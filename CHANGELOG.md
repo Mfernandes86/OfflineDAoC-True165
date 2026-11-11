@@ -5,43 +5,26 @@ The newest version is first.
 Offline DAoC True 1.65 grew out of [Offline DAoC](https://github.com/shadowofze/OfflineDAoC) (0.3 to 0.37c, now on
 hold). Its changelog has the history of everything this version inherits.
 
-## Coming in 0.6
+## Coming in the next update
+
+Nothing yet.
+
+## 0.6 (2026-11-11)
+
+An update to v0.1, v0.2, v0.3, v0.4, v0.4.1 and v0.5: the downloader updates an installed game of any of them in place
+(about 2.8 GB instead of the full 36 GB), and keeps your account, characters, companions, bots and settings. The
+first START SERVER after the update brings your world up to date. New players get the complete game, as before.
+
+### Gamebots and companions
 
 - Guilds: `/gc who` lists your guild's online gamebot members too, after the players. They were only in the guild
   window.
 - Guilds: gamebots you invite pay your guild's dues on the coin they loot, like player members, until you remove
   them from the guild. Hired companions are not guild members and pay nothing.
-- Monsters: a monster that hides or comes back while you are near it changes for you too. A hidden one kept its name
-  floating over nothing (Snarls, who stays hidden until the lupine snarlers beside him are dead), and one that came
-  back could stay nameless and impossible to target. The day and night spawns work the same way.
-- Settings: the messages that tell you to switch on a quality of life option point to where it is. `/grind` said
-  Options > Bots > GRIND; it is Settings > Interface > Grinding > GRIND. The crafting assistant's greyed-out page and
-  the CRAFT ALL and ASSISTANT buttons said Options > Crafting; they are in Settings > Interface > Crafting.
-- Monsters: they bring their friends again on every new pull. After one pull that brought friends, every monster
-  came alone for as long as you kept pulling within two minutes of the last (a break such as a level-up seemed to
-  "reset" it). Now a pull brings no friends only while the monsters of the last pull that did are still fighting you.
 - Gamebots: the Bot Goals Setting applies even if you never saved it. With no saved setting, almost every gamebot
   went solo, so the 40% Group PvE you saw in the launcher gave about one group per realm.
-- Quests: seven quest monsters had no body and attacked unseen: Anklebiter, the Neophyte Spirit, Fasius Previlus,
-  Dash, Cadoc, Spicket and Gashir. Each now looks like its kind, and the server never spawns a quest monster with no
-  body.
-- Quests: Rinda's Lost Keys takes back her iron keychain and then her key. Talking to her finished the quest and both
-  items stayed in your backpack.
-- Quests: dragging an item onto an NPC targets it too, so its answer and the words you can click in it go to that NPC.
-  After dropping the chains on the Thrall Keeper in Brutal Chains with something else targeted, the reward words did
-  nothing.
-- Crafting: recipes that showed a "?" icon in the tradeskill window show their item, such as Midgard's bronze long
-  sword (134 recipes).
-- Midgard: the inn adventurers walk around the house and the walled yard on the road into Huginfell instead of through
-  them.
 - Companions: the Amnesia option says what it does: it interrupts enemy casters in RvR, and sends monsters attacking
   the companion back to its own pet if it has one.
-- `/stuck`: asks first, then your character dies where it stands, so you can release to your bind stone or a city
-  (player issue #30). That death costs no experience, Constitution or resurrection sickness and doesn't count toward
-  the next death's penalty; every other death keeps its penalties. It can't be used in combat. Before, it sent you to
-  the last safe spot it had recorded.
-- Horses: the routes over the Innis Carthaig bridge (Connla to Innis Carthaig, Innis Carthaig to Parthanan Farm, and
-  the Connla to Mulgraighy ticket) ride on the bridge's deck. Your horse dropped into the riverbed under it.
 - Companions: `/hood <companion name>` puts a hired companion's hood up or down, like `/hood` does for you, and it
   stays that way when the companion comes back.
 - Gamebots: after a release they stand up beside their bindstone instead of on top of it (Huginfell).
@@ -62,13 +45,55 @@ hold). Its changelog has the history of everything this version inherits.
   back and forth between two zones.
 - Gamebots: fixes for bots dropping out of the world, lost inventory items, bots stuck recovering after a death for
   hours, healers too low on power to resurrect, and bots idling at the Realm Exchange.
-- Launcher: Player XP rate and Gamebot XP rate are back in the Options tab (1x to 10x, 1x by default).
+
+### Monsters
+
+- Monsters: a monster that hides or comes back while you are near it changes for you too. A hidden one kept its name
+  floating over nothing (Snarls, who stays hidden until the lupine snarlers beside him are dead), and one that came
+  back could stay nameless and impossible to target. The day and night spawns work the same way.
+- Monsters: they bring their friends again on every new pull. After one pull that brought friends, every monster
+  came alone for as long as you kept pulling within two minutes of the last (a break such as a level-up seemed to
+  "reset" it). Now a pull brings no friends only while the monsters of the last pull that did are still fighting you.
+
+### World, items and crafting
+
+- Crafting: recipes that showed a "?" icon in the tradeskill window show their item, such as Midgard's bronze long
+  sword (134 recipes).
+- Midgard: the inn adventurers walk around the house and the walled yard on the road into Huginfell instead of through
+  them.
+- `/stuck`: asks first, then your character dies where it stands, so you can release to your bind stone or a city
+  (player issue #30). That death costs no experience, Constitution or resurrection sickness and doesn't count toward
+  the next death's penalty; every other death keeps its penalties. It can't be used in combat. Before, it sent you to
+  the last safe spot it had recorded.
+- Horses: the routes over the Innis Carthaig bridge (Connla to Innis Carthaig, Innis Carthaig to Parthanan Farm, and
+  the Connla to Mulgraighy ticket) ride on the bridge's deck. Your horse dropped into the riverbed under it.
+
+### Quests
+
+- Quests: seven quest monsters had no body and attacked unseen: Anklebiter, the Neophyte Spirit, Fasius Previlus,
+  Dash, Cadoc, Spicket and Gashir. Each now looks like its kind, and the server never spawns a quest monster with no
+  body.
+- Quests: Rinda's Lost Keys takes back her iron keychain and then her key. Talking to her finished the quest and both
+  items stayed in your backpack.
+- Quests: dragging an item onto an NPC targets it too, so its answer and the words you can click in it go to that NPC.
+  After dropping the chains on the Thrall Keeper in Brutal Chains with something else targeted, the reward words did
+  nothing.
+
+### The new client
+
+- Settings: the messages that tell you to switch on a quality of life option point to where it is. `/grind` said
+  Options > Bots > GRIND; it is Settings > Interface > Grinding > GRIND. The crafting assistant's greyed-out page and
+  the CRAFT ALL and ASSISTANT buttons said Options > Crafting; they are in Settings > Interface > Crafting.
 - Name colours: Settings > Interface > NAME COLOURS, or `/colornames` and `/oldnamecolors`, turns on the 1.54 client's
   coloured names: monsters by con, NPCs cyan, enemies red, guild dark green, group light orange, other players light
   blue, the dead brown and your target white. Gamebots and companions show as players.
 - Monsters: their walk and run cycles play in full; they were cut short when the models were converted (wolves
   such as the lupine snarler, zombies and the necromancer's servant, bears, boars, cats, spiders, giants and more).
 - Horses: your character stays in the saddle on stablemaster routes when the horse goes up or down hills.
+
+### The launcher
+
+- Launcher: Player XP rate and Gamebot XP rate are back in the Options tab (1x to 10x, 1x by default).
 
 ## 0.5 (2026-11-09)
 

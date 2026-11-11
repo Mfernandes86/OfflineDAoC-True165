@@ -323,7 +323,7 @@ Reference outputs that only the tools copy has (not applied): `drops165-missing.
 
 | File | What |
 |---|---|
-| `Classic165Mode.cs` | `IsOn` (server property `classic165_mode`), XP locked to 1x, `state-165` paths, the freeshard start-up scripts that are off, GM-only commands (`/tele /tc /grind /freelevel /level /vault /autoloot /mobs /bounty* /classrog /buff /hardcore /xp /rp /dropmr /api /raid /spawn`), base-class career check, inn regions (1, 100, 200) as Realm Exchange regions, travel-time × 1.5. |
+| `Classic165Mode.cs` | `IsOn` (server property `classic165_mode`), the Player and Gamebot XP rates (the launcher's options, 1x by default), `state-165` paths, the freeshard start-up scripts that are off, GM-only commands (`/tele /tc /grind /freelevel /level /vault /autoloot /mobs /bounty* /classrog /buff /hardcore /xp /rp /dropmr /api /raid /spawn`), base-class career check, inn regions (1, 100, 200) as Realm Exchange regions, travel-time × 1.5. |
 | `PlayerRules165.cs` | `IsPlayerLike`: bots get the player combat rules. |
 | `DeathPenalty165.cs` | Bots lose Constitution on PvE release and get resurrection sickness. Gamebots pay a healer or wait it out. |
 | `Supplies165.cs` | Real arrows/bolts from the bag, restock on town errands; companions get theirs from their player. |
