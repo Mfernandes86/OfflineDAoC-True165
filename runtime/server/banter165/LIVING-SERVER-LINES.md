@@ -14,7 +14,7 @@ been heard in a running game yet.
 | | Lines |
 |---|---|
 | Read from Living Server (the chat corpus, its scenes and the lore bible; one per written line) | 20505 |
-| Written into the library | 5113 (5134 written by the tool; 21 trimmed on import, see the end of this page) |
+| Written into the library | 3839 (5134 written by the tool; 1295 trimmed on import, see the end of this page) |
 | Held until the library has a way to say them | 13707 |
 | Left out | 1664 |
 
@@ -31,7 +31,6 @@ been heard in a running game yet.
 | `ls_lore_albion.json` | 45 |
 | `ls_lore_hibernia.json` | 37 |
 | `ls_lore_midgard.json` | 64 |
-| `ls_lore_places.json` | 1274 |
 | `ls_lore_shared.json` | 114 |
 | `ls_places.json` | 440 |
 | `ls_realms.json` | 176 |
@@ -444,3 +443,6 @@ Taken out by hand after the tool ran, so a new run of the tool brings them back 
   itself, "experience per hour", "hits like a truck", and one rewrite left as just "My damage." From `ls_guild.json`
   (8), `ls_replies.json` (4), `ls_everyday.json` (3), `ls_places.json` (3), `ls_hunting.json`, `ls_frontier.json` and
   `ls_classes.json` (1 each).
+- `ls_lore_places.json` (1274 lines), the whole file: about one line in four was a garbled fragment, a monster level
+  from Living Server's own world, or something True 1.65 does not have (consignment merchants, a real-world year). It
+  can come back once its lines have been read one by one (revert the commit that took it out).
