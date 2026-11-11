@@ -49,3 +49,16 @@ When a player's message names a zone and reads as a question ("what is in Spinde
 that has a line tied to that zone (`"only": { "zone": [...] }`, in dungeon, hunting, travel or idle) answers with it.
 The realm, level and class filters still apply, so a Hibernian knows nothing of Albion's zones. With no such line the
 usual reply_* lines answer. Nothing new is written for this: every line about a place is also an answer about it.
+
+## Lines from Living Server (`ls_*.json`)
+
+The `ls_*.json` files hold lines from [Living Server](https://github.com/chris4aker/OfflineDAoC-LivingServer), rewritten
+for this library by `tools/import_living_server_banter.py`: given a situation and filters here, put into this
+library's voice, tied with `only` to the class or zone they are about, and checked by the validator. They are rebuilt
+from scratch by the tool, so do not edit them by hand; change the tool's rules and run it again:
+
+    python -I tools\import_living_server_banter.py --living-server <checkout> --world-db <opendaoc-165.sqlite3.db> --ledger banter165\LIVING-SERVER-LINES.md
+
+[LIVING-SERVER-LINES.md](LIVING-SERVER-LINES.md) counts what was written, what was left out and why, and what is held
+until the library has a way to say it. The new lines of a situation are weighted to take half of its airtime together,
+so they do not crowd out the lines that were here first. To leave them out, delete the `ls_*.json` files.
