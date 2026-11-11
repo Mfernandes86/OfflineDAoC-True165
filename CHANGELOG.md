@@ -5,9 +5,18 @@ The newest version is first.
 Offline DAoC True 1.65 grew out of [Offline DAoC](https://github.com/shadowofze/OfflineDAoC) (0.3 to 0.37c, now on
 hold). Its changelog has the history of everything this version inherits.
 
-## Coming in the next update
+## Coming in 0.7
 
-Nothing yet.
+### Gamebots and companions
+
+- Banter: about 3,800 new gamebot lines from chris4aker's Living Server, rewritten for True 1.65: everyday talk,
+  classes, realms, guilds, the frontier, crafting and realm lore. A line about one zone, class or monster is said only
+  there, a line about the dark only at night, and a boast or a joke gets an answer in kind. The 3,865 lines from before
+  keep half of the airtime. (From the chris4aker fork, chris4aker/OfflineDAoC-True165, branches
+  `offer/banter-only-filter` and `banter/living-server`; place lore and a few lines that broke the 2003 setting were
+  left out.)
+- Banter: ask about a zone by name ("what is in Spindelhalla?") and a gamebot with something to say about that place
+  answers with it.
 
 ## 0.6 (2026-11-11)
 
