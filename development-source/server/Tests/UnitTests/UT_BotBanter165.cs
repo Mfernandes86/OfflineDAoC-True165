@@ -212,6 +212,8 @@ public class UT_BotBanter165
     {
         string[] zones = ["Spindelhalla", "Odin's Gate", "Vale of Mularn", "Mularn", "Black Mtns. South", "Vale"];
         Assert.That(BanterLibrary165.PlaceNamed(message, zones), Is.EqualTo(expected));
+        Assert.That(BanterLibrary165.PlaceNamed(message, BanterLibrary165.PlaceNames(zones)), Is.EqualTo(expected), "names worked out once");
+        Assert.That(BanterLibrary165.PlaceNamed(message, BanterLibrary165.PlaceNames([])), Is.Null, "no zones loaded yet");
     }
 
     [Test]

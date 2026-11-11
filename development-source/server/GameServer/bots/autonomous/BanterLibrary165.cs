@@ -843,21 +843,43 @@ namespace DOL.GS
         /// The place a message names, or null: the longest of the names that stands in it as whole words. Case,
         /// apostrophes and full stops do not count ("odins gate" names Odin's Gate). Pure.
         /// </summary>
-        public static string PlaceNamed(string message, IEnumerable<string> names)
+        public static string PlaceNamed(string message, IEnumerable<string> names) =>
+            names == null ? null : PlaceNamed(message, PlaceNames(names));
+
+        /// <summary>The same, with the names' plain words worked out once (PlaceNames) instead of on every message.</summary>
+        public static string PlaceNamed(string message, IReadOnlyList<PlaceName> names)
         {
-            if (string.IsNullOrWhiteSpace(message) || names == null)
+            if (string.IsNullOrWhiteSpace(message) || names == null || names.Count == 0)
                 return null;
             string said = " " + PlainWords(message) + " ";
             string best = null;
-            foreach (string name in names)
+            foreach (PlaceName place in names)
             {
-                if (string.IsNullOrWhiteSpace(name) || best != null && name.Length <= best.Length)
+                if (best != null && place.Name.Length <= best.Length)
                     continue;
-                string plain = PlainWords(name);
-                if (plain.Length >= 4 && said.Contains(" " + plain + " ", StringComparison.Ordinal))
-                    best = name;
+                if (said.Contains(place.Padded, StringComparison.Ordinal))
+                    best = place.Name;
             }
             return best;
+        }
+
+        /// <summary>A place name and its plain words with a space either side, as PlaceNamed looks for them.</summary>
+        public readonly record struct PlaceName(string Name, string Padded);
+
+        /// <summary>Names ready for PlaceNamed: blank names and names under four plain letters are left out.</summary>
+        public static PlaceName[] PlaceNames(IEnumerable<string> names)
+        {
+            var list = new List<PlaceName>();
+            if (names != null)
+                foreach (string name in names)
+                {
+                    if (string.IsNullOrWhiteSpace(name))
+                        continue;
+                    string plain = PlainWords(name);
+                    if (plain.Length >= 4)
+                        list.Add(new PlaceName(name, " " + plain + " "));
+                }
+            return list.ToArray();
         }
 
         private static string PlainWords(string text) =>

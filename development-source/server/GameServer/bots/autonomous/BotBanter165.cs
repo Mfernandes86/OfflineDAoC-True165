@@ -376,23 +376,29 @@ namespace DOL.GS
             return Pick(BanterLibrary165.ClassifyPlayerMessage(message, directed), channel, responder, values, true, out _);
         }
 
-        private static string[] _zoneNames;
+        private static BanterLibrary165.PlaceName[] _zoneNames;
 
-        /// <summary>Every zone's name, read once (the world's zones do not change while the server runs).</summary>
-        private static string[] ZoneNames()
+        /// <summary>
+        /// Every zone's name, ready for PlaceNamed, read once the world's zones are loaded (they do not change while the
+        /// server runs). Before that nothing is kept, so an early call does not leave the list empty for good.
+        /// </summary>
+        private static BanterLibrary165.PlaceName[] ZoneNames()
         {
-            if (_zoneNames != null)
-                return _zoneNames;
+            BanterLibrary165.PlaceName[] names = _zoneNames;
+            if (names != null)
+                return names;
             try
             {
-                _zoneNames = WorldMgr.Zones.Values.Select(zone => zone?.Description).Where(name => !string.IsNullOrWhiteSpace(name))
-                    .Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+                names = BanterLibrary165.PlaceNames(WorldMgr.Zones.Values.Select(zone => zone?.Description)
+                    .Where(name => !string.IsNullOrWhiteSpace(name)).Distinct(StringComparer.OrdinalIgnoreCase));
             }
             catch (Exception)
             {
                 return [];
             }
-            return _zoneNames;
+            if (names.Length > 0)
+                _zoneNames = names;
+            return names;
         }
 
         /// <summary>One line for a fixed situation (e.g. guild_join), or null.</summary>
