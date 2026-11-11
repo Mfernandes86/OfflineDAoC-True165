@@ -5,9 +5,9 @@ Isles, November 2003), with a world full of gamebots, hired companions, and a ne
 > experience. Large parts of the game haven't been played through by a person. Expect bugs, and keep a backup of
 > your save.
 
-> **On hiatus until further notice.** v0.6 leaves the game in a playable state; I may or may not return with more
-> updates. Please keep reporting bugs and ideas in [Issues](https://github.com/shadowofze/OfflineDAoC-True165/issues) for
-> later, and anyone who wants to continue development in a fork is free to do so, no need to ask me.
+> **Releases are not on a regular schedule.** Expect potentially long gaps between releases. Bug reports and
+> ideas are welcome in [Issues](https://github.com/shadowofze/OfflineDAoC-True165/issues), and anyone who wants to
+> continue development in a fork is free to do so, no need to ask me.
 
 ## What's new in 0.6
 

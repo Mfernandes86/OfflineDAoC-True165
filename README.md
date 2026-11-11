@@ -20,8 +20,8 @@
 > **v0.6 is out**, with an in-place update for players of any earlier version (v0.1 to v0.5). Large parts of the game haven't been played through by a person.
 > Expect bugs, and keep a backup of your save. Bug reports are welcome in [Issues](https://github.com/shadowofze/OfflineDAoC-True165/issues).
 
-**On hiatus until further notice.** v0.6 leaves the game in a playable state. I may or may not return with more updates in the future.
-Please keep reporting bugs and ideas in [Issues](https://github.com/shadowofze/OfflineDAoC-True165/issues): they will be there to look at if I come back.
+**Releases are not on a regular schedule.** Expect potentially long gaps between releases.
+Bug reports and ideas are welcome in [Issues](https://github.com/shadowofze/OfflineDAoC-True165/issues).
 Anyone who wants to continue development in a fork is free to do so, no need to ask me.
 
 # Offline DAoC True 1.65: single-player Dark Age of Camelot as of patch 1.65
