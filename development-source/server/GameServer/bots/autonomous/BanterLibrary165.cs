@@ -840,10 +840,6 @@ namespace DOL.GS
             HasPeriodChatWord(message) && !AutonomousChatIntentModel.HasOutOfWorldWord(message);
 
         /// <summary>
-        /// The reply situations for a player's message, most fitting first, always ending in reply_general.
-        /// Reuses the intent model; a few period chat words (ding, thx, rez, bg) are caught first.
-        /// </summary>
-        /// <summary>
         /// The place a message names, or null: the longest of the names that stands in it as whole words. Case,
         /// apostrophes and full stops do not count ("odins gate" names Odin's Gate). Pure.
         /// </summary>
@@ -877,6 +873,10 @@ namespace DOL.GS
             return directed || Where.IsMatch(text) || Question.IsMatch(text);
         }
 
+        /// <summary>
+        /// The reply situations for a player's message, most fitting first, always ending in reply_general.
+        /// Reuses the intent model; a few period chat words (ding, thx, rez, bg) are caught first.
+        /// </summary>
         public static List<string> ClassifyPlayerMessage(string message, bool directed)
         {
             var keys = new List<string>(4);
