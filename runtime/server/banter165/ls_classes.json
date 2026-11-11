@@ -544,7 +544,6 @@
     {"text": "Mesmerized three adds at once, the group never even noticed.", "situation": "idle", "realm": "Albion", "only": {"class": ["Minstrel"]}, "invites": "boast"},
     {"text": "My lute has been out of tune since level one.", "situation": "idle", "realm": "Albion", "only": {"class": ["Minstrel"]}, "invites": "joke"},
     {"text": "What do you charm on a Minstrel at this level?", "situation": "idle", "realm": "Albion", "only": {"class": ["Minstrel"]}},
-    {"text": "Whole group dead and my rez still on timer, story of my week.", "situation": "idle", "realm": "Albion", "only": {"class": ["Cleric"]}, "invites": "complaint"},
     {"text": "Red con named, full group, nobody died. Heals were on point.", "situation": "idle", "realm": "Albion", "only": {"class": ["Cleric"]}, "invites": "boast"},
     {"text": "I was a smite Cleric for one day, my group still talks about it.", "situation": "idle", "realm": "Albion", "only": {"class": ["Cleric"]}, "invites": "joke"},
     {"text": "Is enhancement worth it on a Cleric or go full rejuv?", "situation": "idle", "realm": "Albion", "only": {"class": ["Cleric"]}, "invites": "ask_opinion"},

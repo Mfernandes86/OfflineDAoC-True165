@@ -190,7 +190,6 @@
     {"text": "Spawn just reset, it is all clear for a moment.", "situation": "hunting", "weight": 0.755},
     {"text": "Waiting on the {target} to pop, it always comes back here.", "situation": "hunting", "weight": 0.755},
     {"text": "The {target} by the rocks is a caster, careful.", "situation": "hunting", "weight": 0.755},
-    {"text": "The big {target} near the fire hits like a truck.", "situation": "hunting", "weight": 0.755},
     {"text": "Anyone know if the {target} drops anything good?", "situation": "hunting", "invites": "ask_know", "weight": 0.755},
     {"text": "The orange ones here are worth the risk.", "situation": "hunting", "weight": 0.755},
     {"text": "Careful pulling here, they link.", "situation": "hunting", "weight": 0.755},

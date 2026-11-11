@@ -55,7 +55,8 @@ usual reply_* lines answer. Nothing new is written for this: every line about a 
 The `ls_*.json` files hold lines from [Living Server](https://github.com/chris4aker/OfflineDAoC-LivingServer), rewritten
 for this library by `tools/import_living_server_banter.py`: given a situation and filters here, put into this
 library's voice, tied with `only` to the class or zone they are about, and checked by the validator. They are rebuilt
-from scratch by the tool, so do not edit them by hand; change the tool's rules and run it again:
+from scratch by the tool, so do not edit them by hand; change the tool's rules and run it again (a few lines
+were trimmed by hand on import, listed at the end of LIVING-SERVER-LINES.md; a new run brings them back):
 
     python -I tools\import_living_server_banter.py --living-server <checkout> --world-db <opendaoc-165.sqlite3.db> --ledger banter165\LIVING-SERVER-LINES.md
 

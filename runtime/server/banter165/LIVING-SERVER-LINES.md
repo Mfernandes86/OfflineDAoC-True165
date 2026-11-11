@@ -14,7 +14,7 @@ been heard in a running game yet.
 | | Lines |
 |---|---|
 | Read from Living Server (the chat corpus, its scenes and the lore bible; one per written line) | 20505 |
-| Written into the library | 5134 |
+| Written into the library | 5113 (5134 written by the tool; 21 trimmed on import, see the end of this page) |
 | Held until the library has a way to say them | 13707 |
 | Left out | 1664 |
 
@@ -22,20 +22,20 @@ been heard in a running game yet.
 
 | File | Lines |
 |---|---|
-| `ls_classes.json` | 673 |
-| `ls_everyday.json` | 629 |
-| `ls_frontier.json` | 254 |
+| `ls_classes.json` | 672 |
+| `ls_everyday.json` | 626 |
+| `ls_frontier.json` | 253 |
 | `ls_groups.json` | 136 |
-| `ls_guild.json` | 283 |
-| `ls_hunting.json` | 337 |
+| `ls_guild.json` | 275 |
+| `ls_hunting.json` | 336 |
 | `ls_lore_albion.json` | 45 |
 | `ls_lore_hibernia.json` | 37 |
 | `ls_lore_midgard.json` | 64 |
 | `ls_lore_places.json` | 1274 |
 | `ls_lore_shared.json` | 114 |
-| `ls_places.json` | 443 |
+| `ls_places.json` | 440 |
 | `ls_realms.json` | 176 |
-| `ls_replies.json` | 345 |
+| `ls_replies.json` | 341 |
 | `ls_threads.json` | 224 |
 | `ls_trade_craft.json` | 100 |
 
@@ -435,3 +435,12 @@ been heard in a running game yet.
 | beggar / listed | 1 | 0 | 1 | 0 |
 | combat / healer_oom | 1 | 0 | 1 | 0 |
 | reply / chat | 1 | 0 | 1 | 0 |
+
+## Trimmed when brought into True 1.65 (2026-11-11)
+
+Taken out by hand after the tool ran, so a new run of the tool brings them back until it has a drop list.
+
+- 21 lines that step out of the game or out of 2003: real-life weeks, days and spreadsheets, talk about the chat
+  itself, "experience per hour", "hits like a truck", and one rewrite left as just "My damage." From `ls_guild.json`
+  (8), `ls_replies.json` (4), `ls_everyday.json` (3), `ls_places.json` (3), `ls_hunting.json`, `ls_frontier.json` and
+  `ls_classes.json` (1 each).

@@ -229,7 +229,6 @@
     {"text": "Swam across Llyn Barfog once and something followed me. Never swam there again.", "situation": "idle", "realm": "Albion", "level": [20, 50], "only": {"zone": ["Llyn Barfog"]}},
     {"text": "The monsters at Llyn Barfog gained epic status, they say. My experience did not notice.", "situation": "idle", "realm": "Albion", "level": [20, 50], "only": {"zone": ["Llyn Barfog"]}},
     {"text": "A two-headed dragon called Xanxicar sleeps in the Crystal Cave under Avalon. Wait too long and the cave fills with lightning.", "situation": "idle", "realm": "Albion", "level": [30, 50], "only": {"zone": ["Crystal Cave"]}},
-    {"text": "Heard the lightning timer in the Crystal Cave got longer. Still not long enough.", "situation": "idle", "realm": "Albion", "level": [30, 50], "only": {"zone": ["Crystal Cave"]}},
     {"text": "Caer Sidi sits on the road to Annwn. The souls in there are not meant to leave.", "situation": "idle", "realm": "Albion", "level": [30, 50], "only": {"zone": ["Caer Sidi"]}},
     {"text": "The old poem says Arthur sailed to Caer Sidi with three ships and only seven men came home. Bards still sing it.", "situation": "idle", "realm": "Albion", "level": [30, 50], "only": {"zone": ["Caer Sidi"]}},
     {"text": "Heard you never wear anything shiny into Caer Sidi. The dead go for the gilded first.", "situation": "idle", "realm": "Albion", "level": [30, 50], "only": {"zone": ["Caer Sidi"]}},
@@ -308,7 +307,6 @@
     {"text": "Heard a guild found an old door in a Connacht hillside. Nobody will say where. Probably nothing.", "situation": "idle", "realm": "Hibernia", "only": {"zone": ["Connacht"]}},
     {"text": "Gossip says someone blew a horn in Connacht and the hill answered. I do not believe a word.", "situation": "idle", "realm": "Hibernia", "only": {"zone": ["Connacht"]}},
     {"text": "Swam west off the Cliffs of Moher until the shore was gone. The sea just keeps going, and so does the fog.", "situation": "idle", "realm": "Hibernia", "only": {"zone": ["Cliffs of Moher"]}},
-    {"text": "World's End is a real zone. I went to see if the world actually ends there. It nearly does.", "situation": "idle", "realm": "Hibernia", "only": {"zone": ["World's End"]}},
     {"text": "Climbed the highest rock on Vigilant Rock just to see the sea. Fog and more fog, and something big moving under it.", "situation": "idle", "realm": "Hibernia", "only": {"zone": ["Vigilant Rock"]}},
     {"text": "Allta Fearann turned up out of nowhere. One more place nobody knew about. The map keeps growing.", "situation": "idle", "realm": "Hibernia", "only": {"zone": ["Allta Fearann"]}},
     {"text": "I swear there is a cave mouth on the Shannon side nobody talks about. Went twenty steps in and turned back.", "situation": "idle", "realm": "Hibernia", "only": {"zone": ["Shannon Estuary"]}},
@@ -443,7 +441,6 @@
     {"text": "The trees in Tir na Nog make me sleepy in a good way.", "situation": "idle", "realm": "Hibernia", "only": {"zone": ["Tir na Nog"]}, "invites": "joke"},
     {"text": "The demons in Darkness Falls keep me humble.", "situation": "idle", "level": [20, 50], "only": {"zone": ["Darkness Falls"]}, "invites": "joke"},
     {"text": "Thidranki is the most fun I have had at 20.", "situation": "idle", "level": [20, 24], "only": {"zone": ["Thidranki"]}},
-    {"text": "Twinks in Thidranki again, they hit like trucks.", "situation": "idle", "level": [20, 24], "only": {"zone": ["Thidranki"]}, "invites": "complaint"},
     {"text": "Murdaigean keeps changing hands, love it.", "situation": "idle", "level": [25, 29], "only": {"zone": ["Murdaigean"]}}
   ]
 }

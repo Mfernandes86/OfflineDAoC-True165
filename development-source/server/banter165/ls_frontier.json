@@ -208,7 +208,6 @@
     {"text": "Who let that happen.", "situation": "rvr_defeat", "kind": "reply"},
     {"text": "Relic gone, wonderful.", "situation": "rvr_defeat", "kind": "reply"},
     {"text": "We need a relic raid at once.", "situation": "rvr_defeat", "kind": "reply"},
-    {"text": "My damage.", "situation": "rvr_defeat", "kind": "reply"},
     {"text": "Woohoo!", "situation": "rvr_victory", "kind": "reply"},
     {"text": "Huge, well done.", "situation": "rvr_victory", "kind": "reply"},
     {"text": "Nice! Who carried?", "situation": "rvr_victory", "kind": "reply"},
