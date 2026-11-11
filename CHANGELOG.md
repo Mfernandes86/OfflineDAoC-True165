@@ -5,43 +5,26 @@ The newest version is first.
 Offline DAoC True 1.65 grew out of [Offline DAoC](https://github.com/shadowofze/OfflineDAoC) (0.3 to 0.37c, now on
 hold). Its changelog has the history of everything this version inherits.
 
-## Coming in 0.6
+## Coming in the next update
+
+Nothing yet.
+
+## 0.6 (2026-11-11)
+
+An update to v0.1, v0.2, v0.3, v0.4, v0.4.1 and v0.5: the downloader updates an installed game of any of them in place
+(about 3.0 GB instead of the full 36 GB), and keeps your account, characters, companions, bots and settings. The
+first START SERVER after the update brings your world up to date. New players get the complete game, as before.
+
+### Gamebots and companions
 
 - Guilds: `/gc who` lists your guild's online gamebot members too, after the players. They were only in the guild
   window.
 - Guilds: gamebots you invite pay your guild's dues on the coin they loot, like player members, until you remove
   them from the guild. Hired companions are not guild members and pay nothing.
-- Monsters: a monster that hides or comes back while you are near it changes for you too. A hidden one kept its name
-  floating over nothing (Snarls, who stays hidden until the lupine snarlers beside him are dead), and one that came
-  back could stay nameless and impossible to target. The day and night spawns work the same way.
-- Settings: the messages that tell you to switch on a quality of life option point to where it is. `/grind` said
-  Options > Bots > GRIND; it is Settings > Interface > Grinding > GRIND. The crafting assistant's greyed-out page and
-  the CRAFT ALL and ASSISTANT buttons said Options > Crafting; they are in Settings > Interface > Crafting.
-- Monsters: they bring their friends again on every new pull. After one pull that brought friends, every monster
-  came alone for as long as you kept pulling within two minutes of the last (a break such as a level-up seemed to
-  "reset" it). Now a pull brings no friends only while the monsters of the last pull that did are still fighting you.
 - Gamebots: the Bot Goals Setting applies even if you never saved it. With no saved setting, almost every gamebot
   went solo, so the 40% Group PvE you saw in the launcher gave about one group per realm.
-- Quests: seven quest monsters had no body and attacked unseen: Anklebiter, the Neophyte Spirit, Fasius Previlus,
-  Dash, Cadoc, Spicket and Gashir. Each now looks like its kind, and the server never spawns a quest monster with no
-  body.
-- Quests: Rinda's Lost Keys takes back her iron keychain and then her key. Talking to her finished the quest and both
-  items stayed in your backpack.
-- Quests: dragging an item onto an NPC targets it too, so its answer and the words you can click in it go to that NPC.
-  After dropping the chains on the Thrall Keeper in Brutal Chains with something else targeted, the reward words did
-  nothing.
-- Crafting: recipes that showed a "?" icon in the tradeskill window show their item, such as Midgard's bronze long
-  sword (134 recipes).
-- Midgard: the inn adventurers walk around the house and the walled yard on the road into Huginfell instead of through
-  them.
 - Companions: the Amnesia option says what it does: it interrupts enemy casters in RvR, and sends monsters attacking
   the companion back to its own pet if it has one.
-- `/stuck`: asks first, then your character dies where it stands, so you can release to your bind stone or a city
-  (player issue #30). That death costs no experience, Constitution or resurrection sickness and doesn't count toward
-  the next death's penalty; every other death keeps its penalties. It can't be used in combat. Before, it sent you to
-  the last safe spot it had recorded.
-- Horses: the routes over the Innis Carthaig bridge (Connla to Innis Carthaig, Innis Carthaig to Parthanan Farm, and
-  the Connla to Mulgraighy ticket) ride on the bridge's deck. Your horse dropped into the riverbed under it.
 - Companions: `/hood <companion name>` puts a hired companion's hood up or down, like `/hood` does for you, and it
   stays that way when the companion comes back.
 - Gamebots: after a release they stand up beside their bindstone instead of on top of it (Huginfell).
@@ -62,14 +45,6 @@ hold). Its changelog has the history of everything this version inherits.
   back and forth between two zones.
 - Gamebots: fixes for bots dropping out of the world, lost inventory items, bots stuck recovering after a death for
   hours, healers too low on power to resurrect, and bots idling at the Realm Exchange.
-- Launcher: Player XP rate and Gamebot XP rate are back in the Options tab (1x to 10x, 1x by default).
-- Name colours: the 1.54 client's coloured names are on by default - monsters by con, NPCs cyan, enemies red,
-  guild dark green, group light orange, other players light blue, the dead brown and your target white; gamebots
-  and companions show as players. Settings > Interface > NAME COLOURS (Classic), or `/oldnamecolors`, turns them off;
-  `/colornames` turns them back on.
-- Monsters: their walk and run cycles play in full; they were cut short when the models were converted (wolves
-  such as the lupine snarler, zombies and the necromancer's servant, bears, boars, cats, spiders, giants and more).
-- Horses: your character stays in the saddle on stablemaster routes when the horse goes up or down hills.
 - `/passive`: your companions and their pets stop fighting, casting, healing and buffing and only follow you - for
   retreating or running through an area. The group window's stance button cycles AGGRESSIVE, DEFENSIVE and PASSIVE
   (green). It stops `/grind`, and resets to aggressive at login.
@@ -82,25 +57,6 @@ hold). Its changelog has the history of everything this version inherits.
   spells: Area spells only / None - buffs only" (a Runemaster on None keeps its bladeturn up and saves its power).
   Automatic stays as it was.
 - Companions in Darkness Falls follow you on foot instead of vanishing and reappearing behind you (GitHub issue #38).
-- Targeting: a monster that changes shape, such as the minor changeling, stays targeted with its name and health
-  shown, and its new size shows.
-- Housing: the housing zones have maps, and lot deeds can be bought from the lot marker (the purchase went to the
-  last NPC you had clicked). The consignment merchant deed is gone; the Realm Exchange replaces it (GitHub issue #31).
-- Maps: an area the original game had no map for, such as Dodens Gruva, says so instead of showing black (GitHub
-  issue #32).
-- Merchants: Shift+click on a quantity arrow steps by 10, the mouse wheel changes the quantity, and the down arrow
-  at 1 goes to 100 (GitHub issue #33).
-- Collision: the Jordheim assembly hall has its walls again, and so do 15 other buildings and rooms converted before
-  a collision fix, in Tir na Nog, Darkness Falls and several dungeons (GitHub issue #34).
-- Realm abilities: their delve text shows values instead of "EN INFO1", and seven descriptions lost stray characters
-  (Ichor of the Deep, Doombringer, Ravager...) (GitHub issue #35).
-- Spindelhalla: a stray copy of Jordheim's weapon merchant Kalf is gone, and Te'Bui stands at its period spot deeper
-  in, not beside the entrance where it killed low-level bots (GitHub issue #36).
-- Loot: 933 drops that didn't stack now stack like others of their kind - gems, pelts, teeth, claws, carapaces and
-  more (GitHub issue #36). Nothing a quest takes was changed.
-- Loot: the Tattered Rawhide Brea Jerkin drops only as the period leather piece; a broken cloth copy is gone.
-- Darkness Falls: 245 over-dense spawns are thinned (essence shredders, plated fiends, rocots, young necyomancers...)
-  and a few demons at the Midgard entrance; every camp keeps monsters (GitHub issue #39).
 - Gamebots: a group that keeps losing members to monsters far above it leaves instead of regrouping beside them (the
   glimmers in Shannon Estuary killed one group dozens of times), and the camp is avoided by groups of that level for
   two hours.
@@ -111,10 +67,79 @@ hold). Its changelog has the history of everything this version inherits.
   cliff edge in Camelot Hills on the way to the Black Mountains.
 - Gamebots: Savages stop buying shields they can't use and Bards and Minstrels stop re-buying flutes; no bot buys
   a copy of gear it already owns.
+
+### Monsters
+
+- Monsters: a monster that hides or comes back while you are near it changes for you too. A hidden one kept its name
+  floating over nothing (Snarls, who stays hidden until the lupine snarlers beside him are dead), and one that came
+  back could stay nameless and impossible to target. The day and night spawns work the same way.
+- Monsters: they bring their friends again on every new pull. After one pull that brought friends, every monster
+  came alone for as long as you kept pulling within two minutes of the last (a break such as a level-up seemed to
+  "reset" it). Now a pull brings no friends only while the monsters of the last pull that did are still fighting you.
+- Darkness Falls: 245 over-dense spawns are thinned (essence shredders, plated fiends, rocots, young necyomancers...)
+  and a few demons at the Midgard entrance; every camp keeps monsters (GitHub issue #39).
+
+### World, items and crafting
+
+- Crafting: recipes that showed a "?" icon in the tradeskill window show their item, such as Midgard's bronze long
+  sword (134 recipes).
+- Midgard: the inn adventurers walk around the house and the walled yard on the road into Huginfell instead of through
+  them.
+- `/stuck`: asks first, then your character dies where it stands, so you can release to your bind stone or a city
+  (player issue #30). That death costs no experience, Constitution or resurrection sickness and doesn't count toward
+  the next death's penalty; every other death keeps its penalties. It can't be used in combat. Before, it sent you to
+  the last safe spot it had recorded.
+- Horses: the routes over the Innis Carthaig bridge (Connla to Innis Carthaig, Innis Carthaig to Parthanan Farm, and
+  the Connla to Mulgraighy ticket) ride on the bridge's deck. Your horse dropped into the riverbed under it.
+- Housing: the housing zones have maps, and lot deeds can be bought from the lot marker (the purchase went to the
+  last NPC you had clicked). The consignment merchant deed is gone; the Realm Exchange replaces it (GitHub issue #31).
+- Realm abilities: their delve text shows values instead of "EN INFO1", and seven descriptions lost stray characters
+  (Ichor of the Deep, Doombringer, Ravager...) (GitHub issue #35).
+- Spindelhalla: a stray copy of Jordheim's weapon merchant Kalf is gone, and Te'Bui stands at its period spot deeper
+  in, not beside the entrance where it killed low-level bots (GitHub issue #36).
+- Loot: 933 drops that didn't stack now stack like others of their kind - gems, pelts, teeth, claws, carapaces and
+  more (GitHub issue #36). Nothing a quest takes was changed.
+- Loot: the Tattered Rawhide Brea Jerkin drops only as the period leather piece; a broken cloth copy is gone.
+
+### Quests
+
+- Quests: seven quest monsters had no body and attacked unseen: Anklebiter, the Neophyte Spirit, Fasius Previlus,
+  Dash, Cadoc, Spicket and Gashir. Each now looks like its kind, and the server never spawns a quest monster with no
+  body.
+- Quests: Rinda's Lost Keys takes back her iron keychain and then her key. Talking to her finished the quest and both
+  items stayed in your backpack.
+- Quests: dragging an item onto an NPC targets it too, so its answer and the words you can click in it go to that NPC.
+  After dropping the chains on the Thrall Keeper in Brutal Chains with something else targeted, the reward words did
+  nothing.
+
+### The new client
+
+- Settings: the messages that tell you to switch on a quality of life option point to where it is. `/grind` said
+  Options > Bots > GRIND; it is Settings > Interface > Grinding > GRIND. The crafting assistant's greyed-out page and
+  the CRAFT ALL and ASSISTANT buttons said Options > Crafting; they are in Settings > Interface > Crafting.
+- Name colours: the 1.54 client's coloured names are on by default - monsters by con, NPCs cyan, enemies red,
+  guild dark green, group light orange, other players light blue, the dead brown and your target white; gamebots
+  and companions show as players. Settings > Interface > NAME COLOURS (Classic), or `/oldnamecolors`, turns them off;
+  `/colornames` turns them back on.
+- Monsters: their walk and run cycles play in full; they were cut short when the models were converted (wolves
+  such as the lupine snarler, zombies and the necromancer's servant, bears, boars, cats, spiders, giants and more).
+- Horses: your character stays in the saddle on stablemaster routes when the horse goes up or down hills.
+- Targeting: a monster that changes shape, such as the minor changeling, stays targeted with its name and health
+  shown, and its new size shows.
+- Maps: an area the original game had no map for, such as Dodens Gruva, says so instead of showing black (GitHub
+  issue #32).
+- Merchants: Shift+click on a quantity arrow steps by 10, the mouse wheel changes the quantity, and the down arrow
+  at 1 goes to 100 (GitHub issue #33).
+- Collision: the Jordheim assembly hall has its walls again, and so do 15 other buildings and rooms converted before
+  a collision fix, in Tir na Nog, Darkness Falls and several dungeons (GitHub issue #34).
 - Merchants: Darkness Falls seal merchants and bounty merchants show an item's cost in seals or bounty points,
   such as "28 EMERALD SEALS"; it read as copper (GitHub issue #37).
 - Name colours: gamebots and companions show the light blue player colour as soon as they come into view; some
   showed the NPC cyan first and switched as they came closer.
+
+### The launcher
+
+- Launcher: Player XP rate and Gamebot XP rate are back in the Options tab (1x to 10x, 1x by default).
 
 ## 0.5 (2026-11-09)
 
