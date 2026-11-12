@@ -4320,6 +4320,7 @@ namespace DOL.AI.Brain
                             targetForcesMelee,
                             hasRangedCombatWeapon) &&
                             (stance == eBotStance.Ranged || ArcherFightsWithBow());   // M7: the Weapon row / training
+                        MaintainRapidFire(livingTarget, useRanged);
                         if (useRanged)
                         {
                             if (Body.ActiveWeaponSlot != eActiveWeaponSlot.Distance)
@@ -5271,6 +5272,27 @@ namespace DOL.AI.Brain
                 if (attacker.IsAlive && attacker.TargetObject == Body && attacker.InCombat && ++onMe >= 2)
                     return true;
             return false;
+        }
+
+        /// <summary>
+        /// M8: a Ranger's Rapid Fire stance is on for a runner or a casting or running player-like enemy and off for
+        /// everything else (BotClassAbilities165.WantsRapidFire). Only bots that own the ability look at it.
+        /// </summary>
+        private void MaintainRapidFire(GameLiving target, bool usingBow)
+        {
+            if (Body.GetAbilityLevel(Abilities.RapidFire) <= 0)
+                return;
+            ECSGameEffect rapidFire = EffectListService.GetAbilityEffectOnTarget(Body, eEffect.RapidFire);
+            bool want = usingBow && target?.IsAlive == true && BotClassAbilities165.WantsRapidFire(
+                target is GamePlayer or GameBot, target.IsMoving, target.IsCasting, target.HealthPercent, target.TargetObject == Body);
+            if (want == (rapidFire != null))
+                return;
+            if (!want)
+                rapidFire.End();
+            else if (EffectListService.GetEffectOnTarget(Body, eEffect.Volley) == null &&
+                     EffectListService.GetAbilityEffectOnTarget(Body, eEffect.SureShot) == null &&
+                     EffectListService.GetAbilityEffectOnTarget(Body, eEffect.TrueShot) == null)
+                ECSGameEffectFactory.Create(new(Body, 0, 1), static (in ECSGameEffectInitParams i) => new RapidFireECSGameEffect(i));
         }
 
         public void CheckOffensiveAbilities()

@@ -13,7 +13,8 @@ namespace DOL.GS
 
 
         public override ushort Icon { get { return 484; } }
-        public override string Name { get { return LanguageMgr.GetTranslation(((GamePlayer)Owner).Client, "Effects.RapidFireEffect.Name"); } }
+        // a gamebot Ranger uses it too (M8): no player client to translate for
+        public override string Name { get { return OwnerPlayer != null ? LanguageMgr.GetTranslation(OwnerPlayer.Client, "Effects.RapidFireEffect.Name") : "Rapid Fire"; } }
         public override bool HasPositiveEffect { get { return true; } }
 
         public override void OnStartEffect()
