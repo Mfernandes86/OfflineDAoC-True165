@@ -79,4 +79,15 @@ public class UT_HornRaidLifecycle
         Assert.That(RealmRaidRecruitmentPolicy.EventCooldownMilliseconds(false, true, false), Is.EqualTo(10 * Minute),
             "route blocked, failed or timed out");
     }
+
+    [Test]
+    public void TheSounderCallsOffWithASecondSoundWithinThirtySeconds()
+    {
+        Assert.That(HornWindow165.CallOffConfirmed("dragon-albion", 1_000, "dragon-albion", 20_000), Is.True);
+        Assert.That(HornWindow165.CallOffConfirmed("dragon-albion", 1_000, "dragon-albion", 32_000), Is.False, "too late: asks again");
+        Assert.That(HornWindow165.CallOffConfirmed("epic-albion", 1_000, "dragon-albion", 2_000), Is.False, "another hunt");
+        Assert.That(HornWindow165.CallOffConfirmed(null, 0, "dragon-albion", 2_000), Is.False, "first sound only asks");
+        foreach (string phase in new[] { "Muster", "Staging", "Battle", "" })
+            Assert.That(HornWindow165.OwnHuntStatus(phase, 300).Length, Is.LessThanOrEqualTo(63), "fits the horn row");
+    }
 }

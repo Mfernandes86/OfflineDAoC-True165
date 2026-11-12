@@ -69,6 +69,8 @@ namespace DOL.GS
             /// <summary>Sounded on the horn under the new rules (population_scheduler_enabled): 300 staged, or 200+ after
             /// 3 minutes; may have archived guests (RallyGuests165).</summary>
             public bool Horn;
+            /// <summary>The character that sounded the horn (HornWindow165.SounderKey): only it may call the raid off.</summary>
+            public string SounderKey;
             /// <summary>When 200 were first staged (the 3-minute wait starts there).</summary>
             public long MinimumStagedTick;
             /// <summary>Horn battle watch: when the battle began, the last progress (a route target or named boss killed by
@@ -428,7 +430,7 @@ namespace DOL.GS
         /// of 300, and goes in at 300 staged or 200+ after 3 minutes. Without it (launcher, or the property off) nothing
         /// changes: 300 free live 50s are needed.
         /// </summary>
-        public static bool Start(string id, eRealm realm, out string reason, bool forced, RallyRequest rally)
+        public static bool Start(string id, eRealm realm, out string reason, bool forced, RallyRequest rally, string sounderKey = null)
         {
             if (!forced) rally = null;
             // Darkness Falls opens only to the realm that holds the most keeps (owner 2026-11-05 audit: 300 bots would
@@ -517,6 +519,7 @@ namespace DOL.GS
                 }
                 if (raid == null) return false;
                 Raids[id] = raid;
+                raid.SounderKey = sounderKey;
                 RealmEventRecords.Begin(id, definition.Name, definition.IsNeutral ? "Neutral raid" : definition.IsDungeon ? "Epic dungeon" : "Dragon",
                     GlobalConstants.RealmToName(realm), (forced ? "Forced" : "Automatic") + " rally via " + raid.Hub.Name);
                 raid.ForcedParties.AddRange(recruits);
@@ -1300,6 +1303,28 @@ namespace DOL.GS
                 { reason = "This expedition is not running."; return false; }
                 End(raid, GameLoop.GameLoopTime, StoppedByPlayer + " from the launcher.");
                 reason = $"{raid.Definition.Name} stopped. The bots return to their own goals; no cooldown was set.";
+                return true;
+            }
+        }
+
+        /// <summary>The character that sounded the horn for this running event, or null.</summary>
+        public static string SounderOf(string id)
+        {
+            lock (Sync) return Raids.TryGetValue(id, out Raid raid) ? raid.SounderKey : null;
+        }
+
+        /// <summary>The horn's "call off" (realm event audit 2026-11-12: only the launcher could stop a horn raid): the player
+        /// who sounded it (or a GM) ends it as stopped by the player, with no cooldown.</summary>
+        public static bool CallOff(string id, string sounderKey, bool gm, out string reason)
+        {
+            lock (Sync)
+            {
+                if (!Raids.TryGetValue(id, out Raid raid))
+                { reason = "That hunt is not under way."; return false; }
+                if (!gm && (raid.SounderKey == null || raid.SounderKey != sounderKey))
+                { reason = "Only the one who sounded the horn for this hunt may call it off."; return false; }
+                End(raid, GameLoop.GameLoopTime, StoppedByPlayer + " at the Horn of Rallying.");
+                reason = $"The hunt for {raid.Definition.Name} is called off. The champions return to their own business.";
                 return true;
             }
         }

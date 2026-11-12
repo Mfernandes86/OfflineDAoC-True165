@@ -103,6 +103,20 @@ namespace DOL.GS
     public static class HornWindow165
     {
         private static readonly HashSet<GamePlayer> Open_ = [];
+        // A sound on your own running hunt asks first; a second sound on it within 30 s calls it off.
+        private static readonly Dictionary<string, (string EventId, long Tick)> PendingCallOff = new();
+        public const long CallOffConfirmMilliseconds = 30_000;
+
+        /// <summary>The character a horn sound belongs to (the same key as the horn's rest): only it may call the hunt off.</summary>
+        public static string SounderKey(GamePlayer player) => player?.InternalID ?? player?.Name;
+
+        /// <summary>The second sound on your own running hunt calls it off when it comes within 30 seconds of the first.</summary>
+        public static bool CallOffConfirmed(string pendingEventId, long pendingTick, string eventId, long now) =>
+            pendingEventId == eventId && pendingTick > 0 && now >= pendingTick && now - pendingTick <= CallOffConfirmMilliseconds;
+
+        /// <summary>The row of a hunt the player sounded (at most 63 characters).</summary>
+        public static string OwnHuntStatus(string phase, int present) =>
+            $"Your hunt: {(string.IsNullOrEmpty(phase) ? "under way" : phase)} - {present} there - sound again to call off";
 
         /// <summary>The PvE events of the player's realm (dragon, epic dungeon, Summoner's Hall, Darkness Falls).</summary>
         public static AutonomousRealmRaid.Definition[] Events(GamePlayer player) =>
@@ -180,6 +194,8 @@ namespace DOL.GS
                     2 => $"Respawning: {Duration(seconds)}",
                     3 => $"Cooling down: {Duration(seconds)}",
                     4 => "Not possible now",
+                    _ when AutonomousRealmRaid.SounderOf(events[i].Id) is { } key && key == SounderKey(player) =>
+                        OwnHuntStatus(s?.Phase, s?.Present ?? 0),
                     _ => $"{state.Replace(" — ", " - ")} - {s?.Present ?? 0} of {events[i].SuggestedBots} bots",
                 };
                 Put(row, 58, status, 64);
@@ -224,11 +240,30 @@ namespace DOL.GS
                 return "Choose a great hunt first.";
             AutonomousRealmRaid.Definition chosen = events[index];
             long now = GameLoop.GameLoopTime;
+            // the horn's call off (realm event audit 2026-11-12): sounding your own running hunt again asks, a second sound
+            // within 30 seconds calls it off
+            string key = SounderKey(player);
+            bool gm = player.Client.Account.PrivLevel > (uint)ePrivLevel.Player;
+            string sounder = AutonomousRealmRaid.SounderOf(chosen.Id);
+            if (sounder != null && (sounder == key || gm))
+            {
+                lock (PendingCallOff)
+                {
+                    if (!PendingCallOff.TryGetValue(key, out var pending) || !CallOffConfirmed(pending.EventId, pending.Tick, chosen.Id, now))
+                    {
+                        PendingCallOff[key] = (chosen.Id, now);
+                        return $"Your hunt for {chosen.Name} is under way. Sound the horn for it again within " +
+                               $"{CallOffConfirmMilliseconds / 1000} seconds to call it off.";
+                    }
+                    PendingCallOff.Remove(key);
+                }
+                return CallOff(player, chosen);
+            }
             // New rules (population_scheduler_enabled): idle live 50s, archived 50s, busy live 50s; otherwise as before
             RallyRequest rally = RallyGuests165.NewRulesOn
                 ? new RallyRequest { SounderGuildId = player.Guild?.GuildID, ArchiveAllowed = RallyGuests165.MayCallArchived(player, now) }
                 : null;
-            bool started = AutonomousRealmRaid.Start(chosen.Id, player.Realm, out string reason, forced: true, rally);
+            bool started = AutonomousRealmRaid.Start(chosen.Id, player.Realm, out string reason, forced: true, rally, key);
             if (!started)
                 return $"The horn cannot be sounded for {chosen.Name} now: {reason}";
             // a sound that logged guests in rests the horn for this player for 30 minutes; stopping the raid still counts
@@ -243,6 +278,27 @@ namespace DOL.GS
             return $"The horn sounds across the land! The realm rallies for {chosen.Name}.";
         }
 
+        /// <summary>Calls off the player's own hunt (or any hunt, for a GM); returns the line to show.</summary>
+        public static string CallOff(GamePlayer player, AutonomousRealmRaid.Definition chosen)
+        {
+            bool gm = player.Client.Account.PrivLevel > (uint)ePrivLevel.Player;
+            if (!AutonomousRealmRaid.CallOff(chosen.Id, SounderKey(player), gm, out string reason))
+                return reason;
+            foreach (GamePlayer near in player.GetPlayersInRadius(WorldMgr.VISIBILITY_DISTANCE))
+                near.Out.SendMessage($"{player.Name} calls off the hunt for {chosen.Name}.", eChatType.CT_Important, eChatLoc.CL_SystemWindow);
+            return reason;
+        }
+
+        /// <summary>/horn calloff [index]: the player's own running hunt (the one at the index, or the only one).</summary>
+        public static string CallOffCommand(GamePlayer player, int index)
+        {
+            AutonomousRealmRaid.Definition[] events = Events(player);
+            string key = SounderKey(player);
+            AutonomousRealmRaid.Definition chosen = index >= 0 && index < events.Length ? events[index]
+                : events.FirstOrDefault(d => AutonomousRealmRaid.SounderOf(d.Id) == key);
+            return chosen == null ? "You have no hunt under way to call off." : CallOff(player, chosen);
+        }
+
         private static void Put(byte[] buffer, int at, string text, int max)
         {
             byte[] bytes = Encoding.Latin1.GetBytes(text ?? string.Empty);
@@ -253,8 +309,8 @@ namespace DOL.GS
 
 namespace DOL.GS.Commands
 {
-    /// <summary>The horn window's buttons (True 1.65 Mode): /horn list | sound &lt;index&gt; | close.</summary>
-    [CmdAttribute("&horn", ePrivLevel.Player, "True 1.65 Mode: the Horn of Rallying window", "/horn list|sound <index>|close")]
+    /// <summary>The horn window's buttons (True 1.65 Mode): /horn list | sound &lt;index&gt; | calloff [index] | close.</summary>
+    [CmdAttribute("&horn", ePrivLevel.Player, "True 1.65 Mode: the Horn of Rallying window", "/horn list|sound <index>|calloff [index]|close")]
     public sealed class HornCommandHandler : AbstractCommandHandler, ICommandHandler
     {
         public void OnCommand(GameClient client, string[] args)
@@ -267,6 +323,12 @@ namespace DOL.GS.Commands
             {
                 case "close":
                     HornWindow165.Close(player);
+                    return;
+                case "calloff":
+                case "stop":
+                    HornWindow165.Message(player, HornWindow165.CallOffCommand(player,
+                        args.Length > 2 && int.TryParse(args[2], out int c) ? c : -1));
+                    HornWindow165.SendList(player);
                     return;
                 case "sound":
                     int index = args.Length > 2 && int.TryParse(args[2], out int i) ? i : -1;
