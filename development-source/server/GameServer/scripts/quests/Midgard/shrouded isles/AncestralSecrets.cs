@@ -74,6 +74,17 @@ namespace DOL.GS.Quests.Hibernia
 			if (!ServerProperties.Properties.LOAD_QUESTS)
 				return;
 
+			// True 1.65 Mode: not offered. Its reward is the freeshard "Beaded Resisting Stones" (Atlas/Phoenix package drmed,
+			// level 51) and its boss the Atlas level 65 "Ancestral Keeper"; the period quest rewarded a choice of Gazsi's
+			// weapons (Allakhazam items 5118, 5208, 5606, 5264, 5262, 10206, 10207, 15553, 21162), which do not exist in this
+			// world yet (quest audit 2026-11-11, P02-D5). It comes back once those weapons are added from the period pages.
+			if (Classic165Mode.IsOn)
+			{
+				if (log.IsInfoEnabled)
+					log.Info("Quest \"" + questTitle + "\" not loaded in True 1.65 Mode (freeshard reward; the period Gazsi weapons are not in this world)");
+				return;
+			}
+
 			#region defineNPCs
 			
 			 var npcs = WorldMgr.GetNPCsByName("Ota Yrling", eRealm.Midgard);
