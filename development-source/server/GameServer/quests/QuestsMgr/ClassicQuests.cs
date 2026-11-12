@@ -369,6 +369,23 @@ namespace DOL.GS.Quests
                 if (chosen == null) continue;
                 DbItemTemplate template = RewardFor(player, GameServer.Database.FindObjectByKey<DbItemTemplate>(custom.Choices[chosen]));
                 if (template == null) continue;
+                // Quest audit 2026-11-11 (P09): a choose whisper handed over any listed item, even one the player's class
+                // cannot use (Reports' ten Avalon weapons, The Craft of Retribution's eight).
+                if (!MeantFor(player, template))
+                {
+                    player.Out.SendMessage("That is not meant for you.", PacketHandler.eChatType.CT_System, PacketHandler.eChatLoc.CL_SystemWindow);
+                    return true;
+                }
+                // Quest audit 2026-11-11 (P05, P07, P10-D3): a quest with two choose steps from one list (Lost Treasure's
+                // bracers, The Sylvan's Pain's rings, Catla's Downfall) let the same item be picked twice; the period
+                // says it cannot be.
+                string choiceId = custom.Choices[chosen];
+                if (RepeatsEarlierChoice(info, quest.Step, choiceId, id =>
+                        player.Inventory.GetFirstItemByID(id, eInventorySlot.Min_Inv, eInventorySlot.Max_Inv) != null, template.Id_nb))
+                {
+                    player.Out.SendMessage("You have already chosen that one.", PacketHandler.eChatType.CT_System, PacketHandler.eChatLoc.CL_SystemWindow);
+                    return true;
+                }
                 if (!player.Inventory.IsSlotsFree(1, eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack))
                 {
                     player.Out.SendMessage("Your backpack is full.", PacketHandler.eChatType.CT_System, PacketHandler.eChatLoc.CL_SystemWindow);
@@ -378,6 +395,55 @@ namespace DOL.GS.Quests
                     player.Out.SendMessage($"{npc.GetName(0, true)} gives you {template.GetName(1, false)}.", PacketHandler.eChatType.CT_System, PacketHandler.eChatLoc.CL_SystemWindow);
                 quest.AdvanceByScript(npc);
                 return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// May this player have this chosen reward? The item's AllowedClasses ("" or "0": every class; "|", ";" or ","
+        /// between ids) must name the player's class, and a weapon, armour piece, shield or instrument must be one the
+        /// player can use (the class part of that check is the one above). Runs only on a choose whisper.
+        /// </summary>
+        public static bool MeantFor(GamePlayer player, DbItemTemplate template)
+        {
+            if (player == null || template == null)
+                return false;
+            if (!ClassMayHave(template.AllowedClasses, player.CharacterClass.ID))
+                return false;
+            if (!IsGear(template.Object_Type))
+                return true;
+            return player.HasAbilityToUseItem(new DbItemTemplate(template) { AllowedClasses = string.Empty });
+        }
+
+        /// <summary>Does an AllowedClasses value include this class ("" or "0": every class)?</summary>
+        public static bool ClassMayHave(string allowedClasses, int classId)
+        {
+            IReadOnlyCollection<int> classes = QuestDependencyRule.ParseClasses(allowedClasses);
+            return classes.Count == 0 || classes.Contains(classId);
+        }
+
+        /// <summary>Weapons, armour, shields and instruments: the object types a class may be unable to use.</summary>
+        public static bool IsGear(int objectType) =>
+            objectType is >= (int)eObjectType._FirstWeapon and <= (int)eObjectType._LastWeapon ||
+            objectType is >= (int)eObjectType._FirstArmor and <= (int)eObjectType._LastArmor ||
+            objectType == (int)eObjectType.Shield || objectType == (int)eObjectType.Instrument;
+
+        /// <summary>
+        /// Is this a second pick of something an earlier or later choose step of the same quest also offers, while the
+        /// player still holds it? Only quests with more than one choose step listing the item are affected, so an item
+        /// the player happens to own from elsewhere never blocks a single choice.
+        /// </summary>
+        public static bool RepeatsEarlierChoice(QuestInfo info, int step, string choiceId, Func<string, bool> holds, string givenId = null)
+        {
+            if (info?.Steps == null || string.IsNullOrEmpty(choiceId))
+                return false;
+            for (int i = 1; i < info.Steps.Count; i++)
+            {
+                if (i == step) continue;
+                CustomStep other = info.Steps[i]?.Custom;
+                if (other?.Kind != "choose" || other.Choices == null) continue;
+                if (!other.Choices.Values.Any(v => string.Equals(v, choiceId, StringComparison.OrdinalIgnoreCase))) continue;
+                return holds(choiceId) || !string.IsNullOrEmpty(givenId) && !string.Equals(givenId, choiceId, StringComparison.OrdinalIgnoreCase) && holds(givenId);
             }
             return false;
         }
