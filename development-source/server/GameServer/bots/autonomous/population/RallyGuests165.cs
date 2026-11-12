@@ -61,9 +61,7 @@ namespace DOL.GS
         public const long LingerMinMilliseconds = 5 * 60_000L;
         public const long LingerMaxMilliseconds = 20 * 60_000L;
         public const long ResoundKeepMilliseconds = 10 * 60_000L;
-        // the lifecycle logs in at most 2 a second in total (AutonomousBotLifecycle.MaxLoginsPerSecond); asking faster only
-        // queued them in the lifecycle (epic-routes 9: make the two numbers agree)
-        public const double LoginsPerSecond = AutonomousBotLifecycle.MaxLoginsPerSecond;
+        public const double LoginsPerSecond = 5;
         public const long LoginTimeoutMilliseconds = 6 * 60_000L;
         public const long LogoutRetryMilliseconds = 30_000L;
         public const long ReserveRetryMilliseconds = 5_000L;
@@ -297,7 +295,7 @@ namespace DOL.GS
 
         private enum Act : byte { Login, Reserve, Logout }
 
-        /// <summary>Logs guests in (about 2 a second, the lifecycle's pace), hands live ones to their raid, tops up failed logins while the raid
+        /// <summary>Logs guests in (about 5 a second), hands live ones to their raid, tops up failed logins while the raid
         /// assembles, and logs lingering guests out. Backend calls happen outside the book's lock.</summary>
         public void Pulse(long now, DateTime nowUtc)
         {
@@ -466,7 +464,7 @@ namespace DOL.GS
 
         public static void OnRaidStarted(string eventId) => Book.OnRaidStarted(eventId);
 
-        /// <summary>Called every coordinator tick; runs every 200 ms (logins at about 2 a second) and refreshes the pools
+        /// <summary>Called every coordinator tick; runs every 200 ms (logins at about 5 a second) and refreshes the pools
         /// once a minute on a background thread.</summary>
         public static void Pulse(long now)
         {
