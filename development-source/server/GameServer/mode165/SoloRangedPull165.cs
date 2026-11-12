@@ -229,7 +229,13 @@ namespace DOL.GS
                     return true;
                 }
             }
-            if (s.PutAwayPending && now - s.ShotTick >= 300)
+            // Q28 (veteran review 2026-11-11): while the monster is still far enough off for another shot, a bow or crossbow
+            // puller keeps shooting (Prima's Armsman: the crossbow "hits harder than your best Polearm style"); the weapon
+            // goes away once the next draw would not finish before it arrives.
+            bool bowKeepsFiring = s.UsedBow && bot.ActiveWeaponSlot == eActiveWeaponSlot.Distance &&
+                bot.Endurance >= bot.rangeAttackComponent.ShotEnduranceCost &&
+                KeepFiring(bot.GetDistanceTo(target) - bot.attackComponent.AttackRange, IncomingSpeed(target), BowDrawMilliseconds(bot));
+            if (s.PutAwayPending && now - s.ShotTick >= 300 && !bowKeepsFiring)
             {
                 s.PutAwayPending = false;
                 bot.StopAttack();
@@ -265,7 +271,40 @@ namespace DOL.GS
                 Finish(bot, s, true, "never came");
                 return false;
             }
+            // Q28: a spell puller casts again while the monster closes (Prima's Cleric: "a Smite spec spell, followed by a
+            // base line Smite ... and another base line Smite until the mob closes") - damage spells only, no control
+            if (s.Spell != null && Noticed(target, bot))
+                TryFireAgain(bot, target);
             return true;
+        }
+
+        /// <summary>Pure (Q28): another shot or cast is worth starting when the monster needs longer to arrive than the action
+        /// takes plus half a second.</summary>
+        public static bool KeepFiring(double distanceToMelee, double monsterSpeed, int actionMilliseconds) =>
+            distanceToMelee > 0 && monsterSpeed > 0 && distanceToMelee / monsterSpeed * 1000 > actionMilliseconds + 500;
+
+        private static double IncomingSpeed(GameLiving target) =>
+            target.CurrentSpeed > 0 ? target.CurrentSpeed : Math.Max(1, (int)target.MaxSpeed);
+
+        private static int BowDrawMilliseconds(GameBot bot) =>
+            bot.Inventory?.GetItem(eInventorySlot.DistanceWeapon) is { SPD_ABS: > 0 } bow ? bow.SPD_ABS * 100 : 4000;
+
+        private static void TryFireAgain(GameBot bot, GameLiving target)
+        {
+            if (bot.IsCasting || bot.castingComponent?.HasPendingSkillRequests == true || bot.IsCrowdControlled ||
+                bot.IsBeingInterrupted)
+                return;
+            Spell again = AutonomousDefensivePull.SelectReadyPullSpell(bot.Spells, bot.Level, bot.Mana, bot.PowerCost,
+                bot.GetSkillDisabledDuration);
+            if (again == null || !BotCasterPriority.IsDamage(again) || BotControlSpells.IsControl(again) ||
+                !bot.IsWithinRadius(target, Math.Max(200, again.Range - RangeMargin)) ||
+                !KeepFiring(bot.GetDistanceTo(target) - bot.attackComponent.AttackRange, IncomingSpeed(target), again.CastTime))
+                return;
+            IPathfindingMgr nav = PathfindingProvider.Instance;
+            if (!HasSight(nav, bot.CurrentZone, new(bot.X, bot.Y, bot.Z), new(target.X, target.Y, target.Z)))
+                return;
+            bot.TargetObject = target;
+            bot.CastSpell(again, SkillBase.GetSpellLine(GlobalSpellsLines.Mob_Spells));
         }
 
         public static void OnAttack(GameLiving actor, AttackData attack)
