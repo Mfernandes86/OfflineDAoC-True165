@@ -321,6 +321,10 @@ namespace DOL.GS.Quests.Albion
             }
         }
 
+        /// <summary>The wolf pups of the quest ("Kill any wolf pups you can find"): black wolf pup, gray wolf pup.</summary>
+        public static bool IsWolfPup(string name) =>
+            !string.IsNullOrEmpty(name) && name.TrimEnd().EndsWith("wolf pup", StringComparison.OrdinalIgnoreCase);
+
         public override void Notify(DOLEvent e, object sender, EventArgs args)
         {
             GamePlayer player = sender as GamePlayer;
@@ -350,11 +354,13 @@ namespace DOL.GS.Quests.Albion
             if (Step == 1 && e == GameLivingEvent.EnemyKilled)
             {
                 EnemyKilledEventArgs gArgs = (EnemyKilledEventArgs)args;
-                if (gArgs.Target.Name.IndexOf("wolf") >= 0)
+                // Quest audit 2026-11-11: the check counted any kill whose name held "wolf" (werewolves, moor wolves, giant
+                // wolves; and it was case-sensitive), and renaming the fur renamed the shared cached template for everyone.
+                // Only the wolf pups Steward Willie asks for count now, and each fur gets its own unsaved template copy.
+                if (IsWolfPup(gArgs.Target?.Name))
                 {
                     SendSystemMessage("You've killed the " + gArgs.Target.Name + " and flayed the fur from it.!");
-                    _wolfFur.Name = gArgs.Target.GetName(1, true) + " fur";
-                    GiveItem(player, _wolfFur);
+                    GiveItem(player, new DbItemTemplate(_wolfFur) { Name = gArgs.Target.GetName(1, true) + " fur" });
                     Step = 2;
                     return;
                 }
