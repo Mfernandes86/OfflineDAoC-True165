@@ -6069,6 +6069,55 @@ namespace DOL.AI.Brain
             return cast;
         }
 
+        /// <summary>
+        /// Q30 (completeness review 2026-11-11): a Necromancer's servant commands (wrapper and payload), its best damage
+        /// command level and its power drains, built once per spell list and level instead of on every command tick (a
+        /// SkillBase lookup per command, LINQ and a HashSet each time). The cooldown, power and range filters stay live.
+        /// </summary>
+        public sealed class ServantCommandTable
+        {
+            public readonly List<Spell> List;
+            public readonly int Count, Level;
+            public readonly Dictionary<int, Spell> PayloadById = new();
+            public readonly Spell[] Drains;
+            public readonly HashSet<int> DrainIds = new();
+            public readonly int BestDamageLevel;
+
+            public ServantCommandTable(List<Spell> list, int level, Func<int, Spell> payloadOf)
+            {
+                List = list;
+                Count = list?.Count ?? 0;
+                Level = level;
+                var drains = new List<Spell>();
+                foreach (Spell spell in list ?? [])
+                {
+                    if (spell?.SpellType != eSpellType.PetSpell || spell.SubSpellID <= 0 || spell.Level > level ||
+                        PayloadById.ContainsKey(spell.ID) || payloadOf(spell.SubSpellID) is not { } payload)
+                        continue;
+                    PayloadById[spell.ID] = payload;
+                    if (spell.IsHarmful && !IsServantDebuff(payload))
+                        BestDamageLevel = Math.Max(BestDamageLevel, spell.Level);
+                    if (payload.SpellType == eSpellType.PowerDrainPet)
+                    {
+                        drains.Add(spell);
+                        DrainIds.Add(spell.ID);
+                    }
+                }
+                Drains = drains.ToArray();
+            }
+
+            public bool Matches(List<Spell> list, int level) =>
+                ReferenceEquals(list, List) && (list?.Count ?? 0) == Count && level == Level;
+        }
+
+        private ServantCommandTable ServantCommandsOf(GameBot bot)
+        {
+            ServantCommandTable table = bot.ServantCommands;
+            if (table == null || !table.Matches(bot.Spells, bot.Level))
+                bot.ServantCommands = table = new ServantCommandTable(bot.Spells, bot.Level, SkillBase.GetSpellByID);
+            return table;
+        }
+
         private bool TryIssueNecromancerServantCommand(eCheckSpellType type)
         {
             if (BotBody?.CharacterClass?.ID is not ((int)eCharacterClass.Necromancer or (int)eCharacterClass.Disciple) ||
@@ -6098,25 +6147,23 @@ namespace DOL.AI.Brain
             // afford) at range and never got back to her drains. A damage command far below her best one is never cast; a
             // Deathsight Necromancer keeps enough power for its power drain, and when it cannot afford the drain (or Save
             // power holds it back) it sends the servant into melee and waits for power, draining again once it can.
-            var known = Body.Spells
-                .Where(spell => spell?.SpellType == eSpellType.PetSpell && spell.SubSpellID > 0 && spell.Level <= Body.Level)
-                .Select(spell => (Wrapper: spell, Payload: SkillBase.GetSpellByID(spell.SubSpellID)))
-                .Where(entry => entry.Payload != null).ToList();
-            int bestDamageLevel = known.Where(entry => entry.Wrapper.IsHarmful && !IsServantDebuff(entry.Payload))
-                .Select(entry => entry.Wrapper.Level).DefaultIfEmpty(0).Max();
+            ServantCommandTable table = ServantCommandsOf(BotBody);
+            int bestDamageLevel = table.BestDamageLevel;
             bool deathsight = AutonomousPetSupport.IsDeathsightSpec(BotBody.GetBaseSpecLevel(Specs.Deathsight),
                 BotBody.GetBaseSpecLevel(Specs.Painworking), BotBody.GetBaseSpecLevel(Specs.Death_Servant));
-            int drainCost = deathsight
-                ? known.Where(entry => entry.Payload.SpellType == eSpellType.PowerDrainPet)
-                    .Select(entry => BotBody.PowerCost(entry.Wrapper)).DefaultIfEmpty(0).Min()
-                : 0;
+            int drainCost = 0;
+            if (deathsight && table.Drains.Length > 0)
+            {
+                drainCost = int.MaxValue;
+                foreach (Spell drain in table.Drains)
+                    drainCost = Math.Min(drainCost, BotBody.PowerCost(drain));
+            }
             bool savingPower = deathsight && SavePowerForGroup();
             if (DeathsightShortOfPower(deathsight, Body.Mana, drainCost, savingPower))
                 BotBody.ServantSentInOn = target;
-            HashSet<int> drains = known.Where(entry => entry.Payload.SpellType == eSpellType.PowerDrainPet)
-                .Select(entry => entry.Wrapper.ID).ToHashSet();
+            HashSet<int> drains = table.DrainIds;
             commands = commands.Where(spell =>
-                known.FirstOrDefault(entry => entry.Wrapper.ID == spell.ID).Payload is { } payload &&
+                table.PayloadById.TryGetValue(spell.ID, out Spell payload) &&
                 !ServantDamageOutclassed(spell.Level, !IsServantDebuff(payload), bestDamageLevel) &&
                 (drains.Contains(spell.ID) || !savingPower && Body.Mana - BotBody.PowerCost(spell) >= drainCost));
 

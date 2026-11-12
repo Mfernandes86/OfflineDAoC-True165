@@ -2544,11 +2544,15 @@ namespace DOL.GS
         /// <summary>Q30: a Paladin's or Warden's best rank of each chant at its level (BotBrain.TryMaintainTankChant).</summary>
         internal BotBrain.TankChantTable TankChants;
 
+        /// <summary>Q30: a Necromancer's servant commands with their payloads at its level (BotBrain servant commands).</summary>
+        internal BotBrain.ServantCommandTable ServantCommands;
+
         public override void SortSpells()
         {
             _playbook = null;   // rebuilt on the next read, from the new list
             OutclassedCache = null;
             TankChants = null;
+            ServantCommands = null;
             System.Threading.Volatile.Write(ref AddControlKnown, -1);
             InstantHarmfulSpells?.Clear();
             HarmfulSpells?.Clear();
