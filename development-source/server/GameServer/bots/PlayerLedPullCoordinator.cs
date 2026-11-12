@@ -25,6 +25,8 @@ namespace DOL.GS
             public GameLiving Target;
             public long Deadline;
             public int Finished;
+            // When incoming danger cancelled this pull (OnGroupThreat); 0 otherwise.
+            public long ThreatCancelledAt;
             // True 1.65 Mode: the tank brings the monster back to the player (AutonomousDefensivePull) instead of
             // starting the fight at the spawn.
             public bool BringBack;
@@ -164,9 +166,20 @@ namespace DOL.GS
             if (group == null || !States.TryGetValue(group, out GroupState state))
                 return false;
             Order order = Volatile.Read(ref state.Pending);
-            return order != null && Volatile.Read(ref order.Finished) == 0 &&
-                   (order.Target == target || victim != null && order.Tank == victim);
+            if (order == null || order.Target != target && (victim == null || order.Tank != victim))
+                return false;
+            // A pull that danger elsewhere cancelled (OnGroupThreat) still counts for a while (owner 2026-11-11): the
+            // puller may be far out with the pulled monster on it, and the group stays on its 350 leash for that one.
+            return PullStillLeashes(Volatile.Read(ref order.Finished) != 0, Volatile.Read(ref order.ThreatCancelledAt),
+                GameLoop.GameLoopTime);
         }
+
+        /// <summary>How long a pull cancelled by danger elsewhere keeps the group leashed for its monster and puller.</summary>
+        public const long ThreatCancelledLeashMilliseconds = 20_000;
+
+        /// <summary>Pure: an open pull leashes; a finished one only when danger cancelled it less than 20 s ago.</summary>
+        public static bool PullStillLeashes(bool finished, long threatCancelledAt, long now) =>
+            !finished || threatCancelledAt != 0 && now - threatCancelledAt < ThreatCancelledLeashMilliseconds;
 
         /// <summary>
         /// The tank is bringing this monster back to the player: its blows on the tank on the way back don't call the
@@ -271,7 +284,10 @@ namespace DOL.GS
                 // restrictions. The existing defensive broadcast chooses the foe.
                 Order order = Volatile.Read(ref state.Pending);
                 if (order != null && Interlocked.CompareExchange(ref order.Finished, 1, 0) == 0)
+                {
+                    Volatile.Write(ref order.ThreatCancelledAt, GameLoop.GameLoopTime);
                     (order.Tank.Brain as BotBrain)?.CancelOrderedPull(order.Target);
+                }
             }
         }
 

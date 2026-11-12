@@ -48,5 +48,16 @@ namespace DOL.UnitTests
             Assert.That(CompanionEngagementMode.DefensiveAnswers(true, false, false, false, false, true), Is.True,
                 "inside 350 everything works as today, pulls included");
         });
+
+        /// <summary>Owner 2026-11-11: a pull that danger elsewhere cancelled keeps the 350 leash for its monster and puller.</summary>
+        [Test]
+        public void ACancelledPullStillLeashesForAWhile() => Assert.Multiple(() =>
+        {
+            Assert.That(PlayerLedPullCoordinator.PullStillLeashes(false, 0, 50_000), Is.True, "an open pull");
+            Assert.That(PlayerLedPullCoordinator.PullStillLeashes(true, 0, 50_000), Is.False, "finished the normal way");
+            Assert.That(PlayerLedPullCoordinator.PullStillLeashes(true, 45_000, 50_000), Is.True, "cancelled by danger 5 s ago");
+            Assert.That(PlayerLedPullCoordinator.PullStillLeashes(true, 10_000,
+                10_000 + PlayerLedPullCoordinator.ThreatCancelledLeashMilliseconds), Is.False, "long ago");
+        });
     }
 }
