@@ -39,10 +39,12 @@ namespace DOL.AI.Brain
         /// Pure rule: whether the bot steps to the flank of a monster fighting someone else. A gamebot: any class but a
         /// tank. A player's companion by its "Positioning" choice: 0 Automatic, only on a monster the main tank holds (a
         /// tank companion then too: someone else is the main tank); 1 Flank, any monster unless it is the main tank itself;
-        /// 2 Stay in front, never.
+        /// 2 Stay in front, never. M2 (veteran review 2026-11-11): a gamebot two-hander off-tank flanks the monster the main
+        /// tank holds (it does not taunt it).
         /// </summary>
-        public static bool FlankAllowed(int choice, bool companion, bool tankClass, bool victimIsMainTank) =>
-            !companion ? !tankClass : choice switch
+        public static bool FlankAllowed(int choice, bool companion, bool tankClass, bool victimIsMainTank,
+            bool damageTank = false) =>
+            !companion ? !tankClass || damageTank && victimIsMainTank : choice switch
             {
                 2 => false,
                 1 => !tankClass || victimIsMainTank,
@@ -103,7 +105,8 @@ namespace DOL.AI.Brain
                 target.TargetObject is not GameLiving victim || victim == bot || !victim.IsAlive ||
                 !bot.IsWithinRadius(target, 400) ||
                 !FlankAllowed(CompanionOptions165.Choice(bot, "position"), BotMeleeStylePolicy.TauntRulesPlayer(bot) != null,
-                    BotPartyRoles.IsTank(bot), BotMeleeStylePolicy.IsMainTankOn(victim, target)))
+                    BotPartyRoles.IsTank(bot), BotMeleeStylePolicy.IsMainTankOn(victim, target),
+                    BotGroupRoles.IsDamageTank(bot) && victim == BotGroupRoles.MainTank(bot)))
             {
                 _flankTarget = null;
                 return false;

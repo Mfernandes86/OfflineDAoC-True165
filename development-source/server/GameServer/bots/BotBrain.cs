@@ -3945,7 +3945,9 @@ namespace DOL.AI.Brain
             // A gamebot party's members follow its kill target (BotBrain.MainAssist); the tank sets it.
             GameLiving assistTarget = protectionTarget == null ? MainAssistTarget(directAttacker) : null;
             Body.TargetObject = protectionTarget ?? assistTarget ?? directAttacker ?? activePetTarget ?? CalculateNextAttackTarget();
-            OfferKillTarget(Body.TargetObject as GameLiving);
+            // M2: a tank peeling an add off a groupmate never moves the kill target onto that add (it may start one)
+            OfferKillTarget(Body.TargetObject as GameLiving,
+                protectionTarget != null && Body.TargetObject == protectionTarget && protectionTarget.TargetObject != Body);
             RedirectPetFromControlledTarget(Body.TargetObject as GameLiving);
             MaintainTankPeel();
             // A tethered boss outside its tether is immune: stop hitting it and lead it home (AutonomousTetherReset).
@@ -4689,11 +4691,11 @@ namespace DOL.AI.Brain
 
         /// <summary>Q10 (veteran review 2026-11-11): how long one protection answer is kept.</summary>
         public const int ProtectionSearchIntervalMs = 750;
-        /// <summary>... and how often the 2,600-unit area search still runs, for a monster running at a groupmate that
-        /// has not hit anyone yet (the attacker lists only know it after its first blow).</summary>
+        /// <summary>... and how often an area search may find a monster running at a groupmate that has not hit anyone
+        /// yet. M5: that search is now the group fight board's one search per group every 2 s (shared by all members),
+        /// so a tank no longer runs its own.</summary>
         public const int ProtectionAreaScanIntervalMs = 3000;
         private long _nextProtectionSearchTick;
-        private long _nextProtectionAreaScanTick;
         private GameLiving _lastProtectionTarget;
 
         /// <summary>Pure: may the cached protection answer be reused at <paramref name="now"/>?</summary>
@@ -4706,8 +4708,7 @@ namespace DOL.AI.Brain
                 return null;
 
             // Q10: two 2,600-unit area searches ran on every combat think of every grouped tank. The answer is now kept
-            // for 0.75 s (while it still points at a living groupmate), candidates come from the attacker lists the game
-            // already keeps, and the area search runs at most once every 3 s.
+            // for 0.75 s (while it still points at a living groupmate); M5: candidates come from the group's fight board.
             long now = GameLoop.GameLoopTime;
             GameLiving cached = _lastProtectionTarget;
             bool cachedValid = cached == null ||
@@ -4717,6 +4718,9 @@ namespace DOL.AI.Brain
                 return cached;
             _nextProtectionSearchTick = now + ProtectionSearchIntervalMs;
             _lastProtectionTarget = SearchProtectionTarget(now);
+            // M2: the add this tank goes for is its peel for a moment, so a second tank takes another one
+            if (_lastProtectionTarget != null && _lastProtectionTarget.TargetObject != Body)
+                BotPeelReservations.Reserve(_lastProtectionTarget, Body, now + BotPeelReservations.HoldMilliseconds);
             return _lastProtectionTarget;
         }
 
@@ -4731,17 +4735,15 @@ namespace DOL.AI.Brain
                 return null;
 
             List<GameLiving> pool = new(AggroList.Keys);
-            foreach (GameLiving member in protectedMembers)
-                if (member.attackComponent != null)
-                    pool.AddRange(member.attackComponent.AttackerTracker.Attackers);
-            if (now >= _nextProtectionAreaScanTick)
-            {
-                _nextProtectionAreaScanTick = now + ProtectionAreaScanIntervalMs;
-                pool.AddRange(Body.GetNPCsInRadius(2600).Cast<GameLiving>());
-                pool.AddRange(Body.GetPlayersInRadius(2600).Cast<GameLiving>());
-            }
+            if (FightBoard() is { } board)
+                pool.AddRange(board.Threats);
             IEnumerable<GameLiving> candidates = pool.Where(candidate =>
                     candidate != null && Body.IsWithinRadius(candidate, 2600)).Distinct();
+            // M2 (veteran review 2026-11-11): the off-tank owns the peels. A main tank with a free off-tank near leaves the
+            // adds on other members to it and holds the kill; no two tanks run at the same add.
+            bool leavePeelsToOffTank = Classic165Mode.IsOn && BotGroupRoles.IsMainTank(Body) &&
+                BotGroupRoles.OffTankNear(Body, GROUP_DEFENSE_ASSIST_RADIUS) is GameLiving offTank &&
+                !BotPeelReservations.IsBusy(offTank, now) && !offTank.IsIncapacitated;
             // A mesmerized monster still points at its last victim: never protect against it (that broke the mez).
             // True 1.65 Mode: nor against a monster on the player who is the main tank (BotMeleeStylePolicy.MayTaunt).
             GamePlayer mainTankRules = BotMeleeStylePolicy.TauntRulesPlayer(BotBody);
@@ -4752,12 +4754,21 @@ namespace DOL.AI.Brain
                                         IsBreakablyControlled(candidate) || IsReservedForMez(candidate)) &&
                                     !(mainTankRules != null && victim == mainTankRules &&
                                       BotMeleeStylePolicy.PlayerIsMainTank(mainTankRules, candidate)) &&
+                                    TankTakesPeel(victim == Body, leavePeelsToOffTank,
+                                        BotPeelReservations.IsReservedByOther(candidate, Body, now)) &&
                                     CanAggroTarget(candidate))
                 .OrderByDescending(candidate => candidate.TargetObject == leader)
                 .ThenByDescending(candidate => candidate.TargetObject is GameBot bot && bot.Brain is BotBrain { IsHealer: true })
                 .ThenBy(candidate => Body.GetDistanceTo(candidate))
                 .FirstOrDefault();
         }
+
+        /// <summary>
+        /// Pure (M2): whether this tank goes for a monster on a groupmate. A monster on the tank itself always; another
+        /// tank's peel never; a main tank leaves adds on others to a free off-tank nearby.
+        /// </summary>
+        public static bool TankTakesPeel(bool onSelf, bool leavePeelsToOffTank, bool reservedByOtherTank) =>
+            onSelf || !leavePeelsToOffTank && !reservedByOtherTank;
 
         /// <summary>A monster on a group member is a protection threat unless it is mesmerized or rooted (don't break mez).</summary>
         public static bool IsProtectionThreat(bool targetsProtectedMember, bool breakablyControlled) =>
@@ -4773,6 +4784,9 @@ namespace DOL.AI.Brain
                 return false;
             // the taunt spell too follows the "Taunt" choice and the main tank (owner 2026-11-06: no taunting off the player)
             if (BotMeleeStylePolicy.TauntRulesPlayer(BotBody) != null && !BotMeleeStylePolicy.MayTaunt(BotBody, target))
+                return false;
+            // M2 (veteran review 2026-11-11): only the main tank holds the kill; another tank never taunts its monster off it
+            if (Classic165Mode.IsOn && victim != Body && victim == BotGroupRoles.MainTank(Body))
                 return false;
 
             if (GameLoop.GameLoopTime >= _nextPriorityTauntTick)

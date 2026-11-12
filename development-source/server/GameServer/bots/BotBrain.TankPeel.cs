@@ -1,4 +1,7 @@
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using DOL.GS;
 using DOL.GS.SkillHandler;
 
@@ -35,9 +38,18 @@ namespace DOL.AI.Brain
                 .ToArray();
             if (squishies.Length == 0)
                 return;
-            GameLiving threatened = squishies.Where(BeingHitInMelee).OrderBy(member => member.HealthPercent).FirstOrDefault();
-            GameLiving healer = squishies.FirstOrDefault(member =>
-                PeelClass(member) is eCharacterClass characterClass && BotPartyRoles.IsHealingClass(characterClass));
+            // M5 (veteran review 2026-11-11): who is being hit in melee comes from the group's fight board
+            HashSet<GameLiving> hitInMelee = FightBoard()?.HitInMelee;
+            bool BeingHit(GameLiving member) => hitInMelee?.Contains(member) ?? BeingHitInMelee(member);
+            GameLiving threatened = squishies.Where(BeingHit).OrderBy(member => member.HealthPercent).FirstOrDefault();
+            // M2: protect whichever healer is being hit (then the lowest), not always the first one found; with an off-tank
+            // near, the main tank covers the second healer and the off-tank the first
+            GameLiving[] healers = squishies.Where(member =>
+                    PeelClass(member) is eCharacterClass characterClass && BotPartyRoles.IsHealingClass(characterClass))
+                .OrderBy(member => BeingHit(member) ? 0 : 1).ThenBy(member => member.HealthPercent).ToArray();
+            GameLiving healer = healers.Length == 0 ? null : healers[PeelHealerIndex(healers.Length,
+                Classic165Mode.IsOn && BotGroupRoles.IsMainTank(bot) &&
+                BotGroupRoles.OffTankNear(bot, ProtectAbilityHandler.PROTECT_DISTANCE) != null)];
 
             // The player's choice for a hired tank (AI Options): guard and protect the player, the healer, or nobody.
             int choice = CompanionOptions165.Choice(bot, "guard");
@@ -52,7 +64,7 @@ namespace DOL.AI.Brain
             };
             // True 1.65 Mode: Protect never goes on the player who is the main tank (it would pull their monster off them)
             GameLiving protectThreatened = threatened != null && IsMainTankPlayer(threatened)
-                ? squishies.Where(member => member != threatened && BeingHitInMelee(member))
+                ? squishies.Where(member => member != threatened && BeingHit(member))
                     .OrderBy(member => member.HealthPercent).FirstOrDefault()
                 : threatened;
             if (protect && (chosen ?? healer ?? protectThreatened) is GameLiving protectTarget)
@@ -62,7 +74,7 @@ namespace DOL.AI.Brain
             // monster to stand by the healer, so a far-away guard did nothing, 2026-11-05).
             GameLiving guardTarget = chosen ?? squishies
                 .Where(member => bot.IsWithinRadius(member, GuardAbilityHandler.GUARD_DISTANCE))
-                .OrderBy(member => member == threatened ? 0 : member == healer ? 1 : BeingHitInMelee(member) ? 2 : 3)
+                .OrderBy(member => member == threatened ? 0 : member == healer ? 1 : BeingHit(member) ? 2 : 3)
                 .ThenBy(member => member.HealthPercent)
                 .FirstOrDefault() ?? threatened ?? healer;
             if (guard && ShieldInUse(bot) && guardTarget != null)
@@ -131,5 +143,55 @@ namespace DOL.AI.Brain
         private static bool ShieldInUse(GameBot bot) =>
             bot.ActiveWeaponSlot == eActiveWeaponSlot.Standard &&
             bot.Inventory?.GetItem(eInventorySlot.LeftHandWeapon) is { Object_Type: (int)eObjectType.Shield };
+
+        /// <summary>
+        /// Pure (M2): which of the healers (best first: the one being hit, then the lowest) this tank guards and protects.
+        /// A main tank with an off-tank near takes the second, so two tanks cover two healers.
+        /// </summary>
+        public static int PeelHealerIndex(int healers, bool mainTankWithOffTank) =>
+            healers <= 0 ? -1 : mainTankWithOffTank && healers > 1 ? 1 : 0;
+    }
+
+    /// <summary>
+    /// M2 (veteran review 2026-11-11): the add each tank has gone for (its peel), for a few seconds, so two tanks never
+    /// run at the same add and a main tank can see whether its off-tank is already busy with one. Lock-free: one small
+    /// holder per add and one per tank, weak keys.
+    /// </summary>
+    public static class BotPeelReservations
+    {
+        public const long HoldMilliseconds = 3_000;
+
+        private sealed class AddHolder
+        {
+            public volatile GameLiving Tank;
+            public long Until;
+        }
+
+        private sealed class TankHolder
+        {
+            public long BusyUntil;
+        }
+
+        private static readonly ConditionalWeakTable<GameLiving, AddHolder> Adds = new();
+        private static readonly ConditionalWeakTable<GameLiving, TankHolder> Tanks = new();
+
+        public static void Reserve(GameLiving add, GameLiving tank, long until)
+        {
+            if (add == null || tank == null)
+                return;
+            AddHolder holder = Adds.GetValue(add, _ => new AddHolder());
+            holder.Tank = tank;
+            Volatile.Write(ref holder.Until, until);
+            Volatile.Write(ref Tanks.GetValue(tank, _ => new TankHolder()).BusyUntil, until);
+        }
+
+        /// <summary>Another tank has gone for this add within the last few seconds.</summary>
+        public static bool IsReservedByOther(GameLiving add, GameLiving tank, long now) =>
+            add != null && Adds.TryGetValue(add, out AddHolder holder) && now < Volatile.Read(ref holder.Until) &&
+            holder.Tank != tank && holder.Tank is { IsAlive: true };
+
+        /// <summary>This tank is busy with a peel of its own.</summary>
+        public static bool IsBusy(GameLiving tank, long now) =>
+            tank != null && Tanks.TryGetValue(tank, out TankHolder holder) && now < Volatile.Read(ref holder.BusyUntil);
     }
 }

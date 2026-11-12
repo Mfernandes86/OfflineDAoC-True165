@@ -49,9 +49,19 @@ namespace DOL.GS
             {
                 1 => true,    // the player chose: hold the monster
                 2 => false,   // the player chose: shed it
-                _ => BotPartyRoles.IsTank(bot) || !HasTankPartner(bot),
+                _ => GamebotMayTaunt(BotPartyRoles.IsTank(bot), HasTankPartner(bot),
+                    Classic165Mode.IsOn && BotGroupRoles.IsDamageTank(bot) && target?.TargetObject is GameLiving victim &&
+                    victim == BotGroupRoles.MainTank(bot)),
             };
         }
+
+        /// <summary>
+        /// Pure rule for a gamebot on Automatic: a tank taunts, others only with no tank partner. M2 (veteran review
+        /// 2026-11-11): a two-hander off-tank does not taunt the monster the main tank holds (Prima: the off-tank manages
+        /// the adds; taunting the kill off the main tank only spreads the damage).
+        /// </summary>
+        public static bool GamebotMayTaunt(bool tankClass, bool hasTankPartner, bool damageTankOnMainTanksMonster) =>
+            tankClass ? !damageTankOnMainTanksMonster : !hasTankPartner;
 
         /// <summary>On Automatic a companion tank stops taunting under this health (it would only die holding the monster).</summary>
         public const int AutomaticTauntMinHealthPercent = 40;

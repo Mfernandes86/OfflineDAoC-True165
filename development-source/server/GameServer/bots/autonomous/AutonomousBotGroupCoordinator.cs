@@ -1100,13 +1100,20 @@ public static partial class AutonomousBotGroupCoordinator
         return Math.Clamp(leaderIndex, 0, roles.Count - 1);
     }
 
+    /// <summary>
+    /// The main tank and puller among the party's tanks: at level 50 any, else the highest level, picked at random. M2
+    /// (veteran review 2026-11-11): with <paramref name="shieldTanks"/> given, shield tanks first (Prima: the shield tank
+    /// is the main tank and puller; a two-hander is damage or the off-tank).
+    /// </summary>
     public static int PreferredPveTankSlot(IReadOnlyList<int> tankLevels, bool levelFiftyGroup,
-        Random random = null)
+        Random random = null, IReadOnlyList<bool> shieldTanks = null)
     {
         if (tankLevels == null || tankLevels.Count == 0)
             return -1;
-        int highestLevel = levelFiftyGroup ? int.MinValue : tankLevels.Max();
-        int[] eligible = Enumerable.Range(0, tankLevels.Count)
+        bool shieldOnly = shieldTanks != null && shieldTanks.Count == tankLevels.Count && shieldTanks.Any(shield => shield);
+        int[] candidates = Enumerable.Range(0, tankLevels.Count).Where(index => !shieldOnly || shieldTanks[index]).ToArray();
+        int highestLevel = levelFiftyGroup ? int.MinValue : candidates.Max(index => tankLevels[index]);
+        int[] eligible = candidates
             .Where(index => levelFiftyGroup || tankLevels[index] == highestLevel)
             .ToArray();
         return eligible[(random ?? Random.Shared).Next(eligible.Length)];
@@ -1811,6 +1818,9 @@ public static partial class AutonomousBotGroupCoordinator
             FinishGroupTask(session, "No living group leader remains");
             return false;
         }
+        // M2: the role sheet follows member and puller changes
+        if (raidView == null && session.ObjectiveKind == eAutonomousObjectiveKind.GroupPve)
+            RefreshRoleSheet(session, members);
 
         // Only enrolled dragon/epic parties use simultaneous hub assembly.
         // Automatic and forced enrollment share this path. Never wait for a
@@ -2437,6 +2447,7 @@ public static partial class AutonomousBotGroupCoordinator
         if (session == null || session.Ending)
             return;
         session.Ending = true;
+        BotGroupRoles.Publish(session.Group, null);
         GameBot[] members = AllBotMembers(session.Group);
         if (session.ObjectiveKind == eAutonomousObjectiveKind.RvR)
             AutonomousRvrEventLayer.RemoveForce(session.Id);
@@ -2855,12 +2866,25 @@ public static partial class AutonomousBotGroupCoordinator
         roles = null;
         GameBot[] pool = candidates.Where(candidate => candidate?.CharacterClass != null)
             .OrderBy(_ => Random.Shared.Next()).ToArray();
+        // M2 (veteran review 2026-11-11): real healers (a Rejuvenation Cleric, a Mending Healer ...) are offered first, so
+        // a party takes them before a Smite Cleric, a Paladin or a Friar without Rejuvenation fills its healer slot.
+        bool specRoles = Classic165Mode.IsOn;
+        if (specRoles)
+            pool = pool.OrderBy(candidate => BotGroupRoles.IsPrimaryHealer(BotGroupRoles.HealerRank(candidate)) ? 0 : 1).ToArray();
         eCharacterClass[] poolClasses = pool.Select(candidate => (eCharacterClass)candidate.CharacterClass.ID).ToArray();
-        bool[] crowdControl = Classic165Mode.IsOn ? pool.Select(HasMesmerize).ToArray() : null;
+        bool[] crowdControl = specRoles ? BestCrowdControl(pool) : null;
         if (!TryMatchPveRoster((eCharacterClass)leader.CharacterClass.ID, poolClasses, minimumSize, maximumSize,
                 out BotPveGroupRole[] template, out int[] owners, crowdControl))
             return false;
         GameBot[] slotted = owners.Select(owner => owner < 0 ? leader : pool[owner]).ToArray();
+        if (specRoles)
+        {
+            // M2: the best healers hold the Healer slots (a Mentalism Mentalist only as the second healer)
+            eCharacterClass[] slotClasses = slotted.Select(member => (eCharacterClass)member.CharacterClass.ID).ToArray();
+            int[] slotRanks = slotted.Select(BotGroupRoles.HealerRank).ToArray();
+            foreach ((int first, int second) in BotGroupRoles.PreferBetterHealers(template, slotClasses, slotRanks))
+                (slotted[first], slotted[second]) = (slotted[second], slotted[first]);
+        }
         selected = slotted.Where(owner => owner != leader).ToArray();
         roles = new Dictionary<long, BotPveGroupRole>();
         for (int index = 0; index < slotted.Length; index++)
@@ -2989,6 +3013,23 @@ public static partial class AutonomousBotGroupCoordinator
         return true;
     }
 
+    /// <summary>
+    /// M2: which pool members the roster pins into the buffer slot as the party's mezzer - those that can mesmerize with
+    /// the best crowd-control spec (a Music Bard or a Mind Sorcerer before a Body Sorcerer).
+    /// </summary>
+    private static bool[] BestCrowdControl(GameBot[] pool)
+    {
+        bool[] mezzers = pool.Select(HasMesmerize).ToArray();
+        int[] ranks = pool.Select(BotGroupRoles.CrowdControlRank).ToArray();
+        int best = int.MaxValue;
+        for (int index = 0; index < pool.Length; index++)
+            if (mezzers[index])
+                best = Math.Min(best, ranks[index]);
+        for (int index = 0; index < pool.Length; index++)
+            mezzers[index] &= ranks[index] == best;
+        return mezzers;
+    }
+
     /// <summary>The bot knows a single-target mesmerize at its level (crowd control for the party).</summary>
     private static bool HasMesmerize(GameBot bot)
     {
@@ -3069,11 +3110,24 @@ public static partial class AutonomousBotGroupCoordinator
 
     private static GameBot ChooseLockedPvePuller(Session session, GameBot[] members)
     {
+        GameBot puller = ChooseLockedPvePullerCore(session, members);
+        PublishRoleSheet(session, members, puller);
+        return puller;
+    }
+
+    private static GameBot ChooseLockedPvePullerCore(Session session, GameBot[] members)
+    {
+        bool specRoles = Classic165Mode.IsOn;
+        GameBot crowdControl = specRoles ? ChooseCrowdControlMember(members) : null;
         if (AutonomousDefensivePull.UsesDefensivePull(true, members.Length, members.All(member => member.Level == 50)))
         {
             GameBot ranged = members.Where(AutonomousDefensivePull.HasRangedPull)
-                .OrderBy(member => session.PveRoles.TryGetValue(MemberKey(member), out BotPveGroupRole role)
-                    ? role == BotPveGroupRole.Tank ? 0 : role == BotPveGroupRole.Healer ? 2 : 1 : 3)
+                .OrderBy(member => specRoles
+                    // M2: a shield tank, then a two-hander tank, then the crowd-control slot, then the rest, healers last
+                    ? BotGroupRoles.RangedPullerOrder(session.PveRoles.TryGetValue(MemberKey(member), out BotPveGroupRole specRole)
+                        ? specRole : null, BotGroupRoles.IsShieldTank(member), member == crowdControl)
+                    : session.PveRoles.TryGetValue(MemberKey(member), out BotPveGroupRole role)
+                        ? role == BotPveGroupRole.Tank ? 0 : role == BotPveGroupRole.Healer ? 2 : 1 : 3)
                 // a nuker pulls last (period forums: tanks with a ranged attack or the crowd-control player pull)
                 .ThenBy(member => AutonomousDefensivePull.PullsWithNuke(member) ? 1 : 0)
                 .ThenBy(MemberKey).FirstOrDefault();
@@ -3084,8 +3138,70 @@ public static partial class AutonomousBotGroupCoordinator
             .OrderBy(MemberKey)
             .ToArray();
         bool levelFiftyGroup = members.Length > 0 && members.All(member => member.Level == 50);
-        int slot = PreferredPveTankSlot(tanks.Select(member => (int)member.Level).ToArray(), levelFiftyGroup);
+        int slot = PreferredPveTankSlot(tanks.Select(member => (int)member.Level).ToArray(), levelFiftyGroup, null,
+            specRoles ? tanks.Select(BotGroupRoles.IsShieldTank).ToArray() : null);
         return slot >= 0 ? tanks[slot] : null;
+    }
+
+    /// <summary>M2: the party's crowd-control slot (parties of five or more): the best crowd-control spec that can mez.</summary>
+    private static GameBot ChooseCrowdControlMember(GameBot[] members)
+    {
+        GameBot[] ordered = members.OrderBy(MemberKey).ToArray();
+        int index = BotGroupRoles.ChooseCrowdControl(ordered.Select(BotGroupRoles.CrowdControlRank).ToArray(),
+            ordered.Select(member => HasMesmerize(member) || member.CanCastCrowdControlSpells).ToArray(), ordered.Length);
+        return index >= 0 ? ordered[index] : null;
+    }
+
+    /// <summary>
+    /// M2: publishes who is main tank (the puller when it is a tank, else a shield tank, then the higher level), the
+    /// off-tank, the ranked healers and the crowd-control slot. The brains read it lock-free.
+    /// </summary>
+    private static void PublishRoleSheet(Session session, GameBot[] members, GameBot puller)
+    {
+        if (session?.Group == null || session.ObjectiveKind != eAutonomousObjectiveKind.GroupPve || !Classic165Mode.IsOn)
+            return;
+        GameBot[] tanks = members.Where(member => session.PveRoles.TryGetValue(MemberKey(member), out BotPveGroupRole role) &&
+                                                  role == BotPveGroupRole.Tank)
+            .OrderBy(MemberKey).ToArray();
+        bool[] shields = tanks.Select(BotGroupRoles.IsShieldTank).ToArray();
+        int[] order = BotGroupRoles.RankTanks(shields, tanks.Select(member => (int)member.Level).ToArray(),
+            Array.IndexOf(tanks, puller));
+        GameBot[] healers = members.Where(member => BotGroupRoles.HealerRank(member) < BotGroupRoles.NoHealer)
+            .OrderBy(BotGroupRoles.HealerRank).ThenBy(MemberKey).ToArray();
+        GameBot crowdControl = ChooseCrowdControlMember(members);
+        var sheet = new BotGroupRoles.Sheet
+        {
+            Tanks = order.Select(index => (GameLiving)tanks[index]).ToArray(),
+            ShieldTanks = order.Select(index => shields[index]).ToArray(),
+            Healers = healers.Cast<GameLiving>().ToArray(),
+            CrowdControl = crowdControl,
+            Signature = RoleSheetSignature(members, puller),
+        };
+        BotGroupRoles.Publish(session.Group, sheet);
+        if (Log.IsInfoEnabled)
+            Log.Info($"AUTONOMOUS_GROUP_ROLES group={session.Id} mainTank=\"{sheet.Tanks.FirstOrDefault()?.Name}\" " +
+                     $"shield={(sheet.ShieldTanks.Length > 0 && sheet.ShieldTanks[0])} " +
+                     $"offTank=\"{(sheet.Tanks.Length > 1 ? sheet.Tanks[1].Name : string.Empty)}\" " +
+                     $"healers=\"{string.Join(",", healers.Select(member => $"{member.Name}:{BotGroupRoles.HealerRank(member)}"))}\" " +
+                     $"cc=\"{crowdControl?.Name}\" puller=\"{puller?.Name}\"");
+    }
+
+    private static long RoleSheetSignature(GameBot[] members, GameBot puller)
+    {
+        long signature = puller == null ? 0 : MemberKey(puller) * 31;
+        foreach (GameBot member in members)
+            signature += MemberKey(member) * 7919 + 1;
+        return signature;
+    }
+
+    /// <summary>Caller holds Sync. Re-publishes the role sheet when the members or the puller changed.</summary>
+    private static void RefreshRoleSheet(Session session, GameBot[] members)
+    {
+        if (session.ObjectiveKind != eAutonomousObjectiveKind.GroupPve || !Classic165Mode.IsOn || session.Puller == null)
+            return;
+        if (BotGroupRoles.Get(session.Group) is { } sheet && sheet.Signature == RoleSheetSignature(members, session.Puller))
+            return;
+        PublishRoleSheet(session, members, session.Puller);
     }
 
     public static bool UsesDefensivePullGroup(Group group)

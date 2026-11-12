@@ -40,8 +40,16 @@ namespace DOL.AI.Brain
         public static bool ReplacesKillTarget(bool storedAlive, bool sameWriter, bool writerStillOnIt, long ageMilliseconds) =>
             !storedAlive || sameWriter || !writerStillOnIt || ageMilliseconds > KillTargetStaleMilliseconds;
 
+        /// <summary>
+        /// Pure (M2, veteran review 2026-11-11): whether this tank may write the party's kill target. With a main tank
+        /// alive and near, only the main tank writes; with none, any tank (as before). A peel (a tank going for an add on a
+        /// groupmate) may start a kill target when there is none, but never moves a live one.
+        /// </summary>
+        public static bool MayWriteKillTarget(bool mainTankNear, bool isMainTank, bool peel, bool liveStoredTarget) =>
+            (!mainTankNear || isMainTank) && !(peel && liveStoredTarget);
+
         /// <summary>The tank publishes the monster it is fighting as the party's kill target.</summary>
-        private void OfferKillTarget(GameLiving target)
+        private void OfferKillTarget(GameLiving target, bool peel = false)
         {
             if (!IsTankClass || !UsesGamebotMainAssist || target is not GameNPC { IsAlive: true } ||
                 !(Body.IsAttacking || Body.InCombat) || IsBreakablyControlled(target))
@@ -49,6 +57,13 @@ namespace DOL.AI.Brain
             KillTargetHolder holder = KillTargets.GetValue(Body.Group, _ => new KillTargetHolder());
             long now = GameLoop.GameLoopTime;
             GameLiving stored = holder.Target, writer = holder.Writer;
+            GameLiving mainTank = BotGroupRoles.MainTank(Body);
+            bool liveStored = stored != null && stored != target && stored.IsAlive &&
+                stored.ObjectState == GameObject.eObjectState.Active && now - holder.Tick <= KillTargetStaleMilliseconds;
+            if (!MayWriteKillTarget(mainTank != null && mainTank != Body && (mainTank.InCombat || mainTank.IsAttacking) &&
+                    Body.IsWithinRadius(mainTank, GROUP_DEFENSE_ASSIST_RADIUS),
+                    mainTank == Body, peel, liveStored))
+                return;
             if (stored == target && writer == Body)
             {
                 holder.Tick = now;
@@ -62,10 +77,15 @@ namespace DOL.AI.Brain
             holder.Tick = now;
         }
 
-        /// <summary>The party's kill target for a non-tank member, or null to keep its own choice.</summary>
+        /// <summary>
+        /// The party's kill target for a non-tank member, or null to keep its own choice. M2 (veteran review 2026-11-11):
+        /// an off-tank with no peel to make and no add on itself hits the main tank's kill too (Prima: take the adds off
+        /// the healers, then return to the main mob); the main tank keeps its own target.
+        /// </summary>
         private GameLiving MainAssistTarget(GameLiving directAttacker)
         {
-            if (IsTankClass || Body.Group is not { } group || !KillTargets.TryGetValue(group, out KillTargetHolder holder) ||
+            if (IsTankClass && !(Classic165Mode.IsOn && directAttacker == null && BotGroupRoles.IsOffTank(Body)) ||
+                Body.Group is not { } group || !KillTargets.TryGetValue(group, out KillTargetHolder holder) ||
                 !UsesGamebotMainAssist)
                 return null;
             GameLiving target = holder.Target;
