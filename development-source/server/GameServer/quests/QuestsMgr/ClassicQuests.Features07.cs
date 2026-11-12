@@ -287,6 +287,15 @@ namespace DOL.GS.Quests
 
         private static void MarkMemoryDirty() => Volatile.Write(ref _memoryDirty, 1);
 
+        /// <summary>Pure: has this quest already granted the character this real item, whatever the step?</summary>
+        public static bool GrantedInQuest(IEnumerable<(string Character, int Quest, int Step, string Item)> given, string character, int quest, string item)
+        {
+            foreach (var g in given)
+                if (g.Quest == quest && g.Character == character && string.Equals(g.Item, item, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            return false;
+        }
+
         /// <summary>One saved line of a real item granted mid-quest: character, quest, step, item.</summary>
         public static string GrantLine(string character, int quest, int step, string item) => $"{character}|{quest}|{step}|{item}";
 

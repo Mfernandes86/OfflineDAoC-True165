@@ -127,6 +127,19 @@ public class UT_QuestFeatures07
     });
 
     [Test]
+    public void ARealMidQuestItemIsGrantedOncePerQuest()
+    {
+        var given = new[] { ("char-1", 21264, 6, "cq_mid_ring_of_spun_silk") };
+        Assert.Multiple(() =>
+        {
+            Assert.That(ClassicQuests.GrantedInQuest(given, "char-1", 21264, "CQ_MID_RING_OF_SPUN_SILK"), Is.True, "a later catch-up step does not give it again");
+            Assert.That(ClassicQuests.GrantedInQuest(given, "char-1", 21264, "cq_mid_herbalist_s_hauberk_of_ivy"), Is.False);
+            Assert.That(ClassicQuests.GrantedInQuest(given, "char-2", 21264, "cq_mid_ring_of_spun_silk"), Is.False, "another character");
+            Assert.That(ClassicQuests.GrantedInQuest(given, "char-1", 21263, "cq_mid_ring_of_spun_silk"), Is.False, "another quest");
+        });
+    }
+
+    [Test]
     public void AnEventMonsterOnAPathIsNotMadeHarmless()
     {
         // one whose template gives it no aggression still attacks whoever comes within reach of its walk

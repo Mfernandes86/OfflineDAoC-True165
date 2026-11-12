@@ -643,7 +643,9 @@ namespace DOL.GS.Quests
                 string id = step.Grant[i];
                 if (string.IsNullOrEmpty(id) || player.Inventory.GetFirstItemByID(id, eInventorySlot.Min_Inv, eInventorySlot.Max_Inv) != null) continue;
                 var given = (player.InternalID ?? player.Name, quest.ID, quest.Step, id.ToLowerInvariant());
-                if (RealGrantsGiven.ContainsKey(given)) continue;
+                // a real item this quest already granted, on this step or an earlier one (a later step may list it again
+                // as a catch-up for characters who were past the first one when it was added)
+                if (RealGrantsGiven.ContainsKey(given) || GrantedInQuest(RealGrantsGiven.Keys, given.Item1, quest.ID, given.Item4)) continue;
                 var key = (player, quest.ID, quest.Step * 100 + i + 1);
                 long now = GameLoop.GameLoopTime;
                 if (GiveCooldown.TryGetValue(key, out long until) && now < until) continue;
