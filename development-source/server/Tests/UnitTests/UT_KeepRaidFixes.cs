@@ -120,6 +120,9 @@ public class UT_KeepRaidFixes
         Assert.That(AutonomousRvrEventLayer.HoldEnds(true, AutonomousRvrEventLayer.HoldMaximumMilliseconds, false), Is.True, "time is up");
         Assert.That(AutonomousRvrEventLayer.HoldEnds(false, 0, false), Is.True, "the keep was lost");
     });
+    [TestCase(true, ExpectedResult = false, TestName = "A caster does not batter a door its spells cannot hurt")]
+    [TestCase(false, ExpectedResult = true, TestName = "Melee and archers batter the door")]
+    public bool OnlyMeleeAndArchersBatterDoors(bool listCaster) => AutonomousWorldBotController.BattersDoorsByHand(listCaster);
 }
 
 /// <summary>Keeps audit T4: a captured keep keeps a holding party until its guards are back.</summary>

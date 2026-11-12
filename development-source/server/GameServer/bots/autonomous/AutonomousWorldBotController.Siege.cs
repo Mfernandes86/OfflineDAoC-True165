@@ -403,6 +403,12 @@ namespace DOL.GS
         internal static GameKeepDoor SiegeDoor(GameBot bot, AbstractGameKeep keep) => KeepRaidDoors.NextShutRaidGate(keep);
 
         /// <summary>
+        /// Keeps audit 2026-11-11 (M1): spells do nothing to a keep door (SpellHandler), so a list caster is never sent to
+        /// batter one; as players' casters did, it stays on the guards and defenders. Melee and archers batter.
+        /// </summary>
+        public static bool BattersDoorsByHand(bool listCaster) => !listCaster;
+
+        /// <summary>
         /// With nothing else to fight, a sieging bot batters the raid's next door by hand when it stands within reach of
         /// it (owner 2026-10-31: players did), the same door the rams work on (keeps audit 2026-11-11, L2: the nearest
         /// shut door of any kind was taken, posterns' halves and relic doors off the way included).
@@ -414,7 +420,8 @@ namespace DOL.GS
                 return null;
             AbstractGameKeep keep = GameServer.KeepManager.GetKeepsOfRegion(bot.CurrentRegionID)
                 .FirstOrDefault(k => $"rvr-keep-{k.KeepID}" == _rvrDestination.Id);
-            if (keep == null || keep.Realm == bot.Realm || !AutonomousRvrKeepPolicy.IsSiegeObjective(keep)) return null;
+            if (keep == null || keep.Realm == bot.Realm || !AutonomousRvrKeepPolicy.IsSiegeObjective(keep) ||
+                !BattersDoorsByHand(bot.CharacterClass?.ClassType == eClassType.ListCaster)) return null;
             GameKeepDoor door = KeepRaidDoors.NextShutRaidGate(keep);
             return door != null && bot.IsWithinRadius(door, DoorBatterReach) && GameServer.ServerRules.IsAllowedToAttack(bot, door, true)
                 ? door : null;
