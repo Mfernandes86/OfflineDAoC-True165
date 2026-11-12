@@ -20,8 +20,9 @@ public static class AutonomousRvrDefense
             AutonomousRvrEventLayer.Intent.DefendEvent or AutonomousRvrEventLayer.Intent.AssaultKeep or
             AutonomousRvrEventLayer.Intent.AssaultRelicKeep;
 
+    /// <summary>The raid has broken every door it needs (KeepRaidDoors): a postern still standing does not seal the keep.</summary>
     public static bool ObjectiveExposed(AbstractGameKeep keep) => keep.Doors.Values.Any(d => d.IsAttackableDoor) &&
-        !keep.Doors.Values.Any(d => d.IsAttackableDoor && d.IsAlive && d.State == eDoorState.Closed);
+        !KeepRaidDoors.Sealed(keep);
 
     public static bool IsRangedDefender(GameBot bot) => bot?.CharacterClass != null &&
         (bot.CharacterClass.ClassType == eClassType.ListCaster ||

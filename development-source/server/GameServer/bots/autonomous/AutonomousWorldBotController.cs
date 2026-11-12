@@ -2089,7 +2089,7 @@ namespace DOL.GS
                 enemy = null;
             // Owner 2026-10-31: with no other target, sieging bots batter the keep's gate by hand, as players did.
             if (enemy == null && battleActive && !carrying)
-                enemy = FindDoorToBatter(bot);
+                enemy = FindRaidGateToBatter(bot);
             if (enemy != null && StepInOnSentinel(brain, bot, enemy))
                 return true;
             if (enemy != null)
@@ -2266,8 +2266,7 @@ namespace DOL.GS
             // nearby-door check let a bot whose search circle reached the lord but not the inner door attack him).
             bool closedDoor = GameServer.KeepManager.GetKeepsOfRegion(bot.CurrentRegionID)
                 .Where(keep => $"rvr-keep-{keep.KeepID}" == _rvrDestination?.Id)
-                .SelectMany(keep => keep.Doors.Values)
-                .Any(door => door.IsAlive && door.IsAttackableDoor && door.State == eDoorState.Closed);
+                .Any(KeepRaidDoors.Sealed);
             var keepNavigation=AutonomousKeepApproachNavigation.ForRealm(PathfindingProvider.Instance,bot.CurrentRegion,bot.Realm);
             // Staged assault: outer/inner guards first, then the real lord only
             // after a real gate opens.  The lord's normal death pipeline is the
@@ -2437,8 +2436,7 @@ namespace DOL.GS
                 // A relic keep has no lord: its objective is the relic shrine. The whole army goes onto the shrine floor as
                 // soon as a walk to it exists, whatever side doors and posterns still stand (relic audit 2026-10-31, B1/B2).
                 if(keep.IsRelic && TryRelicShrineApproach(bot,keep,nav,actor,out approach)) return true;
-                var gates=keep.Doors.Values.Where(d=>d.IsAlive && d.IsAttackableDoor && d.State==eDoorState.Closed)
-                    .Select(d=>new Vector3(d.X,d.Y,d.Z)).ToArray();
+                var gates=KeepRaidDoors.ShutRaidGates(keep).Select(d=>new Vector3(d.X,d.Y,d.Z)).ToArray();
                 int lateral = ((int)(bot.DatabaseID % 17) - 8) * 60;
                 if(gates.Length>0 && AutonomousRvrApproach.TryGateApproach(nav,bot.CurrentRegion,bot.Realm,actor,center,gates,out approach,lateral))return true;
                 // With every gate breached, enter on a real connected floor.

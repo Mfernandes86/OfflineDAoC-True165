@@ -19,12 +19,12 @@ namespace DOL.GS.Keeps
         /// <summary>
         /// Owner 2026-10-07 (Nottmoor Faste, then Caer Sursbrooke): bots took the keep with its keep door still standing;
         /// casters and archers hit the lord through the walls (NPC spells and arrows skip the client line-of-sight check).
-        /// While the gate or the keep door (posterns aside) is closed, the lord takes no damage from a bot or a bot's pet.
+        /// While the gate or the keep door (posterns aside) is closed, the lord takes no damage from a bot or a bot's pet
+        /// (the raid doors of KeepRaidDoors, the same rule the bots use to pick their doors).
         /// Players are unaffected.
         /// </summary>
         public bool ShieldedFromBots =>
-            Component?.Keep is { } keep && keep.Doors.Values.Any(d => d.IsAlive && d.IsAttackableDoor &&
-                d.State == eDoorState.Closed && !AutonomousWorldBotController.PosternLike(keep, d));
+            Component?.Keep is { } keep && KeepRaidDoors.Sealed(keep);
 
         public static bool IsBotSource(GameObject source)
         {

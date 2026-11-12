@@ -376,17 +376,29 @@ namespace DOL.GS
             return true;
         }
 
-        /// <summary>The door a ram works on: main gates before posterns, the outer gate before the inner keep door.
-        /// Owner 2026-10-07: at Caer Sursbrooke a raid ram set up on the postern instead of the keep door. The postern is
-        /// a pair of door halves, only one flagged IsPostern; the unflagged half sat farther from the keep's centre than
-        /// the keep door. A door beside a flagged postern counts as one, and doors then go in keep order (gate, keep door)
-        /// before distance. Door data is left as it is.</summary>
-        internal static GameKeepDoor SiegeDoor(GameBot bot, AbstractGameKeep keep) =>
-            keep.Doors.Values.Where(d=>d.IsAlive && d.IsAttackableDoor && d.State==eDoorState.Closed)
-                .OrderBy(d=>PosternLike(keep, d) ? 1 : 0)
-                .ThenBy(SiegeDoorNumber)
-                .ThenByDescending(d=>Vector2.DistanceSquared(new(d.X,d.Y),new(keep.X,keep.Y)))
-                .ThenBy(bot.GetDistanceTo).FirstOrDefault();
+        /// <summary>The door a ram works on: the raid's next door by the one shared rule (KeepRaidDoors). Owner
+        /// 2026-10-07: at Caer Sursbrooke a raid ram set up on the postern instead of the keep door; keeps audit 2026-11-11
+        /// (L2): after both real gates fell the rams still went for that postern's unflagged half, and at relic keeps for
+        /// the upper doors 07-09 that are not on the way to the relic. Door data is left as it is.</summary>
+        internal static GameKeepDoor SiegeDoor(GameBot bot, AbstractGameKeep keep) => KeepRaidDoors.NextShutRaidGate(keep);
+
+        /// <summary>
+        /// With nothing else to fight, a sieging bot batters the raid's next door by hand when it stands within reach of
+        /// it (owner 2026-10-31: players did), the same door the rams work on (keeps audit 2026-11-11, L2: the nearest
+        /// shut door of any kind was taken, posterns' halves and relic doors off the way included).
+        /// </summary>
+        private GameKeepDoor FindRaidGateToBatter(GameBot bot)
+        {
+            if (_rvrIntent is not (AutonomousRvrEventLayer.Intent.AssaultKeep or AutonomousRvrEventLayer.Intent.AssaultRelicKeep) ||
+                _rvrDestination?.Id.StartsWith("rvr-keep-", StringComparison.Ordinal) != true)
+                return null;
+            AbstractGameKeep keep = GameServer.KeepManager.GetKeepsOfRegion(bot.CurrentRegionID)
+                .FirstOrDefault(k => $"rvr-keep-{k.KeepID}" == _rvrDestination.Id);
+            if (keep == null || keep.Realm == bot.Realm || !AutonomousRvrKeepPolicy.IsSiegeObjective(keep)) return null;
+            GameKeepDoor door = KeepRaidDoors.NextShutRaidGate(keep);
+            return door != null && bot.IsWithinRadius(door, DoorBatterReach) && GameServer.ServerRules.IsAllowedToAttack(bot, door, true)
+                ? door : null;
+        }
 
         /// <summary>For a door behind the outer gate (the keep door), the gate's position: attackers reach it from that
         /// side. Null for the gate itself and for anything that is not a keep door.</summary>
@@ -402,8 +414,7 @@ namespace DOL.GS
         public static int SiegeDoorNumber(GameKeepDoor door) => door.DoorId % 100;
 
         /// <summary>A postern, or the other half of one (within 200 of a flagged postern door).</summary>
-        internal static bool PosternLike(AbstractGameKeep keep, GameKeepDoor door) =>
-            door.IsPostern || keep.Doors.Values.Any(p => p != door && p.IsPostern && p.IsWithinRadius(door, 200));
+        internal static bool PosternLike(AbstractGameKeep keep, GameKeepDoor door) => KeepRaidDoors.PosternLike(keep, door);
 
         /// <summary>
         /// What each engine shoots at: rams the door; trebuchets the same door (triple damage against doors);
