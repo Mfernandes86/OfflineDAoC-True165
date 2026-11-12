@@ -91,7 +91,9 @@ namespace DOL.GS
                     if (Random.Shared.Next(++candidates) == 0) speaker = bot;
                 }
                 string herald = speaker?.Name ?? fallback?.Name ?? "Realm herald";
-                AutonomousBotChatCoordinator.BroadcastFaction(herald, notice.Realm, notice.Text);
+                // herald notices go on the realm chat group, where a 2003 raid was called (BotChatChannels165)
+                BotChatChannels165.Send(BotChatChannels165.PeriodChannels ? BotChatChannels165.Channel.RvR : BotChatChannels165.Channel.Faction,
+                    herald, notice.Realm, null, notice.Text);
                 // a bot or two may follow the notice with banter165 lines for its situation (owner 2026-11-10)
                 BotBanter165.FollowNotice(notice.EventId, notice.Realm, notice.Text, herald);
             }

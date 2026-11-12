@@ -513,8 +513,10 @@ namespace DOL.GS
                     continue;
                 _ = new ECSGameTimer(speaker, _ =>
                 {
+                    // herald follow-ups and rally answers are realm business: the realm chat group (BotChatChannels165)
                     if (CanTalk(speaker) && ClientService.Instance.GetPlayersOfRealm(realm).Count > 0)
-                        AutonomousBotChatCoordinator.BroadcastFaction(speaker.Name, realm, line);
+                        BotChatChannels165.Send(BotChatChannels165.PeriodChannels ? BotChatChannels165.Channel.RvR : BotChatChannels165.Channel.Faction,
+                            speaker.Name, realm, speaker.CurrentRegion, line);
                     return 0;
                 }, firstDelay + index * 2_200 + Random.Shared.Next(1_500));
             }

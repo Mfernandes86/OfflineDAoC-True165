@@ -72,12 +72,22 @@ public static class AutonomousBotChatCoordinator
         // banter165 lines first when one fits what the bot is doing; otherwise today's lines (owner 2026-11-10)
         string opening = BotBanter165.TryOpening(starter, context, faction ? "realm" : "say", out BotBanter165.Topic topic) ??
                          BuildAmbientOpening(starter, context, faction);
-        if (faction)
-            BroadcastFaction(starter.Name, starter.Realm, opening);
-        else if (!starter.Say(opening))
+        // a realm-wide line goes on its period channel (BotChatChannels165): RvR on the chat group, trade and general
+        // talk on /broadcast in the speaker's region, questions on /advice, LFG on /lfg
+        BotChatChannels165.Channel channel = faction
+            ? BotChatChannels165.Classify(topic?.Situation, opening, IsPvpContext(starter))
+            : BotChatChannels165.Channel.Faction;
+        if (faction && !BotChatChannels165.Send(channel, starter, opening))
+        {
+            // nobody of the realm in its region hears a /broadcast: it says it to whoever stands by, or keeps quiet
+            if (!localAudience || !starter.Say(opening))
+                return false;
+            faction = false;
+        }
+        else if (!faction && !starter.Say(opening))
             return false;
 
-        ScheduleBotReplies(starter, opening, faction, false, topic);
+        ScheduleBotReplies(starter, opening, faction, false, topic, channel);
         return true;
     }
 
@@ -129,11 +139,14 @@ public static class AutonomousBotChatCoordinator
         string opening = Random.Shared.Next(2) == 0
             ? $"Does anybody want to make me an offer on {item}?"
             : $"How much do u think {item} is worth?";
-        BroadcastFaction(seller.Name, seller.Realm, opening);
+        // trade talk is /broadcast in the seller's region (BotChatChannels165)
+        BotChatChannels165.Channel channel = BotChatChannels165.PeriodChannels ? BotChatChannels165.Channel.Trade : BotChatChannels165.Channel.Faction;
+        if (!BotChatChannels165.Send(channel, seller, opening))
+            return false;
         // repliers may use banter165 "trading" reply lines about this item (owner 2026-11-10)
         var topic = new BotBanter165.Topic { Situation = "trading" };
         topic.Shared["item"] = item;
-        ScheduleBotReplies(seller, opening, true, false, topic);
+        ScheduleBotReplies(seller, opening, true, false, topic, channel);
         return true;
     }
 
@@ -316,7 +329,8 @@ public static class AutonomousBotChatCoordinator
         }
     }
 
-    private static void ScheduleBotReplies(GameBot starter, string opening, bool faction, bool fromPlayer, BotBanter165.Topic topic = null)
+    private static void ScheduleBotReplies(GameBot starter, string opening, bool faction, bool fromPlayer, BotBanter165.Topic topic = null,
+        BotChatChannels165.Channel channelKind = BotChatChannels165.Channel.Faction)
     {
         string channel = faction ? "realm" : "say";
         bool hasKnowledge = AutonomousChatKnowledge.TryAnswer(starter.Realm, opening, out string knowledge);
@@ -336,8 +350,10 @@ public static class AutonomousBotChatCoordinator
                 continue;
             Schedule(responder, 1_700 + scheduledCount++ * 2_100 + Random.Shared.Next(1_300), () =>
             {
-                if (faction && HasFactionAudience(responder.Realm))
-                    BroadcastFaction(responder.Name, responder.Realm, response);
+                // a reply stays on the opener's channel (a /broadcast in the opener's region)
+                if (faction && BotChatChannels165.HasAudience(channelKind, starter.Realm, starter.CurrentRegion))
+                    BotChatChannels165.Send(channelKind, responder.Name, responder.Realm, starter.CurrentRegion, response,
+                        responder.Level, responder.CharacterClass?.Name);
                 else if (!faction && HasLocalAudience(responder))
                     responder.Say(response);
             });
@@ -351,8 +367,8 @@ public static class AutonomousBotChatCoordinator
                              (faction ? "Fair enough. Safe travels." : "Understood. I will keep at it.");
             Schedule(starter, 5_500 + scheduledCount * 1_500, () =>
             {
-                if (faction && HasFactionAudience(starter.Realm))
-                    BroadcastFaction(starter.Name, starter.Realm, closing);
+                if (faction && BotChatChannels165.HasAudience(channelKind, starter.Realm, starter.CurrentRegion))
+                    BotChatChannels165.Send(channelKind, starter, closing);
                 else if (!faction && HasLocalAudience(starter))
                     starter.Say(closing);
             });
@@ -379,6 +395,15 @@ public static class AutonomousBotChatCoordinator
         !CompanionChat165.IsCompanion(bot) &&   // hired companions never join the world's talk (CompanionChat165)
         bot.IsAlive && bot.ObjectState == GameObject.eObjectState.Active && !bot.InCombat && !bot.IsCasting &&
         !bot.IsOnStableMasterRoute && !bot.IsOnHorse;
+
+    /// <summary>The bot is about RvR: its activity, goal or zone is the frontier.</summary>
+    private static bool IsPvpContext(GameBot bot)
+    {
+        string situation = $"{bot.PersistentRecord?.Activity} {bot.PersistentRecord?.CurrentGoal} {bot.CurrentZone?.Description}";
+        return situation.Contains("rvr", StringComparison.OrdinalIgnoreCase) ||
+               situation.Contains("pvp", StringComparison.OrdinalIgnoreCase) ||
+               situation.Contains("frontier", StringComparison.OrdinalIgnoreCase) || bot.CurrentZone?.IsRvR == true;
+    }
 
     private static bool HasFactionAudience(eRealm realm) => ClientService.Instance.GetPlayersOfRealm(realm).Count > 0;
 
