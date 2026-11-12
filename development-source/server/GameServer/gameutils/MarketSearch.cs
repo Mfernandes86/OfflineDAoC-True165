@@ -526,7 +526,8 @@ namespace DOL.GS
         {
             if (!RealmExchangeBroker.IsExchangeOwnerLot(ownerLot))
                 return [];
-            search.realm = eRealm.None;
+            // the realm index is the broker's lot realm: read only that realm (it read all three and filtered by lot)
+            search.realm = MarketSearchEngine.GetRealmOfLot(ownerLot);
             return ApplyFilters(GetInitialCandidates(search).Where(item => item.OwnerLot == ownerLot && !RealmExchangeExpiry.IsExpired(item, DateTime.UtcNow)), search)
                 .OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(item => item.SellPrice)

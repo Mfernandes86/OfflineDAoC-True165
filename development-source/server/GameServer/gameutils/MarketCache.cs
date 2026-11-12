@@ -92,5 +92,33 @@ namespace DOL.GS
         {
             return _searchEngine.Search(query);
         }
+
+        /// <summary>Visits matching items without copying the result set (the visitor must not change the market).</summary>
+        public static void ForEach(in ItemQuery query, Action<DbInventoryItem> visit) => _searchEngine.ForEach(query, visit);
+
+        /// <summary>Whether this exact item is listed in the cache (O(1)).</summary>
+        public static bool Contains(DbInventoryItem item) => _searchEngine.Contains(item);
+
+        /// <summary>Reads the Realm Exchange index (MarketBook) under the cache's read lock; the reader must not change the market.</summary>
+        public static T ReadBook<T>(Func<MarketBook, T> read) => _searchEngine.ReadBook(read);
+
+        /// <summary>Re-reads an item's facts into the index after a field changed outside UpdateItem.</summary>
+        public static bool Refresh(DbInventoryItem item) => UpdateItem(item, static (_, _) => { }, 0);
+
+        public static MarketBook.RealmSummary Summary(eRealm realm) => ReadBook(book => book.Summary(realm));
+
+        /// <summary>A sale at this price, for the recent-sale medians used to reprice stale listings.</summary>
+        public static void NoteSale(eRealm realm, DbInventoryItem item, long price) =>
+            _searchEngine.SalesBook.NoteSale(realm, item, MarketSearchEngine.GetClientSlot(item), price);
+
+        public static long MedianSale(eRealm realm, string name) => _searchEngine.SalesBook.MedianSale(realm, name);
+
+        public static long MedianSale(eRealm realm, int level, int clientSlot) => _searchEngine.SalesBook.MedianSale(realm, level, clientSlot);
+
+        /// <summary>Whether the index matches the cache (the hourly drift check).</summary>
+        public static bool CheckBook(out string note)
+        {
+            return _searchEngine.CheckBook(out note);
+        }
     }
 }

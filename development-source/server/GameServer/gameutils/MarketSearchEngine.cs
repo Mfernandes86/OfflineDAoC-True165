@@ -31,6 +31,9 @@ namespace DOL.GS
         private readonly Dictionary<bool, HashSet<DbInventoryItem>> _byVisual = new();
         private readonly Dictionary<string, HashSet<DbInventoryItem>> _byOwner = new();
 
+        /// <summary>The Realm Exchange index kept in step with this cache (changed only under this engine's write lock).</summary>
+        private readonly MarketBook _book = new();
+
         public int ItemCount
         {
             get
@@ -64,6 +67,7 @@ namespace DOL.GS
                 AddToIndex(_byCrafted, keys.IsCrafted, item);
                 AddToIndex(_byVisual, keys.HasVisual, item);
                 AddToIndex(_byOwner, keys.Owner, item);
+                _book.Add(item, keys.Slot);
                 return true;
             }
             finally
@@ -86,6 +90,7 @@ namespace DOL.GS
                 RemoveFromIndex(_byCrafted, keys.IsCrafted, item);
                 RemoveFromIndex(_byVisual, keys.HasVisual, item);
                 RemoveFromIndex(_byOwner, keys.Owner, item);
+                _book.Remove(item);
                 return true;
             }
             finally
@@ -145,6 +150,96 @@ namespace DOL.GS
             }
         }
 
+        /// <summary>Reads the Realm Exchange index under this engine's read lock. The reader must not change the market.</summary>
+        public T ReadBook<T>(Func<MarketBook, T> read)
+        {
+            _lock.EnterReadLock();
+
+            try
+            {
+                return read(_book);
+            }
+            finally
+            {
+                _lock.ExitReadLock();
+            }
+        }
+
+        /// <summary>Whether the Realm Exchange index holds exactly the cached exchange listings (under one read lock).</summary>
+        public bool CheckBook(out string note)
+        {
+            _lock.EnterReadLock();
+
+            try
+            {
+                return _book.Matches(_itemKeyCache.Keys, out note);
+            }
+            finally
+            {
+                _lock.ExitReadLock();
+            }
+        }
+
+        /// <summary>Recent sale prices have their own lock; no engine lock is needed.</summary>
+        public MarketBook SalesBook => _book;
+
+        /// <summary>Whether this exact listing is in the cache (O(1), no copy).</summary>
+        public bool Contains(DbInventoryItem item)
+        {
+            if (item == null)
+                return false;
+            _lock.EnterReadLock();
+
+            try
+            {
+                return _itemKeyCache.ContainsKey(item);
+            }
+            finally
+            {
+                _lock.ExitReadLock();
+            }
+        }
+
+        /// <summary>Calls <paramref name="visit"/> for each item matching the query without copying the result set first
+        /// (the visitor runs under the read lock and must not change the market).</summary>
+        public void ForEach(in ItemQuery query, Action<DbInventoryItem> visit)
+        {
+            _lock.EnterReadLock();
+
+            try
+            {
+                List<HashSet<DbInventoryItem>> sets = GetMatchingSets(query);
+                if (sets == null || sets.Count == 0)
+                {
+                    if (query.HasAny)
+                        return;
+                    foreach (DbInventoryItem item in _itemKeyCache.Keys)
+                        visit(item);
+                    return;
+                }
+                HashSet<DbInventoryItem> smallest = sets[0];
+                foreach (HashSet<DbInventoryItem> set in sets)
+                    if (set.Count < smallest.Count)
+                        smallest = set;
+                foreach (DbInventoryItem item in smallest)
+                {
+                    bool all = true;
+                    foreach (HashSet<DbInventoryItem> set in sets)
+                        if (!ReferenceEquals(set, smallest) && !set.Contains(item))
+                        {
+                            all = false;
+                            break;
+                        }
+                    if (all)
+                        visit(item);
+                }
+            }
+            finally
+            {
+                _lock.ExitReadLock();
+            }
+        }
+
         public static eRealm GetRealmOfLot(ushort lot)
         {
             if (lot == RealmExchangeBroker.AlbionOwnerLot) return eRealm.Albion;
@@ -174,7 +269,7 @@ namespace DOL.GS
             );
         }
 
-        private static int GetClientSlot(DbInventoryItem item)
+        public static int GetClientSlot(DbInventoryItem item)
         {
             if ((eInventorySlot) item.Item_Type is eInventorySlot.TorsoArmor)
                 return 5;
