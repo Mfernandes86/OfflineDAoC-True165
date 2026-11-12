@@ -171,4 +171,13 @@ public class UT_HornRaidLifecycle
         Assert.That(clamped.X, Is.EqualTo(2000).Within(0.01), "dragged 2,500 off: posts 1,000 from the lair toward it");
         Assert.That(clamped.Y, Is.EqualTo(1000).Within(0.01));
     }
+
+    [Test]
+    public void ALeftoverReserveFormsPartiesOfAnyEightOnlyOnceItIsComplete()
+    {
+        Assert.That(AutonomousBotGroupCoordinator.AnyRolesPartySize(20, false), Is.Zero, "guests may still bring the roles");
+        Assert.That(AutonomousBotGroupCoordinator.AnyRolesPartySize(20, true), Is.EqualTo(8));
+        Assert.That(AutonomousBotGroupCoordinator.AnyRolesPartySize(6, true), Is.EqualTo(4));
+        Assert.That(AutonomousBotGroupCoordinator.AnyRolesPartySize(3, true), Is.Zero, "too few: released");
+    }
 }

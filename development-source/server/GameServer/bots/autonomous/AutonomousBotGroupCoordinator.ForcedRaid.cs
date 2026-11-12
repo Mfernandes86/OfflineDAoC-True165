@@ -102,7 +102,7 @@ public static partial class AutonomousBotGroupCoordinator
     /// The next forced-raid party from the free reserved bots (already in closest-first order):
     /// a full eight with the usual roles, or the final four when only four reserved bots remain.
     /// </summary>
-    public static GameBot[] ComposeForcedParty(GameBot[] free, int reservedRemaining)
+    public static GameBot[] ComposeForcedParty(GameBot[] free, int reservedRemaining, bool reserveComplete = false)
     {
         if (free == null || free.Length == 0) return null;
         if (free.Length >= 8)
@@ -113,10 +113,19 @@ public static partial class AutonomousBotGroupCoordinator
                     if (TryBuildPveRoster(leader, pool.Where(b => b != leader).ToArray(), out var others, out _))
                         return new[] { leader }.Concat(others).ToArray();
         }
-        return ForcedPartyCanUseFinalFour(free.Length, reservedRemaining) ? free.Take(4).ToArray() : null;
+        if (ForcedPartyCanUseFinalFour(free.Length, reservedRemaining)) return free.Take(4).ToArray();
+        int any = AnyRolesPartySize(free.Length, reserveComplete);
+        return any > 0 ? free.Take(any).ToArray() : null;
     }
 
     public static bool ForcedPartyCanUseFinalFour(int free, int reservedRemaining) => reservedRemaining == 4 && free == 4;
+
+    /// <summary>
+    /// When the whole reserve is free and no role-complete eight can be formed any more (sh-routes 3), the rest form a
+    /// party of any eight, then of any four; 0 while the reserve may still bring the missing roles.
+    /// </summary>
+    public static int AnyRolesPartySize(int free, bool reserveComplete) =>
+        !reserveComplete ? 0 : free >= 8 ? 8 : free >= 4 ? 4 : 0;
 
     private static bool TryAssignExpeditionRoles(GameBot[] members, GameBot leader, out Dictionary<long, BotPveGroupRole> roles)
     {
@@ -124,7 +133,8 @@ public static partial class AutonomousBotGroupCoordinator
         roles = new();
         // Only the final four reinforcement slots use a smaller party, with
         // cross-party support. Ordinary PvE still requires all eight roles.
-        if (members.Length != 4 || members.Any(b => !AutonomousRealmRaid.IsEligible(b))) return false;
+        // (a forced raid's leftover reserve also forms any eight once the roles cannot be filled: ComposeForcedParty)
+        if (members.Length is not (4 or 8) || members.Any(b => !AutonomousRealmRaid.IsEligible(b))) return false;
         foreach (var b in members)
             roles[MemberKey(b)] = Enum.GetValues<BotPveGroupRole>().First(r => BotPartyRoles.CanFill((eCharacterClass)b.CharacterClass.ID, r));
         return true;

@@ -831,7 +831,21 @@ namespace DOL.GS
                         // parties in 22 minutes). Build the next party from whichever reserved
                         // bots are free, closest to the hub first, with the same role rules.
                         GameBot[] reserved = raid.ForcedParties.SelectMany(p => p).Distinct().ToArray();
-                        members = AutonomousBotGroupCoordinator.ComposeForcedParty(reserved.Where(Free).ToArray(), reserved.Length);
+                        GameBot[] free = reserved.Where(Free).ToArray();
+                        // sh-routes 3: the horn counts answerers by head, but parties formed only with all eight roles, so
+                        // a reserve short of healers or tanks never formed. Once every reserved bot is free and no guest
+                        // is still logging in, the rest form parties of any eight (or four): healing and defence are shared
+                        // raid-wide. Fewer than four left over are released instead of counting as "coming" for ever.
+                        bool reserveComplete = free.Length == reserved.Length && (!raid.Horn || RallyGuests165.Pending(raid.Definition.Id) == 0);
+                        if (reserveComplete && reserved.Length is > 0 and < 4)
+                        {
+                            raid.ForcedParties.Clear();
+                            foreach (GameBot b in reserved)
+                                if (Reservations.GetValueOrDefault(b.DatabaseID) == raid.Definition.Id) Reservations.TryRemove(b.DatabaseID, out _);
+                            Log.Info($"REALM_RAID_RESERVE_RELEASED event={raid.Definition.Id} bots={reserved.Length} reason=\"too few for a party\"");
+                            continue;
+                        }
+                        members = AutonomousBotGroupCoordinator.ComposeForcedParty(free, reserved.Length, reserveComplete);
                     }
                     if (members == null) continue;
                     batch.Add((raid.Definition.Id, members));
