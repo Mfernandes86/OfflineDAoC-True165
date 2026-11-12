@@ -32,4 +32,15 @@ public class UT_BotEmotes165
         Assert.That(BotEmotes165.AnswerTo(eEmote.Rude, BotEmotes165.Manner.Rude), Is.EqualTo(eEmote.Rude));
         Assert.That(BotEmotes165.AnswerTo(eEmote.Drink, BotEmotes165.Manner.Quiet), Is.Null);
     }
+
+    [Test]
+    public void WinnersCallToHoldATakenKeepByItsNickname()
+    {
+        for (int seed = 0; seed < 30; seed++)
+        {
+            string line = BotEmotes165.HoldLine("Caer Benowyc", new System.Random(seed));
+            Assert.That(line, Does.Contain("Ben"));
+            Assert.That(line, Does.Not.Contain("{").And.Not.Contain("Caer Benowyc"));
+        }
+    }
 }

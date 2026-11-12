@@ -14,7 +14,8 @@ namespace DOL.GS
     /// worthy enemy, /laugh or /rude over a corpse, /cheer when a keep fell, /wave back at someone who waves.
     /// - An RvR kill (an enemy player or gamebot) with a real player in sight: by its own manner (from its id, as the
     ///   stealthers' pick) a polite bot may /salute or /bow, a rude one /laugh or /rude; most do nothing (about 12%).
-    /// - A keep taken: up to six winning gamebots near its doors /cheer or /victory, staggered over 1-4 seconds.
+    /// - A keep taken: up to six winning gamebots near its doors /cheer or /victory, staggered over 1-4 seconds, and one
+    ///   of them calls on the realm chat group to hold it for the retake.
     /// - A player's /wave, /bow, /salute, /cheer, /rude or /laugh at a gamebot or companion out of combat: it answers in
     ///   kind (a rude one with /laugh) a moment later, at most once per 10 seconds per bot.
     /// All event-driven: one radius query at a kill or capture, one packet per emote; nothing runs between events.
@@ -115,7 +116,21 @@ namespace DOL.GS
         public static void OnServerStopped(DOLEvent e, object sender, EventArgs args) =>
             GameEventMgr.RemoveHandler(KeepEvent.KeepTaken, OnKeepTaken);
 
-        /// <summary>A keep fell: up to six winning gamebots near its doors cheer.</summary>
+        private static readonly string[] HoldLines =
+        [
+            "{keep} is ours, hold here, they'll be back", "stay on {keep} for the retake ppl", "dont leave {keep} yet, retake inc soon",
+            "hold {keep}, crafters fix the doors pls", "gj all, hold up at {keep} for a bit", "{keep} ours, need ppl to hold it",
+        ];
+
+        /// <summary>The winners' "hold it for the retake" call for a keep they took (its nickname), on the realm chat group.</summary>
+        public static string HoldLine(string keepName, Random random) =>
+            HoldLines[(random ?? Random.Shared).Next(HoldLines.Length)].Replace("{keep}", HeraldShorthand165.Nickname(keepName));
+
+        /// <summary>
+        /// A keep fell: up to six winning gamebots near its doors cheer (when a player can see it), and one of them calls on
+        /// the realm chat group to hold the keep for the retake a few seconds later (veteran-bots review M10 / rvr-social G8:
+        /// talk only, the bots' plans are unchanged).
+        /// </summary>
         private static void OnKeepTaken(DOLEvent e, object sender, EventArgs args)
         {
             try
@@ -123,16 +138,32 @@ namespace DOL.GS
                 if (args is not KeepEventArgs { Keep: { } keep })
                     return;
                 GameKeepDoor door = keep.Doors.Values.FirstOrDefault(d => d?.ObjectState == GameObject.eObjectState.Active);
-                if (door == null || !door.GetPlayersInRadius(WorldMgr.VISIBILITY_DISTANCE).Any())
+                if (door == null)
                     return;
+                bool seen = door.GetPlayersInRadius(WorldMgr.VISIBILITY_DISTANCE).Any();
                 int index = 0;
+                GameBot caller = null;
                 foreach (GameBot bot in door.GetNPCsInRadius(2_000).OfType<GameBot>())
                 {
                     if (bot.Realm != keep.Realm || !bot.IsAlive || !bot.IsAutonomousWorldBot || bot.IsTemporaryGroupHelper)
                         continue;
+                    caller ??= bot;
+                    if (!seen)
+                        break;
                     Later(bot, Random.Shared.Next(2) == 0 ? eEmote.Cheer : eEmote.Victory, 1_000 + Random.Shared.Next(3_000));
                     if (++index >= MaxCheering)
                         break;
+                }
+                if (caller != null)
+                {
+                    string line = HoldLine(keep.Name, Random.Shared);
+                    _ = new ECSGameTimer(caller, _ =>
+                    {
+                        if (caller.IsAlive && caller.ObjectState == GameObject.eObjectState.Active && caller.Realm == keep.Realm &&
+                            BotChatChannels165.Send(BotChatChannels165.Channel.RvR, caller, line))
+                            FeatureCounters165.Add("bot_keep_hold_call");
+                        return 0;
+                    }, 4_000 + Random.Shared.Next(4_000));
                 }
             }
             catch (Exception)
