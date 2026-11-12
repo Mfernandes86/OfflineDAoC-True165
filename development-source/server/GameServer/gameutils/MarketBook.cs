@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 using DOL.Database;
 
 namespace DOL.GS
@@ -119,6 +120,12 @@ namespace DOL.GS
 
         public int Count => _all.Count;
 
+        private int _version;
+
+        /// <summary>Goes up with every listing added or removed (a change of price or time is a remove and an add): a
+        /// cheap "has the market changed" for caches.</summary>
+        public int Version => Volatile.Read(ref _version);
+
         private static int RealmIndex(eRealm realm) => realm is eRealm.Albion or eRealm.Midgard or eRealm.Hibernia ? (int)realm : 0;
         private static int BucketKey(int bucket, int band) => bucket * 16 + band;
         public static int BandOf(int level) => Math.Clamp(level, 0, 54) / 5;
@@ -165,6 +172,7 @@ namespace DOL.GS
                 listing.ExpiresTicks = 0;
             }
             _all[item] = listing;
+            Interlocked.Increment(ref _version);
 
             RealmBook realm = _realms[RealmIndex(listing.Realm)];
             if (listing.IsBot)
@@ -196,6 +204,7 @@ namespace DOL.GS
         {
             if (item == null || !_all.Remove(item, out Listing listing))
                 return;
+            Interlocked.Increment(ref _version);
             RealmBook realm = _realms[RealmIndex(listing.Realm)];
             if (listing.IsBot)
             {

@@ -446,7 +446,8 @@ namespace DOL.GS;
     /// <summary>The materials a crafter is short of for its next recipes (CrafterBots165.WantedMaterials), or null.</summary>
     private static List<string> ShortMaterials(GameBot bot)
     {
-        if (bot?.Inventory == null || CrafterBots165.WantedMaterials(bot.PersistentRecord, bot.Realm) is not { Count: > 0 } wanted)
+        if (bot?.Inventory == null || bot.PersistentRecord is not { } record ||
+            CrafterBots165.WantedMaterials(record, bot.Realm) is not { Count: > 0 } wanted)
             return null;
         List<string> missing = null;
         foreach ((string id, int count) in wanted)
@@ -540,7 +541,7 @@ namespace DOL.GS;
         if (type == eObjectType.Poison)
             return item.Level <= bot.Level && WantsPoison(bot) ? 350 : 0;
         // a crafter's materials for its next recipes, only while it has fewer than it uses (CrafterBots165 crafts with them)
-        int wanted = CrafterBots165.WantedMaterial(bot.PersistentRecord, bot.Realm, item.Id_nb);
+        int wanted = bot.PersistentRecord is { } record ? CrafterBots165.WantedMaterial(record, bot.Realm, item.Id_nb) : 0;
         if (wanted > 0 && item.Count > 0 &&
             bot.Inventory.CountItemTemplate(item.Id_nb, eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack) < wanted)
             return 300 + Math.Min(150, item.Count * 3);
@@ -1373,9 +1374,9 @@ namespace DOL.GS;
     /// </summary>
     public static bool IsOwnCraftMaterial(GameBot bot, DbInventoryItem item)
     {
-        if (bot?.Inventory == null || item?.Id_nb == null)
+        if (bot?.Inventory == null || item?.Id_nb == null || bot.PersistentRecord is not { } record)
             return false;
-        int wanted = CrafterBots165.WantedMaterial(bot.PersistentRecord, bot.Realm, item.Id_nb);
+        int wanted = CrafterBots165.WantedMaterial(record, bot.Realm, item.Id_nb);
         if (wanted <= 0)
             return false;
         int before = 0;
@@ -1689,7 +1690,7 @@ namespace DOL.GS;
             return null;
         }
 
-        private sealed record VendorSets(int Revision, long Tick, HashSet<DbInventoryItem> Loadout, HashSet<DbInventoryItem> Kept);
+        private sealed record VendorSets(int Revision, long Tick, int Fingerprint, HashSet<DbInventoryItem> Loadout, HashSet<DbInventoryItem> Kept);
         private static readonly ConcurrentDictionary<long, VendorSets> VendorSetCache = new();
         private const long VendorSetMilliseconds = 5_000;
 
@@ -1702,8 +1703,10 @@ namespace DOL.GS;
         {
             int revision = ServiceDecisions.TryGetValue(bot.DatabaseID, out ServiceDecisionState state) ? Volatile.Read(ref state.Revision) : 0;
             long now = GameLoop.GameLoopTime;
+            int fingerprint = InventoryFingerprint(bot);
             if (bot.DatabaseID > 0 && VendorSetCache.TryGetValue(bot.DatabaseID, out VendorSets cached) &&
-                cached.Revision == revision && now >= cached.Tick && now - cached.Tick < VendorSetMilliseconds)
+                cached.Revision == revision && cached.Fingerprint == fingerprint && now >= cached.Tick &&
+                now - cached.Tick < VendorSetMilliseconds)
                 return (cached.Loadout, cached.Kept);
             HashSet<DbInventoryItem> loadout = FindOperationalLoadoutItems(bot);
             HashSet<DbInventoryItem> kept = KeepsForExchange(bot, loadout);
@@ -1711,9 +1714,28 @@ namespace DOL.GS;
             {
                 if (VendorSetCache.Count > 16_384)
                     VendorSetCache.Clear();
-                VendorSetCache[bot.DatabaseID] = new VendorSets(revision, now, loadout, kept);
+                VendorSetCache[bot.DatabaseID] = new VendorSets(revision, now, fingerprint, loadout, kept);
             }
             return (loadout, kept);
+        }
+
+        /// <summary>The bot's items where they are (identity, slot, count) and the market's version, folded into one
+        /// number: any change to the bag, the worn gear or the exchange starts fresh vendor sets, even one that did not
+        /// bump the revision (the choice and the sale of one tick still share them). A walk over the slots.</summary>
+        private static int InventoryFingerprint(GameBot bot)
+        {
+            var hash = new HashCode();
+            foreach (DbInventoryItem item in bot.Inventory.AllItems)
+            {
+                if (item == null)
+                    continue;
+                hash.Add(System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(item));
+                hash.Add(item.SlotPosition);
+                hash.Add(item.Count);
+            }
+            hash.Add(MarketCache.BookVersion);
+            hash.Add(AutonomousServiceFallback.IsExchangeUnreachable(bot.DatabaseID, GameLoop.GameLoopTime));
+            return hash.ToHashCode();
         }
 
         public static DbInventoryItem FindVendorTrashCandidate(GameBot bot)

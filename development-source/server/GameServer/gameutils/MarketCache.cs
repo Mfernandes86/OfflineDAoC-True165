@@ -114,6 +114,9 @@ namespace DOL.GS
 
         public static MarketBook.RealmSummary Summary(eRealm realm) => ReadBook(book => book.Summary(realm));
 
+        /// <summary>The exchange index's change counter (no lock: one int read).</summary>
+        public static int BookVersion => _searchEngine.SalesBook.Version;
+
         /// <summary>A sale at this price, for the recent-sale medians used to reprice stale listings.</summary>
         public static void NoteSale(eRealm realm, DbInventoryItem item, long price) =>
             _searchEngine.SalesBook.NoteSale(realm, item, MarketSearchEngine.GetClientSlot(item), price);
