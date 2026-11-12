@@ -179,7 +179,7 @@ public sealed partial class AutonomousWorldBotController
                 $"{(bot.Realm == order.Defender ? "Holding an interior defensive post" : "Holding the realm's separated defensive camp")}; " +
                 $"attackers advance when their recruited force is ready after at least three minutes; no enemy attendance requirement; " +
                 $"preparation deadline in {Math.Max(0, (int)Math.Ceiling(TimeSpan.FromMilliseconds(order.RemainingMilliseconds).TotalMinutes))}m " +
-                $"({(keep.IsRelic ? 192 : 128)} cap per realm; actual fighting can start the battle earlier)");
+                $"({RealmEventPolicy.AttackerCap(keep.IsRelic)} cap per realm; actual fighting can start the battle earlier)");
             return true;
         }
 

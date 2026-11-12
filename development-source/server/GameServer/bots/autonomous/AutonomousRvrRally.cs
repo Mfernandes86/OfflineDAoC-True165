@@ -93,7 +93,7 @@ public static class AutonomousRvrRally
         // slot on these perpendicular, still widely separated wings.
         if (regionId == 1 && keepId == 50) return 4 | (2 << 3); // west / south
         if (regionId == 1 && keepId == 58) return 0 | (6 << 3); // east / north
-        int cap = relic ? 192 : 128;
+        int cap = RealmEventPolicy.AttackerCap(relic);   // every slot an army can fill (relics audit M1: 192 of 240)
         eRealm other=(eRealm)(6-(int)attacker-(int)defender);
         var a=AutonomousFrontierTransport.Destination(attacker,regionId)?.Location;
         var b=AutonomousFrontierTransport.Destination(other,regionId)?.Location;
