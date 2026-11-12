@@ -9,7 +9,8 @@ namespace DOL.GS
     /// chants" option. Every reader goes through <see cref="CompanionOptions165.Choice"/>, which is always 0 (Automatic)
     /// for a gamebot, so gamebots keep their behaviour; the rules themselves are pure and unit tested.
     /// Generic option kinds 40 and up (CompanionOptions165): 40 twist, 41 stance, 42 crowd control, 43 pet, 44 weapon,
-    /// 45 Warden chant, 46 Warden role, 47 Stag, 48 Critical Shot, 49 opening stun, 50 Engage, 51 shield swap for Slam.
+    /// 45 Warden chant, 46 Warden role, 47 Stag, 48 Critical Shot, 49 opening stun, 50 Engage, 51 shield swap for Slam,
+    /// 52 Triple Wield.
     /// </summary>
     public static class CompanionControls165
     {
@@ -246,6 +247,12 @@ namespace DOL.GS
 
         /// <summary>The on/off rows (Critical Shot, Opening stun): 0 Automatic (on), 1 off.</summary>
         public const int AbilityOff = 1;
+
+        /// <summary>Pure: a Blademaster starts Triple Wield by its row - the same three choices and rule as Stag.</summary>
+        public static bool TripleWieldWanted(int choice, bool hardFight) => StagWanted(choice, hardFight);
+
+        /// <summary>Whether this companion may use Engage (the "Engage" row: 0 Automatic, 1 off; always for gamebots).</summary>
+        public static bool EngageAllowed(GameBot bot) => CompanionOptions165.Choice(bot, "engage") != AbilityOff;
 
         /// <summary>Whether this companion may open with Critical Shot (always for gamebots).</summary>
         public static bool CriticalShotAllowed(GameBot bot) => CompanionOptions165.Choice(bot, "critshot") != AbilityOff;

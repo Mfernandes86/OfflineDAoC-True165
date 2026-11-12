@@ -5363,6 +5363,13 @@ namespace DOL.AI.Brain
             GameBot bot = BotBody;
             if (bot == null || !Classic165Mode.IsOn || bot.GetAbilityLevel(Abilities.Engage) <= 0)
                 return false;
+            // M7: a hired tank's "Engage" row set to Off ends an Engage it holds and starts none
+            if (!CompanionControls165.EngageAllowed(bot))
+            {
+                if (Body.IsEngaging)
+                    Body.CancelEngageEffect();
+                return false;
+            }
             long now = GameLoop.GameLoopTime;
             GameLiving enemy = Body.TargetObject as GameLiving;
             bool attackedRecently = enemy != null &&
@@ -5506,7 +5513,9 @@ namespace DOL.AI.Brain
                         case Abilities.Triple_Wield:
                         {
                             if (Body.TargetObject is GameLiving target &&
-                                BotClassAbilities165.TripleWieldWorthwhile(HardFight(target),
+                                // M7: a hired Blademaster's Triple Wield row - Automatic (hard fights), on cooldown, off
+                                BotClassAbilities165.TripleWieldWorthwhile(
+                                    CompanionControls165.TripleWieldWanted(CompanionOptions165.Choice(BotBody, "triplewield"), HardFight(target)),
                                     Body.IsWithinRadius(target, Body.MeleeAttackRange),
                                     EffectListService.GetAbilityEffectOnTarget(Body, eEffect.TripleWield) != null) &&
                                 GameServer.ServerRules.IsAllowedToAttack(Body, target, true))

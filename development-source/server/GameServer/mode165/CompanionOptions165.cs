@@ -37,7 +37,8 @@ namespace DOL.GS
             KindDebuffLine = 28, KindSavePowerCaster = 29, KindAttackSpells = 30;
         /// <summary>Companion controls (veteran review M7 and the owner's twist option, 2026-11-11; CompanionControls165).</summary>
         public const byte KindTwist = 40, KindStance = 41, KindCrowdControl = 42, KindPetJob = 43, KindWeapon = 44,
-            KindStag = 47, KindCriticalShot = 48, KindOpeningStun = 49, KindSlamSwap = 51;
+            KindStag = 47, KindCriticalShot = 48, KindOpeningStun = 49, KindEngage = 50, KindSlamSwap = 51,
+            KindTripleWield = 52;
         /// <summary>The fourth Role choice of every healer's Role row (owner 2026-11-11; CompanionSpellOptions165).</summary>
         public const string MeleeHealChoice = "Melee and heal, no attack spells (melee interrupts casts)";
         public static readonly HashSet<string> Verbs = ["charm", "pet", "subpet", "song", "option"];
@@ -159,6 +160,11 @@ namespace DOL.GS
                 bot => bot.HasAbility(Abilities.Stag)),
             new(KindCriticalShot, "critshot", "Critical Shot opener", ["Automatic (on an idle monster)", "Off"],
                 bot => bot.HasAbility(Abilities.Critical_Shot)),
+            // the shield tank's Engage (as the M8 AI: a lone monster or archer on it, never with another in melee), and the
+            // Blademaster's Triple Wield (as Berserk and Stag: hard fights, on cooldown, off)
+            new(KindEngage, "engage", "Engage", ["Automatic", "Off"], bot => bot.HasAbility(Abilities.Engage)),
+            new(KindTripleWield, "triplewield", "Triple Wield", ["Automatic (hard fights)", "On cooldown", "Off"],
+                bot => bot.HasAbility(Abilities.Triple_Wield)),
             // M7 / G10: a two-hander tank with a shield set swaps to it for one Slam and back (the real swap and swing)
             new(KindSlamSwap, "slamswap", "Shield swap for Slam", ["Automatic (on)", "Off"],
                 bot => BotPartyRoles.IsTank(bot) && bot.Inventory?.GetItem(eInventorySlot.TwoHandWeapon) != null &&
