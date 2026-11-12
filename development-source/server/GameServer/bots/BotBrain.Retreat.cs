@@ -121,7 +121,7 @@ namespace DOL.AI.Brain
         /// <summary>A solo gamebot losing badly with no heal or crowd control ready leaves, once per fight.</summary>
         private PersonalRetreat ConsiderSoloBail(GameBot bot, long now)
         {
-            if (!bot.IsAutonomousWorldBot || bot.IsTemporaryGroupHelper || bot.Group != null || !bot.InCombat ||
+            if (!BotGroupRetreat.SoloBailEnabled || !bot.IsAutonomousWorldBot || bot.IsTemporaryGroupHelper || bot.Group != null || !bot.InCombat ||
                 _soloBailUsedThisFight || bot.HealthPercent >= 50 || now < _nextSoloBailLook || bot.IsIncapacitated)
                 return null;
             _nextSoloBailLook = now + 500;
