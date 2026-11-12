@@ -176,7 +176,9 @@ public sealed class UT_RealmExchangeExpiry
 
     private static void Add(DbInventoryItem item)
     {
-        item.Template = new DbItemTemplate { Id_nb = Guid.NewGuid().ToString(), Name = "exchange expiry test", Item_Type = 25, Object_Type = (int)eObjectType.Cloth };
+        // a merchant pays a copper for it (a worthless listing is never deleted: review 2026-11-11)
+        item.Template = new DbItemTemplate { Id_nb = Guid.NewGuid().ToString(), Name = "exchange expiry test", Item_Type = 25, Object_Type = (int)eObjectType.Cloth,
+            Price = 1, IsDropable = true };
         Assert.That(MarketCache.AddItem(item), Is.True);
     }
 

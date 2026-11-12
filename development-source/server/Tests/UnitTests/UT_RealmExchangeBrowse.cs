@@ -51,6 +51,23 @@ namespace DOL.UnitTests
 
         private static readonly DateTime Now = new(2026, 11, 11, 12, 0, 0, DateTimeKind.Utc);
 
+        /// <summary>Review 2026-11-11: an enchanted copy was folded behind a cheaper plain one and could not be seen or
+        /// bought. Copies with different stats are different rows; copies with the same stats still share one.</summary>
+        [Test]
+        public void CopiesWithDifferentStatsAreDifferentRows()
+        {
+            DbInventoryItem plain = Item("silk robe", eObjectType.Cloth, eInventorySlot.TorsoArmor, price: 100, id: "plain");
+            DbInventoryItem plainToo = Item("silk robe", eObjectType.Cloth, eInventorySlot.TorsoArmor, price: 150, id: "plain2");
+            DbInventoryItem enchanted = Item("silk robe", eObjectType.Cloth, eInventorySlot.TorsoArmor, price: 500, id: "enchanted");
+            enchanted.Bonus1Type = (int)eProperty.Intelligence;
+            enchanted.Bonus1 = 6;
+            RealmExchangeBrowse.View view = RealmExchangeBrowse.Build(new[] { plain, plainToo, enchanted }, true, "viewer", Now);
+            Assert.That(view.Rows.Count, Is.EqualTo(2));
+            Assert.That(view.Rows.Single(r => r.Item.ObjectId == "plain").Copies, Is.EqualTo(2));
+            Assert.That(view.Rows.Single(r => r.Item.ObjectId == "enchanted").Copies, Is.EqualTo(1));
+            Assert.That(RealmExchangeBrowse.Build(new[] { plain, plainToo, enchanted }, false, "viewer", Now).Rows.Count, Is.EqualTo(3));
+        }
+
         private static List<DbInventoryItem> Market()
         {
             var items = new List<DbInventoryItem>();

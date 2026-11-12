@@ -40,22 +40,53 @@ namespace DOL.UnitTests
             protected override IServerRules ServerRulesImpl => new NormalServerRules();
         }
 
-        /// <summary>Accepts every write and records deletes; selects return the configured rows or nothing.</summary>
+        /// <summary>Accepts every write and records deletes; selects return the configured rows or nothing. With
+        /// <see cref="Realistic"/> it also records adds and saves and sets the persistence flags as the SQL store does
+        /// (a delete marks the row deleted and no longer stored); <see cref="FailSaves"/> makes adds and saves fail;
+        /// <see cref="ByKey"/> answers FindObjectByKey.</summary>
         public class StoreDatabase : DispatchProxy
         {
             public readonly List<DataObject> Deleted = new();
+            public readonly List<DataObject> Added = new();
+            public readonly List<DataObject> Saved = new();
             public readonly Dictionary<Type, IList> Rows = new();
+            public readonly Dictionary<(Type, string), DataObject> ByKey = new();
+            public bool Realistic;
+            public bool FailSaves;
+
+            private static IEnumerable<DataObject> RowsOf(object arg) =>
+                arg is DataObject row ? new[] { row } : arg as IEnumerable<DataObject> ?? Array.Empty<DataObject>();
 
             protected override object Invoke(MethodInfo method, object[] args)
             {
                 if (method.Name == nameof(IObjectDatabase.DeleteObject))
                 {
-                    if (args[0] is DataObject row)
+                    foreach (DataObject row in RowsOf(args[0]).ToList())
+                    {
                         Deleted.Add(row);
-                    else if (args[0] is IEnumerable<DataObject> rows)
-                        Deleted.AddRange(rows);
+                        if (Realistic)
+                        {
+                            row.IsPersisted = false;
+                            row.IsDeleted = true;
+                        }
+                    }
                     return true;
                 }
+                if (Realistic && method.Name is nameof(IObjectDatabase.AddObject) or nameof(IObjectDatabase.SaveObject))
+                {
+                    foreach (DataObject row in RowsOf(args[0]).ToList())
+                    {
+                        (method.Name == nameof(IObjectDatabase.AddObject) ? Added : Saved).Add(row);
+                        if (FailSaves)
+                            continue;
+                        row.IsPersisted = true;
+                        row.IsDeleted = false;
+                        row.Dirty = false;
+                    }
+                    return !FailSaves;
+                }
+                if (method.Name == nameof(IObjectDatabase.FindObjectByKey) && method.IsGenericMethod)
+                    return ByKey.TryGetValue((method.GetGenericArguments()[0], args[0]?.ToString()), out DataObject found) ? found : null;
                 if (method.Name is nameof(IObjectDatabase.SelectObjects) or nameof(IObjectDatabase.SelectAllObjects))
                 {
                     Type type = method.GetGenericArguments()[0];
@@ -103,6 +134,9 @@ namespace DOL.UnitTests
             RealmExchangeWriteQueue.Clear();
             RealmExchangeWriteQueue.Enabled = false;
             Exchange165.LoadRelists(database, new HashSet<string>());
+            CrafterBots165.ResetForTests();
+            // the one-second persistence timer stays out of these tests (it would flush the exchange queue mid-test)
+            FlushingField.SetValue(null, 1);
             RealmExchangeStats.Reset();
         }
 
@@ -118,11 +152,16 @@ namespace DOL.UnitTests
             RealmExchangeWriteQueue.Enabled = true;
             RealmExchangeWriteQueue.Clear();
             Exchange165.LoadRelists(null, new HashSet<string>());
+            CrafterBots165.ResetForTests();
+            FlushingField.SetValue(null, 0);
             ItemValue165.SetMerchantStockForTests(null);
             Properties.ITEM_SELL_RATIO = _previousSellRatio;
             Properties.CLASSIC165_MODE = _previousMode;
             GameServer.LoadTestDouble(_previousServer);
         }
+
+        private static readonly FieldInfo FlushingField =
+            typeof(AutonomousBotStatusPersistence).GetField("_flushing", BindingFlags.Static | BindingFlags.NonPublic);
 
         private static void Field(Type type, object target, string name, object value) =>
             type.GetField(name, BindingFlags.Instance | BindingFlags.NonPublic).SetValue(target, value);
@@ -507,6 +546,253 @@ namespace DOL.UnitTests
             Assert.That(AutonomousBotEconomy.CanSellOnExchange(young), Is.False);
             OverhaulBot seller = Bot(level: 10);
             Assert.That(AutonomousBotEconomy.CanBuyOnExchange(seller) && AutonomousBotEconomy.CanSellOnExchange(seller), Is.True);
+        }
+
+        // ---- review fixes (2026-11-11)
+
+        [Test]
+        public void QueuedSave_OfACreditedListing_IsNeverInsertedAgain()
+        {
+            _store.Realistic = true;
+            RealmExchangeWriteQueue.Enabled = true;
+            DateTime now = DateTime.UtcNow;
+            long offlineOwner = 870_001;
+            DbInventoryItem listing = List(Valuable("credited robe"), AutonomousBotEconomy.GetOwnerId(offlineOwner), 0, 50_000, now.AddHours(-13));
+            listing.IsPersisted = true;
+
+            Assert.That(Exchange165.TryUndercut(listing, now), Is.True, "12 h unsold: re-undercut");
+            Assert.That(RealmExchangeWriteQueue.IsQueued(listing), Is.True);
+            // 24 h: the owner is offline, so it is paid out and the row deleted before the queue is written
+            Assert.That(Exchange165.HandleExpired(listing, offlineOwner, now.AddHours(11)), Is.True);
+            Assert.That(_store.Deleted, Does.Contain(listing));
+            Assert.That(RealmExchangeWriteQueue.IsQueued(listing), Is.False, "the credit cancels the queued reprice");
+            RealmExchangeWriteQueue.Save(listing);   // a late save of the deleted row is ignored too
+            RealmExchangeWriteQueue.Flush();
+            Assert.That(_store.Added, Does.Not.Contain(listing), "never inserted again: no live listing at the next start");
+            Assert.That(_store.Saved, Does.Not.Contain(listing));
+            Assert.That(MarketCache.Contains(listing), Is.False);
+        }
+
+        [Test]
+        public void WriteQueue_RelistRowOfAStoredKeyUpdates_AndAWriteThatKeepsFailingIsDropped()
+        {
+            _store.Realistic = true;
+            RealmExchangeWriteQueue.Enabled = true;
+            var record = new OfflineTrue165RelistRecord { InventoryId = "stored-key", Tries = Exchange165.TriesFailed };
+            _store.ByKey[(typeof(OfflineTrue165RelistRecord), "stored-key")] =
+                new OfflineTrue165RelistRecord { InventoryId = "stored-key", IsPersisted = true };
+            RealmExchangeWriteQueue.Save(record);
+            RealmExchangeWriteQueue.Flush();
+            Assert.That(_store.Added, Does.Not.Contain(record), "its key is stored: an update, not a failing insert");
+            Assert.That(_store.Saved, Does.Contain(record));
+
+            _store.FailSaves = true;
+            record.Dirty = true;
+            RealmExchangeWriteQueue.Save(record);
+            for (int attempt = 1; attempt < RealmExchangeWriteQueue.MaxAttempts; attempt++)
+                RealmExchangeWriteQueue.Flush();
+            Assert.That(RealmExchangeWriteQueue.Count, Is.EqualTo(1), "retried while under the attempt limit");
+            RealmExchangeWriteQueue.Flush();
+            Assert.That(RealmExchangeWriteQueue.Count, Is.Zero, "dropped, not retried every second forever");
+        }
+
+        [Test]
+        public void MarketPass_LeavesAnExpiredListingToTheSweep()
+        {
+            OverhaulBot bot = Bot();
+            DateTime now = DateTime.UtcNow;
+            DbInventoryItem listing = List(Valuable("expired robe"), bot.InternalID, 0, 50_000, now.AddHours(-25));
+            RealmMarketPass.RunRealm(eRealm.Hibernia, now);
+            Assert.That(listing.SellPrice, Is.EqualTo(50_000));
+            Assert.That(Exchange165.RelistOf(listing), Is.Null);
+        }
+
+        [Test]
+        public void Archive_TakesRelistRecordsOutOfMemory_AndARestoreAdoptsThem()
+        {
+            RealmExchangeWriteQueue.Enabled = true;
+            OverhaulBot bot = Bot();
+            DbInventoryItem item = AddBackpack(bot, Valuable("failed robe"));
+            Exchange165.MarkFailed(item, 9_000);
+            OfflineTrue165RelistRecord record = Exchange165.RelistOf(item);
+            Assert.That(RealmExchangeWriteQueue.IsQueued(record), Is.True);
+
+            List<OfflineTrue165RelistRecord> taken = Exchange165.Detach(new[] { item.ObjectId });
+            Assert.That(taken, Is.EquivalentTo(new[] { record }));
+            Assert.That(Exchange165.HasFailed(item), Is.False);
+            Assert.That(RealmExchangeWriteQueue.IsQueued(record), Is.False, "its row goes with the archived bot");
+
+            var restored = new OfflineTrue165RelistRecord { InventoryId = item.ObjectId, Tries = Exchange165.TriesFailed, IsPersisted = true };
+            Assert.That(Exchange165.Adopt(new[] { restored }), Is.EqualTo(1));
+            Assert.That(Exchange165.HasFailed(item), Is.True, "a restored bot never lists its failed items again");
+            Assert.That(RealmExchangeWriteQueue.IsQueued(restored), Is.False, "already stored");
+        }
+
+        [Test]
+        public void Crafter_KeepsOnlyWhatItsNextRecipesUse_ASurplusStackMayGo()
+        {
+            Properties.CLASSIC165_MODE = true;
+            _store.Rows[typeof(DbCraftedXItem)] = new List<DbCraftedXItem>
+                { new() { CraftedItemId_nb = "ovh-product", IngredientId_nb = "ovh-cloth", Count = 2 } };
+            _store.Rows[typeof(DbCraftedItem)] = new List<DbCraftedItem>
+                { new() { Id_nb = "ovh-product", CraftingLevel = 1, CraftingSkillType = (int)eCraftingSkill.Tailoring } };
+            _store.ByKey[(typeof(DbItemTemplate), "ovh-product")] = new DbItemTemplate { Id_nb = "ovh-product", Price = 100 };
+            _store.ByKey[(typeof(DbItemTemplate), "ovh-cloth")] = new DbItemTemplate { Id_nb = "ovh-cloth", Price = 10 };
+            OverhaulBot bot = Bot();
+            bot.PersistentRecord.CraftSkill = (int)eCraftingSkill.Tailoring;
+            bot.PersistentRecord.CraftLevel = 1;
+
+            int wanted = CrafterBots165.WantedMaterial(bot.PersistentRecord, eRealm.Hibernia, "ovh-cloth");
+            Assert.That(wanted, Is.EqualTo(2 * CrafterBots165.MaterialCombinesKept));
+            Assert.That(CrafterBots165.WantedMaterial(bot.PersistentRecord, eRealm.Hibernia, "ovh-unused"), Is.Zero);
+            DbInventoryItem[] stacks = Enumerable.Range(0, 3).Select(_ =>
+            {
+                DbItemTemplate cloth = Template("ovh cloth", 1, 100, eInventorySlot.FirstBackpack, 10, eObjectType.GenericItem, 0);
+                cloth.Id_nb = "ovh-cloth";
+                cloth.MaxCount = 100;
+                DbInventoryItem stack = GameInventoryItem.Create(cloth);
+                stack.Count = 8;
+                return AddBackpack(bot, stack);
+            }).ToArray();
+            Assert.That(AutonomousBotEconomy.IsOwnCraftMaterial(bot, stacks[0]), Is.True);
+            Assert.That(AutonomousBotEconomy.IsOwnCraftMaterial(bot, stacks[1]), Is.True, "8 kept so far, it keeps 10");
+            Assert.That(AutonomousBotEconomy.IsOwnCraftMaterial(bot, stacks[2]), Is.False, "a surplus stack may be listed or sold");
+        }
+
+        [Test]
+        public void Stacks_CompareCopiesPerUnit()
+        {
+            DbItemTemplate Arrows()
+            {
+                DbItemTemplate t = Template("ovh arrows", 10, 100, eInventorySlot.FirstBackpack, 50, eObjectType.Arrow, 0);
+                t.MaxCount = 100;
+                return t;
+            }
+            DbInventoryItem small = GameInventoryItem.Create(Arrows());
+            small.Count = 20;
+            DbInventoryItem big = GameInventoryItem.Create(Arrows());
+            big.Count = 99;
+            List(small, AutonomousBotEconomy.GetOwnerId(871_001), 0, 200);   // 10 copper an arrow
+            List(big, AutonomousBotEconomy.GetOwnerId(871_002), 0, 495);     // 5 copper an arrow
+            MarketBook.NameStats stats = MarketCache.ReadBook(b => b.Name(eRealm.Hibernia, "ovh arrows", null));
+            Assert.That(stats.Cheapest.Item, Is.SameAs(big), "the 99-stack is the cheaper per arrow");
+            Assert.That(stats.CheapestFor(20), Is.EqualTo(100));
+            Assert.That(stats.DearestOtherBot.Item, Is.SameAs(small));
+            MarketBook.Listing smallListing = MarketCache.ReadBook(b => b.Find(small));
+            Assert.That(MarketCache.ReadBook(b => b.CheaperBotCopies(smallListing)), Is.EqualTo(1));
+        }
+
+        [Test]
+        public void CraftedProduct_NeverAsksUnderItsMaterials()
+        {
+            DbInventoryItem product = Valuable("crafted robe");
+            product.IsCrafted = true;
+            Assert.That(ItemValue165.Ask(product, 0, cheapestOther: 1_000, materialCost: 100_000), Is.GreaterThanOrEqualTo(110_000));
+
+            OverhaulBot crafter = Bot(level: 20);
+            List(Valuable("crafted robe"), AutonomousBotEconomy.GetOwnerId(872_001), 0, 20_000);
+            Assert.That(AutonomousBotEconomy.PlanCraftedListing(crafter, product, 50_000, 0), Is.Null,
+                "1.1 x its materials can't undercut the copy listed: a merchant buys it, never a listing at a loss");
+            AutonomousBotEconomy.ListingCandidate plan = AutonomousBotEconomy.PlanCraftedListing(crafter, product, 1_000, 0);
+            Assert.That(plan, Is.Not.Null);
+            Assert.That(plan.PriceCopper, Is.LessThan(20_000).And.GreaterThanOrEqualTo(1_100));
+        }
+
+        [Test]
+        public void Refresh_NeverAddsAnItemThatIsNoLongerListed()
+        {
+            DbInventoryItem sold = Valuable("sold meanwhile");
+            sold.OwnerLot = RealmExchangeBroker.HiberniaOwnerLot;
+            sold.OwnerID = AutonomousBotEconomy.GetOwnerId(873_001);
+            Assert.That(MarketCache.Refresh(sold), Is.False);
+            Assert.That(MarketCache.Contains(sold), Is.False);
+            DbInventoryItem listed = List(Valuable("still listed"), AutonomousBotEconomy.GetOwnerId(873_002), 0, 9_000);
+            listed.SellPrice = 8_000;   // changed outside UpdateItem
+            Assert.That(MarketCache.Refresh(listed), Is.True);
+            Assert.That(MarketCache.ReadBook(b => b.Find(listed)).Price, Is.EqualTo(8_000));
+        }
+
+        [Test]
+        public void TakeBackThenNewHours_TheQueuedDeleteDoesNotWipeThem()
+        {
+            RealmExchangeWriteQueue.Enabled = true;
+            DbInventoryItem item = Valuable("player robe");
+            item.OwnerID = "player-character-id";
+            RealmExchangeExpiry.ForgetHours(item);
+            Assert.That(RealmExchangeWriteQueue.Count, Is.EqualTo(1));
+            RealmExchangeExpiry.SetPlayerListingHours(item, 24);
+            Assert.That(RealmExchangeWriteQueue.Count, Is.Zero, "the pending delete is cancelled");
+            Assert.That(RealmExchangeExpiry.PlayerListingHours(item), Is.EqualTo(24));
+        }
+
+        [Test]
+        public void Shutdown_WritesTheExchangeQueue_EvenWithNoBotSaveWaiting()
+        {
+            _store.Realistic = true;
+            RealmExchangeWriteQueue.Enabled = true;
+            var record = new OfflineTrue165RelistRecord { InventoryId = "shutdown-row", Tries = Exchange165.TriesFailed };
+            RealmExchangeWriteQueue.Save(record);
+            FlushingField.SetValue(null, 0);
+            AutonomousBotStatusPersistence.FlushAll();
+            Assert.That(RealmExchangeWriteQueue.Count, Is.Zero);
+            Assert.That(_store.Added, Does.Contain(record));
+        }
+
+        [Test]
+        public void WorthlessPulledListing_IsNeverDeleted_ItWaitsAnHour()
+        {
+            OverhaulBot bot = Bot();
+            FillBackpack(bot);
+            DateTime now = DateTime.UtcNow;
+            DbInventoryItem listing = List(Item("worthless robe", 20, 99, eInventorySlot.FirstBackpack, 0, eObjectType.Cloth, 30),
+                bot.InternalID, 0, 5_000, now.AddHours(-37));
+            Assert.That(ItemValue165.Floor(listing), Is.Zero);
+            Assert.That(Exchange165.Pull(listing, bot.DatabaseID, 5_000, RealmExchangeStats.Counter.Returned), Is.False);
+            Assert.That(_store.Deleted, Does.Not.Contain(listing));
+            Assert.That(MarketCache.Contains(listing), Is.True, "still listed, still buyable");
+            Assert.That(RealmExchangeExpiry.ExpiresUtc(listing), Is.GreaterThan(now.AddMinutes(50)), "tried again in an hour");
+            Assert.That(MarketCache.ReadBook(b => b.Due(now.AddMinutes(1), 10)), Does.Not.Contain(listing), "it does not block the wheel");
+        }
+
+        [Test]
+        public void ExpirySweep_PaysOutAtMostTwentyOwnersPerMinute()
+        {
+            DateTime now = DateTime.UtcNow;
+            for (int i = 0; i < 25; i++)
+                List(Valuable("capped robe " + i), AutonomousBotEconomy.GetOwnerId(874_000 + i), 0, 50_000, now.AddHours(-25));
+            Assert.That(RealmExchangeExpiry.ExpireDue(now), Is.EqualTo(RealmExchangeExpiry.MaxCreditsPerSweep));
+            Assert.That(_store.Deleted.OfType<DbInventoryItem>().Count(), Is.EqualTo(RealmExchangeExpiry.MaxCreditsPerSweep));
+            Assert.That(RealmExchangeExpiry.ExpireDue(now), Is.EqualTo(5), "the rest a minute later");
+        }
+
+        [Test]
+        public void ClothCaster_FindsItsClothUpgrade_BehindDearerPlateItCannotWear()
+        {
+            OverhaulBot buyer = Bot(level: 20, money: 5_000_000);
+            Assert.That(buyer.Inventory.AddItem(eInventorySlot.TorsoArmor, Item("worn vest", 10, 85, eInventorySlot.TorsoArmor, 100)), Is.True);
+            string seller = AutonomousBotEconomy.GetOwnerId(875_000);
+            for (int i = 0; i < 12; i++)
+                List(Item("heavy scale hauberk " + i, 20, 99, eInventorySlot.TorsoArmor, 500, eObjectType.Scale, 80), seller, i, 30_000);
+            Assert.That(AutonomousBotEconomy.WantsWindowShopping(buyer), Is.False, "no town errand for armour it can't wear");
+            Assert.That(AutonomousBotEconomy.FindBestUsefulExchangePurchase(buyer), Is.Null);
+            DbInventoryItem cloth = List(Item("fine cloth vest", 19, 96, eInventorySlot.TorsoArmor, 500, eObjectType.Cloth, 20), seller, 20, 20_000);
+
+            AutonomousBotEconomy.PurchaseCandidate probe = AutonomousBotEconomy.FindBestUsefulExchangePurchase(buyer);
+            Assert.That(probe?.Item, Is.SameAs(cloth), "the scale it can't wear never takes the scored places");
+        }
+
+        [Test]
+        public void Probe_LeavesOutExpiredAndTooHighListings()
+        {
+            string seller = AutonomousBotEconomy.GetOwnerId(876_000);
+            DateTime now = DateTime.UtcNow;
+            DbInventoryItem expired = List(Item("old gloves", 18, 96, eInventorySlot.HandsArmor, 500), seller, 0, 1_000, now.AddHours(-25));
+            DbInventoryItem high = List(Item("high gloves", 30, 96, eInventorySlot.HandsArmor, 500), seller, 1, 1_000);
+            DbInventoryItem fresh = List(Item("fresh gloves", 18, 96, eInventorySlot.HandsArmor, 500), seller, 2, 1_000);
+            int bucket = MarketSearchEngine.GetClientSlot(fresh);
+            List<MarketBook.Listing> found = MarketCache.ReadBook(b => b.Probe(eRealm.Hibernia, bucket, 0, MarketBook.Bands - 1, 10_000, null, 22, now.Ticks));
+            Assert.That(found.Select(l => l.Item), Is.EquivalentTo(new[] { fresh }));
+            Assert.That(MarketCache.ReadBook(b => b.Probe(eRealm.Hibernia, bucket, 0, MarketBook.Bands - 1, 10_000, null)).Count, Is.EqualTo(3));
         }
 
         // ---- locks

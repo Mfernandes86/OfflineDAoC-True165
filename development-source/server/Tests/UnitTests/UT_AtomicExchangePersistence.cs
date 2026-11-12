@@ -37,6 +37,56 @@ namespace DOL.UnitTests
             }
         }
 
+        /// <summary>Review 2026-11-11: the delete-in-transaction SQL was only tested through a fake store. A sale deletes
+        /// the sold item's relist and listing-hours rows in its own transaction, against SQLite; a sale that fails rolls
+        /// back and keeps them.</summary>
+        [Test]
+        public void Sale_DeletesRelistAndListingHoursRowsInItsTransaction_AndKeepsThemWhenItRollsBack()
+        {
+            string path = TemporaryPath();
+            try
+            {
+                SqliteObjectDatabase database = Open(path);
+                database.RegisterDataObject(typeof(DOL.GS.OfflineTrue165RelistRecord));
+                database.RegisterDataObject(typeof(DOL.GS.OfflineTrue165ListingHours));
+                var (permission, proceeds) = Seed(database);
+                var relist = new DOL.GS.OfflineTrue165RelistRecord { InventoryId = "sold-item", Tries = 1, OriginalPrice = 500 };
+                var hours = new DOL.GS.OfflineTrue165ListingHours { InventoryId = "sold-item", Hours = 24 };
+                var otherHours = new DOL.GS.OfflineTrue165ListingHours { InventoryId = "unsold-item", Hours = 12 };
+                Assert.That(database.AddObject([relist, hours, otherHours]), Is.True);
+
+                // a sale whose second row is gone fails: nothing commits, the bookkeeping rows stay
+                SqliteObjectDatabase deleter = Open(path);
+                Assert.That(deleter.DeleteObject(deleter.SelectAllObjects<DbCoreCharacterXCustomParam>().Single()), Is.True);
+                permission.Command = "must-not-commit";
+                proceeds.Value = "missing-row-update";
+                Assert.That(database.SaveObjectsAtomically([permission, proceeds], [relist, hours]), Is.False);
+                Assert.That(relist.IsDeleted || hours.IsDeleted, Is.False);
+                SqliteObjectDatabase check = Open(path);
+                check.RegisterDataObject(typeof(DOL.GS.OfflineTrue165RelistRecord));
+                check.RegisterDataObject(typeof(DOL.GS.OfflineTrue165ListingHours));
+                Assert.That(check.SelectAllObjects<DOL.GS.OfflineTrue165RelistRecord>().Select(r => r.InventoryId), Is.EquivalentTo(new[] { "sold-item" }));
+                Assert.That(check.SelectAllObjects<DOL.GS.OfflineTrue165ListingHours>().Count, Is.EqualTo(2));
+                Assert.That(check.SelectAllObjects<DbSinglePermission>().Single().Command, Is.EqualTo("before"));
+
+                // the sale that commits deletes both rows of the sold item, and only those
+                permission.Command = "sold";
+                Assert.That(database.SaveObjectsAtomically([permission], [relist, hours]), Is.True);
+                Assert.That(relist.IsDeleted && hours.IsDeleted, Is.True);
+                Assert.That(relist.IsPersisted || hours.IsPersisted, Is.False);
+                SqliteObjectDatabase fresh = Open(path);
+                fresh.RegisterDataObject(typeof(DOL.GS.OfflineTrue165RelistRecord));
+                fresh.RegisterDataObject(typeof(DOL.GS.OfflineTrue165ListingHours));
+                Assert.That(fresh.SelectAllObjects<DOL.GS.OfflineTrue165RelistRecord>(), Is.Empty);
+                Assert.That(fresh.SelectAllObjects<DOL.GS.OfflineTrue165ListingHours>().Select(h => h.InventoryId), Is.EquivalentTo(new[] { "unsold-item" }));
+                Assert.That(fresh.SelectAllObjects<DbSinglePermission>().Single().Command, Is.EqualTo("sold"));
+            }
+            finally
+            {
+                DeleteTemporaryFile(path);
+            }
+        }
+
         [Test]
         public void MissingSecondRow_RollsBackFirstUpdateAndLeavesSnapshotsDirty()
         {
