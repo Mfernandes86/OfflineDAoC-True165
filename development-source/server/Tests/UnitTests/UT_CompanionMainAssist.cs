@@ -19,6 +19,16 @@ namespace DOL.UnitTests
         });
 
         [Test]
+        public void ThePlayerStillLeadsForFourSecondsAfterTheirLastAttack() => Assert.Multiple(() =>
+        {
+            Assert.That(BotBrain.PlayerLeadsStickyMilliseconds, Is.EqualTo(4_000));
+            Assert.That(BotBrain.PlayerStillLeads(10_000, 10_000), Is.True, "attacking now");
+            Assert.That(BotBrain.PlayerStillLeads(13_000, 10_000), Is.True, "a caster's gap between casts");
+            Assert.That(BotBrain.PlayerStillLeads(14_000, 10_000), Is.False, "the player stopped: the tank leads");
+            Assert.That(BotBrain.PlayerStillLeads(10_000, long.MinValue / 2), Is.False, "never attacked");
+        });
+
+        [Test]
         public void TheKillTargetRulesAreShared() => Assert.Multiple(() =>
         {
             Assert.That(BotBrain.AssistsKillTarget(true, false, 80, false), Is.True);

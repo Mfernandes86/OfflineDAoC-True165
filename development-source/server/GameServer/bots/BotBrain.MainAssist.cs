@@ -48,9 +48,34 @@ namespace DOL.AI.Brain
             return player.IsAttacking || player.IsCasting && casting?.IsHarmful == true && !PlayerLedPullCoordinator.IsCrowdControl(casting);
         }
 
+        /// <summary>
+        /// How long the player still counts as leading the fight after their last swing or harmful cast (combat review
+        /// 2026-11-11): a caster's or archer's gap between casts, or a power wait, is not "the player stopped".
+        /// </summary>
+        public const long PlayerLeadsStickyMilliseconds = 4_000;
+
+        /// <summary>Pure: the player led the fight at <paramref name="lastLedTick"/> and still counts as leading now.</summary>
+        public static bool PlayerStillLeads(long now, long lastLedTick) => now - lastLedTick < PlayerLeadsStickyMilliseconds;
+
+        private long _playerLedFightTick = long.MinValue / 2;
+        private GamePlayer _playerLedFightPlayer;
+
+        /// <summary><see cref="PlayerLeadsFight"/>, held for <see cref="PlayerLeadsStickyMilliseconds"/> after it was last seen.</summary>
+        private bool PlayerLeadsFightSticky(GamePlayer player)
+        {
+            long now = GameLoop.GameLoopTime;
+            if (PlayerLeadsFight(player))
+            {
+                _playerLedFightPlayer = player;
+                _playerLedFightTick = now;
+                return true;
+            }
+            return player?.IsAlive == true && player == _playerLedFightPlayer && PlayerStillLeads(now, _playerLedFightTick);
+        }
+
         private bool UsesCompanionMainAssist =>
             CompanionMainAssistApplies(Classic165Mode.IsOn, BotBody?.IsPlayerCompanion == true, BotBody?.IsPlayerLedGroup == true,
-                Body.Group != null, PlayerLeadsFight(AssistedPlayer));
+                Body.Group != null, PlayerLeadsFightSticky(AssistedPlayer));
 
         private bool UsesMainAssist => UsesGamebotMainAssist || UsesCompanionMainAssist;
 
@@ -84,6 +109,10 @@ namespace DOL.AI.Brain
         {
             if (!IsTankClass || !UsesMainAssist || target is not GameNPC { IsAlive: true } ||
                 !(Body.IsAttacking || Body.InCombat) || IsBreakablyControlled(target))
+                return;
+            // a companion tank's peel on an add never becomes the kill target of the player's group (combat review
+            // 2026-11-11): the others stay on the tank's main monster instead of flipping onto the add
+            if (peel && BotBody?.IsPlayerLedGroup == true)
                 return;
             KillTargetHolder holder = KillTargets.GetValue(Body.Group, _ => new KillTargetHolder());
             long now = GameLoop.GameLoopTime;
@@ -123,6 +152,9 @@ namespace DOL.AI.Brain
             bool valid = target != null && GameLoop.GameLoopTime - holder.Tick <= KillTargetStaleMilliseconds &&
                 CanDefendAgainst(target) && Body.IsWithinRadius(target, GROUP_DEFENSE_ASSIST_RADIUS);
             if (!AssistsKillTarget(valid, valid && IsBreakablyControlled(target), Body.HealthPercent, directAttacker != null))
+                return null;
+            // /defensive and /passive: never a target the companion's stance would drop again on its next think
+            if (BotBody?.IsPlayerCompanion == true && !CompanionEngagementMode.Allows(Body, target))
                 return null;
             if (!AggroList.ContainsKey(target))
                 AddToAggroList(target, 1);
