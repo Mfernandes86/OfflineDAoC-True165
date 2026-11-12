@@ -3314,6 +3314,18 @@ namespace DOL.GS
             // A coordinated party keeps its own pace instead (AutonomousBotGroupCoordinator.ReadyForChainPull).
             bool partyPace = Classic165Mode.IsOn && !requireFullRecovery && _groupDirective?.IsDynamic == true;
             bool restToFull = requireFullRecovery || Classic165Mode.IsOn && !partyPace;
+            // O4 (owner 2026-11-11): a solo bot stands once it has enough for the next pull of the con it last fought
+            // (green 65/45, blue 80/65); yellow and harder, the first pull and after a death still rest to full. This is
+            // also the after-every-fight rest (requireFullRecovery from the camp's post-combat flag).
+            if (Classic165Mode.IsOn && restToFull && bot.Group == null)
+            {
+                (bot.RestStandHealthPercent, bot.RestStandPowerPercent) =
+                    AutonomousRestPolicy.StandTargetForNextPull(_lastEngagedCon);
+                fullyRecovered = AutonomousRestPolicy.EnoughForNextPull(bot.HealthPercent, bot.ManaPercent,
+                    bot.EndurancePercent, usesPower, bot.RestStandHealthPercent, bot.RestStandPowerPercent);
+            }
+            else
+                (bot.RestStandHealthPercent, bot.RestStandPowerPercent) = ((byte)100, (byte)100);
             if ((requireFullRecovery || Classic165Mode.IsOn && bot.Group == null) && !fullyRecovered && combatBlocked)
             {
                 bot.WakeRecoveryRest();

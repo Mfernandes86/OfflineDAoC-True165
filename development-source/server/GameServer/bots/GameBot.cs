@@ -343,6 +343,11 @@ namespace DOL.GS
 
         public bool IsRecoveryResting => _recoveryRestLocked;
 
+        /// <summary>O4 (owner 2026-11-11): the health and power this resting bot stands up at (100 = full; a solo gamebot's
+        /// camp rest lowers them for a green or blue next pull, AutonomousRestPolicy.StandTargetForNextPull).</summary>
+        internal byte RestStandHealthPercent = 100;
+        internal byte RestStandPowerPercent = 100;
+
         private readonly Dictionary<int, long> _companionCastLog165 = new();
 
         /// <summary>COMPANION_CAST_165: a hired companion's buff or heal attempt, its target and what came of it, at most once
@@ -514,7 +519,8 @@ namespace DOL.GS
 
         private void WakeAfterRecovery()
         {
-            if (IsRecoveryResting && AutonomousRestPolicy.IsFullyRecovered(HealthPercent, ManaPercent, EndurancePercent, MaxMana > 0) &&
+            if (IsRecoveryResting && AutonomousRestPolicy.EnoughForNextPull(HealthPercent, ManaPercent, EndurancePercent, MaxMana > 0,
+                    RestStandHealthPercent, RestStandPowerPercent) &&
                 Brain is BotBrain brain && brain.NextThinkTick > GameLoop.GameLoopTime)
                 brain.NextThinkTick = GameLoop.GameLoopTime;
         }
@@ -3238,6 +3244,7 @@ namespace DOL.GS
                 log.Info($"BOT_REST_WAKE bot={Name} level={Level} hp={HealthPercent}% power={ManaPercent}% endurance={EndurancePercent}% " +
                          $"by={new System.Diagnostics.StackFrame(1).GetMethod()?.DeclaringType?.Name}.{new System.Diagnostics.StackFrame(1).GetMethod()?.Name}");
             _recoveryRestLocked = false;
+            RestStandHealthPercent = RestStandPowerPercent = 100;
             SetSeatedForClients(false);     // stands up before it moves, casts or fights (0xF1)
         }
 

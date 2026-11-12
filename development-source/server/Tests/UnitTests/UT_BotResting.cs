@@ -81,7 +81,7 @@ namespace DOL.UnitTests
 
         [TestCase(99, 100, 100)]
         [TestCase(100, 99, 100)]
-        [TestCase(100, 100, 99)]
+        [TestCase(100, 100, 89)]   // O4: endurance counts as full from 90%
         public void EveryUsedResourceMustFinishRecovery(byte hp, byte power, byte endurance)
         {
             Assert.That(AutonomousRestPolicy.ShouldRest(true, false, false, true, hp, power, endurance, true), Is.True);
@@ -89,7 +89,7 @@ namespace DOL.UnitTests
 
         [TestCase(99, 100, 100)]
         [TestCase(100, 99, 100)]
-        [TestCase(100, 100, 99)]
+        [TestCase(100, 100, 89)]   // O4: endurance counts as full from 90%
         public void CompletedPullHasAResourceDeficitUntilEveryPoolIsFull(byte hp, byte power, byte endurance)
         {
             Assert.That(AutonomousRestPolicy.IsFullyRecovered(hp, power, endurance, true), Is.False);

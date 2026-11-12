@@ -397,6 +397,9 @@ public static class AutonomousRestPolicy
     // 70% (45% made them wait too long). Health and endurance keep their thresholds.
     public const byte PowerRestThreshold = 70;
     public const byte EnduranceRestThreshold = 35;
+    /// <summary>O4 (owner 2026-11-11): endurance at 90% or more counts as full. A melee does not sit for the last few
+    /// percent, which comes back standing in seconds (45% of rests began at 90%+ health and 80%+ endurance).</summary>
+    public const byte EnduranceFullThreshold = 90;
 
     public static bool NeedsRecovery(
         byte healthPercent,
@@ -412,7 +415,32 @@ public static class AutonomousRestPolicy
         byte manaPercent,
         byte endurancePercent,
         bool usesPower) =>
-        healthPercent >= 100 && (!usesPower || manaPercent >= 100) && endurancePercent >= 100;
+        healthPercent >= 100 && (!usesPower || manaPercent >= 100) && endurancePercent >= EnduranceFullThreshold;
+
+    /// <summary>
+    /// O4 (owner 2026-11-11, Prima/veteran practice): a solo gamebot sits after a fight but stands once it has enough for
+    /// the next pull of the same kind - green (or grey) 65% health / 45% power, blue 80% / 65%. Yellow or harder, or an
+    /// unknown con (no pull yet, or after a death), keeps rest-to-full. Endurance always counts as full at 90%.
+    /// </summary>
+    public static (byte Health, byte Power) StandTargetForNextPull(ConColor? nextPullCon) => nextPullCon switch
+    {
+        ConColor.GREY or ConColor.GREEN => (65, 45),
+        ConColor.BLUE => (80, 65),
+        _ => (100, 100),
+    };
+
+    /// <summary>O4: enough health, power (if any) and endurance to stand up for the next pull.</summary>
+    public static bool EnoughForNextPull(byte healthPercent, byte manaPercent, byte endurancePercent, bool usesPower,
+        byte standHealthPercent, byte standPowerPercent) =>
+        healthPercent >= standHealthPercent && (!usesPower || manaPercent >= standPowerPercent) &&
+        endurancePercent >= EnduranceFullThreshold;
+
+    public static bool EnoughForNextPull(byte healthPercent, byte manaPercent, byte endurancePercent, bool usesPower,
+        ConColor? nextPullCon)
+    {
+        (byte health, byte power) = StandTargetForNextPull(nextPullCon);
+        return EnoughForNextPull(healthPercent, manaPercent, endurancePercent, usesPower, health, power);
+    }
 
     // Cosmetic movement around an idle real-player leader must never suppress
     // recovery. Actual leader travel and all non-ambient bot movement retain
