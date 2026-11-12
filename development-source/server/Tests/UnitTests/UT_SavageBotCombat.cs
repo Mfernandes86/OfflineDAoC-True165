@@ -264,12 +264,15 @@ public class UT_SavageBotCombat
         Assert.That(AutonomousBotEconomy.EquipmentValue(highBonus),
             Is.GreaterThan(AutonomousBotEconomy.EquipmentValue(stronger)));
 
+        // the exchange scorer (2026-11-11 overhaul: it takes the bot's spare coin and the listing's ask)
+        stronger.SellPrice = 1;
+        highBonus.SellPrice = 1;
         var scorePurchase = typeof(AutonomousBotEconomy).GetMethod("ScorePurchase",
             BindingFlags.Static | BindingFlags.NonPublic)!;
         var strongerPurchase = (AutonomousBotEconomy.PurchaseCandidate)scorePurchase.Invoke(
-            null, new object[] { bot, stronger, false })!;
+            null, new object[] { bot, stronger, 1_000_000L })!;
         var highBonusPurchase = (AutonomousBotEconomy.PurchaseCandidate)scorePurchase.Invoke(
-            null, new object[] { bot, highBonus, false })!;
+            null, new object[] { bot, highBonus, 1_000_000L })!;
 
         Assert.That(strongerPurchase, Is.Not.Null);
         Assert.That(highBonusPurchase, Is.Not.Null);

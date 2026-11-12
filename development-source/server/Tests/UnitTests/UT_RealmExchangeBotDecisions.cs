@@ -207,7 +207,8 @@ namespace DOL.UnitTests
                 AddBackpack(bot, Item("valuable but wrong-slot gear", 20, 99, (int)eInventorySlot.FirstBackpack, 10_000, 30)).IsROG = true;
             try
             {
-                Assert.That(AutonomousBotEconomy.FindVendorTrashCandidate(bot), Is.Null, "kept for the exchange while a broker is in reach");
+                // 2026-11-11 exchange plan: in reach, the bot keeps for the exchange only what it can list (its free room
+                // plus one for the next visit); 40 copies of one item are mostly sold
                 Assert.That(AutonomousBotEconomy.GetNeededService(bot), Is.EqualTo(eWorldServiceKind.RealmExchange));
 
                 AutonomousServiceFallback.MarkExchangeUnreachable(bot.DatabaseID, GameLoop.GameLoopTime);
@@ -277,11 +278,9 @@ namespace DOL.UnitTests
 
             int appraisal = AutonomousBotEconomy.RecommendListingPrice(item);
             int[] rolls = Enumerable.Range(0, 96).Select(_ => AutonomousBotEconomy.RollListingPrice(item)).ToArray();
-            double rarity = Math.Clamp((item.Quality - 85) / 3d + 2, 0, 10);
-            var facts = new AutonomousAuctionValuation.ItemFacts(item.Level, Math.Max(1, item.Count), item.Quality,
-                Math.Max(1, (int)item.ConditionPercent), rarity, 0, false);
-            int minimum = (int)AutonomousAuctionValuation.Recommend(facts, -0.35).BuyoutCopper;
-            int maximum = (int)AutonomousAuctionValuation.Recommend(facts, 0.50).BuyoutCopper;
+            // 2026-11-11 exchange plan: the fair price (ItemValue165) with a -5%/+15% mood
+            int minimum = (int)ItemValue165.Ask(item, ItemValue165.MoodLow);
+            int maximum = (int)ItemValue165.Ask(item, ItemValue165.MoodHigh);
 
             Assert.Multiple(() =>
             {
@@ -333,7 +332,7 @@ namespace DOL.UnitTests
         }
 
         [Test]
-        public void FullBotListingCapAllowsNonUpgradeValuableItemToBecomeVendorTrash()
+        public void FullBotListingCap_KeepsAMuchBetterItemForASwap_AndVendorsASmallGain()
         {
             DecisionBot bot = Bot();
             GivePersistentRecord(bot, true);
@@ -348,12 +347,19 @@ namespace DOL.UnitTests
                 (int)eInventorySlot.FirstBackpack, 10_000, 30));
             unwanted.IsROG = true;
 
+            // 2026-11-11 exchange plan: a capped bot with loot worth 1.5 x its weakest listing keeps it for a swap
             Assert.Multiple(() =>
             {
                 Assert.That(AutonomousBotEconomy.FindFreeListingSlot(bot.InternalID), Is.EqualTo(-1));
                 Assert.That(AutonomousBotEconomy.TryGetEquipmentUpgrade(bot, unwanted, out _), Is.False);
-                Assert.That(AutonomousBotEconomy.FindVendorTrashCandidate(bot), Is.SameAs(unwanted));
+                Assert.That(AutonomousBotEconomy.FindVendorTrashCandidate(bot), Is.Null, "kept to replace the weakest listing");
+                Assert.That(AutonomousBotEconomy.FindValuableListingCandidate(bot)?.Replace, Is.Not.Null);
             });
+
+            // with listings as good as it, the gain gap is too small: it goes to a merchant
+            foreach (DbInventoryItem listing in _marketItems.ToArray())
+                MarketCache.UpdateItem(listing, static (item, _) => { item.Level = 20; item.Quality = 99; item.DPS_AF = 30; item.Price = 10_000; item.IsROG = true; }, 0);
+            Assert.That(AutonomousBotEconomy.FindVendorTrashCandidate(bot), Is.SameAs(unwanted));
         }
 
         [Test]
