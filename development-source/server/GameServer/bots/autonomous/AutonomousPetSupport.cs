@@ -786,6 +786,11 @@ public static class AutonomousPetSupport
             petBrain.Body.ObjectState is not GameObject.eObjectState.Active)
             return;
 
+        // Q25 (veteran review 2026-11-11, the Theurgist rule): a Spiritmaster grouped with a tank (four or more) keeps
+        // its pet off the monster the tanks hold and sends it only at an add - a monster on itself or a non-tank
+        if (owner is GameBot spiritmaster && SpiritmasterHoldsPet(spiritmaster))
+            combatTarget = SpiritmasterAddTarget(spiritmaster);
+
         // Q15 (veteran review 2026-11-11): a Hunter keeps its pet at heel while it draws the Critical Shot opener on an
         // idle monster (sent first, the pet put the monster in combat and the opener never happened)
         if (ownerBrain.HoldsPetForCriticalShot(combatTarget, petBrain))
@@ -1778,6 +1783,37 @@ public static class AutonomousPetSupport
         Classic165Mode.IsOn && bot?.CharacterClass?.ID == (int)eCharacterClass.Theurgist &&
         CompanionOptions165.PetLine(bot) == null &&
         !TheurgistMaySummon(bot.Group?.MemberCount >= 4 && BotMeleeStylePolicy.HasTankPartner(bot), TheurgistPetsNeeded(bot));
+
+    /// <summary>Pure (Q25): a grouped pet caster with a tank in a group of four or more holds its pet for adds.</summary>
+    public static bool HoldsPetForAdds(bool classic165, bool groupOfFourOrMore, bool tankPartner) =>
+        classic165 && groupOfFourOrMore && tankPartner;
+
+    /// <summary>Q25: a Spiritmaster grouped with a tank (four or more members) keeps its pet for adds.</summary>
+    public static bool SpiritmasterHoldsPet(GameBot bot) =>
+        bot?.CharacterClass?.ID == (int)eCharacterClass.Spiritmaster &&
+        HoldsPetForAdds(Classic165Mode.IsOn, bot.Group?.MemberCount >= 4, BotMeleeStylePolicy.HasTankPartner(bot));
+
+    /// <summary>Q25: the add for a held pet - a monster hitting the Spiritmaster, else one hitting a groupmate who is no
+    /// tank (read from the attacker lists); null when the tanks hold everything.</summary>
+    public static GameLiving SpiritmasterAddTarget(GameBot bot)
+    {
+        foreach (GameLiving attacker in bot.attackComponent.AttackerTracker.Attackers)
+            if (attacker.IsAlive && attacker.TargetObject == bot)
+                return attacker;
+        if (bot.Group == null)
+            return null;
+        foreach (GameLiving member in bot.Group.GetMembersInTheGroup())
+        {
+            if (member == null || member == bot || !member.IsAlive || BotHealTriage165.IsTank(member) ||
+                member.attackComponent == null)
+                continue;
+            foreach (GameLiving attacker in member.attackComponent.AttackerTracker.Attackers)
+                if (attacker.IsAlive && attacker.TargetObject == member &&
+                    bot.IsWithinRadius(attacker, 2000))
+                    return attacker;
+        }
+        return null;
+    }
 
     /// <summary>A monster on the Theurgist, or on a group member who is not a tank (an add the tanks do not hold).</summary>
     private static bool TheurgistPetsNeeded(GameBot theurgist)
