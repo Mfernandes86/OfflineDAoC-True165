@@ -253,6 +253,25 @@ namespace DOL.GS
         /// <summary>Whether this companion may use its opening stun on the kill target (always for gamebots).</summary>
         public static bool OpeningStunAllowed(GameBot bot) => CompanionOptions165.Choice(bot, "openstun") != AbilityOff;
 
+        // ---- Shield swap for Slam (M7, G10)
+
+        /// <summary>How long a two-hander tank stays on its shield set for one Slam at most.</summary>
+        public const long SlamSwapMilliseconds = 8_000;
+
+        /// <summary>
+        /// Pure (G10; period Armsman: "50 pole / 42 shield - swap to sword and shield to Slam, then back to pole"): a tank
+        /// fighting with its two-hander, carrying a usable weapon and shield set and a Slam it can use now, swaps to the
+        /// shield for one Slam when a stun is wanted (the monster is casting, or it is on someone who is not the main tank)
+        /// and the monster is not stun immune. The "Shield swap for Slam" row: 0 Automatic (on), 1 off.
+        /// </summary>
+        public static bool SlamSwapWanted(int choice, bool tank, bool twoHanderActive, bool shieldSetReady, bool slamUsable,
+            bool stunWanted, bool targetStunImmune) =>
+            choice != AbilityOff && tank && twoHanderActive && shieldSetReady && slamUsable && stunWanted && !targetStunImmune;
+
+        /// <summary>Pure: the swap ends - the Slam landed (the monster is stunned), the swing with it went off, or time ran out.</summary>
+        public static bool SlamSwapEnds(bool targetStunned, bool slamSwung, long elapsedMilliseconds) =>
+            targetStunned || slamSwung || elapsedMilliseconds >= SlamSwapMilliseconds;
+
         /// <summary>Whether this companion's add control runs now (its own choice, and no Main CC to leave it to).</summary>
         public static bool AddControlRuns(GameBot bot)
         {

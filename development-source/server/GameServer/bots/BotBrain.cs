@@ -4112,6 +4112,7 @@ namespace DOL.AI.Brain
                 protectionTarget != null && Body.TargetObject == protectionTarget && protectionTarget.TargetObject != Body);
             RedirectPetFromControlledTarget(Body.TargetObject as GameLiving);
             MaintainTankPeel();
+            TryShieldSwapForSlam();
             // A tethered boss outside its tether is immune: stop hitting it and lead it home (AutonomousTetherReset).
             if (Body.TargetObject is GameNPC tetheredBoss && AutonomousTetherReset.TryHandle(BotBody, tetheredBoss))
                 return;
@@ -4679,6 +4680,63 @@ namespace DOL.AI.Brain
                 return null;
 
             return attacker;
+        }
+
+        private long _nextSlamSwapCheck;
+        private Style _slamSwapStyle;
+
+        /// <summary>
+        /// M7 / G10: a two-hander tank swaps to its weapon and shield, Slams once, and swaps back - only when a stun is
+        /// wanted (BotMeleeStylePolicy.StunWanted: a casting monster, or one on someone who is not the main tank). The
+        /// swaps are ordinary weapon switches (their real swing timing); the Slam's numbers are unchanged. Checked at
+        /// most once a second while fighting.
+        /// </summary>
+        private void TryShieldSwapForSlam()
+        {
+            GameBot bot = BotBody;
+            if (bot == null)
+                return;
+            long now = GameLoop.GameLoopTime;
+            GameLiving target = Body.TargetObject as GameLiving;
+            if (bot.SlamSwapUntil != 0)
+            {
+                bool stunned = target?.effectListComponent?.ContainsEffectForEffectType(eEffect.Stun) == true;
+                bool swung = _slamSwapStyle != null && Body.attackComponent?.attackAction?.LastAttackData?.Style == _slamSwapStyle;
+                if (target?.IsAlive != true || CompanionControls165.SlamSwapEnds(stunned, swung, now - bot.SlamSwapStarted))
+                {
+                    bot.SlamSwapUntil = 0;
+                    _slamSwapStyle = null;
+                    if (Body.styleComponent.NextCombatStyle != null && BotMeleeStylePolicy.IsStunStyle(Body.styleComponent.NextCombatStyle))
+                        Body.styleComponent.NextCombatStyle = null;
+                    SwitchToUsableMeleeWeapon();   // back to the two-hander
+                }
+                return;
+            }
+            if (now < _nextSlamSwapCheck || Body.ActiveWeaponSlot != eActiveWeaponSlot.TwoHanded || target?.IsAlive != true ||
+                !Body.IsWithinRadius(target, Body.MeleeAttackRange + 50) || !BotPartyRoles.IsTank(bot))
+                return;
+            _nextSlamSwapCheck = now + 1_000;
+            DbInventoryItem right = bot.Inventory?.GetItem(eInventorySlot.RightHandWeapon);
+            bool shieldSet = bot.Inventory?.GetItem(eInventorySlot.LeftHandWeapon) is { Object_Type: (int)eObjectType.Shield } &&
+                             BotWeaponStats.FitsConfiguredSlot(bot, right, eInventorySlot.RightHandWeapon);
+            if (!shieldSet)
+                return;
+            AttackData lastAttack = Body.attackComponent?.attackAction?.LastAttackData;
+            Style slam = bot.Styles?.Where(style => style.WeaponTypeRequirement == (int)eObjectType.Shield &&
+                                                    BotMeleeStylePolicy.IsStunStyle(style) && style.Level <= bot.Level &&
+                                                    bot.Endurance >= style.EnduranceCost)
+                .OrderByDescending(style => style.Level).FirstOrDefault();
+            bool stunImmune = target.effectListComponent.ContainsEffectForEffectType(eEffect.StunImmunity) ||
+                              target.effectListComponent.ContainsEffectForEffectType(eEffect.NPCStunImmunity) ||
+                              target.effectListComponent.ContainsEffectForEffectType(eEffect.Stun);
+            if (!CompanionControls165.SlamSwapWanted(CompanionOptions165.Choice(bot, "slamswap"), true, true, true, slam != null,
+                    slam != null && BotMeleeStylePolicy.StunWanted(bot, target, lastAttack), stunImmune))
+                return;
+            bot.SlamSwapStarted = now;
+            bot.SlamSwapUntil = now + CompanionControls165.SlamSwapMilliseconds;
+            _slamSwapStyle = slam;
+            Body.SwitchWeapon(eActiveWeaponSlot.Standard);
+            Body.styleComponent.NextCombatStyle = slam;
         }
 
         private void QueueUsableMeleeStyle()

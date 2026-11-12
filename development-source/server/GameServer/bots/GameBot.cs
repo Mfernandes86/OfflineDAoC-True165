@@ -3276,6 +3276,12 @@ namespace DOL.GS
         /// twisting was removed in 2026-10-30).</summary>
         internal long SongSoundQuietUntil;
 
+        /// <summary>Until this tick a two-hander tank fights with its weapon and shield for one Slam (M7, shield swap for
+        /// Slam); BotWeaponSetPolicy prefers the shield set meanwhile.</summary>
+        internal long SlamSwapUntil;
+        internal long SlamSwapStarted;
+        public bool SlamSwapActive => GameLoop.GameLoopTime < SlamSwapUntil;
+
         // Wake only when an actual affordable spell is requested, not during
         // spell selection. Mobile song maintenance remains compatible with
         // out-of-combat logical recovery.

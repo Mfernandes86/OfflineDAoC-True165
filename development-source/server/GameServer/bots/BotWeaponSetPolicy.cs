@@ -24,6 +24,9 @@ namespace DOL.GS
                 return false;
             if (!standardUsable)
                 return true;
+            // M7: the weapon and shield set for one Slam (BotBrain.TryShieldSwapForSlam), then back
+            if (bot?.SlamSwapActive == true)
+                return false;
             if (UntrainedTwoHander(bot))
                 return false;
             if (bot?.PlayerReadiedSlot is eActiveWeaponSlot readied && readied != eActiveWeaponSlot.Distance)
