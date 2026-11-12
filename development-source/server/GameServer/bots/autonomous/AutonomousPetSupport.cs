@@ -378,9 +378,12 @@ public static class AutonomousPetSupport
         if (owner is GameBot bonedancerPlanBot && characterClass == eCharacterClass.Bonedancer)
             bonedancerPlanBot.EnsureBonedancerFocusedSpecPlan();
 
-        bool defensiveOnlyPet = IsDefensiveOnlyPetClass(characterClass, owner is GameBot && owner.Group?.MemberCount > 1,
-                                    characterClass == eCharacterClass.Druid && IsNatureDruid(owner)) ||
-                                owner is not GameBot && characterClass == eCharacterClass.Mentalist;
+        // M7: the companion's Pet row (Guard me, Take adds, Attack my target; Automatic and gamebots as before)
+        int petJob = owner is GameBot jobOwner ? CompanionControls165.PetJob(jobOwner) : CompanionControls165.PetAutomatic;
+        bool defensiveOnlyPet = CompanionControls165.PetDefendsOnly(petJob,
+            IsDefensiveOnlyPetClass(characterClass, owner is GameBot && owner.Group?.MemberCount > 1,
+                characterClass == eCharacterClass.Druid && IsNatureDruid(owner)) ||
+            owner is not GameBot && characterClass == eCharacterClass.Mentalist);
 
         IControlledBrain petBrain = owner.ControlledBrain;
         if (petBrain?.Body != null && (!petBrain.Body.IsAlive || petBrain.Body.ObjectState is not GameObject.eObjectState.Active))
@@ -531,6 +534,9 @@ public static class AutonomousPetSupport
             // route or formation. Clear only a genuinely dead/empty pet target
             // while the owner itself is idle; live retaliation is preserved.
             ClearStalePetCombat(owner, petBrain, combatTarget, defensiveOnlyPet);
+            // M7 Take adds: only a monster on the owner or on a groupmate who is no tank (none: the pet stays back)
+            if (petJob == CompanionControls165.PetTakeAdds && owner is GameBot addOwner && !independentOwnerCombat)
+                combatTarget = SpiritmasterAddTarget(addOwner);
 
             if (independentOwnerCombat)
                 SynchronizeIndependentPet(owner, petBrain, combatTarget);
@@ -788,7 +794,9 @@ public static class AutonomousPetSupport
 
         // Q25 (veteran review 2026-11-11, the Theurgist rule): a Spiritmaster grouped with a tank (four or more) keeps
         // its pet off the monster the tanks hold and sends it only at an add - a monster on itself or a non-tank
-        if (owner is GameBot spiritmaster && SpiritmasterHoldsPet(spiritmaster))
+        // M7: the Pet row's Take adds does the same for any pet class; Attack my target sends it at the fight's target
+        if (owner is GameBot spiritmaster &&
+            CompanionControls165.PetTakesAdds(CompanionControls165.PetJob(spiritmaster), SpiritmasterHoldsPet(spiritmaster)))
             combatTarget = SpiritmasterAddTarget(spiritmaster);
 
         // Q15 (veteran review 2026-11-11): a Hunter keeps its pet at heel while it draws the Critical Shot opener on an
@@ -1794,7 +1802,8 @@ public static class AutonomousPetSupport
         HoldsPetForAdds(Classic165Mode.IsOn, bot.Group?.MemberCount >= 4, BotMeleeStylePolicy.HasTankPartner(bot));
 
     /// <summary>Q25: the add for a held pet - a monster hitting the Spiritmaster, else one hitting a groupmate who is no
-    /// tank (read from the attacker lists); null when the tanks hold everything.</summary>
+    /// tank (read from the attacker lists); null when the tanks hold everything. M7: the Pet row's Take adds uses it for
+    /// any pet class.</summary>
     public static GameLiving SpiritmasterAddTarget(GameBot bot)
     {
         foreach (GameLiving attacker in bot.attackComponent.AttackerTracker.Attackers)

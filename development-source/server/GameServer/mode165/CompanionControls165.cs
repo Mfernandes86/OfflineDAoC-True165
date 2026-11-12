@@ -150,6 +150,44 @@ namespace DOL.GS
             return false;
         }
 
+        // ---- Pet row (M7, G9; Q24 Druid, Q25 Spiritmaster)
+
+        /// <summary>The "Pet" row: 0 Automatic, 1 guard me (defend only), 2 take adds, 3 attack my target.</summary>
+        public const int PetAutomatic = 0, PetGuardMe = 1, PetTakeAdds = 2, PetAttack = 3;
+
+        /// <summary>The classes offered the Pet row: the ones that keep a fighting pet (a Necromancer's servant is its
+        /// body and keeps its own rules; a Theurgist's pets come and go and keep the Theurgist rule).</summary>
+        public static bool PetRowClass(eCharacterClass characterClass) => characterClass is
+            eCharacterClass.Cabalist or eCharacterClass.Enchanter or eCharacterClass.Spiritmaster or
+            eCharacterClass.Bonedancer or eCharacterClass.Hunter or eCharacterClass.Druid or
+            eCharacterClass.Sorcerer or eCharacterClass.Minstrel;
+
+        /// <summary>The player's pet choice for this companion (0 for gamebots).</summary>
+        public static int PetJob(GameBot bot) => CompanionOptions165.Choice(bot, "petjob");
+
+        /// <summary>Pure: the pet service keeps the pet on defence - Guard me always, Take adds and Attack never (they
+        /// pick their own target), Automatic as before (a Regrowth or Nurture Druid, a solo Minstrel).</summary>
+        public static bool PetDefendsOnly(int job, bool automatic) => job switch
+        {
+            PetGuardMe => true,
+            PetTakeAdds or PetAttack => false,
+            _ => automatic,
+        };
+
+        /// <summary>Pure: the owner's own "send my pet at my target" orders are held - Guard me and Take adds (the pet
+        /// service sends it at adds only), Automatic as before; Attack never.</summary>
+        public static bool BrainHoldsPetOffTarget(int job, bool automatic) => job switch
+        {
+            PetGuardMe or PetTakeAdds => true,
+            PetAttack => false,
+            _ => automatic,
+        };
+
+        /// <summary>Pure: the pet goes only at adds - Take adds, or Automatic for a pet class that holds its pet for adds
+        /// (the Spiritmaster grouped with a tank, Q25); Attack never.</summary>
+        public static bool PetTakesAdds(int job, bool automaticHoldsForAdds) =>
+            job == PetTakeAdds || job == PetAutomatic && automaticHoldsForAdds;
+
         /// <summary>Whether this companion's add control runs now (its own choice, and no Main CC to leave it to).</summary>
         public static bool AddControlRuns(GameBot bot)
         {

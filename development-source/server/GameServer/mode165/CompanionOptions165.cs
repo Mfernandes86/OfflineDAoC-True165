@@ -35,7 +35,7 @@ namespace DOL.GS
             KindLifeTransfer = 16, KindAmnesia = 17, KindPerform = 18, KindSavePower = 26, KindPositioning = 27,
             KindDebuffLine = 28, KindSavePowerCaster = 29, KindAttackSpells = 30;
         /// <summary>Companion controls (veteran review M7 and the owner's twist option, 2026-11-11; CompanionControls165).</summary>
-        public const byte KindTwist = 40, KindStance = 41, KindCrowdControl = 42;
+        public const byte KindTwist = 40, KindStance = 41, KindCrowdControl = 42, KindPetJob = 43;
         /// <summary>The fourth Role choice of every healer's Role row (owner 2026-11-11; CompanionSpellOptions165).</summary>
         public const string MeleeHealChoice = "Melee and heal, no attack spells (melee interrupts casts)";
         public static readonly HashSet<string> Verbs = ["charm", "pet", "subpet", "song", "option"];
@@ -136,6 +136,12 @@ namespace DOL.GS
                     "Adds only (never the kill target)", "Off"],
                 bot => bot.CanCastCrowdControlSpells || bot.Spells?.Any(spell => spell?.SpellType is eSpellType.Mesmerize or
                     eSpellType.Mez or eSpellType.Stun) == true),
+            // M7 / G9 (period: pet classes ran their pets on attack / defend; a Spiritmaster or Cabalist with a real tank
+            // parked the pet on an add): Guard me keeps it on defence, Take adds sends it only at a monster on its owner or
+            // on a groupmate who is no tank, Attack sends it at the fight's target (a Regrowth Druid's or a grouped
+            // Spiritmaster's too)
+            new(KindPetJob, "petjob", "Pet", ["Automatic", "Guard me (defend only)", "Take adds", "Attack my target"],
+                bot => CompanionControls165.PetRowClass((eCharacterClass)bot.CharacterClass.ID)),
         ];
 
         /// <summary>A generic AI option's stored key and choices (choice 0 Automatic), or null for an unknown kind.</summary>

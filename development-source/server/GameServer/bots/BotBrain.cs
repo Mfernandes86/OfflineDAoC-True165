@@ -860,9 +860,12 @@ namespace DOL.AI.Brain
             }
         }
 
+        // M7: the Pet row - Guard me and Take adds hold the owner's own "pet, attack my target" orders (Take adds is
+        // sent at adds by the pet service), Attack my target never holds them; Automatic and gamebots as before
         private bool UsesDefensiveOnlyPet => BotBody?.CharacterClass != null &&
-            AutonomousPetSupport.IsDefensiveOnlyPetClass((eCharacterClass)BotBody.CharacterClass.ID, BotBody.Group?.MemberCount > 1,
-                BotBody.CharacterClass.ID == (int)eCharacterClass.Druid && AutonomousPetSupport.IsNatureDruid(BotBody));
+            CompanionControls165.BrainHoldsPetOffTarget(CompanionControls165.PetJob(BotBody),
+                AutonomousPetSupport.IsDefensiveOnlyPetClass((eCharacterClass)BotBody.CharacterClass.ID, BotBody.Group?.MemberCount > 1,
+                    BotBody.CharacterClass.ID == (int)eCharacterClass.Druid && AutonomousPetSupport.IsNatureDruid(BotBody)));
 
         // Class role, not pet ownership: includes Runemaster/Wizard as well as
         // summoners. Melee hybrids and archers retain their own combat policy.
@@ -4787,6 +4790,10 @@ namespace DOL.AI.Brain
 
         private void TryCommandCompanionDruidPet(GameLiving target)
         {
+            // M7 Pet row: Guard me keeps the Druid's pet back, Take adds sends it only at an add
+            int petJob = CompanionControls165.PetJob(BotBody);
+            if (petJob == CompanionControls165.PetGuardMe) return;
+            if (petJob == CompanionControls165.PetTakeAdds) target = AutonomousPetSupport.SpiritmasterAddTarget(BotBody);
             if (!CompanionFollowPolicy.SendsDruidPet(BotBody) || target?.IsAlive != true ||
                 !CanAggroTarget(target) || !CompanionEngagementMode.Allows(Body, target) ||
                 !Body.IsWithinRadius(target, GROUP_DEFENSE_ASSIST_RADIUS) ||
