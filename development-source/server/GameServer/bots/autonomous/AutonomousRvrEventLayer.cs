@@ -58,6 +58,9 @@ public static partial class AutonomousRvrEventLayer
         public bool PreparationNoticeSent;
         public long CreatedTick;
         public bool AttackObserved;
+        /// <summary>Owner decision O9: a stealther of the defending realm reported the attacking force near the target
+        /// (ReportScoutedForce); the defenders may rally before the attack lands.</summary>
+        public bool Scouted;
         /// <summary>Started by a player or the test harness (ForceStart): joined first, and it takes the army of an
         /// automatic siege by the same realm that has not begun fighting yet.</summary>
         public bool Forced;
@@ -566,9 +569,9 @@ public static partial class AutonomousRvrEventLayer
                 // The attacking commitment raises the alarm before combat. Defenders
                 // form next; the third realm joins after both primary forces exist.
                 if (force.Realm != active.AttackerRealm && !(SiegeScheduling
-                        ? RealmEventPolicy.CanRespond(force.Realm == active.DefenderRealm, active.AttackObserved,
+                        ? RealmEventPolicy.CanRespond(force.Realm == active.DefenderRealm, active.AttackObserved || active.Scouted,
                             active.BattleStarted, active.ThirdRealmIntervenes, nowTick - active.BattleStartedTick)
-                        : RealmEventPolicy.CanRecruitRealm(force.Realm == active.DefenderRealm, active.AttackObserved || active.BattleStarted,
+                        : RealmEventPolicy.CanRecruitRealm(force.Realm == active.DefenderRealm, active.AttackObserved || active.Scouted || active.BattleStarted,
                             active.Attackers.Values.Sum(), active.Defenders.Values.Sum(), Capacity(active))))
                     continue;
                 if (force.Realm == active.AttackerRealm)

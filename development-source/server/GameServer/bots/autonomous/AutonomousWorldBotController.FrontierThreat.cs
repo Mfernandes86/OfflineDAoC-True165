@@ -10,6 +10,22 @@ namespace DOL.GS;
 public sealed partial class AutonomousWorldBotController
 {
     private readonly AutonomousFrontierThreatPolicy _frontierThreat = new();
+    private long _nextScoutReportTick;
+
+    /// <summary>Owner decision O9: the enemy realm seen most in the stealther's own scan, reported to the siege layer.</summary>
+    private static void ReportScoutSighting(GameBot bot, GameLiving[] seen)
+    {
+        Span<int> counts = stackalloc int[4];
+        foreach (GameLiving living in seen)
+            if (living is IGamePlayer && (int)living.Realm is >= 1 and <= 3 && living.Realm != bot.Realm)
+                counts[(int)living.Realm]++;
+        int best = 1;
+        for (int realm = 2; realm <= 3; realm++)
+            if (counts[realm] > counts[best])
+                best = realm;
+        if (counts[best] >= AutonomousRvrEventLayer.ScoutReportMinimumEnemies)
+            AutonomousRvrEventLayer.ReportScoutedForce(bot.Name, bot.Realm, (eRealm)best, counts[best], bot.CurrentRegionID, bot.X, bot.Y);
+    }
 
     // PvP stalemate (run 15: Hibernian bots in Darkness Falls stood "fighting" one Albion raider for 15
     // minutes, 117 watchdog relocations): an enemy-realm target that has not lost health for 90 s while
@@ -185,6 +201,13 @@ public sealed partial class AutonomousWorldBotController
             friendly.Realm==bot.Realm && bot.IsWithinRadius(friendly,1000) && BotSiegeRuntime.HoldingPosition(friendly)).ToArray();
         // A True 1.65 stealther (alone or leading a pair) takes the easy kill first: sitting, out of power, hurt.
         bool stalker = (mainAssist == null || callsTargets) && Classic165Mode.IsOn && AutonomousRvrStealthers.PrefersSolo(bot);
+        // owner decision O9: what the stealther sees is a scout report (its own scan; at most one every 30 s)
+        if (stalker && visibleTargets.Length >= AutonomousRvrEventLayer.ScoutReportMinimumEnemies &&
+            GameLoop.GameLoopTime >= _nextScoutReportTick)
+        {
+            _nextScoutReportTick = GameLoop.GameLoopTime + 30_000;
+            ReportScoutSighting(bot, visibleTargets);
+        }
         GameLiving enemy = stalker
             ? AutonomousRvrAssist.Pick(visibleTargets, operatorThreats.Contains, GameRelic.IsPlayerCarryingRelic,
                 target => AutonomousRvrStealthers.Vulnerability(target) * 5 + AutonomousRvrAssist.KillOrderRank(AutonomousRvrAssist.ClassOf(target)),
