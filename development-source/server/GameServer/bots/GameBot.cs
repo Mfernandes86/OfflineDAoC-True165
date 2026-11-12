@@ -139,6 +139,8 @@ namespace DOL.GS
             base.EnemyKilled(enemy);
             // True 1.65 Mode: a draught between a kill and the add still on the bot (BotPotions165)
             BotPotions165.AfterKill(this);
+            // an emote over an RvR kill, now and then (BotEmotes165)
+            BotEmotes165.OnKill(this, enemy);
         }
         public string StableRouteDestination { get; private set; } = string.Empty;
         private DateTime _stableRouteExpectedArrivalUtc;
