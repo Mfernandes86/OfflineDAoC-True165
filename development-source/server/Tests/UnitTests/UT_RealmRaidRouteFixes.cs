@@ -93,6 +93,14 @@ namespace DOL.UnitTests
         public void LesserEncounterIsSetAsideAfterThreeWipes(bool final, int wipes, bool setAside) =>
             Assert.That(RealmRaidDungeonRoute.WipedOut(final, wipes), Is.EqualTo(setAside));
 
+        // The raid goes on to the final trigger once every remaining target is on a retry timer.
+        [TestCase(new long[] { 2_000, 5_000 }, 1_000, true)]
+        [TestCase(new long[] { 2_000, 0 }, 1_000, false)]      // one not probed yet
+        [TestCase(new long[] { 2_000, 1_000 }, 1_000, false)]  // one whose retry has just run out
+        [TestCase(new long[0], 1_000, true)]                   // nothing left
+        public void EverySetAsideTargetSendsTheRaidToTheFinal(long[] retryUntil, long now, bool setAside) =>
+            Assert.That(RealmRaidDungeonRoute.EverySetAside(retryUntil, now), Is.EqualTo(setAside));
+
         [Test]
         public void MusterPostsNeverLandInsideTheKeepOutCircle()
         {

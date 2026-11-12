@@ -141,6 +141,13 @@ namespace DOL.GS
         public const long HoldReportMilliseconds = 10 * 60_000;
         public const long BlockedEndMilliseconds = 20 * 60_000;
         private long _blockedSince;
+        // Set once every remaining target was on a retry timer and the raid went on to the final trigger: from then on
+        // only the final encounters and monsters near the trigger (the horsemen, the primals and their adds) are targets.
+        private bool _finalPhase;
+        public const float FinalPhaseRadius = 4_000f;
+
+        /// <summary>True when every remaining route candidate is on a retry timer (none is waiting to be probed).</summary>
+        public static bool EverySetAside(IEnumerable<long> retryUntil, long now) => retryUntil.All(until => until > now);
 
         /// <summary>
         /// No live encounter reachable from the front or from any party for 20 minutes.
@@ -909,6 +916,8 @@ namespace DOL.GS
                 // Hibernian raid stood four minutes by a "grogan" in Galladoria that none of it could attack (run 22).
                 n.TempProperties.GetProperty<bool>(AutonomousPetSupport.SyntheticCharmPetProperty) != true &&
                 !IsEncounterHazard(n) &&
+                (!_finalPhase || _finalTypes.Contains(n.GetType().Name) ||
+                    Vector3.DistanceSquared(_trigger, new(n.X, n.Y, n.Z)) <= FinalPhaseRadius * FinalPhaseRadius) &&
                 !NameCleared(n is GameEpicBoss, _finalTypes.Contains(n.GetType().Name), _clearedNames.Contains(n.Name), _clearedBossNames.Contains(n.Name)) &&
                 // A neutral expedition goes for its named encounters only; monsters on the way are
                 // fought when they attack (Darkness Falls holds 2,465 spawns).
@@ -976,28 +985,57 @@ namespace DOL.GS
                 Hold = false; Status = "Clearing " + npc.Name; return;
             }
             Hold = true;
-            if (candidates.Any(n => !_routeRetry.ContainsKey(n) || !CanDeferAirbornePatrol(n.GetType(), n.Flags)))
+            // Candidates not yet probed this round are still being checked. When every remaining one is on a retry timer
+            // (unreachable for now, set aside for no damage, a flyer out of reach) the raid goes on to the final trigger:
+            // in Caer Sidi and Galladoria the final does not exist before the raid stands there, so one monster it could
+            // not kill or reach kept it away for good (epic-bosses B1). Tuscaran already does this through its sort order.
+            if (!EverySetAside(candidates.Select(n => _routeRetry.GetValueOrDefault(n)), now))
             {
                 Status = "Checking blocked room approaches; no false completion";
-                if (_blockedSince == 0) _blockedSince = now;
-                if (BlockedTooLong(_blockedSince, now) && !Blocked)
-                {
-                    Blocked = true;
-                    log.Warn($"REALM_EXPEDITION_ROUTE_BLOCKED region={_region} front={(int)Front.X},{(int)Front.Y},{(int)Front.Z} " +
-                             $"remaining={candidates.Length} nearest=\"{candidates.FirstOrDefault()?.Name}\" at={candidates.FirstOrDefault()?.X},{candidates.FirstOrDefault()?.Y},{candidates.FirstOrDefault()?.Z} " +
-                             $"reason=\"no remaining encounter reachable from the front or any party for 20 minutes\"");
-                }
+                CountBlocked(candidates, now);
+                return;
+            }
+            // The encounter controller must see a real party at its native trigger.
+            // Waiting through dialogue/phase timers is not an empty-camp failure.
+            Vector3 trigger = default;
+            bool triggerReachable = false;
+            foreach (Vector3 anchor in anchors)
+            {
+                Zone anchorZone = WorldMgr.GetRegion(_region)?.GetZone((int)anchor.X, (int)anchor.Y) ?? zone;
+                if (nav.HasNavmesh(anchorZone) && AutonomousZonePointApproach.TryResolve(nav, anchorZone, anchor, _trigger, 220, out trigger))
+                { triggerReachable = true; break; }
+            }
+            if (!triggerReachable)
+            {
+                // "Route blocked" now means the final trigger itself cannot be reached.
+                Status = "Checking blocked room approaches; no false completion";
+                CountBlocked(candidates, now);
                 return;
             }
             _blockedSince = 0;
-            // The encounter controller must see a real party at its native trigger.
-            // Waiting through dialogue/phase timers is not an empty-camp failure.
-            if (AutonomousZonePointApproach.TryResolve(nav, zone, Front, _trigger, 220, out Vector3 trigger))
-                Front = Destination = trigger;
+            Front = Destination = trigger;
+            if (candidates.Length > 0 && !_finalPhase)
+            {
+                _finalPhase = true;
+                log.Warn($"REALM_EXPEDITION_FINAL_PHASE region={_region} setAside={candidates.Length} " +
+                         $"names=\"{string.Join(",", candidates.Select(n => n.Name).Distinct().Take(8))}\" reason=\"every remaining target is on a retry timer\"");
+            }
             TargetName = "Final encounter staging";
             _firstTargetChosen = true;
             Status = candidates.Length == 0 ? "Waiting for the next scripted encounter phase" :
-                $"Waiting for the next scripted encounter phase; {candidates.Length} airborne patrols remain";
+                $"Waiting for the next scripted encounter phase; {candidates.Length} set aside";
+        }
+
+        private void CountBlocked(GameNPC[] candidates, long now)
+        {
+            if (_blockedSince == 0) _blockedSince = now;
+            if (BlockedTooLong(_blockedSince, now) && !Blocked)
+            {
+                Blocked = true;
+                log.Warn($"REALM_EXPEDITION_ROUTE_BLOCKED region={_region} front={(int)Front.X},{(int)Front.Y},{(int)Front.Z} " +
+                         $"remaining={candidates.Length} nearest=\"{candidates.FirstOrDefault()?.Name}\" at={candidates.FirstOrDefault()?.X},{candidates.FirstOrDefault()?.Y},{candidates.FirstOrDefault()?.Z} " +
+                         $"reason=\"no remaining encounter and not the final trigger reachable from the front or any party for 20 minutes\"");
+            }
         }
     }
 }
