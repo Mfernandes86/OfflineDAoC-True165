@@ -1073,23 +1073,24 @@ namespace DOL.UnitTests
         }
 
         [Test]
-        public void PaladinHoldsTheEnduranceChantInAFightWithoutCycling()
+        public void ASoloPaladinHoldsTheDamageChantInAFightWithoutCycling()
         {
-            // owner 2026-10-30: endurance in a fight, no chant cycling (each recast replays the chant's sound)
+            // O1 (owner 2026-11-11): one chant by situation, no cycling (each recast replays the chant's sound); a solo
+            // Paladin in a fight at good health holds the damage add (it held endurance before O1)
             Bot bot = NewBot(typeof(ClassPaladin)); bot.CaptureCasts = true; bot.Attacking = true;
             Spell endurance = Song("EnduranceRegenBuff");
             Spell damage = Song("DamageAdd", id: 99972);
             bot.InstantMiscSpells = new List<Spell> { endurance, damage };
             typeof(BotBrain).GetMethod("TryMaintainTankChant", Hidden).Invoke(bot.Brain, null);
-            Assert.That(bot.LastRequested?.ID, Is.EqualTo(endurance.ID), "a Paladin starts the endurance chant");
+            Assert.That(bot.LastRequested?.ID, Is.EqualTo(damage.ID), "a solo Paladin in a fight starts the damage chant");
 
-            var source = new ECSPulseEffect(new(bot, 0, 1, new SpellHandler(bot, endurance, Line)), endurance.Frequency);
+            var source = new ECSPulseEffect(new(bot, 0, 1, new SpellHandler(bot, damage, Line)), damage.Frequency);
             source.Start();
             bot.effectListComponent.BeginTick();
             bot.LastRequested = null;
             Field(typeof(BotBrain), bot.Brain, "_nextSongTwistTick", 0L);
             typeof(BotBrain).GetMethod("TryMaintainTankChant", Hidden).Invoke(bot.Brain, null);
-            Assert.That(bot.LastRequested, Is.Null, "and then holds it: no switch to the damage chant");
+            Assert.That(bot.LastRequested, Is.Null, "and then holds it: no switch to another chant");
         }
 
         [TestCase(true, false, false, false, false, eSpellType.SpeedEnhancement)]

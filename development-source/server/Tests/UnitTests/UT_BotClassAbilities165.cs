@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace DOL.GS.Tests
@@ -14,6 +15,40 @@ namespace DOL.GS.Tests
             Assert.That(BotClassAbilities165.PetHoldsDamageAbovePercent(eCharacterClass.Enchanter), Is.EqualTo(85));
             Assert.That(BotClassAbilities165.PetHoldsDamageAbovePercent(eCharacterClass.Cabalist), Is.EqualTo(85));
             Assert.That(BotClassAbilities165.PetHoldsDamageAbovePercent(eCharacterClass.Theurgist), Is.EqualTo(85));
+        });
+
+        [Test]
+        public void APaladinPicksItsOneChantBySituation() => Assert.Multiple(() =>
+        {
+            // O1 (owner 2026-11-11)
+            var all = new HashSet<eSpellType> { eSpellType.EnduranceRegenBuff, eSpellType.DamageAdd, eSpellType.CombatHeal,
+                eSpellType.SpecArmorFactorBuff };
+            var main = BotClassAbilities165.PaladinRole.MainTank;
+            var off = BotClassAbilities165.PaladinRole.OffTank;
+            var solo = BotClassAbilities165.PaladinRole.Solo;
+            Assert.That(BotClassAbilities165.PaladinChant(main, true, true, 100, 100, all), Is.EqualTo(eSpellType.CombatHeal),
+                "main tank: Refreshment full time keeps the aggro");
+            Assert.That(BotClassAbilities165.PaladinChant(main, true, true, 100, 10, all), Is.EqualTo(eSpellType.CombatHeal),
+                "a tank keeps the heal chant even low on endurance");
+            Assert.That(BotClassAbilities165.PaladinChant(off, true, false, 100, 100, all), Is.EqualTo(eSpellType.DamageAdd));
+            Assert.That(BotClassAbilities165.PaladinChant(off, true, false, 100, 20, all), Is.EqualTo(eSpellType.EnduranceRegenBuff),
+                "endurance only when low and not tanking");
+            Assert.That(BotClassAbilities165.PaladinChant(solo, true, true, 90, 100, all), Is.EqualTo(eSpellType.DamageAdd));
+            Assert.That(BotClassAbilities165.PaladinChant(solo, true, true, 50, 100, all), Is.EqualTo(eSpellType.CombatHeal));
+            Assert.That(BotClassAbilities165.PaladinChant(solo, true, true, 90, 20, all), Is.EqualTo(eSpellType.DamageAdd),
+                "solo with the monster on it: tanking, no endurance switch");
+            Assert.That(BotClassAbilities165.PaladinChant(main, false, true, 100, 100, all), Is.EqualTo(eSpellType.EnduranceRegenBuff),
+                "out of a fight");
+            Assert.That(BotClassAbilities165.PaladinChant(main, true, true, 100, 100, new HashSet<eSpellType> { eSpellType.DamageAdd }),
+                Is.EqualTo(eSpellType.DamageAdd), "a young Paladin without the heal chant");
+        });
+
+        [Test]
+        public void APaladinHoldsAChantItStartedForTenSeconds() => Assert.Multiple(() =>
+        {
+            Assert.That(BotClassAbilities165.PaladinKeepsChant(true, 9_000), Is.True);
+            Assert.That(BotClassAbilities165.PaladinKeepsChant(true, 10_000), Is.False);
+            Assert.That(BotClassAbilities165.PaladinKeepsChant(false, 1_000), Is.False, "a chant it did not start is not held");
         });
 
         [Test]

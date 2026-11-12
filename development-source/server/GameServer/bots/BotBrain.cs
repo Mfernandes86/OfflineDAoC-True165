@@ -3122,6 +3122,7 @@ namespace DOL.AI.Brain
                     BotSongTwistPolicy.IsManagedSong(bot, effect.SpellHandler?.Spell))?.SpellHandler.Spell;
             Spell chosen;
             bool paladinTwisting = false;
+            int paladinHeldId = 0;   // O1: the situational chant (the twist's anchor)
             if ((eCharacterClass)bot.CharacterClass.ID == eCharacterClass.Warden)
             {
                 bool combat = bot.InCombat || HasAggro || bot.IsAttacking ||
@@ -3151,19 +3152,32 @@ namespace DOL.AI.Brain
             }
             else
             {
-                // A Paladin holds one chant, grouped or solo (owner 2026-10-30: endurance in a fight, no cycling):
-                // endurance, else damage add, else armor. Each recast replays the chant's sound.
-                eSpellType held = BotSongTwistPolicy.PaladinHold(chants.Select(spell => spell.SpellType).ToHashSet());
+                // A Paladin holds one chant, no cycling, picked by situation (O1, owner 2026-11-11): the heal chant as
+                // main tank, the damage add as off-tank or solo (the heal chant solo when hurt), endurance out of a
+                // fight or when low and not tanking; a chant it started stays at least 10 s. Each recast replays the
+                // chant's sound.
+                bool fighting = bot.InCombat || HasAggro || bot.IsAttacking;
+                BotClassAbilities165.PaladinRole role = bot.Group?.MemberCount > 1
+                    ? BotMeleeStylePolicy.HasTankPartner(bot) ? BotClassAbilities165.PaladinRole.OffTank : BotClassAbilities165.PaladinRole.MainTank
+                    : BotClassAbilities165.PaladinRole.Solo;
+                bool tanking = role == BotClassAbilities165.PaladinRole.MainTank ||
+                    bot.TargetObject is GameLiving foe && foe.TargetObject == bot;
+                eSpellType held = BotClassAbilities165.PaladinChant(role, fighting, tanking, bot.HealthPercent, bot.EndurancePercent,
+                    chants.Select(spell => spell.SpellType).ToHashSet());
                 // the player's choice for a hired Paladin, in a fight (1) or not (2) (CompanionOptions165, owner 2026-11-05)
-                if (CompanionOptions165.Song(bot, bot.InCombat || HasAggro || bot.IsAttacking ? 1 : 2) is { } chosenChant &&
+                if (CompanionOptions165.Song(bot, fighting ? 1 : 2) is { } chosenChant &&
                     chants.Any(spell => spell.SpellType == chosenChant))
                     held = chosenChant;
+                else if (active != null && chants.Any(spell => spell.ID == active.ID) &&
+                         BotClassAbilities165.PaladinKeepsChant(active.ID == _paladinChantId,
+                             GameLoop.GameLoopTime - _paladinChantSince))
+                    held = active.SpellType;
                 chosen = chants.FirstOrDefault(spell => spell.SpellType == held);
+                paladinHeldId = chosen?.ID ?? 0;
                 // owner 2026-11-11, "Twist songs / chants" (a hired Paladin, default off): the held chant is the anchor and
                 // the other chants are twisted in as their buff runs low, as the Paladin did before 2026-10-30
                 if (chosen != null && CompanionControls165.TwistsSongs(bot))
                 {
-                    bool fighting = bot.InCombat || HasAggro || bot.IsAttacking;
                     bool combatHealing = fighting && (bot.HealthPercent < 95 || bot.Group?.GetMembersInTheGroup().Any(member =>
                         member.IsAlive && member.HealthPercent < 95 && member.CurrentRegionID == bot.CurrentRegionID &&
                         bot.IsWithinRadius(member, GROUP_DEFENSE_ASSIST_RADIUS)) == true);
@@ -3201,10 +3215,18 @@ namespace DOL.AI.Brain
                 if (CompanionControls165.QuietSwitch(paladinTwisting, active != null))
                     bot.SongSoundQuietUntil = GameLoop.GameLoopTime + Math.Max(0, chosen.CastTime) +
                                               CompanionControls165.TwistQuietMarginMilliseconds;
-                bot.CastSpell(chosen, m_mobSpellLine, false);
+                // O1's 10 s hold follows the held chant only; a chant twisted in around it does not restart the hold
+                if (bot.CastSpell(chosen, m_mobSpellLine, false) && (!paladinTwisting || chosen.ID == paladinHeldId))
+                {
+                    _paladinChantId = chosen.ID;
+                    _paladinChantSince = GameLoop.GameLoopTime;
+                }
             }
             finally { bot.TargetObject = oldTarget; }
         }
+
+        private int _paladinChantId;
+        private long _paladinChantSince;
 
         private bool IsUnderImmediateMeleePressure() =>
             AggroList.Keys.Any(attacker => attacker?.IsAlive == true &&

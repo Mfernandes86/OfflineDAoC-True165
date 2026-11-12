@@ -34,6 +34,44 @@ namespace DOL.GS
 
         public const int FlurryRange = 135;
 
+        public enum PaladinRole { Solo, MainTank, OffTank }
+
+        /// <summary>A Paladin keeps a chant it started for at least this long before it changes (O1).</summary>
+        public const int PaladinChantHoldMilliseconds = 10_000;
+
+        /// <summary>
+        /// O1 (owner 2026-11-11): a Paladin holds one chant (no cycling) and picks it by situation. Main tank: the heal
+        /// chant (Prima: "full time will guarantee that you keep the aggro"). Off-tank: the damage add. Solo: the damage
+        /// add, the heal chant when hurt (Prima 6237-6280). The endurance chant out of a fight, and in a fight only when
+        /// its own endurance is under 30% and it is not tanking. The 1.64 client table has all four (Refreshment, Battle,
+        /// Crusader's, Chant of Endurance); a missing one falls back to damage add, heal, endurance, armor.
+        /// </summary>
+        public static eSpellType PaladinChant(PaladinRole role, bool fighting, bool tanking, int healthPercent,
+            int endurancePercent, System.Collections.Generic.ICollection<eSpellType> available)
+        {
+            eSpellType want;
+            if (!fighting || endurancePercent < 30 && !tanking)
+                want = eSpellType.EnduranceRegenBuff;
+            else
+                want = role switch
+                {
+                    PaladinRole.MainTank => eSpellType.CombatHeal,
+                    PaladinRole.OffTank => eSpellType.DamageAdd,
+                    _ => healthPercent < 70 ? eSpellType.CombatHeal : eSpellType.DamageAdd,
+                };
+            if (available.Contains(want))
+                return want;
+            foreach (eSpellType fallback in new[] { eSpellType.DamageAdd, eSpellType.CombatHeal, eSpellType.EnduranceRegenBuff,
+                         eSpellType.SpecArmorFactorBuff })
+                if (available.Contains(fallback))
+                    return fallback;
+            return eSpellType.EnduranceRegenBuff;
+        }
+
+        /// <summary>Pure: keep the running chant while it is younger than the hold (and still a chant the Paladin has).</summary>
+        public static bool PaladinKeepsChant(bool activeIsTheOneItStarted, long sinceMilliseconds) =>
+            activeIsTheOneItStarted && sinceMilliseconds < PaladinChantHoldMilliseconds;
+
         /// <summary>
         /// Rapid Fire (Ranger) is a stance: on for a runner (a monster under 30% health moving away and not on the
         /// archer: get the arrow off before it brings friends) or a player-like enemy that is casting or running
