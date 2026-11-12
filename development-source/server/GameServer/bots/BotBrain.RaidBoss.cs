@@ -148,5 +148,99 @@ namespace DOL.AI.Brain
                 if (!pulse.IsEnding && !pulse.IsEnded && pulse.SpellHandler?.Spell?.SpellType == eSpellType.Bladeturn)
                     pulse.End();
         }
+        private long _areaUntil;
+        private int _areaX, _areaY, _areaRadius;
+        private bool _areaOnBoss;
+        private long _areaMoveAt;
+        /// <summary>How long a seen area spell is still avoided after the last think that saw it being cast.</summary>
+        public const long AreaHoldMilliseconds = 1_500;
+
+        /// <summary>
+        /// epic-bosses L2, sh-bosses: bots stood in a boss's area spells - Apocalypse's Rain of Fire (650 every 3 s within
+        /// 800 for 30 s, twice), Govannon's damage over time round his target, Bane of Hope's. The server has no "ground
+        /// effect" object: these are spells the boss itself is casting, readable from its casting component (the spell's
+        /// radius and target type, the boss's ground target or the cast target). On its existing think a bot whose
+        /// target is an epic encounter casting a harmful spell with a radius and a cast time steps out when it can keep
+        /// fighting from outside (<see cref="RaidBossTraits.StepsOutOfArea"/>), and a melee bot waits outside while the
+        /// cast lasts and the boss stands in it. Instant area spells (Xaga's lights, the fire primal's patches, the Rain
+        /// of Fire add's bolt) give no warning and are not dodged. True when the turn is used.
+        /// Cost: a type test and a cast read per think; a distance only while the target casts such a spell; a walk
+        /// order at most every second. No scan, no allocation.
+        /// </summary>
+        private bool TryStepOutOfBossArea(GameLiving target)
+        {
+            GameBot bot = BotBody;
+            if (bot == null || target is not GameNPC boss || boss is not IGameEpicNpc || !boss.IsAlive)
+                return false;
+            long now = GameLoop.GameLoopTime;
+            bool castTargetMe = false;
+            if (boss.IsCasting && boss.castingComponent?.SpellHandler is { } handler &&
+                handler.Spell is { IsHarmful: true, Radius: > 0, CastTime: > 0 } spell)
+            {
+                RaidBossTraits.AreaCentre kind = RaidBossTraits.CentreOf(spell.Target, spell.Range, spell.Radius);
+                GameObject centre = null;
+                int x = 0, y = 0;
+                switch (kind)
+                {
+                    case RaidBossTraits.AreaCentre.Ground when boss.GroundTarget.IsValid:
+                        x = boss.GroundTarget.X; y = boss.GroundTarget.Y;
+                        break;
+                    case RaidBossTraits.AreaCentre.CastTarget when handler.Target is { } castTarget:
+                        centre = castTarget;
+                        castTargetMe = castTarget == bot;
+                        break;
+                    case RaidBossTraits.AreaCentre.Caster:
+                        centre = boss;
+                        break;
+                    default:
+                        kind = RaidBossTraits.AreaCentre.None;
+                        break;
+                }
+                if (kind != RaidBossTraits.AreaCentre.None)
+                {
+                    if (centre != null)
+                    {
+                        x = centre.X; y = centre.Y;
+                    }
+                    _areaX = x; _areaY = y; _areaRadius = spell.Radius;
+                    _areaOnBoss = kind == RaidBossTraits.AreaCentre.Caster ||
+                        boss.IsWithinRadius(new Point3D(x, y, boss.Z), spell.Radius) && kind == RaidBossTraits.AreaCentre.Ground;
+                    _areaUntil = now + AreaHoldMilliseconds;
+                }
+            }
+            if (now >= _areaUntil)
+                return false;
+
+            long reach = _areaRadius + RaidBossTraits.AreaStepMargin;
+            long bx = bot.X - _areaX, by = bot.Y - _areaY;
+            bool inside = bx * bx + by * by < reach * reach;
+            bool ranged = PrefersCurrentSpellRange() || bot.ActiveWeaponSlot == eActiveWeaponSlot.Distance ||
+                bot.CanCastHealSpells && !IsTankClass;
+            bool holds = boss.TargetObject == bot;
+            if (RaidBossTraits.StepsOutOfArea(inside, castTargetMe, ranged, holds, bot.HealthPercent, _areaOnBoss,
+                    bot.IsWithinRadius(boss, bot.MeleeAttackRange + 50)))
+            {
+                if (now - _areaMoveAt >= 1_000 || !bot.IsMoving)
+                {
+                    _areaMoveAt = now;
+                    if (bot.IsAttacking && !holds)
+                        bot.StopAttack();
+                    bot.StopFollowing();
+                    (int x, int y) = RaidBossTraits.PointOutsideCircle(_areaX, _areaY, bot.X, bot.Y, _areaRadius,
+                        RaidBossTraits.AreaStepMargin, boss.X, boss.Y);
+                    bot.PathTo(new Point3D(x, y, bot.Z), bot.MaxSpeed);
+                }
+                return true;
+            }
+            long ox = boss.X - _areaX, oy = boss.Y - _areaY;
+            if (RaidBossTraits.WaitsOutsideArea(true, inside, ranged, holds, ox * ox + oy * oy < reach * reach))
+            {
+                if (bot.IsAttacking)
+                    bot.StopAttack();
+                bot.StopFollowing();
+                return true;
+            }
+            return false;
+        }
     }
 }

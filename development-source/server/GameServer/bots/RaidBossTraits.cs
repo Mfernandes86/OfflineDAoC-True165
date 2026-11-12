@@ -79,5 +79,72 @@ namespace DOL.GS
                 return (x, y);
             return ((int)Math.Round(cx + dx / length * reach), (int)Math.Round(cy + dy / length * reach));
         }
+        // ---- epic-bosses L2, sh-bosses: stepping out of a boss's area spell
+
+        /// <summary>Where a boss's area spell lands.</summary>
+        public enum AreaCentre { None, Ground, CastTarget, Caster }
+
+        /// <summary>Pure: the centre of a harmful spell with a radius: its ground target for a ranged area spell, the
+        /// caster for a point blank one, the cast target for a targeted spell with a radius (a damage over time "around
+        /// his target"); none without a radius.</summary>
+        public static AreaCentre CentreOf(eSpellTarget target, int range, int radius) =>
+            radius <= 0 ? AreaCentre.None : target switch
+            {
+                eSpellTarget.AREA => range > 0 ? AreaCentre.Ground : AreaCentre.Caster,
+                eSpellTarget.ENEMY => AreaCentre.CastTarget,
+                eSpellTarget.SELF or eSpellTarget.GROUP or eSpellTarget.REALM => AreaCentre.Caster,
+                _ => AreaCentre.None,
+            };
+
+        /// <summary>How far outside the radius a bot steps.</summary>
+        public const int AreaStepMargin = 150;
+
+        /// <summary>A tank holding the boss leaves the area only under this much health (moving drags the boss along).</summary>
+        public const int TankLeavesAreaHealthPercent = 50;
+
+        /// <summary>
+        /// Pure: a bot inside a boss's area spell steps out when it can keep fighting from outside: ranged bots and
+        /// healers always; the tank holding the boss by its health; a melee bot when the area is not on the boss (it
+        /// returns after the cast) or it cannot reach the boss anyway (Apocalypse in the air). The cast's own target of
+        /// a targeted spell stays (the spell lands on it wherever it goes).
+        /// </summary>
+        public static bool StepsOutOfArea(bool inside, bool castTargetOfTargetedSpell, bool rangedOrHealer, bool holdsBoss,
+            int healthPercent, bool centredOnBoss, bool canHitBossNow)
+        {
+            if (!inside || castTargetOfTargetedSpell)
+                return false;
+            if (holdsBoss)
+                return healthPercent < TankLeavesAreaHealthPercent;
+            return rangedOrHealer || !centredOnBoss || !canHitBossNow;
+        }
+
+        /// <summary>
+        /// Pure: a melee bot that stepped out waits outside, rather than walk back in to the boss, while the area lasts
+        /// and the boss stands inside it.
+        /// </summary>
+        public static bool WaitsOutsideArea(bool areaActive, bool inside, bool rangedOrHealer, bool holdsBoss, bool bossInArea) =>
+            areaActive && !inside && !rangedOrHealer && !holdsBoss && bossInArea;
+
+        /// <summary>
+        /// The point just outside a circle on the bot's side of it (straight out from the centre through the bot); a bot
+        /// standing on the centre steps out on the side away from <paramref name="awayX"/>, <paramref name="awayY"/>, or
+        /// to the east when that is the centre too.
+        /// </summary>
+        public static (int X, int Y) PointOutsideCircle(int cx, int cy, int x, int y, int radius, int margin, int awayX, int awayY)
+        {
+            double dx = x - cx, dy = y - cy;
+            double length = Math.Sqrt(dx * dx + dy * dy);
+            if (length < 1)
+            {
+                dx = cx - awayX; dy = cy - awayY;
+                length = Math.Sqrt(dx * dx + dy * dy);
+                if (length < 1)
+                {
+                    dx = 1; dy = 0; length = 1;
+                }
+            }
+            double reach = radius + margin;
+            return ((int)Math.Round(cx + dx / length * reach), (int)Math.Round(cy + dy / length * reach));
+        }
     }
 }

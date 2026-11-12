@@ -4214,6 +4214,9 @@ namespace DOL.AI.Brain
             // dragon-fight L1: ... and a boss outside the lair circle it takes damage in (BotBrain.RaidBoss)
             if (Body.TargetObject is GameNPC lairBoss && TryHoldForBossOutsideLair(lairBoss))
                 return;
+            // epic-bosses L2: out of a boss's area spell while it is cast (BotBrain.RaidBoss)
+            if (Body.TargetObject is GameLiving areaBoss && TryStepOutOfBossArea(areaBoss))
+                return;
             // a shield tank concentrating on blocking (Engage) does not swing this turn
             if (MaintainEngage())
                 return;

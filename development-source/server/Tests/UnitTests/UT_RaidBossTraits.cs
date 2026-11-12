@@ -80,6 +80,48 @@ namespace DOL.UnitTests
             Assert.That(((IRaidBossTraits)plain).RaidLairRadius, Is.Zero);
         }
 
+        [TestCase(eSpellTarget.AREA, 2800, 800, RaidBossTraits.AreaCentre.Ground)]     // Apocalypse's Rain of Fire
+        [TestCase(eSpellTarget.AREA, 0, 350, RaidBossTraits.AreaCentre.Caster)]        // point blank
+        [TestCase(eSpellTarget.ENEMY, 1500, 300, RaidBossTraits.AreaCentre.CastTarget)] // Govannon's damage over time
+        [TestCase(eSpellTarget.ENEMY, 1500, 0, RaidBossTraits.AreaCentre.None)]         // a plain bolt
+        [TestCase(eSpellTarget.CONE, 1000, 500, RaidBossTraits.AreaCentre.None)]
+        public void TheAreaOfABossSpellIsWhereItLands(eSpellTarget target, int range, int radius,
+            RaidBossTraits.AreaCentre expected) =>
+            Assert.That(RaidBossTraits.CentreOf(target, range, radius), Is.EqualTo(expected));
+
+        // inside, castTargetOfTargetedSpell, ranged, holdsBoss, health, centredOnBoss, canHitBoss
+        [TestCase(true, false, true, false, 100, true, false, true)]    // ranged or healer: always out
+        [TestCase(true, false, false, true, 90, false, true, false)]    // the tank holding it stays while healthy
+        [TestCase(true, false, false, true, 40, false, true, true)]     // ... and leaves when low
+        [TestCase(true, false, false, false, 100, false, true, true)]   // melee beside the tank: out of the area round it
+        [TestCase(true, false, false, false, 100, true, true, false)]   // melee at a point blank boss it can hit: stays
+        [TestCase(true, false, false, false, 100, true, false, true)]   // melee under Apocalypse in the air: out
+        [TestCase(true, true, true, false, 100, false, true, false)]    // the spell's own target: it follows it, stay
+        [TestCase(false, false, true, false, 100, true, false, false)]  // not inside: nothing to do
+        public void ABotStepsOutWhenItCanKeepFightingFromOutside(bool inside, bool castTarget, bool ranged, bool holds,
+            int health, bool onBoss, bool canHit, bool expected) =>
+            Assert.That(RaidBossTraits.StepsOutOfArea(inside, castTarget, ranged, holds, health, onBoss, canHit),
+                Is.EqualTo(expected));
+
+        [Test]
+        public void AMeleeBotWaitsOutsideWhileTheBossStandsInTheArea()
+        {
+            Assert.That(RaidBossTraits.WaitsOutsideArea(true, false, false, false, true), Is.True);
+            Assert.That(RaidBossTraits.WaitsOutsideArea(false, false, false, false, true), Is.False);  // cast over: back in
+            Assert.That(RaidBossTraits.WaitsOutsideArea(true, false, true, false, true), Is.False);   // ranged keep casting
+            Assert.That(RaidBossTraits.WaitsOutsideArea(true, false, false, false, false), Is.False); // boss is outside it
+        }
+
+        [Test]
+        public void ABotStepsStraightOutOfTheCircle()
+        {
+            Assert.That(RaidBossTraits.PointOutsideCircle(0, 0, 100, 0, 800, 150, 0, 0), Is.EqualTo((950, 0)));
+            // on the centre: away from the boss
+            Assert.That(RaidBossTraits.PointOutsideCircle(0, 0, 0, 0, 300, 150, 0, 100), Is.EqualTo((0, -450)));
+            // on the centre with the boss there too: east
+            Assert.That(RaidBossTraits.PointOutsideCircle(0, 0, 0, 0, 300, 150, 0, 0), Is.EqualTo((450, 0)));
+        }
+
         private sealed class PlainBoss : IRaidBossTraits { }
     }
 }
