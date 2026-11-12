@@ -152,8 +152,11 @@ namespace DOL.GS
             AutonomousBotEconomy.ListingCandidate plan = AutonomousBotEconomy.PlanCraftedListing(bot, product, materials, ItemValue165.RollMood());
             // (an enchanted piece's materials include the enchant: gems, tincture and fees are not given away)
             int price = plan?.PriceCopper ?? 0;
-            bool listed = plan != null && AutonomousBotEconomy.TryListPlanned(bot, plan, price, out _);
-            if (!listed)
+            bool busy = false;
+            bool listed = plan != null && AutonomousBotEconomy.TryListPlanned(bot, plan, price, out busy);
+            // a busy exchange (its locks are only tried) leaves the product in the bag for the bot's next exchange errand
+            // (review 2026-11-11: under the one-second save flush a share of the crafted stock went to merchants)
+            if (!listed && !busy)
             {
                 Made made = products[i];
                 DbInventoryItem product = made.Item;
@@ -188,6 +191,8 @@ namespace DOL.GS
                 Log.Info($"BOT_CRAFTED_165 bot={bot.Name} id={bot.DatabaseID} craft={craft} skill={record.CraftLevel} " +
                          $"item=\"{made.Template.Name}\" recipe={made.Recipe.Level} listed={listed} price={price} enchanted={enchant.Done}");
             }
+            Log.Info($"BOT_CRAFTED_165 bot={bot.Name} id={bot.DatabaseID} craft={craft} skill={record.CraftLevel} " +
+                     $"item=\"{template.Name}\" recipe={recipe.Level} listed={listed} busy={busy} price={price} enchanted={enchant.Done}");
             bot.MarkAutonomousStateDirty();
             AutonomousBotStatusPersistence.Queue(bot, true);
             return true;
