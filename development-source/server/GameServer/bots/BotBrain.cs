@@ -7566,6 +7566,13 @@ namespace DOL.AI.Brain
 
                 if (!spellToCast.IsInstantCast)
                 {
+                    // GitHub #45: the cast it is already making of this spell on this target is left to finish. A healer
+                    // with an instant heal ready comes through here on every think, and the cure it had chosen again
+                    // (the nearsight or mez is still on the target until the cast lands) cancelled and restarted its
+                    // own 6-second Cure Nearsight until the nearsight ran out.
+                    if (KeepsCastInProgress(BotBody.IsCasting, BotBody.castingComponent?.SpellHandler?.Spell, spellToCast,
+                            BotBody.castingComponent?.SpellHandler?.Target, spellTarget))
+                        return true;
                     if (BotBody.IsCasting)
                         BotBody.StopCurrentSpellcast();
                     else if (BotBody.IsAttacking)
@@ -7608,6 +7615,14 @@ namespace DOL.AI.Brain
 
             return startedCasting || isCastingHeal;
         }
+
+        /// <summary>
+        /// Pure (GitHub #45): the bot is already casting the chosen spell on the chosen target, so that cast goes on - it
+        /// is not cancelled and started again.
+        /// </summary>
+        public static bool KeepsCastInProgress(bool casting, Spell current, Spell chosen, object currentTarget, object chosenTarget) =>
+            casting && current != null && chosen != null && (ReferenceEquals(current, chosen) || current.ID == chosen.ID) &&
+            currentTarget != null && ReferenceEquals(currentTarget, chosenTarget);
 
         private bool CanHealRelicCarrier(GameLiving carrier)
         {
