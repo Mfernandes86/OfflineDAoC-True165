@@ -1466,7 +1466,7 @@ namespace DOL.GS.Quests.Albion
 		//Set quest name
 		public override string Name
 		{
-			get { return Classic165Mode.IsOn ? questTitle : "Symbol of the Broken (Level 50 Academy Epic)"; }
+			get { return Classic165Mode.IsOn ? Epics165.FinaleTitle(questTitle) : "Symbol of the Broken (Level 50 Academy Epic)"; }
 		}
 
 		// Define Steps

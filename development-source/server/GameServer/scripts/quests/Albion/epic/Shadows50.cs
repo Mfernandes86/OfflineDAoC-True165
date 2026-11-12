@@ -2050,7 +2050,7 @@ namespace DOL.GS.Quests.Albion
 		//Set quest name
 		public override string Name
 		{
-			get { return Classic165Mode.IsOn ? Title165 : "Feast of the Decadent (Level 50 Guild of Shadows Epic)"; }
+			get { return Classic165Mode.IsOn ? Epics165.FinaleTitle(Title165) : "Feast of the Decadent (Level 50 Guild of Shadows Epic)"; }
 		}
 
 		// Define Steps

@@ -2397,7 +2397,7 @@ namespace DOL.GS.Quests.Hibernia
 		//Set quest name
 		public override string Name
 		{
-			get { return Classic165Mode.IsOn ? Title165 : "The Horn Twin (Level 50 Path of Harmony Epic)"; }
+			get { return Classic165Mode.IsOn ? Epics165.FinaleTitle(Title165) : "The Horn Twin (Level 50 Path of Harmony Epic)"; }
 		}
 
 		// Define Steps
