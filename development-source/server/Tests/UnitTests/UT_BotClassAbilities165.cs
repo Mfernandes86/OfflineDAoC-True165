@@ -18,6 +18,38 @@ namespace DOL.GS.Tests
         });
 
         [Test]
+        public void AShieldTankEngagesAnArcherOrAMonsterWhileTheHealerIsLow() => Assert.Multiple(() =>
+        {
+            Assert.That(BotClassAbilities165.EngageWorthwhile(true, true, true, false, false, enemyArcher: true, healerLowOnPower: false), Is.True,
+                "an archer shooting at it");
+            Assert.That(BotClassAbilities165.EngageWorthwhile(true, true, true, false, false, enemyArcher: false, healerLowOnPower: true), Is.True,
+                "a monster coming at it while the healer rests");
+            Assert.That(BotClassAbilities165.EngageWorthwhile(true, true, true, false, false, false, false), Is.False,
+                "otherwise it fights");
+            Assert.That(BotClassAbilities165.EngageWorthwhile(true, true, true, enemyAttackedRecently: true, false, true, true), Is.False,
+                "the ability's own rule: nobody hit the enemy in the last 5 s");
+            Assert.That(BotClassAbilities165.EngageWorthwhile(true, true, true, false, otherEnemyInMelee: true, true, true), Is.False,
+                "Engage blocks one enemy only");
+            Assert.That(BotClassAbilities165.EngageWorthwhile(false, true, true, false, false, true, true), Is.False, "not a shield tank");
+            Assert.That(BotClassAbilities165.EngageWorthwhile(true, false, true, false, false, true, true), Is.False, "no shield up");
+            Assert.That(BotClassAbilities165.EngageWorthwhile(true, true, false, false, false, true, true), Is.False, "the enemy is not on it");
+            Assert.That(BotClassAbilities165.EngageShieldSpec, Is.EqualTo(25));
+        });
+
+        [Test]
+        public void EngageEndsWhenItNoLongerHelps() => Assert.Multiple(() =>
+        {
+            Assert.That(BotClassAbilities165.EngageHolds(false, 2_000, enemyArcher: true, inMeleeReach: false, false), Is.True);
+            Assert.That(BotClassAbilities165.EngageHolds(false, 2_000, enemyArcher: true, inMeleeReach: true, false), Is.False,
+                "it reached the archer: swing");
+            Assert.That(BotClassAbilities165.EngageHolds(false, 2_000, enemyArcher: false, false, healerLowOnPower: true), Is.True);
+            Assert.That(BotClassAbilities165.EngageHolds(false, 2_000, enemyArcher: false, false, healerLowOnPower: false), Is.False,
+                "the healer has power again");
+            Assert.That(BotClassAbilities165.EngageHolds(true, 2_000, true, false, true), Is.False, "someone else hits it: no extra block");
+            Assert.That(BotClassAbilities165.EngageHolds(false, 15_000, true, false, true), Is.False, "at most 15 s without a swing");
+        });
+
+        [Test]
         public void APaladinPicksItsOneChantBySituation() => Assert.Multiple(() =>
         {
             // O1 (owner 2026-11-11)

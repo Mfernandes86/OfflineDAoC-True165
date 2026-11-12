@@ -15,6 +15,10 @@ namespace DOL.GS
             {
                 GamePlayer player = Owner as GamePlayer;
 
+                // a gamebot tank engages too (M8): no player client to translate for
+                if (player == null)
+                    return "Engage";
+
                 if (EngageTarget != null)
                     return LanguageMgr.GetTranslation(player.Client, "Effects.EngageEffect.EngageName", EngageTarget.GetName(0, false));
 

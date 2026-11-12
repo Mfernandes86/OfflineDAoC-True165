@@ -4138,6 +4138,9 @@ namespace DOL.AI.Brain
             // A tethered boss outside its tether is immune: stop hitting it and lead it home (AutonomousTetherReset).
             if (Body.TargetObject is GameNPC tetheredBoss && AutonomousTetherReset.TryHandle(BotBody, tetheredBoss))
                 return;
+            // a shield tank concentrating on blocking (Engage) does not swing this turn
+            if (MaintainEngage())
+                return;
 
             if (Body.TargetObject is GameLiving wallTarget && AutonomousRvrDefense.HoldWall(BotBody, wallTarget))
             {
@@ -5315,6 +5318,99 @@ namespace DOL.AI.Brain
                      EffectListService.GetAbilityEffectOnTarget(Body, eEffect.SureShot) == null &&
                      EffectListService.GetAbilityEffectOnTarget(Body, eEffect.TrueShot) == null)
                 ECSGameEffectFactory.Create(new(Body, 0, 1), static (in ECSGameEffectInitParams i) => new RapidFireECSGameEffect(i));
+        }
+
+        private long _engageSince;
+        private bool _engageOnArcher;
+
+        /// <summary>
+        /// M8: a shield tank's Engage (BotClassAbilities165.EngageWorthwhile / EngageHolds). Returns true while the bot is
+        /// engaged: it then closes in or faces the enemy without swinging (a swing ends Engage). Only bots that own the
+        /// ability look at it; the healer check reads the group list only when everything else already holds.
+        /// </summary>
+        private bool MaintainEngage()
+        {
+            GameBot bot = BotBody;
+            if (bot == null || !Classic165Mode.IsOn || bot.GetAbilityLevel(Abilities.Engage) <= 0)
+                return false;
+            long now = GameLoop.GameLoopTime;
+            GameLiving enemy = Body.TargetObject as GameLiving;
+            bool attackedRecently = enemy != null &&
+                enemy.LastAttackedByEnemyTick > now - EngageAbilityHandler.ENGAGE_ATTACK_DELAY_TICK;
+            if (Body.IsEngaging)
+            {
+                EngageECSGameEffect engage = EffectListService.GetEffectOnTarget(Body, eEffect.Engage) as EngageECSGameEffect;
+                bool inReach = enemy != null && Body.IsWithinRadius(enemy, Body.MeleeAttackRange);
+                bool holds = engage != null && enemy?.IsAlive == true && engage.EngageTarget == enemy &&
+                    BotClassAbilities165.EngageHolds(attackedRecently, now - _engageSince, _engageOnArcher, inReach,
+                        !_engageOnArcher && GroupHealerLowOnPower(bot));
+                if (!holds)
+                {
+                    // ending it restarts the attack on the current target (EngageECSGameEffect.OnStopEffect)
+                    if (engage != null)
+                        engage.Cancel(false, true);
+                    else
+                        Body.CancelEngageEffect();
+                    return false;
+                }
+                FaceOrCloseIn(enemy, inReach);
+                return true;
+            }
+
+            if (enemy?.IsAlive != true || Body.ActiveWeaponSlot != eActiveWeaponSlot.Standard ||
+                Body.ActiveLeftWeapon?.Object_Type != (int)eObjectType.Shield ||
+                bot.GetBaseSpecLevel(Specs.Shields) < BotClassAbilities165.EngageShieldSpec ||
+                enemy.TargetObject != Body || attackedRecently || !Body.IsWithinRadius(enemy, 2_000))
+                return false;
+            bool archer = enemy is GamePlayer or GameBot && enemy.ActiveWeaponSlot == eActiveWeaponSlot.Distance;
+            bool otherInMelee = false;
+            foreach (GameLiving attacker in Body.attackComponent.AttackerTracker.Attackers)
+                if (attacker != enemy && attacker.IsAlive && attacker.TargetObject == Body &&
+                    Body.IsWithinRadius(attacker, Body.MeleeAttackRange + 50))
+                {
+                    otherInMelee = true;
+                    break;
+                }
+            if (!BotClassAbilities165.EngageWorthwhile(true, true, true, false, otherInMelee, archer,
+                    !archer && !otherInMelee && GroupHealerLowOnPower(bot)) ||
+                !GameServer.ServerRules.IsAllowedToAttack(Body, enemy, true))
+                return false;
+            ECSGameEffectFactory.Create(new(Body, 0, 1, null), static (in ECSGameEffectInitParams i) => new EngageECSGameEffect(i));
+            if (!Body.IsEngaging)
+                return false;
+            _engageSince = now;
+            _engageOnArcher = archer;
+            FaceOrCloseIn(enemy, Body.IsWithinRadius(enemy, Body.MeleeAttackRange));
+            return true;
+        }
+
+        private void FaceOrCloseIn(GameLiving enemy, bool inReach)
+        {
+            if (inReach)
+            {
+                if (Body.IsMoving)
+                    Body.StopFollowing();
+                Body.TurnTo(enemy);
+            }
+            else if (!IsMeleeChasing(enemy))
+                Body.Follow(enemy, (short)Math.Max(50, Body.MeleeAttackRange - 30), 5_000);
+        }
+
+        /// <summary>A healer of the bot's group under 30% power (the group list, at most eight members).</summary>
+        private static bool GroupHealerLowOnPower(GameBot bot)
+        {
+            if (bot.Group == null)
+                return false;
+            foreach (GameLiving member in bot.Group.GetMembersInTheGroup())
+            {
+                if (member == bot || member?.IsAlive != true || member.MaxMana <= 0)
+                    continue;
+                int classId = member is GameBot memberBot ? memberBot.CharacterClass?.ID ?? 0 :
+                    member is GamePlayer player ? player.CharacterClass?.ID ?? 0 : 0;
+                if (BotPartyRoles.IsHealingClass((eCharacterClass)classId) && member.ManaPercent < 30)
+                    return true;
+            }
+            return false;
         }
 
         public void CheckOffensiveAbilities()

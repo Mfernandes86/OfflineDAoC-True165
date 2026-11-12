@@ -34,6 +34,33 @@ namespace DOL.GS
 
         public const int FlurryRange = 135;
 
+        /// <summary>Shields a tank needs before it uses Engage (a shield-spec tank, not a two-hander with a few points).</summary>
+        public const int EngageShieldSpec = 25;
+
+        /// <summary>The longest a bot stays engaged without swinging.</summary>
+        public const int EngageMaxMilliseconds = 15_000;
+
+        /// <summary>
+        /// Engage (M8, Prima Revised 7341-7348): a shield tank with its shield up concentrates on blocking one enemy that
+        /// is on it and nobody hit in the last 5 s (the ability's own rule; Engage blocks only that enemy): an enemy archer
+        /// (player-like, bow out) shooting at it while it closes in, or a monster coming at it while the group's healer is
+        /// low on power. Never with another enemy already meleeing it.
+        /// </summary>
+        public static bool EngageWorthwhile(bool shieldTank, bool shieldUp, bool enemyOnBot, bool enemyAttackedRecently,
+            bool otherEnemyInMelee, bool enemyArcher, bool healerLowOnPower) =>
+            shieldTank && shieldUp && enemyOnBot && !enemyAttackedRecently && !otherEnemyInMelee &&
+            (enemyArcher || healerLowOnPower);
+
+        /// <summary>
+        /// The bot stays engaged while nobody else hits the enemy (Engage then blocks nothing extra), for at most
+        /// <see cref="EngageMaxMilliseconds"/>: against an archer until it reaches it, against a monster while the healer
+        /// is still low on power. Then it swings again.
+        /// </summary>
+        public static bool EngageHolds(bool enemyAttackedRecently, long engagedMilliseconds, bool enemyArcher,
+            bool inMeleeReach, bool healerLowOnPower) =>
+            !enemyAttackedRecently && engagedMilliseconds < EngageMaxMilliseconds &&
+            (enemyArcher ? !inMeleeReach : healerLowOnPower);
+
         public enum PaladinRole { Solo, MainTank, OffTank }
 
         /// <summary>A Paladin keeps a chant it started for at least this long before it changes (O1).</summary>
