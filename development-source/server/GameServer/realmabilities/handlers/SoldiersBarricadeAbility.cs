@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using DOL.Database;
 using DOL.GS.Effects;
 
@@ -19,6 +20,11 @@ namespace DOL.GS.RealmAbilities
 		public override void Execute(GameLiving living)
 		{
 			if (CheckPreconditions(living, DEAD | SITTING | MEZZED | STUNNED)) return;
+			if (living is GameBot bot)
+			{
+				ExecuteForBot(bot);
+				return;
+			}
 			GamePlayer player = living as GamePlayer;
 
 			/// [Atlas - Takii] We don't want this "does not stack" functionality in OF.
@@ -57,6 +63,29 @@ namespace DOL.GS.RealmAbilities
 					}
 			}
 
+		}
+
+		// A gamebot Armsman (M8, veteran review 2026-11-11): every living group member in range, bots and players alike,
+		// as Bunker of Faith does for bots.
+		private void ExecuteForBot(GameBot bot)
+		{
+			m_value = GetArmorFactorAmount();
+			DisableSkill(bot);
+			List<GameLiving> targets = new();
+			if (bot.Group == null)
+				targets.Add(bot);
+			else
+				foreach (GameLiving member in bot.Group.GetMembersInTheGroup())
+					if (member.IsAlive && bot.IsWithinRadius(member, m_range))
+						targets.Add(member);
+			foreach (GameLiving target in targets)
+			{
+				bool success = !target.TempProperties.GetProperty<bool>(BofBaSb);
+				foreach (GamePlayer visPlayer in target.GetPlayersInRadius(WorldMgr.VISIBILITY_DISTANCE))
+					visPlayer.Out.SendSpellEffectAnimation(bot, target, 7015, 0, false, System.Convert.ToByte(success));
+				if (success)
+					ECSGameEffectFactory.Create(new(target, m_duration, m_value), static (in i) => new SoldiersBarricadeECSEffect(i));
+			}
 		}
 
 		public override int GetReUseDelay(int level)

@@ -12,22 +12,25 @@ namespace DOL.GS.Effects
         public override string Name { get { return "Soldier's Barricade"; } }
         public override bool HasPositiveEffect { get { return true; } }
 
+        // A gamebot group member gets the armor too (M8: a gamebot Armsman's Barricade covers its bot group).
+        private static bool Covers(GameLiving owner) => owner is GamePlayer or GameBot;
+
         public override void OnStartEffect()
         {
-            if (OwnerPlayer == null)
+            if (!Covers(Owner))
                 return;
 
-            OwnerPlayer.OtherBonus[eProperty.ArmorFactor] += (int)Effectiveness;
-            OwnerPlayer.Out.SendUpdateWeaponAndArmorStats();
+            Owner.OtherBonus[eProperty.ArmorFactor] += (int)Effectiveness;
+            OwnerPlayer?.Out.SendUpdateWeaponAndArmorStats();
         }
 
         public override void OnStopEffect()
         {
-            if (OwnerPlayer == null)
+            if (!Covers(Owner))
                 return;
 
-            OwnerPlayer.OtherBonus[eProperty.ArmorFactor] -= (int)Effectiveness;
-            OwnerPlayer.Out.SendUpdateWeaponAndArmorStats();
+            Owner.OtherBonus[eProperty.ArmorFactor] -= (int)Effectiveness;
+            OwnerPlayer?.Out.SendUpdateWeaponAndArmorStats();
         }
     }
 }

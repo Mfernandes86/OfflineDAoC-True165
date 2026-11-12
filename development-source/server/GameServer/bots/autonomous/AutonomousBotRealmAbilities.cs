@@ -19,7 +19,7 @@ public static class AutonomousBotRealmAbilities
 {
     private static readonly Logging.Logger Log = Logging.LoggerManager.Create(typeof(AutonomousBotRealmAbilities));
 
-    public enum Archetype { Melee, Caster, Healer, Archer, Tank }
+    public enum Archetype { Melee, Caster, Healer, Archer, Tank, TwoHander }
 
     public readonly record struct Step(string Key, int Level);
 
@@ -32,6 +32,10 @@ public static class AutonomousBotRealmAbilities
     public const string MasteryOfConcentration = "AtlasOF_MasteryOfConcentration", MysticCrystalLore = "AtlasOF_MCL",
         BunkerOfFaith = "AtlasOF_BunkerOfFaith", PerfectRecovery = "AtlasOF_PerfectRecovery", SpeedOfSound = "AtlasOF_SpeedOfSound",
         AmelioratingMelodies = "AtlasOF_AmelioratingMelodies", Vanish = "AtlasOF_Vanish";
+
+    // M8 (veteran review 2026-11-11): the class actives whose handlers also work for a gamebot.
+    public const string SoldiersBarricade = "AtlasOF_SoldiersBarricade", FaithHealing = "AtlasOF_FaithHealing",
+        RagingPower = "AtlasOF_RagingPower", VolcanicPillar = "AtlasOF_VolcanicPillar";
 
     /// <summary>Prerequisites, as the Atlas handlers' CheckRequirement (written for GamePlayer only).</summary>
     public static (string Key, int Level)? Requirement(string key, int classId) => key switch
@@ -46,6 +50,7 @@ public static class AutonomousBotRealmAbilities
         "AtlasOF_Dodger" or "AtlasOF_MasteryOfStealth" => (AugQui, 2),
         SecondWind or "AtlasOF_ArmorOfFaith" or "AtlasOF_AvoidPain" or "AtlasOF_BattleYell" => (AugCon, 3),
         IgnorePain or IgnorePainTank => (FirstAid, 2),
+        RagingPower => (MysticCrystalLore, 2),   // AtlasOF_RagingPower.CheckRequirement
         _ => null,
     };
 
@@ -54,7 +59,8 @@ public static class AutonomousBotRealmAbilities
 
     /// <summary>True 1.65 Mode adds these (escape and rescue first, then group, then self).</summary>
     public static readonly string[] ClassicActives =
-        { Vanish, PerfectRecovery, BunkerOfFaith, SpeedOfSound, AmelioratingMelodies, MasteryOfConcentration, MysticCrystalLore };
+        { Vanish, PerfectRecovery, BunkerOfFaith, SoldiersBarricade, FaithHealing, SpeedOfSound, AmelioratingMelodies,
+          VolcanicPillar, MasteryOfConcentration, RagingPower, MysticCrystalLore };
 
     public static string[] UsableActivesFor(bool classic) => classic ? ClassicActives.Concat(UsableActives).ToArray() : UsableActives;
 
@@ -93,7 +99,8 @@ public static class AutonomousBotRealmAbilities
     // class active (Vanish, Speed of Sound, Bunker of Faith, Perfect Recovery, Ameliorating Melodies) after Purge and
     // Mastery of Concentration once its Acuity is met. Steps a class lacks are skipped.
     private static readonly Step[] ClassActiveSteps = Build((Vanish, 1), (SpeedOfSound, 1), (BunkerOfFaith, 1),
-        (PerfectRecovery, 1), (AmelioratingMelodies, 1), (MysticCrystalLore, 1));
+        (PerfectRecovery, 1), (AmelioratingMelodies, 1), (SoldiersBarricade, 1), (FaithHealing, 1), (VolcanicPillar, 1),
+        (MysticCrystalLore, 1), (MysticCrystalLore, 2), (RagingPower, 1));
 
     private static Step[] Insert(Step[] build, Step after, Step[] steps)
     {
@@ -103,10 +110,19 @@ public static class AutonomousBotRealmAbilities
 
     private static readonly Step PurgeStep = new(Purge, 1), AcuityThree = new(AugAcuity, 3);
 
+    // M8: a shield tank's period build is Determination and Mastery of Blocking first; its class active (Soldier's
+    // Barricade, Faith Healing) once that core is in.
     private static readonly Step[] ClassicTankBuild = Build((PurgeReduced, 1), (Purge, 1), ("Determination", 1),
-        ("DeterminationHybrid", 1), ("AugCon", 1), ("AugDex", 2), ("MasteryOfPain", 1), ("AugStr", 1), ("MasteryOfBlocking", 1),
+        ("DeterminationHybrid", 1), ("AugCon", 1), ("AugDex", 2), ("MasteryOfBlocking", 1), ("MasteryOfPain", 1), ("AugStr", 1),
         ("MasteryOfParrying", 1), ("Toughness", 1), ("AugCon", 2), ("Determination", 2), ("DeterminationHybrid", 2))
-        .Concat(MeleeBuild).ToArray();
+        .Concat(ClassActiveSteps).Concat(MeleeBuild).ToArray();
+
+    // M8: a two-handed tank class (Armsman, Paladin, Warrior, Thane, Champion, Hero on a two-hander) is damage or off-tank:
+    // Mastery of Pain and Mastery of Arms first, no Mastery of Blocking.
+    private static readonly Step[] ClassicTwoHanderBuild = Build((PurgeReduced, 1), (Purge, 1), ("AugStr", 1), ("AugDex", 2),
+        ("MasteryOfPain", 1), ("AugStr", 3), ("MasteryOfArms", 1), ("Determination", 1), ("DeterminationHybrid", 1),
+        ("AugCon", 1), ("Toughness", 1), ("MasteryOfPain", 2), ("MasteryOfArms", 2), ("AugCon", 2))
+        .Concat(ClassActiveSteps).Concat(MeleeBuild.Where(step => step.Key != "AtlasOF_MasteryOfBlocking")).ToArray();
 
     private static readonly Step[] ClassicMeleeBuild = Insert(MeleeBuild, PurgeStep, ClassActiveSteps);
     private static readonly Step[] ClassicCasterBuild =
@@ -121,9 +137,28 @@ public static class AutonomousBotRealmAbilities
     public static Archetype BuildArchetype(Archetype archetype, int classId, bool classic) =>
         classic && archetype == Archetype.Melee && IsTankClass(classId) ? Archetype.Tank : archetype;
 
+    /// <summary>
+    /// M8 (veteran review 2026-11-11): the build follows the bot's spec, not only its class. A Rejuvenation Friar takes
+    /// the healer build (Aug Acuity, Mastery of Healing, Serenity), a Smite Cleric the caster build (Mastery of Magery,
+    /// Mastery of Concentration), a two-handed tank class the two-hander build. True 1.65 Mode only.
+    /// </summary>
+    public static Archetype SpecArchetype(Archetype classArchetype, int classId, eSpecType spec, bool twoHanded, bool classic)
+    {
+        if (!classic)
+            return classArchetype;
+        if (classId == (int)eCharacterClass.Friar && spec == eSpecType.RejuvFriar)
+            return Archetype.Healer;
+        if (classId == (int)eCharacterClass.Cleric && spec == eSpecType.SmiteCleric)
+            return Archetype.Caster;
+        if (classArchetype == Archetype.Tank && twoHanded)
+            return Archetype.TwoHander;
+        return classArchetype;
+    }
+
     private static Step[] BuildFor(Archetype archetype, bool classic) => archetype switch
     {
         Archetype.Tank => ClassicTankBuild,
+        Archetype.TwoHander => ClassicTwoHanderBuild,
         Archetype.Caster => classic ? ClassicCasterBuild : CasterBuild,
         Archetype.Healer => classic ? ClassicHealerBuild : HealerBuild,
         Archetype.Archer => classic ? ClassicArcherBuild : ArcherBuild,
@@ -221,10 +256,14 @@ public static class AutonomousBotRealmAbilities
 
     private static int ClassOf(GameBot bot) => bot.CharacterClass?.ID ?? bot.ClassId;
 
+    private static Archetype ArchetypeOf(GameBot bot) =>
+        SpecArchetype(CatalogFor(ClassOf(bot)).Archetype, ClassOf(bot), bot.BotSpec?.SpecType ?? eSpecType.None,
+            bot.BotSpec?.Is2H == true, Classic165Mode.IsOn);
+
     private static Dictionary<string, int> PlanFor(GameBot bot, int points)
     {
         Catalog catalog = CatalogFor(ClassOf(bot));
-        return Plan(catalog.Available, catalog.Archetype, ClassOf(bot), points, (key, level) => catalog.ByKey[key].CostForUpgrade(level),
+        return Plan(catalog.Available, ArchetypeOf(bot), ClassOf(bot), points, (key, level) => catalog.ByKey[key].CostForUpgrade(level),
             Classic165Mode.IsOn);
     }
 
@@ -290,7 +329,7 @@ public static class AutonomousBotRealmAbilities
             state.TrainedPoints = points;
             state.HasPurchase = false;
             Log.Info($"BOT_REALM_ABILITY_TRAINED bot=\"{bot.Name}\" class={ClassOf(bot)} realmLevel={bot.RealmLevel} points={points} " +
-                $"archetype={CatalogFor(ClassOf(bot)).Archetype} gained=\"{gained}\"");
+                $"archetype={ArchetypeOf(bot)} gained=\"{gained}\"");
             return gained;
         }
         catch (Exception exception)
@@ -372,6 +411,9 @@ public static class AutonomousBotRealmAbilities
             else if (ClassicActives.Contains(ability.KeyName))
             {
                 situation ??= SituationOf(bot, out deadMember);
+                // the one radius count, only for a bot whose Volcanic Pillar is ready and only while it fights
+                if (ability.KeyName == VolcanicPillar && situation.Value.InCombat)
+                    situation = situation.Value with { EnemiesAtTarget = EnemiesAtTarget(bot) };
                 if (!Wants(ability.KeyName, situation.Value)) continue;
                 if (ability.KeyName == PerfectRecovery) bot.TargetObject = deadMember;
             }
@@ -421,7 +463,26 @@ public static class AutonomousBotRealmAbilities
 
     /// <summary>What the True 1.65 actives look at, read once per check.</summary>
     public readonly record struct Situation(bool InCombat, bool Battleground, int Health, int Mana, bool Controlled,
-        bool Sitting, bool Casting, bool Interrupted, int GroupNear, int GroupHurt, bool GroupFighting, bool DeadMemberNear);
+        bool Sitting, bool Casting, bool Interrupted, int GroupNear, int GroupHurt, bool GroupFighting, bool DeadMemberNear,
+        int EnemiesAtTarget = 0);
+
+    // Volcanic Pillar's radius (AtlasOF_VolcanicPillar: 500) and range (1,875).
+    private const int PillarRadius = 500, PillarRange = 1875;
+
+    /// <summary>Enemies the bot may attack within the pillar's radius of its target (the target included).</summary>
+    private static int EnemiesAtTarget(GameBot bot)
+    {
+        if (bot.TargetObject is not GameLiving target || !target.IsAlive || !bot.IsWithinRadius(target, PillarRange))
+            return 0;
+        int count = 0;
+        foreach (GameNPC npc in target.GetNPCsInRadius(PillarRadius))
+            if (npc.IsAlive && npc.InCombat && GameServer.ServerRules.IsAllowedToAttack(bot, npc, true))
+                count++;
+        foreach (GamePlayer player in target.GetPlayersInRadius(PillarRadius))
+            if (player.IsAlive && GameServer.ServerRules.IsAllowedToAttack(bot, player, true))
+                count++;
+        return count;
+    }
 
     // Group range of the group actives (Bunker of Faith, Ameliorating Melodies, Perfect Recovery 1,500; Speed of Sound 2,000).
     private const int GroupActiveRange = 1500;
@@ -467,6 +528,12 @@ public static class AutonomousBotRealmAbilities
             BunkerOfFaith => burst,
             SpeedOfSound => burst && s.Battleground,
             AmelioratingMelodies => s.GroupFighting && s.GroupHurt >= 2,
+            // M8 Albion actives: Soldier's Barricade on group burst (the Bunker rule); Faith Healing on group burst or the
+            // Paladin itself near death; Raging Power is the in-fight twin of MCL; Volcanic Pillar on three or more enemies.
+            SoldiersBarricade => burst,
+            FaithHealing => burst || s.InCombat && s.Health < 25,
+            RagingPower => s.InCombat && !s.Sitting && s.Mana < 25,
+            VolcanicPillar => s.InCombat && !s.Casting && s.EnemiesAtTarget >= 3,
             MasteryOfConcentration => s.InCombat && s.Interrupted && (s.Battleground || s.Health < 60),
             MysticCrystalLore => !s.InCombat && !s.Sitting && s.Mana < 30,
             _ => false,

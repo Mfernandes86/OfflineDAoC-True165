@@ -38,7 +38,21 @@ namespace DOL.GS.RealmAbilities
 
 			bool didHeal = false;
 
-			if (living.Group != null)
+			// A gamebot Paladin (M8, veteran review 2026-11-11) heals every group member in range, bots included; the
+			// player loop below only reaches players, so in a gamebot group it healed nobody and was never spent.
+			if (living is GameBot && living.Group != null)
+			{
+				Point3D botSpot = new Point3D(living.X, living.Y, living.Z);
+				foreach (GameLiving member in living.Group.GetMembersInTheGroup())
+				{
+					if (!member.IsAlive || member.CurrentRegionID != living.CurrentRegionID || member.GetDistanceTo(botSpot) > Range)
+						continue;
+					if (member.ChangeHealth(living, eHealthChangeType.Spell, member.MaxHealth) > 0)
+						didHeal = true;
+				}
+				SendSpellEffectsToLiving(living, didHeal);
+			}
+			else if (living.Group != null)
 			{
 				Point3D livingCurrentSpot = new Point3D(living.X, living.Y, living.Z);
 				foreach (var player in living.Group.GetPlayersInTheGroup())

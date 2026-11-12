@@ -15,14 +15,16 @@ namespace DOL.UnitTests
             keys.Select(k => k.StartsWith("AtlasOF_") ? k : "AtlasOF_" + k).ToDictionary(k => k, k => k switch
             {
                 Purge or PurgeReduced or SecondWind or IgnorePain or IgnorePainTank or MasteryOfConcentration or BunkerOfFaith or
-                    PerfectRecovery or SpeedOfSound or Vanish or AmelioratingMelodies => 1,
+                    PerfectRecovery or SpeedOfSound or Vanish or AmelioratingMelodies or SoldiersBarricade or FaithHealing or
+                    RagingPower or VolcanicPillar => 1,
                 FirstAid or MysticCrystalLore => 3,
                 _ => 5,
             });
 
         private static int Cost(string key, int level) => key switch
         {
-            Purge or SecondWind or BunkerOfFaith or SpeedOfSound or Vanish => 10,
+            Purge or SecondWind or BunkerOfFaith or SpeedOfSound or Vanish or SoldiersBarricade or RagingPower => 10,
+            FaithHealing or VolcanicPillar => 14,
             PurgeReduced => 4,
             MasteryOfConcentration or PerfectRecovery or IgnorePain => 14,
             IgnorePainTank => 8,
@@ -136,6 +138,104 @@ namespace DOL.UnitTests
             Assert.That(Wants(Vanish, S(health: 30, frontier: false)), Is.False);
             Assert.That(Wants(Vanish, S(health: 30, controlled: true)), Is.False, "Vanish cannot be used mezzed or stunned");
         }
+
+        [Test]
+        public void TheBuildFollowsTheSpecInTrue165Mode() => Assert.Multiple(() =>
+        {
+            // M8 (veteran review 2026-11-11)
+            Assert.That(SpecArchetype(Archetype.Melee, (int)eCharacterClass.Friar, eSpecType.RejuvFriar, false, true), Is.EqualTo(Archetype.Healer));
+            Assert.That(SpecArchetype(Archetype.Melee, (int)eCharacterClass.Friar, eSpecType.StaffFriar, true, true), Is.EqualTo(Archetype.Melee));
+            Assert.That(SpecArchetype(Archetype.Healer, (int)eCharacterClass.Cleric, eSpecType.SmiteCleric, false, true), Is.EqualTo(Archetype.Caster));
+            Assert.That(SpecArchetype(Archetype.Healer, (int)eCharacterClass.Cleric, eSpecType.RejuvCleric, false, true), Is.EqualTo(Archetype.Healer));
+            Assert.That(SpecArchetype(Archetype.Tank, (int)eCharacterClass.Armsman, eSpecType.TwoHanded, true, true), Is.EqualTo(Archetype.TwoHander));
+            Assert.That(SpecArchetype(Archetype.Tank, (int)eCharacterClass.Armsman, eSpecType.OneHandAndShield, false, true), Is.EqualTo(Archetype.Tank));
+            Assert.That(SpecArchetype(Archetype.Melee, (int)eCharacterClass.Friar, eSpecType.RejuvFriar, false, false), Is.EqualTo(Archetype.Melee),
+                "normal mode unchanged");
+        });
+
+        [Test]
+        public void AShieldTankTakesDeterminationAndMasteryOfBlockingFirst()
+        {
+            var plan = Plan(Armsman, Archetype.Tank, (int)eCharacterClass.Armsman, 20, Cost, true);
+            Assert.That(plan.GetValueOrDefault("AtlasOF_Determination"), Is.GreaterThanOrEqualTo(1));
+            Assert.That(plan.GetValueOrDefault("AtlasOF_MasteryOfBlocking"), Is.GreaterThanOrEqualTo(1));
+            Assert.That(plan.ContainsKey("AtlasOF_MasteryOfArms"), Is.False);
+        }
+
+        [Test]
+        public void ATwoHanderTakesMasteryOfPainAndArmsAndNeverBlocking()
+        {
+            var early = Plan(Armsman, Archetype.TwoHander, (int)eCharacterClass.Armsman, 20, Cost, true);
+            Assert.That(early.GetValueOrDefault("AtlasOF_MasteryOfPain"), Is.GreaterThanOrEqualTo(1));
+            Assert.That(early.GetValueOrDefault("AtlasOF_MasteryOfArms"), Is.GreaterThanOrEqualTo(1));
+            Dictionary<string, int> previous = new();
+            for (int points = 0; points <= 120; points++)
+            {
+                var plan = Plan(Armsman, Archetype.TwoHander, (int)eCharacterClass.Armsman, points, Cost, true);
+                int spent = plan.Sum(pair => Enumerable.Range(0, pair.Value).Sum(level => Cost(pair.Key, level)));
+                Assert.That(spent, Is.LessThanOrEqualTo(points));
+                foreach (var (key, _) in plan)
+                    if (Requirement(key, (int)eCharacterClass.Armsman) is { } need)
+                        Assert.That(plan.GetValueOrDefault(need.Key), Is.GreaterThanOrEqualTo(need.Level), key);
+                foreach (var (key, level) in previous)
+                    Assert.That(plan.GetValueOrDefault(key), Is.GreaterThanOrEqualTo(level), $"{key} never shrinks");
+                previous = plan;
+            }
+            var build = Plan(Armsman, Archetype.TwoHander, (int)eCharacterClass.Armsman, 60, Cost, true);
+            Assert.That(build.ContainsKey("AtlasOF_MasteryOfBlocking"), Is.False, "only bought, if ever, among the leftovers");
+        }
+
+        [Test]
+        public void ARejuvFriarTakesTheHealerBuild()
+        {
+            var friar = Catalog("AugStr", "AugDex", "AugCon", "AugAcuity", "MasteryOfPain", "MasteryOfParrying", "MasteryOfArms",
+                "Serenity", "MasteryOfHealing", "MasteryOfTheArcane", "Toughness", Purge, MysticCrystalLore, RagingPower);
+            var plan = Plan(friar, Archetype.Healer, (int)eCharacterClass.Friar, 20, Cost, true);
+            Assert.That(plan.GetValueOrDefault(AugAcuity), Is.GreaterThanOrEqualTo(2));
+            Assert.That(plan.ContainsKey("AtlasOF_MasteryOfHealing"), Is.True);
+            Assert.That(plan.ContainsKey("AtlasOF_MasteryOfPain"), Is.False);
+        }
+
+        [Test]
+        public void AlbionClassActivesAreBoughtAndRagingPowerWaitsForCrystalLoreTwo()
+        {
+            var armsman = new Dictionary<string, int>(Armsman) { [SoldiersBarricade] = 1 };
+            Assert.That(Plan(armsman, Archetype.Tank, (int)eCharacterClass.Armsman, 80, Cost, true).ContainsKey(SoldiersBarricade), Is.True);
+            Assert.That(Requirement(RagingPower, (int)eCharacterClass.Wizard), Is.EqualTo(((string, int)?)(MysticCrystalLore, 2)));
+            var wizard = Catalog("AugAcuity", "AugCon", "AugDex", "MasteryOfMagery", "WildPower", "Serenity", "MasteryOfTheArcane",
+                "Toughness", Purge, MasteryOfConcentration, MysticCrystalLore, RagingPower, VolcanicPillar);
+            Dictionary<string, int> previous = new();
+            for (int points = 0; points <= 100; points++)
+            {
+                var plan = Plan(wizard, Archetype.Caster, (int)eCharacterClass.Wizard, points, Cost, true);
+                if (plan.ContainsKey(RagingPower))
+                    Assert.That(plan.GetValueOrDefault(MysticCrystalLore), Is.GreaterThanOrEqualTo(2), $"{points}");
+                foreach (var (key, level) in previous)
+                    Assert.That(plan.GetValueOrDefault(key), Is.GreaterThanOrEqualTo(level), $"{key} never shrinks");
+                previous = plan;
+            }
+            Assert.That(previous.ContainsKey(VolcanicPillar), Is.True);
+            Assert.That(previous.ContainsKey(RagingPower), Is.True);
+            Assert.That(UsableActivesFor(true), Is.SupersetOf(new[] { SoldiersBarricade, FaithHealing, RagingPower, VolcanicPillar }));
+            Assert.That(UsableActivesFor(false), Does.Not.Contain(SoldiersBarricade), "normal mode unchanged");
+        }
+
+        [Test]
+        public void AlbionActivesFireInTheirSituation() => Assert.Multiple(() =>
+        {
+            Assert.That(Wants(SoldiersBarricade, S(hurt: 4)), Is.True, "group burst");
+            Assert.That(Wants(SoldiersBarricade, S(hurt: 1)), Is.False);
+            Assert.That(Wants(FaithHealing, S(hurt: 4)), Is.True);
+            Assert.That(Wants(FaithHealing, S(near: 1, hurt: 1, health: 20)), Is.True, "the Paladin itself near death");
+            Assert.That(Wants(FaithHealing, S(hurt: 2)), Is.False, "a 30-minute heal waits for a real emergency");
+            Assert.That(Wants(RagingPower, S(mana: 20)), Is.True);
+            Assert.That(Wants(RagingPower, S(mana: 20, combat: false)), Is.False, "out of a fight MCL does it");
+            Assert.That(Wants(RagingPower, S(mana: 40)), Is.False);
+            Assert.That(Wants(VolcanicPillar, S() with { EnemiesAtTarget = 3 }), Is.True);
+            Assert.That(Wants(VolcanicPillar, S() with { EnemiesAtTarget = 2 }), Is.False);
+            Assert.That(Wants(VolcanicPillar, S(casting: true) with { EnemiesAtTarget = 4 }), Is.False);
+            Assert.That(Wants(VolcanicPillar, S(controlled: true) with { EnemiesAtTarget = 4 }), Is.False);
+        });
 
         [Test]
         public void PerfectRecoveryNeedsADeadMemberAndAFight()

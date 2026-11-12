@@ -23,7 +23,7 @@ namespace DOL.GS.RealmAbilities
         public override int CostForUpgrade(int level) { return 14; }
         public override int GetReUseDelay(int level) { return 900; } // 15 mins
 
-        private void CreateSpell(GamePlayer caster)
+        private void CreateSpell(GameLiving caster)
         {
             m_dbspell = new DbSpell();
             m_dbspell.Name = "Volcanic Pillar";
@@ -52,8 +52,10 @@ namespace DOL.GS.RealmAbilities
             if (CheckPreconditions(living, DEAD | SITTING | MEZZED | STUNNED))
                 return;
 
-            if (living is not GamePlayer m_caster || m_caster.castingComponent == null)
+            // a gamebot Wizard casts it too (M8, veteran review 2026-11-11)
+            if (living is not (GamePlayer or GameBot) || living.castingComponent == null)
                 return;
+            GameLiving m_caster = living;
 
             if (m_caster.TargetObject is not GameLiving)
                 return;
