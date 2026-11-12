@@ -231,7 +231,9 @@ namespace DOL.AI.Brain
 				Body.StopFollowing();//stop follow
 				Body.CastSpell(CunovindaBolt, SkillBase.GetSpellLine(GlobalSpellsLines.Mob_Spells),false);//cast bolt
 
-				RandomTarget.MoveTo(Body.CurrentRegionID, 24874, 36116, 17060, 3065);//port player to loc
+				// The bolt stays; the teleport follows the offline displacement rule like the other epic scripts.
+				if (DOL.GS.EpicEncounterMechanics.AllowDisplacement)
+					RandomTarget.MoveTo(Body.CurrentRegionID, 24874, 36116, 17060, 3065);//port player to loc
 
 				if(Body.TargetObject != null && Body.TargetObject != RandomTarget)
 					Body.TargetObject = RandomTarget;//set target as randomtarget
