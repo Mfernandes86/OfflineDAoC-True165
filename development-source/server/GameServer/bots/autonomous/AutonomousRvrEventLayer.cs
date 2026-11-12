@@ -160,7 +160,8 @@ public static partial class AutonomousRvrEventLayer
     private static DOL.GS.Keeps.AbstractGameKeep NextSentinelKeep(LiveObjective relic, long now) =>
         HeldSentinelKeeps(relic)
             .Select(id => GameServer.KeepManager.GetKeepByID(id))
-            .Where(k => k != null && !Events.ContainsKey($"rvr-keep-{k.KeepID}") && !OnCooldown($"rvr-keep-{k.KeepID}", now))
+            .Where(k => k != null && !Events.ContainsKey($"rvr-keep-{k.KeepID}") && !OnCooldown($"rvr-keep-{k.KeepID}", now) &&
+                        AutonomousRvrKeepPolicy.IsCapturable(k))
             .OrderBy(k => (long)(k.X - relic.X) * (k.X - relic.X) + (long)(k.Y - relic.Y) * (k.Y - relic.Y))
             .FirstOrDefault();
 
@@ -301,6 +302,8 @@ public static partial class AutonomousRvrEventLayer
             { reason = "Choose an enemy capturable keep and an attacking realm."; return false; }
             if (Events.ContainsKey(target.Id) || OnCooldown(target.Id, now))
             { reason = "This objective already has an event or an active cooldown."; return false; }
+            if (!CanBeCaptured(target))
+            { reason = $"{Place(target.Name)} has no lord, so it cannot be captured."; return false; }
             // A player may force as many sieges as they like (owner, 2026-10-07); the automatic
             // scheduler's one-attack-per-realm and start-chance limits never apply here.
             Events[target.Id] = new ActiveEvent
@@ -621,7 +624,8 @@ public static partial class AutonomousRvrEventLayer
             LiveObjective[] retakes = relicCandidates.Where(candidate => HoldsRelicOf(candidate, force.Realm)).ToArray();
             LiveObjective relic = ChooseVariedTarget(retakes.Length > 0 ? retakes : relicCandidates, SelectedRelics);
             LiveObjective keep = ChooseVariedTarget(objectives.Where(objective => objective.Kind == Intent.AssaultKeep && !objective.IsRelicKeep &&
-                                                              objective.OwningRealm != force.Realm && !Events.ContainsKey(objective.Id) && !OnCooldown(objective.Id, nowTick))
+                                                              objective.OwningRealm != force.Realm && !Events.ContainsKey(objective.Id) && !OnCooldown(objective.Id, nowTick) &&
+                                                              CanBeCaptured(objective))
                 , SelectedKeeps);
             if (relic != null && HeldSentinelKeeps(relic) is { Length: > MaxSentinelsForRelicAssault } held)
             {
@@ -630,7 +634,7 @@ public static partial class AutonomousRvrEventLayer
                 LiveObjective feeder = objectives
                     .Where(o => o.Kind == Intent.AssaultKeep && !o.IsRelicKeep && o.OwningRealm == relic.OwningRealm &&
                                 !Events.ContainsKey(o.Id) && !OnCooldown(o.Id, nowTick) &&
-                                held.Any(id => o.Id == $"rvr-keep-{id}"))
+                                held.Any(id => o.Id == $"rvr-keep-{id}") && CanBeCaptured(o))
                     .OrderBy(o => (long)(o.X - relic.X) * (o.X - relic.X) + (long)(o.Y - relic.Y) * (o.Y - relic.Y))
                     .FirstOrDefault();
                 if (feeder != null && Random.Shared.NextDouble() < RelicSiegeShare)
@@ -1647,6 +1651,25 @@ public static partial class AutonomousRvrEventLayer
         double totalFill = (active.Attackers.Values.Sum() + active.Defenders.Values.Sum() + active.ThirdRealm.Values.Sum()) /
                            (double)(Capacity(active) * 3);
         return compatibleFill * 0.8d + totalFill * 0.2d;
+    }
+
+    /// <summary>
+    /// Keeps audit 2026-11-11 (B1 safety net): a siege is never started on a keep that cannot be captured (an ordinary
+    /// keep without a lord, AutonomousRvrKeepPolicy.IsCapturable). An objective whose keep is not known here (no keep
+    /// manager, unit tests) counts as capturable. A dictionary lookup per candidate, only when a siege may start.
+    /// </summary>
+    private static bool CanBeCaptured(LiveObjective objective)
+    {
+        if (objective == null) return false;
+        if (objective.IsRelicKeep || !objective.Id.StartsWith("rvr-keep-", StringComparison.Ordinal) ||
+            !int.TryParse(objective.Id.AsSpan("rvr-keep-".Length), out int keepId))
+            return true;
+        try
+        {
+            var keep = GameServer.KeepManager?.GetKeepByID(keepId);
+            return keep == null || AutonomousRvrKeepPolicy.IsCapturable(keep);
+        }
+        catch (Exception) { return true; }
     }
 
     private static bool OnCooldown(string targetId, long nowTick) => Cooldowns.TryGetValue(targetId, out long until) && until > nowTick;
