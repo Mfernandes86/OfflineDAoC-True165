@@ -130,4 +130,27 @@ public static class RealmRaidRecruitmentPolicy
     /// keeps waiting: the flight is at most a quarter of an hour).</summary>
     public static bool HornStagingFailed(int present, bool deadlinePassed) =>
         deadlinePassed && present < HornShortMinimum;
+
+    /// <summary>A horn battle ends "Failed" after this many engagements of the final encounter that ended with it back out
+    /// of combat at full health (a wipe).</summary>
+    public const int HornFailedFinalEngagements = 3;
+    /// <summary>A horn battle ends "Timed out" after this long without a route target or named boss killed and without the
+    /// final encounter reaching a new low.</summary>
+    public const long HornBattleStallMilliseconds = 60 * 60_000L;
+
+    public static bool HornBattleFailed(int failedFinalEngagements) => failedFinalEngagements >= HornFailedFinalEngagements;
+
+    public static bool HornBattleStalled(long battleStartTick, long lastProgressTick, long now) =>
+        battleStartTick > 0 && now - Math.Max(battleStartTick, lastProgressTick) >= HornBattleStallMilliseconds;
+
+    /// <summary>One pulse of the wipe watch on a final encounter: <paramref name="engaged"/> is set while it is hurt or
+    /// fighting; back out of combat at full health after that is one failed engagement.</summary>
+    public static bool FinalEngagementWiped(ref bool engaged, bool alive, bool inCombat, int healthPercent)
+    {
+        if (!alive) { engaged = false; return false; }
+        if (inCombat || healthPercent < 100) { engaged = true; return false; }
+        if (!engaged) return false;
+        engaged = false;
+        return true;
+    }
 }

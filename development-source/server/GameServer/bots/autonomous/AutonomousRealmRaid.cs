@@ -71,6 +71,13 @@ namespace DOL.GS
             public bool Horn;
             /// <summary>When 200 were first staged (the 3-minute wait starts there).</summary>
             public long MinimumStagedTick;
+            /// <summary>Horn battle watch: when the battle began, the last progress (a route target or named boss killed by
+            /// the raid, or a final encounter at a new low) and the wiped engagements of the final encounter.</summary>
+            public long BattleStartTick;
+            public long LastProgressTick;
+            public int FailedFinalEngagements;
+            public readonly Dictionary<GameNPC, bool> FinalEngaged = new();
+            public readonly Dictionary<GameNPC, int> FinalLow = new();
         }
         private sealed class Party
         {
@@ -277,6 +284,7 @@ namespace DOL.GS
                         if (ready)
                         {
                             raid.Started = true;
+                            raid.BattleStartTick = now;
                             if (raid.Horn) RallyGuests165.OnRaidStarted(raid.Definition.Id);
                             raid.Deadline = raid.Forced ? long.MaxValue : now + RealmRaidRecruitmentPolicy.BattleMilliseconds;
                             RealmEventRecords.Progress(raid.Definition.Id, "Battle", "Expedition began advancing to the encounter.", raid.Support.Length, present);
@@ -293,6 +301,8 @@ namespace DOL.GS
                                      raid.StagingArrivalTick))
                         { End(raid, now, $"Staging failed: {present} adventurers arrived; no undersized or airborne assault was ordered."); continue; }
                     }
+                    if (raid.Started && raid.Horn && WatchHornBattle(raid, now) is { } failure)
+                    { End(raid, now, failure); continue; }
                     if (raid.Started && raid.DungeonRoute != null)
                     {
                         raid.DungeonRoute.Advance(raid.Support, now);
@@ -317,6 +327,41 @@ namespace DOL.GS
                     RecentDestinations.Remove(key);
                 _raidDestinations = RecentDestinations.Keys.ToArray();
             }
+        }
+
+        /// <summary>
+        /// A horn battle ends on its own (realm event audit 2026-11-12: it could hold 300 bots at "Mustering for Govannon"
+        /// or at a dragon it could not hurt until a restart): after the third engagement of the final encounter that ended
+        /// with it out of combat at full health again (a wipe), or after an hour without progress (no route target or named
+        /// boss killed by the raid and no final encounter at a new low). One pass over the one to two finals per pulse.
+        /// </summary>
+        private static string WatchHornBattle(Raid raid, long now)
+        {
+            GameNPC[] finals = raid.DungeonRoute?.FinalBosses ?? [raid.Boss];
+            foreach (GameNPC final in finals)
+            {
+                if (final == null) continue;
+                bool alive = final.IsAlive && final.ObjectState == GameObject.eObjectState.Active;
+                bool engaged = raid.FinalEngaged.GetValueOrDefault(final);
+                if (RealmRaidRecruitmentPolicy.FinalEngagementWiped(ref engaged, alive, final.InCombat, final.HealthPercent))
+                {
+                    raid.FailedFinalEngagements++;
+                    raid.FinalLow.Remove(final);
+                    Log.Info($"REALM_RAID_FINAL_WIPE event={raid.Definition.Id} target=\"{final.Name}\" failed={raid.FailedFinalEngagements} " +
+                             $"of={RealmRaidRecruitmentPolicy.HornFailedFinalEngagements}");
+                }
+                raid.FinalEngaged[final] = engaged;
+                if (alive && final.HealthPercent < raid.FinalLow.GetValueOrDefault(final, 100))
+                {
+                    raid.FinalLow[final] = final.HealthPercent;
+                    raid.LastProgressTick = now;
+                }
+            }
+            if (RealmRaidRecruitmentPolicy.HornBattleFailed(raid.FailedFinalEngagements))
+                return $"Failed: the raid was beaten back from the final encounter {raid.FailedFinalEngagements} times.";
+            if (RealmRaidRecruitmentPolicy.HornBattleStalled(raid.BattleStartTick, raid.LastProgressTick, now))
+                return $"Timed out: no encounter was defeated for {RealmRaidRecruitmentPolicy.HornBattleStallMilliseconds / 60_000} minutes.";
+            return null;
         }
 
         public static bool TryJoin(GameBot leader, out View view)
@@ -1046,6 +1091,9 @@ namespace DOL.GS
                 GameBot[] damaging = contributors.ToArray();
                 Raid raid = damaging.Select(b => b?.Group).Where(group => group != null).Select(group => Membership.GetValueOrDefault(group))
                     .FirstOrDefault(r => r != null && r.Started && r.Definition.Region == victim.CurrentRegionID);
+                // a named boss or the route's own target killed by the raid is progress for the horn battle watch
+                if (raid != null && (victim is GameEpicBoss || raid.DungeonRoute != null && victim.Name == raid.DungeonRoute.TargetName))
+                    raid.LastProgressTick = GameLoop.GameLoopTime;
                 if (raid == null)
                 {
                     // Completion can race the native death/loot callback. Keep
@@ -1193,7 +1241,8 @@ namespace DOL.GS
             bool stoppedByPlayer = reason.StartsWith(StoppedByPlayer);
             string outcome = stoppedByPlayer ? "Stopped by player" :
                 reason.StartsWith("Route blocked") ? "Route blocked" :
-                reason.StartsWith("Staging failed") || reason.StartsWith("Failed rally") ? "Failed rally" : reason.Contains("four-hour") ? "Timed out" :
+                reason.StartsWith("Staging failed") || reason.StartsWith("Failed rally") ? "Failed rally" :
+                reason.StartsWith("Failed:") ? "Failed" : reason.Contains("four-hour") || reason.StartsWith("Timed out") ? "Timed out" :
                 raid.Definition.IsDungeon ? raid.DungeonRoute?.Complete == true ? "Boss defeated" : "Ended (unconfirmed)" :
                 !raid.Boss.IsAlive ? "Boss defeated" : "Encounter unavailable";
             RealmEventRecords.Finish(raid.Definition.Id, outcome, reason, raid.Support.Length);

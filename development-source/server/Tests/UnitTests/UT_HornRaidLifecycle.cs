@@ -43,4 +43,30 @@ public class UT_HornRaidLifecycle
         Assert.That(RealmRaidRecruitmentPolicy.HornStagingFailed(160, true), Is.False, "160+ go in (or wait for a landing)");
         Assert.That(RealmRaidRecruitmentPolicy.HornStagingFailed(0, false), Is.False);
     }
+
+    [Test]
+    public void AWipeAtTheFinalEncounterIsCountedOnceWhenItIsWholeAgain()
+    {
+        bool engaged = false;
+        Assert.That(RealmRaidRecruitmentPolicy.FinalEngagementWiped(ref engaged, true, false, 100), Is.False, "untouched");
+        Assert.That(RealmRaidRecruitmentPolicy.FinalEngagementWiped(ref engaged, true, true, 100), Is.False, "pulled");
+        Assert.That(RealmRaidRecruitmentPolicy.FinalEngagementWiped(ref engaged, true, false, 40), Is.False, "hurt, healing back");
+        Assert.That(RealmRaidRecruitmentPolicy.FinalEngagementWiped(ref engaged, true, false, 100), Is.True, "whole again: one wipe");
+        Assert.That(RealmRaidRecruitmentPolicy.FinalEngagementWiped(ref engaged, true, false, 100), Is.False, "counted once");
+        Assert.That(RealmRaidRecruitmentPolicy.FinalEngagementWiped(ref engaged, true, true, 90), Is.False);
+        Assert.That(RealmRaidRecruitmentPolicy.FinalEngagementWiped(ref engaged, false, false, 0), Is.False, "a kill is no wipe");
+        Assert.That(engaged, Is.False);
+        Assert.That(RealmRaidRecruitmentPolicy.HornBattleFailed(2), Is.False);
+        Assert.That(RealmRaidRecruitmentPolicy.HornBattleFailed(3), Is.True);
+    }
+
+    [Test]
+    public void AHornBattleWithoutProgressForAnHourTimesOut()
+    {
+        long start = 5 * Minute;
+        Assert.That(RealmRaidRecruitmentPolicy.HornBattleStalled(start, 0, start + 59 * Minute), Is.False);
+        Assert.That(RealmRaidRecruitmentPolicy.HornBattleStalled(start, 0, start + 60 * Minute), Is.True);
+        Assert.That(RealmRaidRecruitmentPolicy.HornBattleStalled(start, start + 50 * Minute, start + 100 * Minute), Is.False, "a kill resets it");
+        Assert.That(RealmRaidRecruitmentPolicy.HornBattleStalled(0, 0, 500 * Minute), Is.False, "not in battle");
+    }
 }
