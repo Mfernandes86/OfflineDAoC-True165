@@ -110,23 +110,32 @@ namespace DOL.GS
         public const int DefendGroupRadius = 2000;
 
         /// <summary>
-        /// Pure (Q6, veteran review 2026-11-11): /defensive starts no fight beyond 350 units of the player, but it does
-        /// defend - a monster hitting the companion itself is always answered, and one attacking any groupmate or
-        /// groupmate's pet is answered within 2,000 units of the player. Before, a monster beating on the healer 400
-        /// units away was ignored.
+        /// Pure (Q6, veteran review 2026-11-11, with the owner's clarification): /defensive starts no fight beyond 350
+        /// units of the player, but it does defend. A monster already in melee on the companion itself, or on any
+        /// groupmate or groupmate's pet within 2,000 units of the player, is answered - an add hitting the healer.
+        /// Never the monster being pulled (/pull, /grind, any player-led pull), and never one on the puller: those wait
+        /// for the 350 leash or the tank's engage exactly as before, so nobody runs out to meet the pull.
         /// </summary>
         public static bool DefensiveAnswers(bool withinDefensiveRadius, bool attacksThisCompanion, bool attacksGroupmate,
-            bool withinGroupRadius) =>
-            withinDefensiveRadius || attacksThisCompanion || attacksGroupmate && withinGroupRadius;
+            bool withinGroupRadius, bool inMeleeOnVictim, bool pullInProgress) =>
+            withinDefensiveRadius ||
+            inMeleeOnVictim && !pullInProgress && (attacksThisCompanion || attacksGroupmate && withinGroupRadius);
 
         private static bool DefendsTheGroup(GameLiving actor, GamePlayer leader, GameLiving target)
         {
-            if (!target.IsAlive)
+            if (!target.IsAlive || target.TargetObject is not GameLiving victim || !victim.IsAlive)
                 return false;
-            // the attacker lists the game already keeps: no area scan
-            bool onMe = target.TargetObject == actor || actor.attackComponent?.AttackerTracker.ContainsAttacker(target) == true;
-            bool onGroup = !onMe && target.TargetObject is GameLiving victim && victim.IsAlive && InGroupOf(victim, leader);
-            return DefensiveAnswers(false, onMe, onGroup, leader.IsWithinRadius(target, DefendGroupRadius));
+            bool onMe = victim == actor;
+            bool onGroup = !onMe && InGroupOf(victim, leader);
+            if (!onMe && !onGroup)
+                return false;
+            bool inMelee = target.IsWithinRadius(victim, target.MeleeAttackRange + 50) &&
+                           victim.attackComponent?.AttackerTracker.ContainsAttacker(target) == true;
+            Group group = leader.Group;
+            bool pulling = PlayerLedPullCoordinator.IsPullInProgress(group, target, victim) ||
+                           PlayerLedPullCoordinator.IsBringingBack(victim, target) ||
+                           Modes.TryGetValue(leader, out Mode mode) && mode.Pull == target;
+            return DefensiveAnswers(false, onMe, onGroup, leader.IsWithinRadius(target, DefendGroupRadius), inMelee, pulling);
         }
 
         /// <summary>A member of the player's group, or a pet (or sub-pet) of one.</summary>

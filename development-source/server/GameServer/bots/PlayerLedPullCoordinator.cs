@@ -154,6 +154,20 @@ namespace DOL.GS
         }
 
         /// <summary>
+        /// Q6 clarification (owner 2026-11-11): a /pull or /grind order of this group is still open and either this is the
+        /// monster being pulled or <paramref name="victim"/> is the puller. Such a monster never widens a /defensive
+        /// companion's leash: the group waits until it is inside 350 units or the tank has engaged it, as before.
+        /// </summary>
+        public static bool IsPullInProgress(Group group, GameLiving target, GameLiving victim)
+        {
+            if (group == null || !States.TryGetValue(group, out GroupState state))
+                return false;
+            Order order = Volatile.Read(ref state.Pending);
+            return order != null && Volatile.Read(ref order.Finished) == 0 &&
+                   (order.Target == target || victim != null && order.Tank == victim);
+        }
+
+        /// <summary>
         /// The tank is bringing this monster back to the player: its blows on the tank on the way back don't call the
         /// rest of the group out to the spawn (BotBrain.NotifyNearbyGroupBots).
         /// </summary>
