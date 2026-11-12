@@ -61,18 +61,45 @@ namespace DOL.GS
         public static long CostPerConPoint(int level) =>
             GamePlayer.prcRestore[Math.Clamp(level, 0, GamePlayer.prcRestore.Length - 1)];
 
-        /// <summary>A gamebot that should see a healer: Constitution to buy back that it can afford at least a point of,
-        /// or resurrection sickness with more than two minutes left. Hired companions go with their player.</summary>
-        public static bool WantsHealer(GameBot bot)
+        /// <summary>Constitution owed that makes a healer worth its own trip (veteran review 2026-11-11, Q29: 4,838 healer
+        /// visits in 4.2 h, each a trip, and trips are where bots die). A smaller loss is bought back when the bot is in
+        /// town anyway (<see cref="WantsHealer"/>). A bot never owes more than 3 points (one loss at a time, OnDeath).</summary>
+        public const int TripConstitutionLost = 3;
+
+        /// <summary>Sickness time left that is worth a healer trip (unchanged: more than two minutes).</summary>
+        public const long TripSicknessMilliseconds = 120_000;
+
+        /// <summary>
+        /// The healer rule as plain numbers (unit-tested). <paramref name="alreadyInTown"/>: the bot is on a town or
+        /// service visit anyway, so any Constitution it can afford a point of is bought back. Otherwise only a big loss
+        /// (3 points) or long sickness is worth the trip. Costs are unchanged.
+        /// </summary>
+        public static bool ShouldVisitHealer(int constitutionLost, bool canAffordPoint, long sicknessRemainingMilliseconds,
+            bool alreadyInTown)
+        {
+            if (constitutionLost > 0 && canAffordPoint && (alreadyInTown || constitutionLost >= TripConstitutionLost))
+                return true;
+            return sicknessRemainingMilliseconds > TripSicknessMilliseconds;
+        }
+
+        /// <summary>A gamebot on a town or service visit anyway that should also see the healer: Constitution to buy back
+        /// that it can afford at least a point of, or resurrection sickness with more than two minutes left. Hired
+        /// companions go with their player.</summary>
+        public static bool WantsHealer(GameBot bot) => WantsHealer(bot, alreadyInTown: true);
+
+        /// <summary>A gamebot that should make a trip for the healer (task boundaries, ending a hunt): 3 points of
+        /// Constitution owed, or more than two minutes of sickness left.</summary>
+        public static bool WantsHealerTrip(GameBot bot) => WantsHealer(bot, alreadyInTown: false);
+
+        private static bool WantsHealer(GameBot bot, bool alreadyInTown)
         {
             if (!Classic165Mode.IsOn || bot?.IsAutonomousWorldBot != true || bot.IsTemporaryGroupHelper || bot.IsPlayerLedGroup ||
                 HiredCompanions165.IsHired(bot) || !bot.IsAlive)
                 return false;
-            if (bot.TotalConstitutionLostAtDeath > 0 &&
-                AutonomousBotEconomy.GetMoney(bot.DatabaseID) >= CostPerConPoint(bot.Level))
-                return true;
+            int lost = bot.TotalConstitutionLostAtDeath;
+            bool afford = lost > 0 && AutonomousBotEconomy.GetMoney(bot.DatabaseID) >= CostPerConPoint(bot.Level);
             ECSGameEffect sickness = EffectListService.GetEffectOnTarget(bot, eEffect.ResurrectionIllness);
-            return sickness != null && sickness.GetRemainingTimeForClient() > 120_000;
+            return ShouldVisitHealer(lost, afford, sickness?.GetRemainingTimeForClient() ?? 0, alreadyInTown);
         }
 
         /// <summary>At the healer: the sickness is cured and lost Constitution bought back as far as the coin goes.</summary>

@@ -503,7 +503,7 @@ public static class AutonomousObjectiveAssignments
         // owner 2026-11-08: the capital the watchdog sends a bot to has merchants and healers; a bot arriving with a
         // nearly full bag (or Constitution to buy back) unloads there first instead of riding out with it full again
         if (bot.Group == null && !HiredCompanions165.IsHired(bot) &&
-            (AutonomousBotEconomy.IsBackpackNearlyFull(bot) || DeathPenalty165.WantsHealer(bot)) &&
+            (AutonomousBotEconomy.IsBackpackNearlyFull(bot) || DeathPenalty165.WantsHealerTrip(bot)) &&
             TryBeginBetweenTaskServices(bot))
         {
             bot.PersistentRecord.ObjectivePhase = reason + "; unloading in town first";
@@ -711,7 +711,7 @@ public static class AutonomousObjectiveAssignments
         TimeSpan age = utcNow - assigned.ToUniversalTime();
         bool diedSinceStart = recentDeath && TimeSpan.FromMilliseconds(now - bot.LastDeathTick165) < age;
         return ShouldEndHuntToUnload(true, true, age, fullSince is long since ? now - since : null, diedSinceStart,
-            diedSinceStart && bot.TotalConstitutionLostAtDeath > 0 && DeathPenalty165.WantsHealer(bot),
+            diedSinceStart && bot.TotalConstitutionLostAtDeath > 0 && DeathPenalty165.WantsHealerTrip(bot),
             diedSinceStart && fullSince == null && AutonomousBotEconomy.IsBackpackNearlyFull(bot));
     }
 
@@ -733,7 +733,7 @@ public static class AutonomousObjectiveAssignments
         bool backpackNearlyFull = AutonomousBotEconomy.IsBackpackNearlyFull(bot);
         BetweenTaskPlan plan = RollBetweenTaskPlan(bot.HasSpendableAutonomousTrainingPoints,
             backpackNearlyFull || TownErrands165.Reason(bot) != null ||
-            AutonomousWorldBotController.ShoppingPlanFor(bot) != null || DeathPenalty165.WantsHealer(bot),
+            AutonomousWorldBotController.ShoppingPlanFor(bot) != null || DeathPenalty165.WantsHealerTrip(bot),
             Random.Shared.NextDouble(),
             // owner 2026-11-08: a bag that refused loot is always unloaded (no 5% chance of hunting on with it full)
             backpackNearlyFull && AutonomousBotEconomy.FullBackpackSince(bot) != null ? 0 : Random.Shared.NextDouble());
