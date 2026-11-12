@@ -75,6 +75,10 @@ namespace DOL.GS
                 value.Count = value.OverBudget = 0;
                 value.TotalMs = value.MaxMs = value.WaitMs = 0;
             }
+            // veteran review M4: how much non-combat bot work the per-tick guards moved to a later tick this minute
+            (int deferredDecisions, int deferredRoutePlans) = AutonomousAiBudget.TakeDeferredCounts();
+            if (deferredDecisions + deferredRoutePlans > 0)
+                Log.Info(FormattableString.Invariant($"SERVER_AI_BUDGET deferredDecisions={deferredDecisions} deferredRoutePlans={deferredRoutePlans}"));
         }
 
         /// <summary>

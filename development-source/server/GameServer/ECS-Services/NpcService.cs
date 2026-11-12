@@ -43,7 +43,10 @@ namespace DOL.GS
                 return;
             }
 
+            // veteran review M4: the per-tick decision and route-plan allowances (AutonomousAiBudget) start here
+            AutonomousAiBudget.BeginNpcTick();
             GameLoop.ExecuteForEach(_list, lastValidIndex + 1, TickInternal);
+            AutonomousAiBudget.EndNpcTick();
 
             if (Diagnostics.CheckServiceObjectCount)
                 Diagnostics.PrintServiceObjectCount(ServiceName, ref EntityCount, _list.Count);
