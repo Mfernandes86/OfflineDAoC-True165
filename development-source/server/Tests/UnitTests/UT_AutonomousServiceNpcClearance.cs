@@ -1,0 +1,68 @@
+using System;
+using System.Numerics;
+using DOL.GS;
+using NUnit.Framework;
+
+namespace DOL.UnitTests;
+
+// GitHub #48: bots stood on stable masters and other service NPCs.
+[TestFixture]
+public class UT_AutonomousServiceNpcClearance
+{
+    private sealed class Mesh : PathfindingMgrBase
+    {
+        public bool Connected = true;
+        public float FloorShift;
+        public int Projections;
+        public override bool IsAvailable => true;
+        public override bool HasNavmesh(Zone zone) => true;
+        public override Vector3? GetClosestPoint(Zone zone, Vector3 position, float x, float y, float z, EDtPolyFlags[] filters)
+        {
+            Projections++;
+            return position + new Vector3(FloorShift, 0, 0);
+        }
+        public override PathfindingResult GetPathStraight(Zone zone, Vector3 from, Vector3 to, EDtPolyFlags[] filters, Span<WrappedPathfindingNode> nodes)
+        {
+            nodes[0] = new(Connected ? to : from, EDtPolyFlags.Walk);
+            return new(Connected ? PathfindingStatus.PathFound : PathfindingStatus.PartialPathFound, 1);
+        }
+    }
+    private static Zone TestZone => new(null, 2, "Town", 0, 0, 65536, 65536, 2, false, 0, false, 0, 0, 0, 0, 0);
+
+    [Test]
+    public void LandingStepOffIsOwnSpotAwayFromTheStableMaster()
+    {
+        Vector3 end = new(10_000, 10_000, 0);
+        Vector3 master = new(10_000, 9_700, 0);   // the master is south of the route end
+        Vector2 away = Vector2.Normalize(new(end.X - master.X, end.Y - master.Y));
+        for (long id = 1; id < 400; id++)
+        {
+            Vector3 spot = AutonomousServiceNpcClearance.LandingStepOff(end, master, id);
+            Vector2 step = new(spot.X - end.X, spot.Y - end.Y);
+            Assert.That(step.Length(), Is.InRange(AutonomousServiceNpcClearance.LandingStepMin - 0.01f,
+                AutonomousServiceNpcClearance.LandingStepMax + 0.01f));
+            Assert.That(Vector2.Dot(Vector2.Normalize(step), away), Is.GreaterThanOrEqualTo(MathF.Cos(75.5f * MathF.PI / 180f)),
+                "never toward the master");
+            Assert.That(spot, Is.EqualTo(AutonomousServiceNpcClearance.LandingStepOff(end, master, id)), "the same bot, the same spot");
+        }
+        Assert.That(AutonomousServiceNpcClearance.LandingStepOff(end, master, 7),
+            Is.Not.EqualTo(AutonomousServiceNpcClearance.LandingStepOff(end, master, 8)), "riders of one route spread out");
+        Vector3 noMaster = AutonomousServiceNpcClearance.LandingStepOff(end, null, 7);
+        Assert.That(Vector2.Distance(new(noMaster.X, noMaster.Y), new(end.X, end.Y)),
+            Is.InRange(AutonomousServiceNpcClearance.LandingStepMin - 0.01f, AutonomousServiceNpcClearance.LandingStepMax + 0.01f));
+    }
+
+    [Test]
+    public void LandingStepOffNeedsAConnectedFloorNearTheSpot()
+    {
+        Vector3 end = new(10_000, 10_000, 0);
+        var nav = new Mesh();
+        Assert.That(AutonomousServiceNpcClearance.TryResolveLandingStepOff(nav, TestZone, end, null, 5, out Vector3 spot), Is.True);
+        Assert.That(nav.Projections, Is.EqualTo(1), "one floor projection per arrival");
+        Assert.That(Vector3.Distance(spot, end), Is.GreaterThanOrEqualTo(AutonomousServiceNpcClearance.LandingStepMin - 0.01f));
+        Assert.That(AutonomousServiceNpcClearance.TryResolveLandingStepOff(new Mesh { Connected = false }, TestZone, end, null, 5, out _),
+            Is.False, "an island or prop top keeps the rider where it landed");
+        Assert.That(AutonomousServiceNpcClearance.TryResolveLandingStepOff(new Mesh { FloorShift = 90 }, TestZone, end, null, 5, out _),
+            Is.False, "the floor found is far from the chosen spot");
+    }
+}

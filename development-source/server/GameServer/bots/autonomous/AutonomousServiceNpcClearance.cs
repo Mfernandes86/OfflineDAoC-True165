@@ -22,6 +22,10 @@ namespace DOL.GS
         /// <summary>A town break spot stays at least this far from a service NPC.</summary>
         public const float TownBreakClearRadius = 250f;
 
+        /// <summary>A landed rider steps off the route end by this much (per bot, from its id).</summary>
+        public const float LandingStepMin = 60f;
+        public const float LandingStepMax = 140f;
+
         /// <summary>The NPCs players walk up to and click: merchants (stable masters are merchants), trainers,
         /// healers, vault keepers and the realm exchange. A gamebot is never one.</summary>
         public static bool IsServiceNpc(GameNPC npc) =>
@@ -52,6 +56,47 @@ namespace DOL.GS
                 if (npc.ObjectState == GameObject.eObjectState.Active && IsServiceNpc(npc))
                     found.Add(new(npc.X, npc.Y, npc.Z));
             return found;
+        }
+
+        /// <summary>
+        /// Pure: where a rider who landed at <paramref name="end"/> steps to. Each bot gets its own spot
+        /// <see cref="LandingStepMin"/>-<see cref="LandingStepMax"/> from the route end, on the side away from the
+        /// stable master (within 75 degrees of straight away), so the riders of one route no longer share one spot.
+        /// With no master known the whole circle is used.
+        /// </summary>
+        public static Vector3 LandingStepOff(Vector3 end, Vector3? master, long botId)
+        {
+            ulong hash = unchecked((ulong)botId * 2654435761UL);
+            float radius = LandingStepMin + (float)(hash % (ulong)(LandingStepMax - LandingStepMin + 1));
+            Vector2 away = master.HasValue ? new(end.X - master.Value.X, end.Y - master.Value.Y) : Vector2.Zero;
+            float angle = away.LengthSquared() >= 1f
+                ? MathF.Atan2(away.Y, away.X) + ((float)((hash >> 8) % 151UL) - 75f) * MathF.PI / 180f
+                : (float)((hash >> 8) % 360UL) * MathF.PI / 180f;
+            return new(end.X + MathF.Cos(angle) * radius, end.Y + MathF.Sin(angle) * radius, end.Z);
+        }
+
+        /// <summary>
+        /// The walkable step-off spot for a landed rider: one floor projection of <see cref="LandingStepOff"/> and one
+        /// corridor check back to the landing (no prop tops or islands). False keeps the rider where it landed.
+        /// Once per arrival.
+        /// </summary>
+        public static bool TryResolveLandingStepOff(IPathfindingMgr nav, Zone zone, Vector3 landing, Vector3? master,
+            long botId, out Vector3 point)
+        {
+            point = default;
+            if (zone == null || nav == null || !nav.IsAvailable || !nav.HasNavmesh(zone))
+                return false;
+            Vector3 desired = LandingStepOff(landing, master, botId);
+            if (desired.X < zone.XOffset || desired.X >= zone.XOffset + zone.Width ||
+                desired.Y < zone.YOffset || desired.Y >= zone.YOffset + zone.Height)
+                return false;
+            Vector3? floor = nav.GetClosestPoint(zone, desired, 32, 32, 128, nav.DefaultFilters);
+            if (!floor.HasValue || Vector2.Distance(new(floor.Value.X, floor.Value.Y), new(desired.X, desired.Y)) > 48 ||
+                MathF.Abs(floor.Value.Z - landing.Z) > 128 ||
+                !AutonomousZoneItinerary.HasCompleteCorridor(nav, zone, landing, floor.Value))
+                return false;
+            point = floor.Value;
+            return true;
         }
     }
 }
