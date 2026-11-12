@@ -48,6 +48,9 @@ public sealed partial class AutonomousWorldBotController
     private ushort _carrierLastRegion;
     private long _carrierLandedTick, _carrierPortFailingSince;
     private bool _carrierPortGivenUp;
+    private long _carrierCrossingCheckedTick;
+    private ushort _carrierCrossingCheckedRegion;
+    private bool _carrierHasCrossing;
     private GameRelic _shrineWalkRelic;
     private Vector3 _shrineWalkFrom;
     private long _shrineWalkCheckedTick;
@@ -170,6 +173,15 @@ public sealed partial class AutonomousWorldBotController
             Vector2.DistanceSquared(new(bot.X, bot.Y), new(homeKeep.X, homeKeep.Y)) <= 3500f * 3500f)
             return CarrierEntersHomeShrine(bot, home, homeKeep, carried);
         SetRvrStatus(bot, "Returning relic", "Escort the real relic to its home shrine", home.Name);
+        // M6: with no legal crossing toward home the travel code abandoned its camp every turn; hold and report instead.
+        if (bot.CurrentRegionID != home.CurrentRegionID && !CarrierHasCrossing(bot, home, now))
+        {
+            bot.StopMovingOnPath();
+            bot.StopMoving();
+            SetRvrStatus(bot, "Relic return blocked", "Protect the carried relic", "No legal way home from here");
+            ReportCarrierStuck(bot, carried, now, "no legal crossing toward the home shrine");
+            return true;
+        }
         // In the home frontier the walk goes to the home relic keep (the keep route); elsewhere across the zone points
         // (only the own portal keep's port takes a carrier, CarrierPortalKeepTurn).
         CampDestination destination = homeKeep != null && bot.CurrentRegionID == home.CurrentRegionID
@@ -282,6 +294,17 @@ public sealed partial class AutonomousWorldBotController
             Log.Warn($"RELIC_CARRIER_PORT_FAILED bot=\"{bot.Name}\" relic=\"{carried.Name}\" porter=\"{porter.Name}\" region={region} " +
                 $"reason=\"no boarding for {CarrierPortGiveUpMilliseconds / 1000} s; walking home through the dungeons\"");
         return false;
+    }
+
+    /// <summary>Whether a legal crossing leads on toward the home shrine (checked at most every 30 s per region, M6).</summary>
+    private bool CarrierHasCrossing(GameBot bot, GameRelicPad home, long now)
+    {
+        if (_carrierCrossingCheckedRegion == bot.CurrentRegionID && now - _carrierCrossingCheckedTick < 30_000 && now >= _carrierCrossingCheckedTick)
+            return _carrierHasCrossing;
+        _carrierCrossingCheckedRegion = bot.CurrentRegionID;
+        _carrierCrossingCheckedTick = now;
+        _carrierHasCrossing = FindNextCrossing(bot, home.CurrentRegionID, home.X, home.Y) != null;
+        return _carrierHasCrossing;
     }
 
     private void ReportCarrierStuck(GameBot bot, GameRelic carried, long now, string reason)
