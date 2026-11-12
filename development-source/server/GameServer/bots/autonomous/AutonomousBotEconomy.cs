@@ -1405,18 +1405,20 @@ namespace DOL.GS;
         MarketBook.NameStats stats = MarketCache.ReadBook(book => book.Name(bot.Realm, item.Name, owner));
         if (stats.OwnCopies >= MaxBotCopiesPerName)
             return null;
-        long ask = ItemValue165.Ask(item, mood, stats.CheapestOther, materialCost);
+        int count = Math.Max(1, item.Count);
+        long cheapestOther = stats.CheapestFor(count);
+        long ask = ItemValue165.Ask(item, mood, cheapestOther, materialCost);
         MarketBook.Listing bump = null;
         if (stats.BotCopies >= MaxRealmBotCopies)
         {
-            if (stats.DearestOtherBot == null || ask >= stats.DearestOtherBot.Price)
+            if (stats.DearestOtherBot == null || ask >= stats.DearestOtherBot.PriceFor(count))
                 return null;
             bump = stats.DearestOtherBot;
         }
         long gain = Math.Max(0, ask - ItemValue165.Floor(item));
         return new ListingCandidate(item, (int)Math.Clamp(ask, 1, int.MaxValue))
         {
-            Gain = gain, Bump = bump, OwnCrafted = IsOwnCrafted(bot, item), CheapestOther = stats.CheapestOther,
+            Gain = gain, Bump = bump, OwnCrafted = IsOwnCrafted(bot, item), CheapestOther = cheapestOther,
         };
     }
 
@@ -2048,7 +2050,7 @@ namespace DOL.GS;
         if (plan?.Item == null)
             return 0;
         long ask = ItemValue165.Ask(plan.Item, ItemValue165.RollMood(), plan.CheapestOther);
-        if (plan.Bump != null && ask >= plan.Bump.Price)
+        if (plan.Bump != null && ask >= plan.Bump.PriceFor(plan.Item.Count))
             ask = plan.PriceCopper;
         return (int)Math.Clamp(ask, 1, int.MaxValue);
     }
@@ -2159,9 +2161,11 @@ namespace DOL.GS;
                 bump = stats.DearestOtherBot;
                 if (bump == null)
                     return false;
-                if (priceCopper >= bump.Price)
-                    priceCopper = (int)Math.Max(ItemValue165.AskFloor(plan.Item), bump.Price - 1);
-                if (priceCopper >= bump.Price)
+                // per unit: the bumped copy's price for as many items as this listing holds
+                long bumpPrice = bump.PriceFor(plan.Item.Count);
+                if (priceCopper >= bumpPrice)
+                    priceCopper = (int)Math.Max(ItemValue165.AskFloor(plan.Item), bumpPrice - 1);
+                if (priceCopper >= bumpPrice)
                     return false;
             }
             bool listed;

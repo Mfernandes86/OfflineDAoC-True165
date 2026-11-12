@@ -100,8 +100,8 @@ public static class RealmMarketPass
             if (!string.Equals(other.NameKey, listing.NameKey, StringComparison.OrdinalIgnoreCase))
                 continue;
             ownCopies++;
-            if (!ReferenceEquals(other, listing) && other.Price > listing.Price)
-                dearestOwn = false;
+            if (!ReferenceEquals(other, listing) && MarketBook.UnitCheaper(listing, other))
+                dearestOwn = false;   // per unit: stacks of different sizes compare per item
         }
         if (ownCopies > AutonomousBotEconomy.MaxBotCopiesPerName && dearestOwn)
             return true;

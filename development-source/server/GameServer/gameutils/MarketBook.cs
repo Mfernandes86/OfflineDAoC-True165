@@ -30,6 +30,8 @@ namespace DOL.GS
             public int Bucket;
             public int Band;
             public long Price;
+            /// <summary>The items in the listing (a stack's count, 1 for gear): copies compare per unit.</summary>
+            public int Count = 1;
             public long Fair;
             public long Floor;
             public long Gain => Math.Max(0, Fair - Floor);
@@ -37,13 +39,31 @@ namespace DOL.GS
             public long ExpiresTicks;
             public long WheelMinute;
             public int Slot;
+
+            /// <summary>This listing's price per unit, for <paramref name="count"/> items (its own price for its own count).</summary>
+            public long PriceFor(int count)
+            {
+                count = Math.Max(1, count);
+                return count == Count ? Price : (Price * count + Count / 2) / Count;
+            }
         }
+
+        /// <summary>Whether listing <paramref name="a"/> is cheaper per unit than <paramref name="b"/> (stacks of different
+        /// sizes compare per item, review 2026-11-11: a 20-arrow stack undercut a 99-arrow stack's total).</summary>
+        public static bool UnitCheaper(Listing a, Listing b) => (decimal)a.Price * b.Count < (decimal)b.Price * a.Count;
+
+        public static bool UnitEqual(Listing a, Listing b) => (decimal)a.Price * b.Count == (decimal)b.Price * a.Count;
 
         public readonly record struct RealmSummary(int BotListings, int PlayerListings, int DistinctNames, int Sellers);
 
         /// <summary>A name's copies as one seller sees them: the bot copies in the realm, this seller's own copies, the
-        /// cheapest copy of anyone else, and the dearest bot copy of anyone else (the one a new lister would bump).</summary>
-        public readonly record struct NameStats(int BotCopies, int OwnCopies, long CheapestOther, Listing DearestOtherBot);
+        /// cheapest copy of anyone else, and the dearest bot copy of anyone else (the one a new lister would bump); both
+        /// per unit.</summary>
+        public readonly record struct NameStats(int BotCopies, int OwnCopies, Listing Cheapest, Listing DearestOtherBot)
+        {
+            /// <summary>The cheapest other copy's price for this many items (0: none).</summary>
+            public long CheapestFor(int count) => Cheapest?.PriceFor(count) ?? 0;
+        }
 
         public const int Bands = 11;
 
@@ -120,6 +140,7 @@ namespace DOL.GS
                 Bucket = clientSlot,
                 Band = BandOf(item.Level),
                 Price = item.SellPrice,
+                Count = Math.Max(1, item.Count),
                 Slot = item.SlotPosition,
             };
             AutonomousBotEconomy.TryParseOwnerId(listing.Owner, out listing.BotId);
@@ -239,8 +260,8 @@ namespace DOL.GS
         /// <summary>Every listed item (the hourly resync only).</summary>
         public IEnumerable<DbInventoryItem> AllItems() => _all.Keys;
 
-        /// <summary>How many bot copies of this name rank before this listing - cheaper, or as cheap and older by id - (the
-        /// market pass, for a name over its copy limit; the tie-break lets a wall of equal prices drain too).</summary>
+        /// <summary>How many bot copies of this name rank before this listing - cheaper per unit, or as cheap and older by
+        /// id - (the market pass, for a name over its copy limit; the tie-break lets a wall of equal prices drain too).</summary>
         public int CheaperBotCopies(Listing listing)
         {
             if (listing == null || string.IsNullOrEmpty(listing.NameKey) ||
@@ -248,8 +269,8 @@ namespace DOL.GS
                 return 0;
             int cheaper = 0;
             foreach (Listing copy in copies)
-                if (copy.IsBot && !ReferenceEquals(copy, listing) && (copy.Price < listing.Price ||
-                    copy.Price == listing.Price && string.CompareOrdinal(copy.Item.ObjectId, listing.Item.ObjectId) < 0))
+                if (copy.IsBot && !ReferenceEquals(copy, listing) && (UnitCheaper(copy, listing) ||
+                    UnitEqual(copy, listing) && string.CompareOrdinal(copy.Item.ObjectId, listing.Item.ObjectId) < 0))
                     cheaper++;
             return cheaper;
         }
@@ -293,7 +314,7 @@ namespace DOL.GS
             if (string.IsNullOrEmpty(name) || !_realms[RealmIndex(realm)].ByName.TryGetValue(name, out HashSet<Listing> copies))
                 return default;
             int bots = 0, own = 0;
-            long cheapest = 0;
+            Listing cheapest = null;
             Listing dearest = null;
             foreach (Listing copy in copies)
             {
@@ -304,9 +325,9 @@ namespace DOL.GS
                     own++;
                     continue;
                 }
-                if (copy.Price > 0 && (cheapest == 0 || copy.Price < cheapest))
-                    cheapest = copy.Price;
-                if (copy.IsBot && (dearest == null || copy.Price > dearest.Price))
+                if (copy.Price > 0 && (cheapest == null || UnitCheaper(copy, cheapest)))
+                    cheapest = copy;
+                if (copy.IsBot && (dearest == null || UnitCheaper(dearest, copy)))
                     dearest = copy;
             }
             return new NameStats(bots, own, cheapest, dearest);

@@ -261,7 +261,8 @@ namespace DOL.GS
             if (listing == null || listing.ListedTicks <= 0 || utcNow.Ticks - listing.ListedTicks < UndercutAge.Ticks ||
                 listing.ExpiresTicks > 0 && listing.ExpiresTicks <= utcNow.Ticks)
                 return false;   // an expired listing is the expiry sweep's (it relists or pulls it)
-            long cheapestOther = MarketCache.ReadBook(book => book.Name(listing.Realm, listing.NameKey, listing.Owner)).CheapestOther;
+            // per unit: the cheapest other copy's price for as many items as this listing holds
+            long cheapestOther = MarketCache.ReadBook(book => book.Name(listing.Realm, listing.NameKey, listing.Owner)).CheapestFor(listing.Count);
             long ask = item.SellPrice;
             long target = UndercutPrice(ask, cheapestOther, ItemValue165.AskFloor(item));
             var record = new OfflineTrue165RelistRecord { InventoryId = item.ObjectId, Tries = TriesUndercut, OriginalPrice = (int)ask };
