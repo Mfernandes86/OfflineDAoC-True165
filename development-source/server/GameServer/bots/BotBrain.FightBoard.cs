@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using DOL.GS;
@@ -71,7 +72,12 @@ namespace DOL.AI.Brain
             public ushort LastScanRegion;
         }
 
-        private static readonly ConditionalWeakTable<object, FightBoardHolder> FightBoards = new();
+        /// <summary>
+        /// One board per group and region (performance review 2026-11-11): a member fighting in another region (walking
+        /// back from its bind) keeps a board and scan timer of its own instead of rebuilding the camp's board, and re-running
+        /// its area search, on every alternate ask.
+        /// </summary>
+        private static readonly ConditionalWeakTable<object, ConcurrentDictionary<ushort, FightBoardHolder>> FightBoards = new();
         private static long _fightBoardBuilds;
 
         /// <summary>How many boards were built since start (a load counter for the logs and tests).</summary>
@@ -86,7 +92,8 @@ namespace DOL.AI.Brain
             if (asker == null)
                 return null;
             object key = (object)asker.Group ?? asker;
-            FightBoardHolder holder = FightBoards.GetValue(key, _ => new FightBoardHolder());
+            FightBoardHolder holder = FightBoards.GetValue(key, _ => new ConcurrentDictionary<ushort, FightBoardHolder>())
+                .GetOrAdd(asker.CurrentRegionID, _ => new FightBoardHolder());
             long now = GameLoop.GameLoopTime;
             GroupFightBoard board = holder.Board;
             if (board != null && board.IsFresh(now, asker.CurrentRegionID))

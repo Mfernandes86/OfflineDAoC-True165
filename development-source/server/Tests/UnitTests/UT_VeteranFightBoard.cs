@@ -39,6 +39,31 @@ namespace DOL.UnitTests
             public GameObject Target;
             public override bool IsAlive => Alive;
             public override GameObject TargetObject { get => Target; set => Target = value; }
+            public ushort Region;
+            public override ushort CurrentRegionID { get => Region; set => Region = value; }
+        }
+
+        [Test]
+        public void MembersInTwoRegionsKeepABoardEach()
+        {
+            using var scope = new EpicTestServerScope();
+            var camp = (Npc)RuntimeHelpers.GetUninitializedObject(typeof(Npc));
+            var walker = (Npc)RuntimeHelpers.GetUninitializedObject(typeof(Npc));
+            camp.Region = 1;
+            walker.Region = 2;
+            var group = new Group(camp);
+            var list = (List<GameLiving>)typeof(Group).GetField("_groupMembers",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(group);
+            foreach (Npc member in new[] { camp, walker }) { list.Add(member); member.Group = group; }
+            GroupFightBoard campBoard = BotBrain.GetFightBoard(camp);
+            GroupFightBoard walkerBoard = BotBrain.GetFightBoard(walker);
+            Assert.Multiple(() =>
+            {
+                Assert.That(campBoard.RegionId, Is.EqualTo(1));
+                Assert.That(walkerBoard.RegionId, Is.EqualTo(2));
+                Assert.That(BotBrain.GetFightBoard(camp), Is.SameAs(campBoard), "the walker's ask did not rebuild the camp's board");
+                Assert.That(BotBrain.GetFightBoard(walker), Is.SameAs(walkerBoard));
+            });
         }
 
         [Test]
