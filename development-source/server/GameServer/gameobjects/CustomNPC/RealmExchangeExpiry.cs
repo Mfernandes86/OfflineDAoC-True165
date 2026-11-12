@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -86,61 +88,177 @@ public static class RealmExchangeExpiry
             $"{who} listing expires in {(int)remaining.TotalHours}h {remaining.Minutes}m ({expiry:yyyy-MM-dd HH:mm} UTC).";
     }
 
+
+    /// <summary>A player listing is being sold: its hours row is returned so the sale transaction deletes it.</summary>
+    public static OfflineTrue165ListingHours TakeHoursForSale(string objectId, string sellerId)
+    {
+        if (objectId == null || AutonomousBotEconomy.TryParseOwnerId(sellerId, out _))
+            return null;
+        HoursCache.TryRemove(objectId, out _);
+        return new OfflineTrue165ListingHours { InventoryId = objectId, IsPersisted = true };
+    }
+
+    /// <summary>A player took an item back out of the listing chest: its hours row goes.</summary>
+    public static void ForgetHours(DbInventoryItem item)
+    {
+        if (item?.ObjectId == null || AutonomousBotEconomy.TryParseOwnerId(item.OwnerID, out _))
+            return;
+        HoursCache.TryRemove(item.ObjectId, out _);
+        RealmExchangeWriteQueue.Delete(new OfflineTrue165ListingHours { InventoryId = item.ObjectId, IsPersisted = true });
+    }
+
     internal static void Start()
     {
         // Old listings predate the timestamp column: give those bots one full
         // bot-listing lifetime from migration, never expire an item on an unknown age.
+        var listedIds = new HashSet<string>(StringComparer.Ordinal);
         foreach (DbInventoryItem item in MarketCache.SearchItems(new ItemQuery()))
         {
-            if (!RealmExchangeBroker.IsExchangeOwnerLot(item.OwnerLot) ||
-                !AutonomousBotEconomy.TryParseOwnerId(item.OwnerID, out _) || ExpiresUtc(item) != null) continue;
-            item.RealmExchangeListedUtc = DateTime.UtcNow.ToString("O");
+            if (!RealmExchangeBroker.IsExchangeOwnerLot(item.OwnerLot))
+                continue;
+            if (item.ObjectId != null)
+                listedIds.Add(item.ObjectId);
+            if (!AutonomousBotEconomy.TryParseOwnerId(item.OwnerID, out _) || ExpiresUtc(item) != null) continue;
+            MarketCache.UpdateItem(item, static (listed, now) => listed.RealmExchangeListedUtc = now, DateTime.UtcNow.ToString("O"));
             GameServer.Database.SaveObject(item);
         }
-        _timer ??= new Timer(_ => Sweep(), null, 60_000, 60_000);
+        CleanBookkeeping(GameServer.Database, listedIds);
+        _timer ??= new Timer(_ => Tick(), null, TickMilliseconds, TickMilliseconds);
     }
 
-    private static void Sweep()
+    /// <summary>
+    /// Startup: loads the relist rows and removes the orphan bookkeeping rows - relist and listing-hours rows whose item
+    /// is no longer listed (2026-11-11 exchange audit: 249 relist and 67 listing-hours rows of items that had sold).
+    /// Side-table rows only, never a listing. Returns the rows deleted.
+    /// </summary>
+    public static int CleanBookkeeping(IObjectDatabase database, ISet<string> listedIds)
+    {
+        int removed = 0;
+        try
+        {
+            removed += Exchange165.LoadRelists(database, listedIds);
+            IList<OfflineTrue165ListingHours> hours = database?.SelectAllObjects<OfflineTrue165ListingHours>();
+            if (hours != null)
+            {
+                DataObject[] orphans = hours.Where(row => row != null && !listedIds.Contains(row.InventoryId)).Cast<DataObject>().ToArray();
+                if (orphans.Length > 0)
+                {
+                    lock (AutonomousBotStatusPersistence.DatabaseWriteLock)
+                        database.DeleteObject(orphans);
+                    removed += orphans.Length;
+                }
+            }
+            if (removed > 0)
+                Note($"EXCHANGE_CLEANUP orphanRows={removed} relists={Exchange165.RelistCount}", null);
+        }
+        catch (Exception error)
+        {
+            Note("Realm Exchange bookkeeping cleanup skipped.", error);
+        }
+        return removed;
+    }
+
+    private static void Note(string message, Exception error)
+    {
+        try
+        {
+            var log = Logging.LoggerManager.Create(typeof(RealmExchangeExpiry));
+            if (error == null)
+                log.Info(message);
+            else
+                log.Warn(message, error);
+        }
+        catch { } // no logger (tests): diagnostics never stop the cleanup
+    }
+
+    /// <summary>The exchange timer: the market pass every 30 s, the expiry sweep every minute, the hourly line.</summary>
+    public const int TickMilliseconds = 30_000;
+    private static int _tickCount;
+
+    private static void Tick()
     {
         if (Interlocked.Exchange(ref _running, 1) != 0) return;
-        try { ExpireDue(DateTime.UtcNow); }
+        try
+        {
+            DateTime now = DateTime.UtcNow;
+            RealmMarketPass.Run(now);
+            int tick = Interlocked.Increment(ref _tickCount);
+            if (tick % 2 == 0)
+            {
+                long start = Stopwatch.GetTimestamp();
+                ExpireDue(now);
+                RealmExchangeStats.NoteSweep(Stopwatch.GetTimestamp() - start);
+            }
+            if (tick % 120 == 0)
+                ResyncWheel();
+            RealmExchangeStats.LogHourlyIfDue(now);
+        }
         catch (Exception error) { Logging.LoggerManager.Create(typeof(RealmExchangeExpiry)).Error("Realm Exchange expiry sweep failed; retained remaining items.", error); }
         finally { Volatile.Write(ref _running, 0); }
     }
 
+    /// <summary>Hourly safety net: a listing whose timestamp changed without the index seeing it is re-read, so the
+    /// expiry wheel can't keep an item past its time. Returns the listings re-read.</summary>
+    public static int ResyncWheel()
+    {
+        List<DbInventoryItem> stale = MarketCache.ReadBook(book =>
+        {
+            var found = new List<DbInventoryItem>();
+            foreach (DbInventoryItem item in book.AllItems())
+                if (book.Find(item) is { } listing && listing.ExpiresTicks != (ExpiresUtc(item)?.Ticks ?? 0))
+                    found.Add(item);
+            return found;
+        });
+        int refreshed = 0;
+        foreach (DbInventoryItem item in stale)
+            if (MarketCache.Refresh(item))
+                refreshed++;
+        return refreshed;
+    }
+
+    /// <summary>Most expired listings handled per sweep (bounded writes; the rest wait a minute).</summary>
+    public const int MaxPerSweep = 200;
+
     public static int ExpireDue(DateTime utcNow)
     {
         int removed = 0;
-        // Once a minute, bounded writes; nothing runs in individual AI turns.
-        foreach (DbInventoryItem item in MarketCache.SearchItems(new ItemQuery()).Where(item => IsExpired(item, utcNow)).Take(200))
+        // Once a minute, only the listings whose expiry minute has come (the expiry wheel): no full copy, no parsing of
+        // every timestamp. Nothing runs in individual AI turns.
+        foreach (DbInventoryItem item in MarketCache.ReadBook(book => book.Due(utcNow, MaxPerSweep)))
         {
-            lock (RealmExchangeBroker.TransactionLock)
-            lock (AutonomousBotStatusPersistence.DatabaseWriteLock)
+            if (!IsExpired(item, utcNow))
             {
-                if (!IsExpired(item, utcNow)) continue;
+                // the index had an older timestamp: re-read it so the wheel holds the real expiry
+                MarketCache.Refresh(item);
+                continue;
+            }
+            // never wait long for the locks: a busy exchange tries again next minute
+            if (!RealmExchangeLocks.TryEnter(25, true, out RealmExchangeLocks.Scope scope))
+                break;
+            using (scope)
+            {
+                if (!IsExpired(item, utcNow) || !MarketCache.Contains(item)) continue;
                 if (!AutonomousBotEconomy.TryParseOwnerId(item.OwnerID, out long id))
                 {
                     // a player's listing ran out: it stays in their listing chest, no longer offered (they can price it again)
-                    MarketCache.UpdateItem(item, static (listed, value) => listed.SellPrice = value, 0);
-                    item.RealmExchangeListedUtc = string.Empty;
+                    MarketCache.UpdateItem(item, static (listed, value) =>
+                    {
+                        listed.SellPrice = value;
+                        listed.RealmExchangeListedUtc = string.Empty;
+                    }, 0);
                     item.Dirty = true;
                     GameServer.Database.SaveObject(item);
-                    if (ClientService.Instance.GetPlayers().FirstOrDefault(p => p.InternalID == item.OwnerID) is GamePlayer seller)
+                    if (ClientService.Instance?.GetPlayers().FirstOrDefault(p => p.InternalID == item.OwnerID) is GamePlayer seller)
                         seller.Out.SendMessage($"Your Realm Exchange listing of {item.Name} ran out unsold; it waits in your listing chest.", PacketHandler.eChatType.CT_Merchant, PacketHandler.eChatLoc.CL_SystemWindow);
                     removed++;
                     continue;
                 }
-                // True 1.65 Mode: relisted at 90%, then 80%, then back to the bot (Exchange165); normal mode deletes it
-                if (Exchange165.HandleExpired(item, id))
+                // a bot's: relisted once for 12 h more, then back to the bot or paid out at the merchant value (Exchange165)
+                if (Exchange165.HandleExpired(item, id, utcNow))
                 {
                     AutonomousBotEconomy.MarkEconomyChanged(id);
                     removed++;
-                    continue;
                 }
-                if (!GameServer.Database.DeleteObject(item)) continue;
-                MarketCache.RemoveItem(item);
-                AutonomousBotEconomy.MarkEconomyChanged(id);
-                removed++;
             }
         }
         return removed;
