@@ -13,12 +13,13 @@ public sealed class UT_ScaleGuards
     public void DecisionAllowanceShrinksWithSlowTicksButNeverStops()
     {
         int fast = AutonomousAiBudget.DecisionAllowance(2);
-        int slow = AutonomousAiBudget.DecisionAllowance(10);
+        int slow = AutonomousAiBudget.DecisionAllowance(16);
         Assert.Multiple(() =>
         {
             Assert.That(fast, Is.GreaterThan(slow));
             Assert.That(AutonomousAiBudget.DecisionAllowance(50), Is.EqualTo(AutonomousAiBudget.MinimumDecisionsPerTick));
             Assert.That(slow, Is.GreaterThanOrEqualTo(AutonomousAiBudget.MinimumDecisionsPerTick));
+            Assert.That(AutonomousAiBudget.DecisionAllowance(5), Is.GreaterThanOrEqualTo(100), "an ordinary tick is not throttled");
         });
     }
 
@@ -38,7 +39,7 @@ public sealed class UT_ScaleGuards
     public void DeferredBotsThinkAgainWithinAFewTicks()
     {
         foreach (long id in new[] { 0L, 1, 66, 67, 12345, -9, long.MaxValue })
-            Assert.That(AutonomousAiBudget.DeferredThinkMilliseconds(id), Is.InRange(100, 166));
+            Assert.That(AutonomousAiBudget.DeferredThinkMilliseconds(id), Is.InRange(150, 400));
         Assert.That(AutonomousAiBudget.Smooth(0, 5), Is.EqualTo(5));
         Assert.That(AutonomousAiBudget.Smooth(10, 0), Is.EqualTo(8).Within(1e-9));
     }

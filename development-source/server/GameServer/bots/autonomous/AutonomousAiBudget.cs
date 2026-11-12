@@ -55,11 +55,15 @@ public static class AutonomousAiBudget
         "Veteran review M4 (2026-11-11): a per-tick cap on decisions of gamebots that are not fighting (travel, rest, planning) and a per-tick budget for new route plans, so slow ticks spread work over the next ticks instead of stalling. Combat thinking is never capped.", true)]
     public static bool TickBudgetEnabled = true;
 
-    /// <summary>The NPC-service time (ms per tick) that non-combat decisions may fill, measured on recent ticks.</summary>
-    public const double DecisionBudgetMilliseconds = 12;
+    /// <summary>
+    /// The NPC-service time (ms per tick, of 33) up to which non-combat decisions are uncapped in practice: the cap is an
+    /// overload guard that bites only when the service averages well over half a tick, not a constant throttle (a
+    /// deferred bot re-runs the start of its think, so a cap that bit all the time would cost more than it saved).
+    /// </summary>
+    public const double DecisionBudgetMilliseconds = 20;
 
-    /// <summary>Non-combat decisions always allowed per tick, however slow the last ticks were (360 a second).</summary>
-    public const int MinimumDecisionsPerTick = 12;
+    /// <summary>Non-combat decisions always allowed per tick, however slow the last ticks were (720 a second).</summary>
+    public const int MinimumDecisionsPerTick = 24;
 
     /// <summary>Worker time (ms, summed over threads) that new route plans may use in one tick.</summary>
     public const double RoutePlanBudgetMilliseconds = 40;
@@ -131,8 +135,8 @@ public static class AutonomousAiBudget
     public static void EndRoutePlan(long startTimestamp) =>
         Interlocked.Add(ref _routePlanTimestampTicks, Math.Max(0, Stopwatch.GetTimestamp() - startTimestamp));
 
-    /// <summary>How soon a deferred bot thinks again (about 3-5 ticks, staggered).</summary>
-    public static int DeferredThinkMilliseconds(long stableId) => 100 + (int)((ulong)Math.Abs(stableId % 67));
+    /// <summary>How soon a deferred bot thinks again (5-12 ticks, staggered so deferred bots do not return together).</summary>
+    public static int DeferredThinkMilliseconds(long stableId) => 150 + (int)((ulong)Math.Abs(stableId % 251));
 
     /// <summary>Deferred decisions and route plans since the last call (for the once-a-minute work summary).</summary>
     public static (int Decisions, int RoutePlans) TakeDeferredCounts() =>
