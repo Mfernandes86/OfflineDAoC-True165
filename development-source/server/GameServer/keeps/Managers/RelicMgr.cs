@@ -225,16 +225,23 @@ namespace DOL.GS
             return owningSelf ? modifier : 1.0;
         }
 
-        public static bool CanPickupRelicFromShrine(GameLiving player, GameRelic relic)
+        public static bool CanPickupRelicFromShrine(GameLiving player, GameRelic relic) =>
+            player != null && CanRealmPickupRelicFromShrine(player.Realm, relic);
+
+        /// <summary>
+        /// The 1.65 rule by realm (relic audit L3: the bots' raid planner asks it before it sends an army): a realm may lift
+        /// its own original relic from any shrine, and another realm's relic only while its own relic of that type is mounted
+        /// in its own hands.
+        /// </summary>
+        public static bool CanRealmPickupRelicFromShrine(eRealm playerRealm, GameRelic relic)
         {
-            if (player == null || relic == null)
+            if (relic == null)
                 return false;
 
             // A player can always pick up their own realm's original relic.
-            if (player.Realm == relic.OriginalRealm)
+            if (playerRealm == relic.OriginalRealm)
                 return true;
 
-            eRealm playerRealm = player.Realm;
             eRelicType type = relic.RelicType;
             GameRelic[] snapshot = _relicsArray;
 

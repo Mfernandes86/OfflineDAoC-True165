@@ -100,6 +100,46 @@ public static class AutonomousRelicShrine
         return false;
     }
 
+    /// <summary>One relic as the raid planner sees it.</summary>
+    public readonly record struct RelicFact(eRealm Holder, eRealm Original, eRelicType Type, bool Mounted);
+
+    /// <summary>
+    /// Pure rule (relic audit L3): whether a raid by <paramref name="attacker"/> on a shrine holding <paramref name="onPad"/>
+    /// can end with a relic on the attacker's own pad. The pickup (GameRelic, RelicMgr.CanRealmPickupRelicFromShrine) lifts
+    /// a relic of another realm only for a realm that holds its own original relic of that type, or that relic itself; the
+    /// home pad (GameRelicPad.MountRelic) takes at most three relics.
+    /// </summary>
+    public static bool RaidCanPlace(eRealm attacker, IEnumerable<RelicFact> onPad, IReadOnlyCollection<RelicFact> allRelics,
+        Func<eRelicType, bool> homePadHasRoom)
+    {
+        foreach (RelicFact relic in onPad ?? [])
+        {
+            if (!relic.Mounted || relic.Holder == attacker) continue;
+            bool mayLift = attacker == relic.Original || (allRelics ?? []).Any(other =>
+                other.Mounted && other.Holder == attacker && other.Original == attacker && other.Type == relic.Type);
+            if (mayLift && (homePadHasRoom?.Invoke(relic.Type) ?? true)) return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Whether a relic raid by this realm on this relic keep can place its prize (L3). A keep whose pad is not known (tests,
+    /// a world without relics) is not refused; a pad known to hold nothing this realm may lift is.
+    /// </summary>
+    public static bool RaidCanPlace(AbstractGameKeep keep, eRealm attacker)
+    {
+        GameRelicPad pad = PadOf(keep);
+        if (pad == null) return true;
+        RelicFact Fact(GameRelic relic) => new(relic.Realm, relic.OriginalRealm, relic.RelicType, relic.IsMounted);
+        RelicFact[] all = RelicMgr.GetRelics().Select(Fact).ToArray();
+        GameRelicPad[] pads = RelicMgr.GetPadsSnapshot();
+        return RaidCanPlace(attacker, pad.MountedRelics.Select(Fact), all, type =>
+        {
+            GameRelicPad[] home = pads.Where(p => p.Realm == attacker && p.PadType == type).ToArray();
+            return home.Length == 0 || home.Any(p => p.MountedRelics.Count < 3);
+        });
+    }
+
     /// <summary>
     /// The relic of the attacker's target relic keep that may be lifted now: mounted on that keep's pad, of another realm,
     /// and one the attacker's realm may take (it holds its own relic of that type).

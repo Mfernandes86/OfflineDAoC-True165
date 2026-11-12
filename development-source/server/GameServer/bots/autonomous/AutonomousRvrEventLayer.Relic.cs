@@ -60,6 +60,36 @@ public static partial class AutonomousRvrEventLayer
         if (log.IsInfoEnabled) log.Info($"RVR_RELIC_CARRIER_ENDED carrier={carrierId} outcome={outcome} winner={GlobalConstants.RealmToName(winner)}");
     }
 
+    /// <summary>The live keep behind a "rvr-keep-N" objective id, or null (other ids, no keep manager in tests).</summary>
+    private static DOL.GS.Keeps.AbstractGameKeep KeepOfObjective(string id) =>
+        id != null && id.StartsWith("rvr-keep-", StringComparison.Ordinal) && int.TryParse(id["rvr-keep-".Length..], out int keepId)
+            ? GameServer.KeepManager?.GetKeepByID(keepId) : null;
+
+    /// <summary>Whether a relic raid by this realm on this relic keep could place its prize on its own pad (L3).</summary>
+    private static bool RelicRaidCanPlace(LiveObjective relicKeep, eRealm attacker) =>
+        relicKeep?.IsRelicKeep != true || KeepOfObjective(relicKeep.Id) is not { IsRelic: true } keep ||
+        AutonomousRelicShrine.RaidCanPlace(keep, attacker);
+
+    /// <summary>
+    /// Relic audit L3: a realm that lost its own relic of a type can lift no enemy relic of that type (only its own), and
+    /// its army used to march, break in and be refused at the pad for the rest of a four-hour battle. A relic raid (forced,
+    /// a campaign step, or a resumed one) that cannot place its prize is refused before anything starts, and an open
+    /// campaign for it ends. Called under Sync from ForceStart. True when refused.
+    /// </summary>
+    private static bool RefuseUnplaceableRelicRaid(LiveObjective target, eRealm attacker, out string reason)
+    {
+        reason = null;
+        if (RelicRaidCanPlace(target, attacker)) return false;
+        reason = $"{GlobalConstants.RealmToName(attacker)} cannot take a relic from {target.Name}: a realm must hold its own relic of that kind to lift another's.";
+        if (Campaigns.TryGetValue(target.Id, out RelicCampaign campaign) && campaign.Attacker == attacker)
+        {
+            Campaigns.Remove(target.Id);
+            var log = DOL.Logging.LoggerManager.Create(typeof(AutonomousRvrEventLayer));
+            if (log.IsInfoEnabled) log.Info($"RVR_RELIC_CAMPAIGN_ENDED relic={target.Id} attacker={attacker} reason=\"no relic there this realm may lift\"");
+        }
+        return true;
+    }
+
     /// <summary>Whether a relic campaign for this relic keep is open (tests, dashboard).</summary>
     public static bool HasRelicCampaign(string relicKeepId)
     {
@@ -121,6 +151,8 @@ public static partial class AutonomousRvrEventLayer
         lock (Sync)
         {
             if (Campaigns.ContainsKey(relic.Id)) return false;
+            // L3: a raid saved before its realm lost its own relic of that kind cannot lift anything there any more.
+            if (!RelicRaidCanPlace(relic, attacker)) return false;
             int held = HeldSentinelKeeps(relic).Length;
             Campaigns[relic.Id] = new RelicCampaign
             {
