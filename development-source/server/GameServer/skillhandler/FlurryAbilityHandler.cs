@@ -149,6 +149,13 @@ namespace DOL.GS.SkillHandler
 		/// Flurry's damage on <paramref name="target"/> after its slash resists (shared by players and gamebots, so a bot's
 		/// Flurry hits exactly as hard as a player's).
 		/// </summary>
+		/// <summary>
+		/// The divisor of the target's health: 4.5 on a player (prev 3.5), 4.6 on anything else (prev 3.6). A gamebot counts
+		/// as a player, the same rule that lets a Blademaster Flurry it (BotClassAbilities165.FlurryTargetAllowed), so
+		/// bot-on-bot Flurry hits exactly as hard as player-on-player (combat review 2026-11-11).
+		/// </summary>
+		public static double Divisor(bool playerLikeTarget) => playerLikeTarget ? 4.5 : 4.6;
+
 		public static int Damage(GameLiving attacker, GameLiving target)
 		{
 			int damage = 0;
@@ -162,12 +169,7 @@ namespace DOL.GS.SkillHandler
 				attacker.GetModifiedSpecLevel(Specs.Celtic_Dual) : attacker.GetModifiedSpecLevel(Specs.Dual_Wield);
 
 			//damage = base HP / 100 * DWspec / 2.7 that would be the original calculation
-			if (target is GamePlayer)
-			{
-				damage = (int)(target.MaxHealth / 100 * specc / 4.5);  // prev 3.5 
-			}
-			else
-			{ damage = (int)(target.MaxHealth / 100 * specc / 4.6); } // prev 3.6
+			damage = (int)(target.MaxHealth / 100 * specc / Divisor(target is GamePlayer or GameBot));
 
 			#region Resists
 			int primaryResistModifier = target.GetResist(eDamageType.Slash);

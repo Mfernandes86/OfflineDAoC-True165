@@ -119,6 +119,14 @@ namespace DOL.GS.Tests
         });
 
         [Test]
+        public void FlurryOnAGamebotUsesThePlayerDivisor() => Assert.Multiple(() =>
+        {
+            // a gamebot target is player-like (as for targeting): the player number, never the monster one
+            Assert.That(DOL.GS.SkillHandler.FlurryAbilityHandler.Divisor(playerLikeTarget: true), Is.EqualTo(4.5));
+            Assert.That(DOL.GS.SkillHandler.FlurryAbilityHandler.Divisor(playerLikeTarget: false), Is.EqualTo(4.6));
+        });
+
+        [Test]
         public void RapidFireFinishesARunnerAndRacesACaster() => Assert.Multiple(() =>
         {
             Assert.That(BotClassAbilities165.WantsRapidFire(false, targetMoving: true, targetCasting: false, 25, targetOnArcher: false), Is.True,
