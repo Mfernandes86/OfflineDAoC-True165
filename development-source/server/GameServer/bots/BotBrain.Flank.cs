@@ -58,6 +58,10 @@ namespace DOL.AI.Brain
             return System.Math.Min(turn, 4096 - turn) > FlankRetryTurn || moved > FlankRetryMove;
         }
 
+        /// <summary>Pure (Q13): the bot keeps attacking during a flank walk that starts and ends in melee reach.</summary>
+        public static bool FlankKeepsSwinging(bool botInMeleeReach, int flankSpotDistanceFromTarget, int meleeRange) =>
+            botInMeleeReach && flankSpotDistanceFromTarget <= meleeRange;
+
         /// <summary>The back style (preferred) or side style this bot could use on its target with the weapon in hand.</summary>
         private Style FlankStyle()
         {
@@ -127,7 +131,10 @@ namespace DOL.AI.Brain
             Point2D spot = target.GetPointFromHeading(heading, FlankStandOff);
             if (Vector2.DistanceSquared(new(bot.X, bot.Y), new(spot.X, spot.Y)) <= 30 * 30)
                 return Done();
-            if (bot.attackComponent.AttackState)
+            // Q13 (veteran review 2026-11-11): keep swinging while circling - a player stepping around a monster it is
+            // already hitting does not stop attacking. Stop only when the walk starts out of melee reach.
+            if (bot.attackComponent.AttackState &&
+                !FlankKeepsSwinging(bot.IsWithinRadius(target, bot.MeleeAttackRange), FlankStandOff, bot.MeleeAttackRange))
                 bot.StopAttack();
             bot.PathTo(new Vector3(spot.X, spot.Y, target.Z), bot.MaxSpeed);
             return true;
