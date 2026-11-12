@@ -54,7 +54,8 @@ namespace DOL.AI.Brain
         private GameLiving GroupKillTarget()
         {
             if (BotBody?.IsPlayerLedGroup == true)
-                return AssistedPlayer?.TargetObject as GameLiving;
+                // M7: while the player is not attacking, the tank companion's target (the main assist) is the kill target
+                return CompanionKillTarget() ?? AssistedPlayer?.TargetObject as GameLiving;
             return Body.Group is { } group && KillTargets.TryGetValue(group, out KillTargetHolder holder) &&
                 GameLoop.GameLoopTime - holder.Tick <= KillTargetStaleMilliseconds ? holder.Target : null;
         }

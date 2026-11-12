@@ -29,6 +29,37 @@ namespace DOL.AI.Brain
             Classic165Mode.IsOn && BotBody is { IsAutonomousWorldBot: true, IsPlayerLedGroup: false, IsTemporaryGroupHelper: false } &&
             Body.Group != null && AutonomousObjectiveAssignments.KindFor(BotBody) == eAutonomousObjectiveKind.GroupPve;
 
+        /// <summary>
+        /// M7 / G5 (veteran review 2026-11-11; period: "nominate a main assist ... CC works first, then all hit the MA's
+        /// target"): in a player's group, while the player is not attacking (a healer, a mezzer, someone busy), the tank
+        /// companion is the main assist - its target is the group's kill target and the other companions take it. While
+        /// the player attacks, the companions assist the player exactly as before.
+        /// </summary>
+        public static bool CompanionMainAssistApplies(bool classic165, bool companion, bool playerLed, bool grouped,
+            bool playerAttacking) =>
+            classic165 && companion && playerLed && grouped && !playerAttacking;
+
+        /// <summary>The player is fighting: swinging, or casting a harmful spell that is not crowd control.</summary>
+        private static bool PlayerLeadsFight(GamePlayer player)
+        {
+            if (player?.IsAlive != true)
+                return false;
+            Spell casting = player.castingComponent?.SpellHandler?.Spell;
+            return player.IsAttacking || player.IsCasting && casting?.IsHarmful == true && !PlayerLedPullCoordinator.IsCrowdControl(casting);
+        }
+
+        private bool UsesCompanionMainAssist =>
+            CompanionMainAssistApplies(Classic165Mode.IsOn, BotBody?.IsPlayerCompanion == true, BotBody?.IsPlayerLedGroup == true,
+                Body.Group != null, PlayerLeadsFight(AssistedPlayer));
+
+        private bool UsesMainAssist => UsesGamebotMainAssist || UsesCompanionMainAssist;
+
+        /// <summary>The tank companion's kill target while its player is not attacking (M7), or null.</summary>
+        private GameLiving CompanionKillTarget() =>
+            UsesCompanionMainAssist && Body.Group is { } group && KillTargets.TryGetValue(group, out KillTargetHolder holder) &&
+            GameLoop.GameLoopTime - holder.Tick <= KillTargetStaleMilliseconds && holder.Target is { IsAlive: true } target
+                ? target : null;
+
         /// <summary>Pure rule: a member follows the kill target unless it is mesmerized/rooted, or the member is low and being hit.</summary>
         public static bool AssistsKillTarget(bool killTargetValid, bool killTargetControlled, int healthPercent, bool beingHit) =>
             killTargetValid && !killTargetControlled && !(healthPercent < MainAssistLowHealthPercent && beingHit);
@@ -51,7 +82,7 @@ namespace DOL.AI.Brain
         /// <summary>The tank publishes the monster it is fighting as the party's kill target.</summary>
         private void OfferKillTarget(GameLiving target, bool peel = false)
         {
-            if (!IsTankClass || !UsesGamebotMainAssist || target is not GameNPC { IsAlive: true } ||
+            if (!IsTankClass || !UsesMainAssist || target is not GameNPC { IsAlive: true } ||
                 !(Body.IsAttacking || Body.InCombat) || IsBreakablyControlled(target))
                 return;
             KillTargetHolder holder = KillTargets.GetValue(Body.Group, _ => new KillTargetHolder());
@@ -86,7 +117,7 @@ namespace DOL.AI.Brain
         {
             if (IsTankClass && !(Classic165Mode.IsOn && directAttacker == null && BotGroupRoles.IsOffTank(Body)) ||
                 Body.Group is not { } group || !KillTargets.TryGetValue(group, out KillTargetHolder holder) ||
-                !UsesGamebotMainAssist)
+                !UsesMainAssist)
                 return null;
             GameLiving target = holder.Target;
             bool valid = target != null && GameLoop.GameLoopTime - holder.Tick <= KillTargetStaleMilliseconds &&
