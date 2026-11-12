@@ -3031,6 +3031,10 @@ namespace DOL.GS
                 return false;
             }
 
+            // veteran review Q30: a camp still empty after the first empty search (which already paid for the 5,000-unit
+            // ring) is searched again every 3-5 s instead of every second until it is given up
+            if (_emptyCampSinceTick != 0)
+                _nextTargetSearchTick = GameLoop.GameLoopTime + EmptyCampSearchBackoffMilliseconds(bot.ObjectID);
             _emptyCampSinceTick = _emptyCampSinceTick == 0 ? GameLoop.GameLoopTime : _emptyCampSinceTick;
             NotePartyEmptyCampTurn();   // owner 2026-11-10: a truly empty camp ends the too-far episode
             // A crowded camp that others keep empty is left after 15 s, not 75 s (owner 2026-11-05, reset-day S36): the
@@ -3546,6 +3550,9 @@ namespace DOL.GS
             }
             return found;
         }
+
+        /// <summary>The wait between target searches at a camp that stayed empty (3-5 s, staggered per bot).</summary>
+        public static int EmptyCampSearchBackoffMilliseconds(int objectId) => 3_000 + (int)((uint)objectId % 2_000);
 
         /// <summary>The last camp target search found only monsters that con grey to this bot.</summary>
         private bool _campOnlyGrey;

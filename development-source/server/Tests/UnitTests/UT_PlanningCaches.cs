@@ -26,3 +26,14 @@ public sealed class UT_PlanningCaches
         Assert.That(AutonomousWorldBotController.ReachableRegionsCacheMilliseconds, Is.InRange(60_000, 15 * 60_000));
     }
 }
+
+[TestFixture]
+public sealed class UT_EmptyCampSearchBackoff
+{
+    [Test]
+    public void EmptyCampIsRescannedEveryThreeToFiveSeconds()
+    {
+        foreach (int id in new[] { 0, 1, 1_999, 2_000, 123_456, int.MaxValue, -5 })
+            Assert.That(AutonomousWorldBotController.EmptyCampSearchBackoffMilliseconds(id), Is.InRange(3_000, 4_999));
+    }
+}
