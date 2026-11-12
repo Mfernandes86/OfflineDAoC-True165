@@ -39,6 +39,8 @@ namespace DOL.GS
             public uint priceMin;
             public uint priceMax;
             public byte playerCrafted;
+            /// <summary>Realm Exchange browse flags (RealmExchangeBrowse.FlagUsableOnly, FlagEveryCopy); 0 from older clients.</summary>
+            public byte flags;
             public int visual;
             public byte page;
             

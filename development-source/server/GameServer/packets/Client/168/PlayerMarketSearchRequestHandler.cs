@@ -78,7 +78,9 @@ namespace DOL.GS.PacketHandler.Client.v168
 			search.bonus3Value = bonus3bValue * 256 + bonus3Value;
 
 			search.proc = (int)packet.ReadByte();
-			packet.Skip(1);
+			// 2026-11-11 exchange plan (phase 6): the byte older clients send as 0 carries the Realm Exchange browse flags
+			// (RealmExchangeBrowse.FlagUsableOnly 0x01, FlagEveryCopy 0x02)
+			search.flags = (byte)packet.ReadByte();
 			//short unk2 = (short)packet.ReadShort();
 			search.armorType = (byte)packet.ReadByte();
 			search.damageType = (byte)packet.ReadByte(); // 1=crush, 2=slash, 3=thrust

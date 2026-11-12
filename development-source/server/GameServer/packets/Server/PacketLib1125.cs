@@ -505,7 +505,14 @@ namespace DOL.GS.PacketHandler
 		/// <summary>
 		/// 1125d+ Market Explorer
 		/// </summary>
-		public override void SendMarketExplorerWindow(IList<DbInventoryItem> items, byte page, byte maxpage)
+		public override void SendMarketExplorerWindow(IList<DbInventoryItem> items, byte page, byte maxpage) =>
+			SendMarketExplorerWindow(items, page, maxpage, null);
+
+		/// <summary>
+		/// 1125d+ Market Explorer; lots[i] (when given) replaces row i's u16 lot field (the Realm Exchange's copy count of
+		/// a grouped row, 1-65000; RealmExchangeBrowse).
+		/// </summary>
+		public override void SendMarketExplorerWindow(IList<DbInventoryItem> items, byte page, byte maxpage, IReadOnlyList<ushort> lots)
 		{
 			using (var pak = PooledObjectFactory.GetForTick<GSTCPPacketOut>().Init(GetPacketCode(eServerPackets.MarketExplorerWindow)))
 			{
@@ -576,7 +583,8 @@ namespace DOL.GS.PacketHandler
 					}
 
 					pak.WriteShortLowEndian((byte)item.Effect); // untested for low endian but probabaly
-					pak.WriteShortLowEndian(item.OwnerLot);//lot
+					int row = items.IndexOf(item);
+					pak.WriteShortLowEndian(lots != null && row >= 0 && row < lots.Count ? lots[row] : item.OwnerLot);//lot
 					pak.WriteIntLowEndian((uint)item.SellPrice);
 
 					if (ServerProperties.Properties.CONSIGNMENT_USE_BP)

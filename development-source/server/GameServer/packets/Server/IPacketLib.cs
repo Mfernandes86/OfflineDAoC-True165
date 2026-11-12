@@ -763,6 +763,12 @@ namespace DOL.GS.PacketHandler
         void SendToggleHousePoints(House house);
         void SendRentReminder(House house);
         void SendMarketExplorerWindow(IList<DbInventoryItem> items, byte page, byte maxpage);
+        /// <summary>
+        /// The market window with a u16 per row in place of each item's own lot: the Realm Exchange's copy count of a
+        /// grouped row (RealmExchangeBrowse). Null lots, or a packet library without the field, send the plain window.
+        /// </summary>
+        void SendMarketExplorerWindow(IList<DbInventoryItem> items, byte page, byte maxpage, IReadOnlyList<ushort> lots) =>
+            SendMarketExplorerWindow(items, page, maxpage);
         void SendMarketExplorerWindow();
         void SendConsignmentMerchantMoney(long money);
         void SendHouseUsersPermissions(House house);

@@ -3683,6 +3683,10 @@ namespace DOL.GS.PacketHandler
 			}
 		}
 
+		/// <summary>The 1.68 window has no lot field; the lots are ignored.</summary>
+		public virtual void SendMarketExplorerWindow(IList<DbInventoryItem> items, byte page, byte maxpage, IReadOnlyList<ushort> lots) =>
+			SendMarketExplorerWindow(items, page, maxpage);
+
 		public virtual void SendMarketExplorerWindow(IList<DbInventoryItem> items, byte page, byte maxpage)
 		{
 			if (m_gameClient == null || m_gameClient.Player == null)
