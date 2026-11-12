@@ -28,7 +28,9 @@ namespace DOL.GS
         /// stands in for a player. In front of the bot, within the ability's 135 units.
         /// </summary>
         public static bool FlurryTargetAllowed(GameObject target) =>
-            target is GamePlayer or GameBot or Keeps.GameKeepGuard;
+            FlurryTargetAllowed(target is GamePlayer or GameBot, target is Keeps.GameKeepGuard);
+
+        public static bool FlurryTargetAllowed(bool playerLike, bool keepGuard) => playerLike || keepGuard;
 
         public const int FlurryRange = 135;
 

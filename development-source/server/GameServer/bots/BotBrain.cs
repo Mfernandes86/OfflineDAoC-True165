@@ -5330,6 +5330,47 @@ namespace DOL.AI.Brain
                             }
                             break;
                         }
+
+                        // M8 (veteran review 2026-11-11): the Blademaster's Triple Wield on the fights that need a burst
+                        // (the Berserk test), Flurry on a player-like enemy or keep guard in reach.
+                        case Abilities.Triple_Wield:
+                        {
+                            if (Body.TargetObject is GameLiving target &&
+                                BotClassAbilities165.TripleWieldWorthwhile(HardFight(target),
+                                    Body.IsWithinRadius(target, Body.MeleeAttackRange),
+                                    EffectListService.GetAbilityEffectOnTarget(Body, eEffect.TripleWield) != null) &&
+                                GameServer.ServerRules.IsAllowedToAttack(Body, target, true))
+                            {
+                                var tripleWield = new TripleWieldECSGameEffect(
+                                    new ECSGameEffectInitParams(Body, TripleWieldAbilityHandler.DURATION * 1000, 1));
+                                if (tripleWield.Start())
+                                    Body.DisableSkill(ab, TripleWieldAbilityHandler.REUSE_TIMER * 1000);
+                            }
+                            break;
+                        }
+
+                        case Abilities.Flurry:
+                        {
+                            if (Body.TargetObject is GameLiving target && target.IsAlive &&
+                                BotClassAbilities165.FlurryTargetAllowed(target) &&
+                                Body.IsWithinRadius(target, BotClassAbilities165.FlurryRange) &&
+                                Body.IsObjectInFront(target, 180) &&
+                                GameServer.ServerRules.IsAllowedToAttack(Body, target, true))
+                            {
+                                // the ability's own damage and slash resists (FlurryAbilityHandler.Damage)
+                                int damage = FlurryAbilityHandler.Damage(Body, target);
+                                target.TakeDamage(Body, eDamageType.Slash, damage, 0);
+                                foreach (GamePlayer viewer in target.GetPlayersInRadius(WorldMgr.VISIBILITY_DISTANCE))
+                                    viewer.Out.SendSpellEffectAnimation(Body, target, 7103, 0, false, 0x01);
+                                if (target is GamePlayer hitPlayer)
+                                    hitPlayer.Out.SendMessage(DOL.Language.LanguageMgr.GetTranslation(hitPlayer.Client, "Skill.Ability.Flurry.HitYou",
+                                        Body.Name, damage), eChatType.CT_Damaged, eChatLoc.CL_SystemWindow);
+                                Body.LastAttackTickPvP = Body.CurrentRegion.Time;
+                                target.LastAttackedByEnemyTickPvP = target.CurrentRegion.Time;
+                                Body.DisableSkill(ab, FlurryAbilityHandler.REUSE_TIMER);
+                            }
+                            break;
+                        }
                     }
                 }
             }

@@ -39,7 +39,7 @@ namespace DOL.GS.SkillHandler
 		/// <summary>
 		/// The reuse time in milliseconds for flurry ability
 		/// </summary>
-		protected const int REUSE_TIMER = 60 * 2000; // 2 minutes
+		public const int REUSE_TIMER = 60 * 2000; // 2 minutes
 
 
 		/// <summary>
@@ -120,9 +120,46 @@ namespace DOL.GS.SkillHandler
 			#endregion
 
 			GameLiving target = (GameLiving)player.TargetObject;
+			int damage = Damage(player, target);
+
+			//flurry is slash damage
+			target.TakeDamage(player, eDamageType.Slash, damage, 0);
+			/*
+			GameSpellEffect mez = SpellHandler.FindEffectOnTarget(target, "Mesmerize");
+            if (mez != null)
+                mez.Cancel(false);
+			*/
+			//sending spell effect
+			foreach (GamePlayer effPlayer in target.GetPlayersInRadius(WorldMgr.VISIBILITY_DISTANCE))
+				effPlayer.Out.SendSpellEffectAnimation(player, target, 7103, 0, false, 0x01);
+
+            player.Out.SendMessage(LanguageMgr.GetTranslation(player.Client.Account.Language, "Skill.Ability.Flurry.YouHit", target.GetName(0, false), damage), eChatType.CT_YouHit, eChatLoc.CL_SystemWindow);
+                    
+            if (target is GamePlayer)
+                (target as GamePlayer).Out.SendMessage(LanguageMgr.GetTranslation((target as GamePlayer).Client, "Skill.Ability.Flurry.HitYou", player.Name, damage), eChatType.CT_Damaged, eChatLoc.CL_SystemWindow);
+
+			player.LastAttackTickPvP = player.CurrentRegion.Time;
+			target.LastAttackedByEnemyTickPvP = target.CurrentRegion.Time;
+
+			player.DisableSkill(ab, REUSE_TIMER);
+
+		}
+
+		/// <summary>
+		/// Flurry's damage on <paramref name="target"/> after its slash resists (shared by players and gamebots, so a bot's
+		/// Flurry hits exactly as hard as a player's).
+		/// </summary>
+		public static int Damage(GameLiving attacker, GameLiving target)
+		{
 			int damage = 0;
-			int specc = (player.CharacterClass is PlayerClass.ClassBlademaster) ?
-				player.GetModifiedSpecLevel(Specs.Celtic_Dual) : player.GetModifiedSpecLevel(Specs.Dual_Wield);
+			ICharacterClass characterClass = attacker switch
+			{
+				GamePlayer player => player.CharacterClass,
+				GameBot bot => bot.CharacterClass,
+				_ => null,
+			};
+			int specc = (characterClass is PlayerClass.ClassBlademaster) ?
+				attacker.GetModifiedSpecLevel(Specs.Celtic_Dual) : attacker.GetModifiedSpecLevel(Specs.Dual_Wield);
 
 			//damage = base HP / 100 * DWspec / 2.7 that would be the original calculation
 			if (target is GamePlayer)
@@ -148,27 +185,7 @@ namespace DOL.GS.SkillHandler
 
 			#endregion
 
-			//flurry is slash damage
-			target.TakeDamage(player, eDamageType.Slash, damage, 0);
-			/*
-			GameSpellEffect mez = SpellHandler.FindEffectOnTarget(target, "Mesmerize");
-            if (mez != null)
-                mez.Cancel(false);
-			*/
-			//sending spell effect
-			foreach (GamePlayer effPlayer in target.GetPlayersInRadius(WorldMgr.VISIBILITY_DISTANCE))
-				effPlayer.Out.SendSpellEffectAnimation(player, target, 7103, 0, false, 0x01);
-
-            player.Out.SendMessage(LanguageMgr.GetTranslation(player.Client.Account.Language, "Skill.Ability.Flurry.YouHit", target.GetName(0, false), damage), eChatType.CT_YouHit, eChatLoc.CL_SystemWindow);
-                    
-            if (target is GamePlayer)
-                (target as GamePlayer).Out.SendMessage(LanguageMgr.GetTranslation((target as GamePlayer).Client, "Skill.Ability.Flurry.HitYou", player.Name, damage), eChatType.CT_Damaged, eChatLoc.CL_SystemWindow);
-
-			player.LastAttackTickPvP = player.CurrentRegion.Time;
-			target.LastAttackedByEnemyTickPvP = target.CurrentRegion.Time;
-
-			player.DisableSkill(ab, REUSE_TIMER);
-
+			return damage;
 		}
 	}
 }
