@@ -21,5 +21,23 @@ namespace DOL.UnitTests
         [TestCase(8, 1_000, 0, 0, false, false)]                  // the raid is there: the clock runs
         public void AbsenceAllowanceRunsFromTheLastPresence(int near, long now, long start, long present, bool approaching, bool paused) =>
             Assert.That(RealmRaidDungeonRoute.AbsencePausesClock(near, now, start, present, approaching), Is.EqualTo(paused));
+
+        // A cleared name clears every monster of that name; a boss's name is cleared only by a boss kill.
+        [TestCase(false, false, true, false, true)]   // Oro's clone after Oro (or another clone) died
+        [TestCase(true, false, true, false, false)]   // Oro himself after only a clone died: still a target
+        [TestCase(true, false, true, true, true)]     // a boss of that name died: its respawn is not fought again
+        [TestCase(true, true, true, true, false)]     // final encounters are never cleared by name
+        [TestCase(false, false, false, false, false)] // nothing of that name died yet
+        public void ClearedNameCoversEveryMonsterOfThatName(bool boss, bool final, bool nameKilled, bool bossKilled, bool cleared) =>
+            Assert.That(RealmRaidDungeonRoute.NameCleared(boss, final, nameKilled, bossKilled), Is.EqualTo(cleared));
+
+        // Epic dungeons: one of each name for the first hour, then scripted bosses, finals and boss adds only.
+        [TestCase(true, false, false, false, true)]
+        [TestCase(false, false, false, false, false)]  // epic-class trash after the first hour
+        [TestCase(false, true, false, false, true)]
+        [TestCase(false, false, true, false, true)]
+        [TestCase(false, false, false, true, true)]
+        public void EpicDungeonTargetsAreBossesAfterTheFirstHour(bool firstHour, bool boss, bool final, bool add, bool target) =>
+            Assert.That(RealmRaidDungeonRoute.IsEpicDungeonTarget(firstHour, boss, final, add), Is.EqualTo(target));
     }
 }

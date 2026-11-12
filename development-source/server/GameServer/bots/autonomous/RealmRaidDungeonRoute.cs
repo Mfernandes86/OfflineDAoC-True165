@@ -23,10 +23,31 @@ namespace DOL.GS
         // Named encounters defeated this expedition, by name: several scripted bosses come back as new objects (Lich Lord
         // Ilron, Lich Lord Sanguis, Spindler Broodmother were each fought twice in run 10).
         private readonly HashSet<string> _clearedNames = new(StringComparer.Ordinal);
+        // Names of scripted bosses (GameEpicBoss) the raid killed. A boss's name is cleared only by a boss kill: Lich Lord
+        // Ilron's images and High Lord Oro's clones carry their boss's name, and killing one of them first must not take the
+        // boss off the list. Once the boss is dead, its look-alikes are cleared with it (Oro's clones come back after 30
+        // minutes as new monsters and sorted before Legion).
+        private readonly HashSet<string> _clearedBossNames = new(StringComparer.Ordinal);
+
+        /// <summary>
+        /// A monster whose name the raid has cleared is no route target: any monster after a kill of that name, a scripted
+        /// boss only after a boss of that name died. Final encounters are never cleared by name.
+        /// </summary>
+        public static bool NameCleared(bool scriptedBoss, bool final, bool nameKilled, bool bossOfNameKilled) =>
+            !final && (scriptedBoss ? bossOfNameKilled : nameKilled);
+
+        /// <summary>
+        /// Route targets in an epic dungeon (Caer Sidi, Tuscaran Glacier, Galladoria): for the first hour one monster of
+        /// each name (the name rule above), then only the scripted bosses, the final encounters and the adds a living boss
+        /// spawned. Almost every monster in these dungeons is epic-class, so "epic-class after the first hour" kept nearly
+        /// all of them; the boss class says what was meant. Monsters on the way are still fought when they attack.
+        /// </summary>
+        public static bool IsEpicDungeonTarget(bool firstHour, bool scriptedBoss, bool final, bool encounterAdd) =>
+            firstHour || scriptedBoss || final || encounterAdd;
         private long _routeStartTick;
         /// <summary>
-        /// An epic dungeon raid clears every monster for its first hour, then goes for its named encounters and the
-        /// final one only (monsters on the way are fought when they attack). With trash coming back the list never
+        /// An epic dungeon raid clears one monster of each name for its first hour, then goes for its scripted bosses and
+        /// the final one only (monsters on the way are fought when they attack; see <see cref="IsEpicDungeonTarget"/>). With trash coming back the list never
         /// emptied: Caer Sidi's raid killed Soul Reckoner, Host and Dorinakka and then cleared custodians and crypt
         /// knights for two hours, never reaching Apocalypse (run 10, 2026-10-15).
         /// </summary>
@@ -36,7 +57,8 @@ namespace DOL.GS
         // skipped: its four Earthmenders (script-spawned, not named) healed it, and after the first hour the raid only
         // targets named encounters. Adds a script spawns beside the front are part of the fight; they come first.
         public const float EncounterAddRadius = 3_000f;
-        // Only while the encounter that spawned it is still alive nearby. Run 17 (2026-10-17): Lich Lord Sanguis's blood
+        // Only while a scripted boss (GameEpicBoss) is still alive nearby: any epic-class monster would do before, and in the
+        // epic dungeons the trash is epic-class, so leftover adds stayed targets beside any trash. Run 17 (2026-10-17): Lich Lord Sanguis's blood
         // mages kept spawning after he died, the raid farmed them at the old front for 40 minutes and never went on to
         // Apocalypse.
         public static bool IsEncounterAdd(GameNPC npc, Vector3 front, IReadOnlyCollection<GameNPC> livingEncounters) =>
@@ -621,7 +643,7 @@ namespace DOL.GS
                     npc.Realm != eRealm.None ? $"realm{(int)npc.Realm}" :
                     (npc.Flags & (GameNPC.eFlags.PEACE | GameNPC.eFlags.CANTTARGET)) != 0 ? $"flags{(int)npc.Flags}" :
                     _cleared.Contains(npc) ? "cleared" :
-                    _clearedNames.Contains(npc.Name) && !_finalTypes.Contains(npc.GetType().Name) ? "clearedName" :
+                    NameCleared(npc is GameEpicBoss, _finalTypes.Contains(npc.GetType().Name), _clearedNames.Contains(npc.Name), _clearedBossNames.Contains(npc.Name)) ? "clearedName" :
                     IsEncounterHazard(npc) ? "hazard" :
                     _routeRetry.TryGetValue(npc, out long retry) ? $"retry{(retry - GameLoop.GameLoopTime) / 1000}s" : "candidate";
                 parts.Add($"{npc.Name}@{npc.X},{npc.Y},{npc.Z}:{npc.HealthPercent}%:{why}");
@@ -643,7 +665,8 @@ namespace DOL.GS
                 log.Info($"REALM_EXPEDITION_TARGET_DEFEATED region={_region} target=\"{_target.Name}\" level={_target.Level} " +
                          $"minutes={(now - _targetStartTick) / 60_000.0:0.0}");
                 _cleared.Add(_target);
-                if (_target is IGameEpicNpc) _clearedNames.Add(_target.Name);
+                _clearedNames.Add(_target.Name);
+                if (_target is GameEpicBoss) _clearedBossNames.Add(_target.Name);
                 _target = null;
             }
             bool finalDeaths = _finalTypes.All(type => _finals.TryGetValue(type, out var boss) && !boss.IsAlive);
@@ -727,7 +750,7 @@ namespace DOL.GS
             Zone zone = WorldMgr.GetRegion(_region)?.GetZone((int)Front.X, (int)Front.Y);
             if (zone == null || !nav.IsAvailable || !nav.HasNavmesh(zone))
             { Hold = true; Status = "Blocked: dungeon navigation unavailable"; return; }
-            GameNPC[] encounters = live.Where(n => n is IGameEpicNpc && n.IsAlive && n.ObjectState == GameObject.eObjectState.Active).ToArray();
+            GameNPC[] encounters = live.Where(n => n is GameEpicBoss && n.IsAlive && n.ObjectState == GameObject.eObjectState.Active).ToArray();
             GameNPC[] candidates = live.Where(n => n.IsAlive && n.ObjectState == GameObject.eObjectState.Active && n.Realm == eRealm.None &&
                 n.Level > 0 && n is not GameBot && n is not GameSummonedPet && n.Brain is not IControlledBrain &&
                 n is not GameMerchant && n is not GameTrainer && n is not GameTeleporter && n is not GameTaxi &&
@@ -736,11 +759,11 @@ namespace DOL.GS
                 // Hibernian raid stood four minutes by a "grogan" in Galladoria that none of it could attack (run 22).
                 n.TempProperties.GetProperty<bool>(AutonomousPetSupport.SyntheticCharmPetProperty) != true &&
                 !IsEncounterHazard(n) &&
-                !(n is IGameEpicNpc && _clearedNames.Contains(n.Name) && !_finalTypes.Contains(n.GetType().Name)) &&
+                !NameCleared(n is GameEpicBoss, _finalTypes.Contains(n.GetType().Name), _clearedNames.Contains(n.Name), _clearedBossNames.Contains(n.Name)) &&
                 // A neutral expedition goes for its named encounters only; monsters on the way are
                 // fought when they attack (Darkness Falls holds 2,465 spawns).
-                (_objectives == null ? now - _routeStartTick < EpicTrashPhaseMilliseconds || n is IGameEpicNpc || _finalTypes.Contains(n.GetType().Name) ||
-                        IsEncounterAdd(n, Front, encounters)
+                (_objectives == null ? IsEpicDungeonTarget(now - _routeStartTick < EpicTrashPhaseMilliseconds, n is GameEpicBoss,
+                        _finalTypes.Contains(n.GetType().Name), IsEncounterAdd(n, Front, encounters))
                     : RealmRaidNeutralEvents.IsObjective(_objectives, n.Name)))
                 .OrderBy(n => _finalTypes.Contains(n.GetType().Name) ? 1 : 0)
                 .ThenBy(n => IsEncounterAdd(n, Front, encounters) ? 0 : 1)
