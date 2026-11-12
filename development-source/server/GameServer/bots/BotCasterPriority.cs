@@ -52,6 +52,12 @@ namespace DOL.GS
             debuffsCastOnTarget < openingDebuffs && casterPowerPercent >= 30 && targetHealthPercent >= 60 &&
             (targetIsPlayerLike || grouped || targetLevel >= casterLevel);
 
+        /// <summary>
+        /// Q2 (veteran review 2026-11-11): a bolt is worth casting only at a target nobody else is meleeing - the opener,
+        /// or solo. Prima: "Forget Bolts in large battles, since they'll often be blocked".
+        /// </summary>
+        public static bool BoltWorthwhile(int othersMeleeingTarget) => othersMeleeingTarget <= 0;
+
         public const int SavePowerBelowPercent = 50;
         public const int FinishTargetBelowPercent = 30;
 

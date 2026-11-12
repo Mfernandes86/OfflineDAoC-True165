@@ -4799,6 +4799,17 @@ namespace DOL.AI.Brain
             return BotCasterPriority.SavePowerInGroup(Body.ManaPercent, target.HealthPercent, tankHolds);
         }
 
+        /// <summary>How many others are meleeing <paramref name="target"/> (its own attacker list, no area scan); the bot's
+        /// own swings do not count.</summary>
+        private int OthersMeleeing(GameLiving target)
+        {
+            int melee = target?.attackComponent?.AttackerTracker.MeleeCount ?? 0;
+            if (melee > 0 && Body.attackComponent.AttackState && Body.ActiveWeaponSlot != eActiveWeaponSlot.Distance &&
+                Body.IsWithinRadius(target, Body.MeleeAttackRange + 50))
+                melee--;
+            return melee;
+        }
+
         private bool HardFight(GameLiving target)
         {
             if (target is GamePlayer or GameBot || target.Level >= Body.Level || Body.HealthPercent < 60)
@@ -5037,7 +5048,13 @@ namespace DOL.AI.Brain
                     }
                 }
 
-                if (BotBody.CanCastBolts && spellsToCast.Count < 1 && CompanionOptions165.Choice(BotBody, "bolts") != 1 && !holdDamage)
+                // Q2 (veteran review 2026-11-11; Prima: "forget bolts in large battles, since they'll often be blocked"):
+                // under Automatic a bolt is the opener, or for a target nobody else is meleeing - never into a melee
+                // scrum. A caster with no other attack spell still bolts (below).
+                bool boltsAllowed = BotBody.CanCastBolts && CompanionOptions165.Choice(BotBody, "bolts") != 1 && !holdDamage;
+                bool boltsHeldForMelee = boltsAllowed && spellsToCast.Count < 1 && Body.TargetObject is GameLiving boltTarget &&
+                    !BotCasterPriority.BoltWorthwhile(OthersMeleeing(boltTarget));
+                if (boltsAllowed && !boltsHeldForMelee && spellsToCast.Count < 1)
                 {
                     foreach (Spell spell in BotBody.BoltSpells)
                     {
@@ -5067,6 +5084,12 @@ namespace DOL.AI.Brain
                         }
                     }
                 }
+
+                // a bolt held back from a melee scrum is still better than no attack spell at all
+                if (boltsHeldForMelee && !spellsToCast.Exists(BotCasterPriority.IsDamage))
+                    foreach (Spell spell in BotBody.BoltSpells)
+                        if (CanCastOffensiveSpell(spell))
+                            spellsToCast.Add(spell);
 
                 // Nothing else to cast while the pet is being hit: the shield, above 60% power too.
                 if (spellsToCast.Count == 0 && TryStartPetFocusShield(true))
