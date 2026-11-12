@@ -149,6 +149,17 @@ static func picked(f: Dictionary) -> bool:
 	return (bool(f.get("collide", false)) and not f.get("no_collision", false)) or String(f.get("source", "")) == "world_object"
 
 
+## Whether a loaded model's floor is its pick floor instead of its drawn faces: a dungeon piece converted with it
+## (nif_static.pick_parts: its hidden "dungswitch/pickee" node, its "dungswitch/Collidee" and its "dungswitch/waterproxy"
+## - the 1.64 game.dll's dungeon loader 0x4be202 / 0x4be379-0x4be470 gives each piece's ground picker the pickee, or
+## the Collidee without one, then the waterproxy; never the drawn "visible" node. The Collidee is a floor with a pickee
+## too: Caer Sidi's galleries are only in it). GitHub issue #42: Spindelhalla's spider room lifted you onto its cobweb
+## sheets, which climb to the ceiling, and you could not get back out. Outdoor and city fixtures keep their drawn faces
+## as floors.
+func uses_pick(parts: Dictionary) -> bool:
+	return bool(info.get("dungeon", false)) and String(parts.get("pick_source", "")) != ""
+
+
 ## The client's stand-in wall for a fixture it doesn't collide with but gives a Radius (fixtures.csv; trees): within
 ## 1024 units of the player game.dll 0x49084e spawns an invisible entity of size 2 x Radius x Scale / 100 units, raised
 ## onto the ground (0x43f4db), and the player's step tests (0x435d7a / 0x43609b) stop where |dx| or |dy| to it would
@@ -462,12 +473,47 @@ func _water_border(st: SurfaceTool, border: Array[Vector2i], ids: PackedByteArra
 	var reached := {}
 	var todo: Array[Vector2i] = []
 	var sides: Array[Vector2i] = [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]
+	# "the body's own water" must be open water: the wet sub-cells (body or border) joined to it must hold at least
+	# one body sub-cell under the water by 0.5 m at all four corners. A wet sliver at the mask's edge, over a rise
+	# inside the mask, is not - its far slope stays dry land (issue #44: Emain Macha loc 20387 11901, a flat sheet
+	# up to 3 m over the grass east of the north-west pond; the same at Gwyddneau's cliff-foot trenches). The real
+	# 1.64 client draws water per water.pcx cell only.
+	var deep := func(sx: int, sz: int) -> bool:            # under the water by 0.5 m at all four corners
+		var x0 := sx * sub
+		var z0 := sz * sub
+		return maxf(maxf(_grid_height(x0, z0), _grid_height(x0 + sub, z0)),
+				maxf(_grid_height(x0, z0 + sub), _grid_height(x0 + sub, z0 + sub))) <= level - 0.5
+	var open := {}                                         # wet sub-cell -> its wet group holds open water (cached)
+	var open_water := func(start: Vector2i) -> bool:
+		if open.has(start):
+			return open[start]
+		var seen := {start: true}
+		var queue: Array[Vector2i] = [start]
+		var found := false
+		var qi := 0
+		while qi < queue.size():
+			var s: Vector2i = queue[qi]
+			qi += 1
+			if open.get(s, false) or (in_body.call(s.x, s.y) and deep.call(s.x, s.y)):
+				found = true                               # (the rest of the queue is the same group)
+				break
+			for d in sides:
+				var o: Vector2i = s + d
+				if seen.has(o):
+					continue
+				var o_wet: bool = cells[o] if cells.has(o) else (in_body.call(o.x, o.y) and wet.call(o.x, o.y))
+				if o_wet:
+					seen[o] = true
+					queue.append(o)
+		for s in seen:
+			open[s] = found
+		return found
 	for s in cells:
 		if not cells[s]:
 			continue
-		for d in sides:                                    # beside the body's own water
+		for d in sides:                                    # beside the body's own (open) water
 			var o: Vector2i = s + d
-			if in_body.call(o.x, o.y) and wet.call(o.x, o.y):
+			if in_body.call(o.x, o.y) and wet.call(o.x, o.y) and open_water.call(o):
 				reached[s] = true
 				todo.append(s)
 				break
@@ -616,7 +662,8 @@ func _build_fixtures() -> void:
 	body.collision_mask = 0
 	add_child(body)
 	# floors: the client's ground pick sees the Collide fixtures' scene nodes plus the dynamic objects (see picked), so
-	# their visible faces are floors on the floor layer; every other fixture's faces are scenery (the camera arm)
+	# their visible faces are floors on the floor layer; every other fixture's faces are scenery (the camera arm). A
+	# dungeon piece's floor is its pickee / Collidee / waterproxy instead, its drawn faces scenery (uses_pick)
 	var floor_body := StaticBody3D.new()
 	floor_body.name = "FloorBodies"
 	floor_body.collision_layer = LAYER_FLOOR
@@ -701,6 +748,9 @@ func _build_fixtures() -> void:
 				mmi.visibility_range_end_margin = far * view_mult * 0.1
 				mmi.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
 				add_child(mmi)
+		# a dungeon piece's ground pick sees only its pickee / Collidee / waterproxy (GitHub issue #42, see uses_pick): those
+		# faces are its floor, and its drawn faces only meet the camera arm
+		var use_pick := uses_pick(parts)
 		for i in xforms.size():
 			var vf: PackedVector3Array = parts.visible_faces
 			if vf.is_empty():
@@ -718,7 +768,25 @@ func _build_fixtures() -> void:
 			var fcs := CollisionShape3D.new()
 			fcs.shape = floor_cache[fk]
 			fcs.transform = xforms[i] if per_model[m][i].has("basis") else Transform3D(Basis(Vector3.UP, deg_to_rad(float(per_model[m][i].yaw))), xforms[i].origin)
-			(floor_body if picked(per_model[m][i]) else scenery_body).add_child(fcs)
+			(floor_body if picked(per_model[m][i]) and not use_pick else scenery_body).add_child(fcs)
+		for i in xforms.size():
+			var pk_faces: PackedVector3Array = parts.pick
+			if not use_pick or pk_faces.is_empty() or not picked(per_model[m][i]):
+				continue
+			var pkk := "pick/%d/%.2f" % [m, float(per_model[m][i].scale)]
+			if not floor_cache.has(pkk):
+				var psc := PackedVector3Array()
+				psc.resize(pk_faces.size())
+				for k in pk_faces.size():
+					psc[k] = pk_faces[k] * float(per_model[m][i].scale)
+				var pfs := ConcavePolygonShape3D.new()
+				pfs.backface_collision = false              # front faces only: the shell's ceilings face down, into the room
+				pfs.set_faces(psc)
+				floor_cache[pkk] = pfs
+			var pcs2 := CollisionShape3D.new()
+			pcs2.shape = floor_cache[pkk]
+			pcs2.transform = xforms[i] if per_model[m][i].has("basis") else Transform3D(Basis(Vector3.UP, deg_to_rad(float(per_model[m][i].yaw))), xforms[i].origin)
+			floor_body.add_child(pcs2)
 		# trees: the client's stand-in box around the trunk (proxy_faces), for fixtures it doesn't collide with
 		for i in xforms.size():
 			var pf: Dictionary = per_model[m][i]
@@ -869,7 +937,8 @@ func _parts_radius(parts: Dictionary) -> float:
 	return box.size.length() * 0.5
 
 
-## {meshes: [[Mesh, local Transform3D]], collision: faces, visible_faces: faces} for one converted model.
+## {meshes: [[Mesh, local Transform3D]], collision: faces, visible_faces: faces, pick: faces, pick_source} for one
+## converted model (pick: a dungeon piece's ground-pick target, see uses_pick).
 ## ambient_only: the zone's nifs.csv "Ambient Only" column - lit by the ambient light alone (NifMaterials).
 ## On the zone worker: the file parsed, its textures decoded and its scene made here; every face read from the parsed
 ## arrays (never Mesh.get_faces(), a read-back from the GPU), and its materials' render-server materials made on the
@@ -900,8 +969,17 @@ func _load_model(path: String, ambient_only := false) -> Dictionary:
 	state.set_materials(gmats)
 	GpuJobs.ready_materials(Array(gmats))
 	var made := _model_scene(doc, state, specs, path)
+	# a dungeon piece's pick floor (nif_static.pick_parts): the meshes listed - its Collidee's collision_ meshes and its
+	# hidden pickee_<n> / pickwater_<n> copies; none in models converted before 2026-11-11 or that are no dungeon piece
+	var pick_info = state.json.get("extras", {}).get("nif_pick", {})
+	if not pick_info is Dictionary:
+		pick_info = {}
+	var pick_names := {}
+	for pn in (pick_info as Dictionary).get("meshes", []):
+		pick_names[String(pn)] = true
 	var out := {"meshes": [], "collision": PackedVector3Array(), "visible_faces": PackedVector3Array(),
-			"climb": PackedVector3Array(),
+			"climb": PackedVector3Array(), "pick": PackedVector3Array(),
+			"pick_source": String((pick_info as Dictionary).get("node", "")),
 			"particles": state.json.get("extras", {}).get("nif_particles", []),
 			"doors": {}, "door_specs": state.json.get("extras", {}).get("nif_doors", [])}
 	for e in made:
@@ -925,6 +1003,10 @@ func _load_model(path: String, ambient_only := false) -> Dictionary:
 				out.doors[k].panel_faces.append_array(raw)
 			continue
 		var faces: PackedVector3Array = local * raw
+		if pick_names.has(mi_name):                        # the ground-pick target (floor only, never drawn)
+			out.pick.append_array(faces)
+		if mi_name.begins_with("pickee_") or mi_name.begins_with("pickwater_"):
+			continue
 		if mi_name.begins_with("collision_"):
 			out.collision.append_array(faces)
 			continue
@@ -955,7 +1037,8 @@ func _model_scene(doc: GLTFDocument, state: GLTFState, specs: Array, path: Strin
 			p = p.get_parent()
 		var n := String(mi.name)
 		var leaf := door_leaf(n)
-		var drawn: bool = not ((not leaf.is_empty() and leaf[0]) or n.begins_with("collision_") or n.begins_with("climb_"))
+		var drawn: bool = not ((not leaf.is_empty() and leaf[0]) or n.begins_with("collision_") or n.begins_with("climb_")
+				or n.begins_with("pickee_") or n.begins_with("pickwater_"))
 		if drawn:
 			var mesh := mi.mesh
 			for i in mesh.get_surface_count():

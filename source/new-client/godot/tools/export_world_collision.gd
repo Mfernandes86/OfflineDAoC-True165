@@ -79,8 +79,9 @@ func _export(zone_id: int) -> void:
 	zl.free()
 
 
-## The visible faces of every Collide fixture whose model has collidee geometry (a building, bridge, dock, stair),
-## placed the way ZoneLoader places its floors (scaled, then turned by yaw or a dungeon piece's full basis).
+## The visible faces of every Collide fixture whose model has collidee geometry (a building, bridge, dock, stair) -
+## a dungeon piece's ground-pick target instead (pickee / Collidee) - placed the way ZoneLoader places its floors
+## (scaled, then turned by yaw or a dungeon piece's full basis).
 func _solid_floors(zl: ZoneLoader, dir: String) -> PackedVector3Array:
 	var out := PackedVector3Array()
 	var parts_of := {}
@@ -93,7 +94,8 @@ func _solid_floors(zl: ZoneLoader, dir: String) -> PackedVector3Array:
 		var parts: Dictionary = parts_of[m]
 		if parts.is_empty() or (parts.collision as PackedVector3Array).is_empty():
 			continue
-		var vf: PackedVector3Array = parts.visible_faces
+		# a dungeon piece: its ground-pick target, as ZoneLoader floors it (uses_pick, GitHub issue #42)
+		var vf: PackedVector3Array = parts.pick if zl.uses_pick(parts) else parts.visible_faces
 		var sc := float(f.scale)
 		var origin := Vector3(f.pos[0], f.pos[1], f.pos[2])
 		var xf := Transform3D(Basis(Vector3.UP, deg_to_rad(float(f.yaw))), origin)

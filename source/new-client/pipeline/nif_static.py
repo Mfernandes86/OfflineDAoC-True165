@@ -15,6 +15,11 @@ Collision follows the client (game.dll 0x482ba5): EVERY node named "collidee" (a
 holds wall geometry (find_collidees; until 2026-10-29 only the first, which lost 59 models' walls). The client hides that subtree and tests its triangles; it is exported as
 hidden "collision_<n>" nodes, textured or not. Door leaves carry their own "collideeNN" nodes, which the door system
 handles. Other untextured, unmapped shapes are hidden and are not walls.
+Dungeon pieces' floors follow the client too (GitHub issue #42, 2026-11-11): the ground pick of a dungeon piece sees
+its "dungswitch/pickee" node (or "dungswitch/Collidee" without one) and its "dungswitch/waterproxy" (find_pick,
+pick_parts) - never the drawn geometry. The pickee and waterproxy are exported as hidden "pickee_<n>" / "pickwater_<n>"
+nodes, and extras.nif_pick lists them with the collision_ nodes of the Collidee (also a floor, see pick_parts). The
+engine builds dungeon floors from these (ZoneLoader.uses_pick).
 convert(..., keep_paths=True) (opt-in, player houses, 2026-11-02) keeps the NIF's node tree instead (KeepPaths);
 without it the output is exactly as before.
 """
@@ -320,6 +325,93 @@ def find_collidees(nif):
         return out
     node, m = find_collidee(nif)
     return [(node, m)] if node is not None else []
+
+
+def find_dungswitch_child(nif, name):
+    """(node, parent world matrix) of the first node named `name` (any case) whose parent is named 'dungswitch' (any
+    case), depth-first over the NiNodes, or (None, None) - the 1.64 game.dll's lookup 0x4c0ce6 as the dungeon piece
+    loader calls it: find(root, name, 0, "dungswitch"), a _stricmp on the node's name and on its parent's."""
+    sp = spec()
+    want = name.lower()
+
+    def dfs(b, parent_m, parent_name):
+        if b is None:
+            return None
+        nm = b.get('name') or ''
+        if nm.lower() == want and parent_name.lower() == 'dungswitch':
+            return b, parent_m
+        if not sp.is_a(b.type, 'NiNode'):
+            return None
+        m = local_matrix(b) @ parent_m
+        for c in b.get('children') or []:
+            hit = dfs(c, m, nm)
+            if hit:
+                return hit
+        return None
+    for r in nif.roots:
+        hit = dfs(r, np.identity(4), '')
+        if hit:
+            return hit
+    return None, None
+
+
+def find_pick(nif):
+    """A dungeon piece's ground-pick target, as the 1.64 client builds it (GitHub issue #42; game.dll 0x4be202 /
+    0x4be379-0x4be415): the piece's picker gets the 'pickee' node (piece+0x18), or the 'Collidee' node (piece+0x14)
+    when there is no pickee - both direct children of 'dungswitch'. The loader hides both (0x4bde4f-0x4bde85) and the
+    drawn 'visible' node is never a pick target: cobwebs, plants, chains and crates are walked through, not stood on.
+    ('pickee' | 'collidee', node, parent world matrix), or (None, None, None) for a model that is no dungeon piece."""
+    node, m = find_dungswitch_child(nif, 'pickee')
+    if node is not None:
+        return 'pickee', node, m
+    node, m = find_dungswitch_child(nif, 'collidee')
+    if node is not None:
+        return 'collidee', node, m
+    return None, None, None
+
+
+def pick_parts(nif):
+    """A dungeon piece's floor for the engine (GitHub issue #42): {kind: find_pick's 'pickee' | 'collidee' | None,
+    collidee_ids: ids of the shapes under dungswitch/Collidee, pickee: [(shape, data, matrix)] under dungswitch/pickee,
+    pickwater: the same under dungswitch/waterproxy}. The client's ground picker gets pickee (else Collidee) and then
+    the waterproxy node (game.dll 0x4be42c-0x4be470). The Collidee's floors are floors too, pickee or not: Caer Sidi's
+    upper galleries (stoneroom06 and others) are in the Collidee but not in the pickee, and every period account and
+    the server navmesh have them walked on - with the pickee alone 8,463 of Caer Sidi's 62,220 navmesh sample points
+    lost their floor; with the Collidee as well, 17 (and 36 gained). None of the three holds the drawn decoration (cobwebs, roots,
+    crates), which the client never stands on."""
+    kind, node, m = find_pick(nif)
+    out = {'kind': kind, 'collidee_ids': set(), 'pickee': [], 'pickwater': []}
+    if kind is None:
+        return out
+    if kind == 'pickee':
+        out['pickee'] = subtree_shapes(node, m)
+    cnode, cm = find_dungswitch_child(nif, 'collidee')
+    if cnode is not None:
+        out['collidee_ids'] = {id(s) for s, _, _ in subtree_shapes(cnode, cm)}
+    wnode, wm = find_dungswitch_child(nif, 'waterproxy')
+    if wnode is not None:
+        out['pickwater'] = subtree_shapes(wnode, wm)
+    return out
+
+
+def subtree_shapes(node, parent_m):
+    """[(shape, data, model matrix)] of every triangle shape under a node, hidden or not (a pick / collision target)."""
+    sp = spec()
+    out = []
+
+    def walk(b, pm):
+        if b is None or any(sp.is_a(b.type, t) for t in SKIP_TYPES):
+            return
+        m = local_matrix(b) @ pm
+        if sp.is_a(b.type, 'NiTriBasedGeom'):
+            data = b.get('data')
+            if data is not None and data.get('num_vertices'):
+                out.append((b, data, m))
+            return
+        for c in b.get('children') or []:
+            walk(c, m)
+    walk(node, parent_m)
+    return out
 
 
 def climb_shapes(nif):
@@ -777,6 +869,9 @@ def collect(nif, node_anims=False):
     sp = spec()
     shapes, doors = [], []
     collidees = {id(n) for n, _ in find_collidees(nif)}
+    pick_kind, pick_node, _ = find_pick(nif)
+    if pick_kind == 'pickee':                              # a dungeon piece's floor, hidden by the client (find_pick)
+        collidees.add(id(pick_node))
     strays = stray_cards(nif) if node_anims else set()
 
     def walk(b, parent_m, inherited):
@@ -1604,6 +1699,10 @@ def convert(raw, out_path, texture_uri='textures', node_anims=False, keep_paths=
             continue                                       # environment maps are drawn (environment_map)
         if b.type in ('NiTextureEffect', 'NiMultiTextureProperty', 'NiTextureProperty'):
             warnings.append(f'{b.type} {b.get("name") or ""} not rendered yet')
+    # a dungeon piece's floor (pick_parts): the collision_ meshes under its dungswitch/Collidee node by name, its
+    # pickee as hidden pickee_<n> meshes and its waterproxy as hidden pickwater_<n> copies (the water stays drawn)
+    pp = pick_parts(nif)
+    pick_names, npick = [], 0
     for i, (shape, data, m) in enumerate(collidee_shapes(nif)):
         pos, nrm, uv, col, tri = shape_arrays(data, m)
         if len(tri):
@@ -1611,6 +1710,21 @@ def convert(raw, out_path, texture_uri='textures', node_anims=False, keep_paths=
             if tree is not None:                           # under its own NIF node (KeepPaths)
                 tree.attach_child(g, shape, node)
             ncol += len(tri)
+            if id(shape) in pp['collidee_ids']:
+                pick_names.append(f'collision_{i}')
+                npick += len(tri)
+    for prefix in ('pickee', 'pickwater'):
+        for i, (shape, data, m) in enumerate(pp[prefix]):
+            pos, nrm, uv, col, tri = shape_arrays(data, m)
+            if len(tri):
+                node = g.mesh(f'{prefix}_{i}', pos, nrm, [], None, tri, None, scene_root=tree is None)   # hidden: floor only
+                if tree is not None:
+                    tree.attach_child(g, shape, node)
+                pick_names.append(f'{prefix}_{i}')
+                npick += len(tri)
+    pick_kind = pp['kind']
+    if pick_kind is not None:
+        g.doc.setdefault('extras', {})['nif_pick'] = {'node': pick_kind, 'meshes': pick_names, 'triangles': npick}
     nclimb = 0
     for i, (shape, data, m) in enumerate(climb_shapes(nif)):
         pos, nrm, uv, col, tri = shape_arrays(data, m)
@@ -1766,7 +1880,8 @@ def convert(raw, out_path, texture_uri='textures', node_anims=False, keep_paths=
     if tree is not None:
         tree.finish(g)
     g.save(out_path)
-    return {'textures': textures, 'triangles': ntri, 'collision_triangles': ncol, 'climb_triangles': nclimb, 'aabb': (lo.tolist(), hi.tolist()),
+    return {'textures': textures, 'triangles': ntri, 'collision_triangles': ncol, 'climb_triangles': nclimb,
+            'pick': pick_kind, 'pick_triangles': npick, 'aabb': (lo.tolist(), hi.tolist()),
             'particles': len(particles), 'morphs': len(morph_specs), 'doors': len(doors),
             'warnings': sorted(set(warnings))}
 
