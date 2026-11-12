@@ -28,7 +28,8 @@ namespace DOL.AI.Brain
                 !BardBotCrowdControlPolicy.HasGroupForPveAdd(group?.MemberCount) ||
                 shaman.CanCastCrowdControlSpells != true ||
                 shaman.IsIncapacitated || shaman.IsCasting ||
-                shaman.castingComponent?.HasPendingSkillRequests == true || now < _nextPveAddRootLook)
+                shaman.castingComponent?.HasPendingSkillRequests == true || now < _nextPveAddRootLook ||
+                shaman.IsPlayerCompanion && !CompanionControls165.AddControlRuns(shaman))   // M7: the Crowd control row
                 return false;
             _nextPveAddRootLook = now + 1_000;
 

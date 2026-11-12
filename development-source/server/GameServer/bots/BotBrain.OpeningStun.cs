@@ -31,7 +31,9 @@ namespace DOL.AI.Brain
         {
             GameBot bot = BotBody;
             if (!Classic165Mode.IsOn || bot?.Group == null || bot.IsCasting || bot.IsBeingInterrupted ||
-                bot.CharacterClass?.ID != (int)eCharacterClass.Healer)
+                bot.CharacterClass?.ID != (int)eCharacterClass.Healer ||
+                // M7: the Crowd control row (Adds only and Off never control the kill target)
+                !CompanionControls165.CcAllowsKillTargetControl(CompanionControls165.CrowdControl(bot)))
                 return false;
             if (GroupKillTarget() is not GameNPC target || target is GameBot || !target.IsAlive ||
                 target == _openingStunDoneFor || BotPvpCrowdControl.PlayerLike(target))

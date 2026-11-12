@@ -110,9 +110,11 @@ namespace DOL.AI.Brain
             if (bot?.CharacterClass == null || bot.CharacterClass.ID == (int)eCharacterClass.Bard ||
                 (group == null || group.MemberCount < 2) && ownPet == null || bot.IsIncapacitated || bot.IsCasting && !IsChannellingPetShield ||
                 bot.castingComponent?.HasPendingSkillRequests == true || now < _nextPveAddControlLook ||
-                BotPartyRoles.IsHealingClass((eCharacterClass)bot.CharacterClass.ID) && bot.ManaPercent < HealerControlPowerPercent)
+                BotPartyRoles.IsHealingClass((eCharacterClass)bot.CharacterClass.ID) && bot.ManaPercent < HealerControlPowerPercent ||
+                bot.IsPlayerCompanion && !CompanionControls165.AddControlRuns(bot))   // M7: the Crowd control row
                 return false;
             _nextPveAddControlLook = now + 1_000;
+            bool mainCc = CompanionControls165.CcLongReuseOnAnyAdd(CompanionControls165.CrowdControl(bot));
 
             Spell[] control = bot.Spells?.Where(spell => spell != null && IsAddControlSpell(spell) &&
                     spell.Target == eSpellTarget.ENEMY && spell.Range > 0 && spell.Level <= bot.Level &&
@@ -171,7 +173,7 @@ namespace DOL.AI.Brain
                     if (isMez ? mezImmune : (stunImmune || !protects))
                         continue;
                     if (spell.HasRecastDelay && spell.RecastDelay >= EmergencyRecastMilliseconds &&
-                        !AllowsLongReuseControl(classic165, emergency, spell.Radius <= 0,
+                        !AllowsLongReuseControl(classic165, emergency || mainCc, spell.Radius <= 0,
                             bot.IsBeingInterrupted || !CastTimeControlReady(control, isMez)))
                         continue;
                     if (spell.CastTime > 0 && !spell.Uninterruptible && bot.IsBeingInterrupted ||

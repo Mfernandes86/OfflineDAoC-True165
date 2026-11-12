@@ -35,7 +35,7 @@ namespace DOL.GS
             KindLifeTransfer = 16, KindAmnesia = 17, KindPerform = 18, KindSavePower = 26, KindPositioning = 27,
             KindDebuffLine = 28, KindSavePowerCaster = 29, KindAttackSpells = 30;
         /// <summary>Companion controls (veteran review M7 and the owner's twist option, 2026-11-11; CompanionControls165).</summary>
-        public const byte KindTwist = 40, KindStance = 41;
+        public const byte KindTwist = 40, KindStance = 41, KindCrowdControl = 42;
         /// <summary>The fourth Role choice of every healer's Role row (owner 2026-11-11; CompanionSpellOptions165).</summary>
         public const string MeleeHealChoice = "Melee and heal, no attack spells (melee interrupts casts)";
         public static readonly HashSet<string> Verbs = ["charm", "pet", "subpet", "song", "option"];
@@ -129,6 +129,13 @@ namespace DOL.GS
             // /aggressive, /defensive or /passive
             new(KindStance, "stance", "Stance", ["Automatic (the group's stance)", "Aggressive", "Defensive", "Passive"],
                 _ => true),
+            // M7 / G7 (period: in PBAoE groups the pack is burned, not mezzed; "the CC class's job on adds is CC"): Main CC
+            // mezzes every add first (its long-reuse mez too) and Automatic companions leave the adds to it; Adds only
+            // never controls the kill target (the Pacification Healer's opening stun); Off controls nothing
+            new(KindCrowdControl, "cc", "Crowd control", ["Automatic", "Main CC (mez every add first)",
+                    "Adds only (never the kill target)", "Off"],
+                bot => bot.CanCastCrowdControlSpells || bot.Spells?.Any(spell => spell?.SpellType is eSpellType.Mesmerize or
+                    eSpellType.Mez or eSpellType.Stun) == true),
         ];
 
         /// <summary>A generic AI option's stored key and choices (choice 0 Automatic), or null for an unknown kind.</summary>

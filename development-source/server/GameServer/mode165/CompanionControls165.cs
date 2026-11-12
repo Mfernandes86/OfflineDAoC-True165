@@ -117,5 +117,44 @@ namespace DOL.GS
         /// <summary>Pure: the camp still holds - same region, and the player within 2,500 of it or away less than 10 s.</summary>
         public static bool CampHolds(bool sameRegion, int playerDistance, long awayMilliseconds) =>
             sameRegion && (playerDistance <= CampLeaveDistance || awayMilliseconds < CampLeaveMilliseconds);
+
+        // ---- Crowd control row (M7, G7)
+
+        /// <summary>The "Crowd control" row: 0 Automatic, 1 Main CC, 2 adds only, 3 off.</summary>
+        public const int CcAutomatic = 0, CcMain = 1, CcAddsOnly = 2, CcOff = 3;
+
+        /// <summary>Pure: mez, stun or root an add at all (everything but Off).</summary>
+        public static bool CcAllowsAddControl(int choice) => choice != CcOff;
+
+        /// <summary>Pure: control the group's kill target too (a Pacification Healer's opening stun): Automatic and Main CC.</summary>
+        public static bool CcAllowsKillTargetControl(int choice) => choice is CcAutomatic or CcMain;
+
+        /// <summary>Pure: the main mezzer spends its long-reuse mez or stun on any add, not only on three or more.</summary>
+        public static bool CcLongReuseOnAnyAdd(int choice) => choice == CcMain;
+
+        /// <summary>Pure: an Automatic companion leaves the adds to a groupmate companion set to Main CC that can act.</summary>
+        public static bool DefersToMainCc(int ownChoice, bool mainCcReady) => ownChoice == CcAutomatic && mainCcReady;
+
+        /// <summary>The player's crowd-control choice for this companion (0 for gamebots).</summary>
+        public static int CrowdControl(GameBot bot) => CompanionOptions165.Choice(bot, "cc");
+
+        /// <summary>Another companion of this companion's group is the main mezzer and can act now.</summary>
+        public static bool MainCcReady(GameBot bot)
+        {
+            if (bot?.IsPlayerCompanion != true || bot.Group is not { } group)
+                return false;
+            foreach (GameLiving member in group.GetMembersInTheGroup())
+                if (member is GameBot other && other != bot && other.IsAlive && !other.IsIncapacitated &&
+                    other.CurrentRegionID == bot.CurrentRegionID && other.IsPlayerCompanion && CrowdControl(other) == CcMain)
+                    return true;
+            return false;
+        }
+
+        /// <summary>Whether this companion's add control runs now (its own choice, and no Main CC to leave it to).</summary>
+        public static bool AddControlRuns(GameBot bot)
+        {
+            int choice = CrowdControl(bot);
+            return CcAllowsAddControl(choice) && !(choice == CcAutomatic && DefersToMainCc(choice, MainCcReady(bot)));
+        }
     }
 }

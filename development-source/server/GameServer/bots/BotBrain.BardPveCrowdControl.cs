@@ -19,7 +19,8 @@ namespace DOL.AI.Brain
                 bard.CanCastCrowdControlSpells != true ||
                 bard.IsIncapacitated || bard.IsCasting ||
                 bard.castingComponent?.HasPendingSkillRequests == true ||
-                GameLoop.GameLoopTime < _nextBardPveMezLook)
+                GameLoop.GameLoopTime < _nextBardPveMezLook ||
+                bard.IsPlayerCompanion && !CompanionControls165.AddControlRuns(bard))   // M7: the Crowd control row
                 return false;
             _nextBardPveMezLook = GameLoop.GameLoopTime + 1_000;   // owner 2026-11-08: once a second, as add control
 
