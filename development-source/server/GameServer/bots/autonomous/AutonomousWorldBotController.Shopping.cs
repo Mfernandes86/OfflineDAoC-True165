@@ -75,6 +75,56 @@ namespace DOL.GS
             return template.Price <= budget / empty;
         }
 
+        private static readonly eInventorySlot[] JewelrySlots =
+        [
+            eInventorySlot.Neck, eInventorySlot.Cloak, eInventorySlot.Waist, eInventorySlot.Jewelry,
+            eInventorySlot.LeftRing, eInventorySlot.RightRing, eInventorySlot.LeftBracer, eInventorySlot.RightBracer,
+        ];
+
+        /// <summary>
+        /// Vendor armour and jewellery like a veteran's (veteran-bots review 2026-11-11, M9 / economy G4): bought only for an
+        /// empty slot, or to replace a worn piece that now cons green (or grey) to the bot, and then only a piece at about
+        /// the bot's level (level - 1 or more), so a set is bought once and kept instead of piece by piece every level
+        /// (11,617 vendor upgrades in 1.5 days, each one a walk to a merchant). Prima: "Hold off on buying armor as long as
+        /// you can, save your money, and buy something that's player crafted" (Wizard); "Don't ever buy armor, just use
+        /// what you find" (Spiritmaster). Vendor cloth never replaces a worn piece at all: casters buy cloth only for an
+        /// empty slot. Weapons, shields, instruments and ranged weapons keep
+        /// today's rule (any real upgrade).
+        /// </summary>
+        public static bool VendorPieceAllowed(GameBot bot, DbItemTemplate template)
+        {
+            if (bot?.Inventory == null || template == null)
+                return true;
+            var slot = (eInventorySlot)template.Item_Type;
+            bool armor = BodyArmorSlots.Contains(slot);
+            if (!armor && !JewelrySlots.Contains(slot))
+                return true;
+            DbInventoryItem worn = slot switch
+            {
+                eInventorySlot.LeftRing or eInventorySlot.RightRing => WeakerOfPair(bot, eInventorySlot.LeftRing, eInventorySlot.RightRing),
+                eInventorySlot.LeftBracer or eInventorySlot.RightBracer => WeakerOfPair(bot, eInventorySlot.LeftBracer, eInventorySlot.RightBracer),
+                _ => bot.Inventory.GetItem(slot),
+            };
+            if (worn == null)
+                return true;
+            if ((eObjectType)template.Object_Type == eObjectType.Cloth)
+                return false;
+            return WornPieceConsGreen(bot.Level, worn.Level) && template.Level >= bot.Level - 1;
+        }
+
+        /// <summary>Whether a worn piece of this level cons green or grey to a bot of this level.</summary>
+        public static bool WornPieceConsGreen(int botLevel, int itemLevel) =>
+            GameObject.GetConLevel(Math.Clamp(botLevel, 0, 255), Math.Clamp(itemLevel, 0, 255)) <= (int)ConColor.GREEN;
+
+        /// <summary>The empty one of a ring or bracer pair (null), else the lower-level piece.</summary>
+        private static DbInventoryItem WeakerOfPair(GameBot bot, eInventorySlot first, eInventorySlot second)
+        {
+            DbInventoryItem a = bot.Inventory.GetItem(first), b = bot.Inventory.GetItem(second);
+            if (a == null || b == null)
+                return null;
+            return a.Level <= b.Level ? a : b;
+        }
+
         private const long ShoppingSkipMilliseconds = 30 * 60_000;
         private static readonly ConcurrentDictionary<(long Bot, string Merchant), long> ShoppingSkips = new();
 
@@ -169,7 +219,8 @@ namespace DOL.GS
                     foreach (StockEntry entry in entries)
                     {
                         DbItemTemplate t = entry.Template;
-                        if (!ShoppingConsiders(bot, t, budget) || !ShoppingAllowsWhileArmorMissing(bot, t, budget))
+                        if (!ShoppingConsiders(bot, t, budget) || !ShoppingAllowsWhileArmorMissing(bot, t, budget) ||
+                            !VendorPieceAllowed(bot, t))
                             continue;
                         int gain;
                         if (BotWeaponStats.IsMeleeWeapon((eObjectType)t.Object_Type))

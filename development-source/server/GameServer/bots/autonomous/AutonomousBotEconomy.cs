@@ -1258,7 +1258,8 @@ namespace DOL.GS;
             DbInventoryItem[] upgrades = merchant.TradeItems.GetAllItems().Values
                 .OfType<DbItemTemplate>()
                 .Where(template => AutonomousWorldBotController.ShoppingConsiders(bot, template, coin) &&
-                                   AutonomousWorldBotController.ShoppingAllowsWhileArmorMissing(bot, template, coin))
+                                   AutonomousWorldBotController.ShoppingAllowsWhileArmorMissing(bot, template, coin) &&
+                                   AutonomousWorldBotController.VendorPieceAllowed(bot, template))
                 .Select(GameInventoryItem.Create)
                 .Where(item => item != null && IsWorthBuying(bot, item, out _))
                 .OrderByDescending(EquipmentValue)
