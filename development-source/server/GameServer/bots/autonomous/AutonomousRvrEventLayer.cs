@@ -982,6 +982,18 @@ public static partial class AutonomousRvrEventLayer
     /// before it marches (owner 2026-10-07: a huge force matters more than speed): 80% of the force, or the
     /// 10-minute muster runs out, whichever comes first. The third realm never musters (it stays chaotic).
     /// </summary>
+    /// <summary>
+    /// Keeps audit 2026-11-11 (T3): the bot defense rally marches once 85% of the defenders who answered stand at it (at
+    /// least four, or all of them when fewer answered), the attackers' own rule. It waited for 85% of the defender cap,
+    /// a force that may not exist, so with fewer available it always sat out 9 + 6 minutes while a crewed ram pair opens
+    /// a gate in 2.5-10.
+    /// </summary>
+    public static int DefenseMarchThreshold(int cap, int signedUp)
+    {
+        int called = Math.Max(0, Math.Min(cap, signedUp));
+        return Math.Max(Math.Min(called, 4), called * 85 / 100);
+    }
+
     public static int DefenseWaveSize(int called) => Math.Max(Math.Min(called, 6), called * 80 / 100);
 
     private static void BeginDefenseMuster(ActiveEvent active, long nowTick, long milliseconds = -1)
@@ -1150,7 +1162,7 @@ public static partial class AutonomousRvrEventLayer
                 else active.DefenseMustered.Remove(botId);
                 int needed = active.DefenseReaction
                     ? DefenseWaveSize(active.Defenders.Values.Sum())
-                    : Math.Max(4, DefenderCapFor(active) * 85 / 100);
+                    : DefenseMarchThreshold(DefenderCapFor(active), active.Defenders.Values.Sum());
                 if (DefenseMusterAttendance(active, nowTick) >= needed)
                     GiveDefenseMarch(active, nowTick, "the defense rally has gathered");
                 return;
@@ -1589,7 +1601,8 @@ public static partial class AutonomousRvrEventLayer
             // Run 25: a 3-minute player-defense muster marched with 1 of 175 (the rest were still walking in from 60k
             // away). A player's attack now musters until 80% have gathered or ten minutes pass (owner: a huge force
             // matters more than speed); there is no further extension.
-            if (!active.DefenseReaction && !active.DefenseMusterExtended && active.DefenseMustered.Count < DefenderCapFor(active) / 2)
+            if (!active.DefenseReaction && !active.DefenseMusterExtended &&
+                DefenseMusterAttendance(active, nowTick) < Math.Min(DefenderCapFor(active), active.Defenders.Values.Sum()) / 2)
             {
                 active.DefenseMusterExtended = true;
                 active.DefenseMusterDeadlineTick = nowTick + DefenseMusterExtensionMilliseconds;

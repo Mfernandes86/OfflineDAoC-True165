@@ -90,4 +90,12 @@ public class UT_KeepRaidFixes
         Assert.That(AutonomousRvrEventLayer.ShouldExtendMuster(true, 1, 45, 60, 45), Is.False, "nobody else is coming");
         Assert.That(AutonomousRvrEventLayer.ShouldExtendMuster(true, AutonomousRvrEventLayer.RelicMusterExtensions, 46, 60, 45), Is.False);
     });
+    [Test]
+    public void TheDefenseRallyWaitsForTheDefendersWhoAnswered() => Assert.Multiple(() =>
+    {
+        Assert.That(AutonomousRvrEventLayer.DefenseMarchThreshold(64, 20), Is.EqualTo(17), "85% of the 20 who answered, not of the cap of 64");
+        Assert.That(AutonomousRvrEventLayer.DefenseMarchThreshold(64, 200), Is.EqualTo(54), "never more than 85% of the cap");
+        Assert.That(AutonomousRvrEventLayer.DefenseMarchThreshold(64, 3), Is.EqualTo(3), "three defenders go in together");
+        Assert.That(AutonomousRvrEventLayer.DefenseMarchThreshold(64, 6), Is.EqualTo(5));
+    });
 }
