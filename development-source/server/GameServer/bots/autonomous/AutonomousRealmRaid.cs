@@ -80,6 +80,8 @@ namespace DOL.GS
             public int FailedFinalEngagements;
             public readonly Dictionary<GameNPC, bool> FinalEngaged = new();
             public readonly Dictionary<GameNPC, int> FinalLow = new();
+            /// <summary>Darkness Falls closed to the realm during the battle: since when fewer than 8 raiders are inside.</summary>
+            public long FewInsideSince;
         }
         private sealed class Party
         {
@@ -253,6 +255,8 @@ namespace DOL.GS
                             }
                     if (!raid.Definition.IsDungeon && (!raid.Boss.IsAlive || raid.Boss.ObjectState != GameObject.eObjectState.Active))
                     { End(raid, now, "The dragon encounter has ended; checking actual respawn before the next expedition."); continue; }
+                    if (raid.Definition.Region == AutonomousDarknessFallsPolicy.RegionId && WatchDarknessFallsAccess(raid, now) is { } closed)
+                    { End(raid, now, closed); continue; }
                     if (raid.Started && raid.Definition.IsNeutral)
                         RealmRaidNeutralEvents.ApplyEncounterLevels(raid.Definition.Region, raid.Definition.Objectives);
                     raid.DungeonRoute?.ObserveCompletion();
@@ -364,6 +368,37 @@ namespace DOL.GS
             if (RealmRaidRecruitmentPolicy.HornBattleStalled(raid.BattleStartTick, raid.LastProgressTick, now))
                 return $"Timed out: no encounter was defeated for {RealmRaidRecruitmentPolicy.HornBattleStallMilliseconds / 60_000} minutes.";
             return null;
+        }
+
+        /// <summary>
+        /// Darkness Falls opens only to the realm holding the most keeps (15 minutes' grace after losing the lead), and the
+        /// door is checked on every crossing (df-routes L3). Lost before the assault: the rally ends at once (no cooldown).
+        /// Lost during the battle: those inside fight on, nobody can come back in, and the raid ends once fewer than 8 living
+        /// raiders have been inside for 5 minutes. One property test per pulse; a roster count only while it is closed.
+        /// </summary>
+        private static string WatchDarknessFallsAccess(Raid raid, long now)
+        {
+            if (DOL.GS.ServerRules.DFEnterJumpPoint.CanRealmEnter(raid.Definition.Realm))
+            {
+                raid.FewInsideSince = 0;
+                return null;
+            }
+            if (!raid.Started)
+            {
+                RealmEventNotices.Queue(raid.Definition.Id, raid.Definition.Realm,
+                    "Darkness Falls is closed to our realm now: another realm holds more keeps. The muster is called off.");
+                return "Failed rally: Darkness Falls closed to the realm before the assault began.";
+            }
+            int inside = raid.Support.Count(b => b.IsAlive && b.CurrentRegionID == AutonomousDarknessFallsPolicy.RegionId);
+            if (inside >= RealmRaidRecruitmentPolicy.AccessLostMinimumInside)
+            {
+                raid.FewInsideSince = 0;
+                return null;
+            }
+            if (raid.FewInsideSince == 0) raid.FewInsideSince = now;
+            return RealmRaidRecruitmentPolicy.AccessLostAbandoned(raid.FewInsideSince, now)
+                ? $"Failed: Darkness Falls is closed to the realm and only {inside} raiders are left inside."
+                : null;
         }
 
         public static bool TryJoin(GameBot leader, out View view)

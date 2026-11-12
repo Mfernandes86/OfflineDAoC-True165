@@ -162,4 +162,12 @@ public static class RealmRaidRecruitmentPolicy
     /// after a rally that never went in; 10 minutes after a battle that did not kill the final encounter.</summary>
     public static long EventCooldownMilliseconds(bool stoppedByPlayer, bool battleBegan, bool finalDefeated) =>
         stoppedByPlayer || finalDefeated || !battleBegan ? 0 : FailedBattleCooldownMilliseconds;
+
+    /// <summary>Darkness Falls lost to the realm during the battle: nobody can come back in, so the raid ends once fewer than
+    /// 8 living raiders have been inside for 5 minutes.</summary>
+    public const long AccessLostAbandonMilliseconds = 5 * 60_000L;
+    public const int AccessLostMinimumInside = 8;
+
+    public static bool AccessLostAbandoned(long fewInsideSinceTick, long now) =>
+        fewInsideSinceTick > 0 && now - fewInsideSinceTick >= AccessLostAbandonMilliseconds;
 }

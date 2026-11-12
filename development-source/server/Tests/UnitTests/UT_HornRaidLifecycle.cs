@@ -97,4 +97,12 @@ public class UT_HornRaidLifecycle
         Assert.That(AutonomousRealmRaid.RouteProofExpiry(true, 1_000), Is.EqualTo(1_000 + 5 * Minute), "a proven way is rechecked every 5 minutes");
         Assert.That(AutonomousRealmRaid.RouteProofExpiry(false, 1_000), Is.EqualTo(1_000 + Minute), "a failed one every minute");
     }
+
+    [Test]
+    public void ARaidCutOffFromDarknessFallsEndsWhenFewerThanEightAreLeftInsideForFiveMinutes()
+    {
+        Assert.That(RealmRaidRecruitmentPolicy.AccessLostAbandoned(0, 100 * Minute), Is.False, "eight or more inside");
+        Assert.That(RealmRaidRecruitmentPolicy.AccessLostAbandoned(10 * Minute, 14 * Minute), Is.False);
+        Assert.That(RealmRaidRecruitmentPolicy.AccessLostAbandoned(10 * Minute, 15 * Minute), Is.True);
+    }
 }
