@@ -97,4 +97,12 @@ public class UT_AutonomousServiceNpcClearance
         Assert.That(AutonomousServiceNpcClearance.IsClearOf(new(1_500, 1_000, 0), services, clear), Is.True, "between them, clear");
         Assert.That(AutonomousServiceNpcClearance.IsClearOf(new(1_500, 1_000, 0), [], clear), Is.True);
     }
+
+    [Test]
+    public void AServiceStopStartsOverOnTheNextVisit()
+    {
+        Assert.That(AutonomousSupplyMerchantSpace.IsNewVisit(now: 200_000, lastAsked: 100_000), Is.True, "came back later");
+        Assert.That(AutonomousSupplyMerchantSpace.IsNewVisit(now: 101_500, lastAsked: 100_000), Is.False, "the same stop, next AI turn");
+        Assert.That(AutonomousSupplyMerchantSpace.IsNewVisit(now: 100_000, lastAsked: 0), Is.True, "the first visit");
+    }
 }

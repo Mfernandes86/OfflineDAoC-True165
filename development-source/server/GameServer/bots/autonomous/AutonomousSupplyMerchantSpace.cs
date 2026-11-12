@@ -39,6 +39,12 @@ namespace DOL.GS
         /// long and uses the service where it stands (it is already inside the interaction range).</summary>
         public const int SpotWalkLimitMs = 20_000;
 
+        /// <summary>Pure: the bot was last asked for its spot at this NPC long enough ago that this is another visit.</summary>
+        public static bool IsNewVisit(long now, long lastAsked) => now - lastAsked > NewVisitGapMs;
+
+        /// <summary>A service stop asks every AI turn while it lasts; a gap this long means the bot left and came back.</summary>
+        public const int NewVisitGapMs = 60_000;
+
         /// <summary>How close to its own spot counts as there.</summary>
         public const int SpotArrivalRadius = 32;
 
@@ -83,6 +89,7 @@ namespace DOL.GS
         private long _nextSupplySpaceSearch;
         private long _supplySpaceWalkUntil;
         private bool _supplySpaceGaveUp;
+        private long _supplySpaceLastAsked;
 
         // Returns true only when a real transaction is in range and the bot
         // is clear of the NPC. Cached per visit; no population scan per AI turn.
@@ -119,6 +126,15 @@ namespace DOL.GS
             }
             if (!strict)
             {
+                // A new visit to the same NPC starts over: the spot is kept, the walk limit and the "use it where I
+                // stand" answer are not (they were per bot for good, so only a bot's first visit used its own spot).
+                long asked = GameLoop.GameLoopTime;
+                if (AutonomousSupplyMerchantSpace.IsNewVisit(asked, _supplySpaceLastAsked))
+                {
+                    _supplySpaceGaveUp = false;
+                    _supplySpaceWalkUntil = asked + AutonomousSupplyMerchantSpace.SpotWalkLimitMs;
+                }
+                _supplySpaceLastAsked = asked;
                 if (_supplySpaceGaveUp)
                     return true;
                 if (!_supplySpacePoint.HasValue)
