@@ -1146,36 +1146,195 @@ func on_skills(d: Dictionary) -> void:
 		skills = []
 	skills.append_array(d.list)
 	if not bool(d.more):
-		_refresh_bar_icons()
+		_skills_known = true
+		_refresh_bars_after_list()
 		_forget_details("sk:")
+		_forget_skill_requests()
 		skills_changed.emit()
 
 
-## Abilities, styles and hybrid spells already on your quickbars take their icons again from the list (a bar saved
-## before 2026-10-13 held an ability's raw icons.csv number - another picture).
-func _refresh_bar_icons() -> void:
-	var first := 0
-	while first < skills.size() and int(skills[first].page) == 0:
-		first += 1
+# ---------------------------------------------------------------- quickbar slots name their skill (GitHub issue #50)
+# A Berserker's Left Axe styles fired other styles under their old icons: a slot kept only "srv:skill:<n>", the skill's
+# PLACE in the server's list, and the server rebuilds that list at login in another order (abilities first, styles by
+# spec), so a new ability or an earlier spec's style moved every later style. A slot now also keeps the skill itself:
+# "sid" (its server id from the list: the style / ability / spell InternalID) and "page"; a list spell
+# ("srv:spell:<line>:<level>") keeps "line" (the line's name). The <n> / <line> in the id is only where that skill
+# sits now, worked out again from sid / page / name (+ icon) when a list arrives, after the bars load and when a slot
+# is used or hovered. An old slot (no sid) is matched once by its saved name (its icon for an ability whose name has
+# its level: Evade I -> II), never by its <n>. A slot whose skill you no longer have gets "missing": shown dimmed,
+# never used.
+var _skills_known := false               # the server's skill list has arrived (it can be empty)
+var _lines_known := false                # ... and its list spells
+const _KIND_PAGES := {"style": [2], "spell": [3, 4], "ability": [1, 5, 6]}
+
+
+func _first_skill() -> int:
+	for i in skills.size():
+		if int(skills[i].page) != 0:
+			return i
+	return skills.size()
+
+
+## Brings a quickbar entry up to date with the live lists (its id, icon and name); false when it can't be used now
+## (its skill is gone). Any other entry (items, macros, specs by name): true, untouched.
+func resolve_entry(e: Dictionary) -> bool:
+	var id := String(e.get("id", ""))
+	if id.begins_with("srv:skill:"):
+		if not _skills_known:
+			return not e.has("missing")
+		var i := _find_skill(e)
+		if i < 0:
+			e["missing"] = true
+			return false
+		var sk: Dictionary = skills[i]
+		var page := int(sk.page)
+		var ic := skill_icon("icon" if page in [1, 5, 6] else ("style" if page == 2 else "spell"), int(sk.icon))
+		e["id"] = "srv:skill:%d" % (i - _first_skill())
+		e["sid"] = int(sk.id)
+		e["page"] = page
+		e["name"] = String(sk.name)
+		e["icon"] = int(ic[0])
+		e["border"] = int(ic[1])
+		e.erase("missing")
+		return true
+	if id.begins_with("srv:spell:"):
+		if not _lines_known:
+			return not e.has("missing")
+		var found := _find_list_spell(e)
+		if found.is_empty():
+			e["missing"] = true
+			return false
+		var sp: Dictionary = found[1]
+		var style := String(sp.get("kind", "spell")) == "style"
+		var ic := skill_icon("style" if style else "spell", int(sp.icon))
+		e["id"] = "srv:spell:%d:%d" % [int(found[0]), int(sp.level)]
+		e["line"] = String(spell_lines[int(found[0])].name)
+		e["name"] = String(sp.name)
+		e["icon"] = int(ic[0])
+		e["border"] = int(ic[1])
+		e.erase("missing")
+		return true
+	return true
+
+
+## The place in `skills` of a "srv:skill:" entry's skill, or -1. The id (sid, on the saved page) or the name must match;
+## the icon, then the old place, only choose between equal candidates.
+func _find_skill(e: Dictionary) -> int:
+	var first := _first_skill()
+	var parts := String(e.get("id", "")).split(":")
+	var n := int(parts[2]) if parts.size() >= 3 and parts[2].is_valid_int() else -1
+	var pages: Array = [int(e.page)] if e.has("page") else _KIND_PAGES.get(String(e.get("kind", "")), [1, 2, 3, 4, 5, 6])
+	var sid := int(e.get("sid", 0))
+	var name := String(e.get("name", "")).to_lower()
+	var icon := int(e.get("icon", -1))
+	var border := int(e.get("border", -1))
+	var best := -1
+	var best_score := 0
+	var by_icon: Array = []                               # (an ability renamed by its level: Evade I -> Evade II)
+	for i in range(first, skills.size()):
+		var sk: Dictionary = skills[i]
+		var page := int(sk.page)
+		if not (page in pages):
+			continue
+		var pic: Array = skill_icon("icon" if page in [1, 5, 6] else ("style" if page == 2 else "spell"), int(sk.icon))
+		var same_icon := icon >= 0 and int(pic[0]) == icon and int(pic[1]) == border   # (picture + border: Evade I / II)
+		var score := 0
+		if sid > 0 and int(sk.id) == sid:
+			score += 8
+		if name != "" and String(sk.name).to_lower() == name:
+			score += 4
+		if score == 0:
+			if same_icon and page in [1, 5, 6]:
+				by_icon.append(i)
+			continue
+		if same_icon:
+			score += 2
+		if i - first == n:
+			score += 1
+		if score > best_score:
+			best_score = score
+			best = i
+	if best < 0 and by_icon.size() == 1:
+		best = int(by_icon[0])
+	return best
+
+
+## A "srv:spell:<line>:<level>" entry's [line index, spell] in `spell_lines`, or []. The line's name or the spell's
+## name must match at that level; the old line index only chooses between equal lines (a baseline and a spec line can
+## share a name).
+func _find_list_spell(e: Dictionary) -> Array:
+	var parts := String(e.get("id", "")).split(":")
+	if parts.size() < 4:
+		return []
+	var old_line := int(parts[2])
+	var lv := int(parts[3])
+	var line_name := String(e.get("line", "")).to_lower()
+	var name := String(e.get("name", "")).to_lower()
+	var best: Array = []
+	var best_score := 0
+	for li in spell_lines.size():
+		var ln: Dictionary = spell_lines[li]
+		var at_level: Dictionary = {}
+		var same_name := false
+		for sp in ln.get("spells", []):
+			if int(sp.level) != lv:
+				continue
+			if name != "" and String(sp.name).to_lower() == name:
+				at_level = sp
+				same_name = true
+				break
+			if at_level.is_empty():
+				at_level = sp
+		if at_level.is_empty():
+			continue
+		var score := 0
+		if line_name != "" and String(ln.name).to_lower() == line_name:
+			score += 4
+		if same_name:
+			score += 4
+		if score == 0:
+			continue
+		if li == old_line:
+			score += 1
+		if score > best_score:
+			best_score = score
+			best = [li, at_level]
+	return best
+
+
+## Every quickbar entry brought up to date with the lists; true when any changed (to be saved).
+func refresh_bar_entries() -> bool:
+	var changed := false
 	for bar in PlayerData.quickbars:
 		for bank in bar:
 			for e in bank:
-				if not (e is Dictionary) or not String(e.get("id", "")).begins_with("srv:skill:"):
+				if not (e is Dictionary) or (e as Dictionary).is_empty():
 					continue
-				var i := first + int(String(e.id).get_slice(":", 2))
-				if i >= skills.size():
-					continue
-				var page := int(skills[i].page)
-				var ic := skill_icon("icon" if page in [1, 5, 6] else ("style" if page == 2 else "spell"), int(skills[i].icon))
-				e["icon"] = int(ic[0])
-				e["border"] = int(ic[1])
+				var before: Dictionary = (e as Dictionary).duplicate()
+				resolve_entry(e)
+				if before != e:
+					changed = true
+	return changed
+
+
+## A new list (login, training, a level, a respec): the bars follow it. They are saved only when they are this
+## character's (at login the list comes before the zone loads the saved bars - PlayerData.load_character resolves them
+## again then).
+func _refresh_bars_after_list() -> void:
+	if refresh_bar_entries() and String(PlayerData.character.get("name", "")).to_lower() \
+			== String(selected.get("name", "")).to_lower() and not selected.is_empty():
+		PlayerData.save_character()
+	# (the quickbars redraw on skills_changed, sent next)
 
 
 func on_spell_line(d: Dictionary) -> void:
 	if bool(d.done):
 		spell_lines = _lines_building
 		_lines_building = []
+		_lines_known = true
+		_refresh_bars_after_list()
 		_forget_details("sk:")
+		_forget_skill_requests()
 		skills_changed.emit()
 		return
 	if int(d.line) == 0:
@@ -1209,13 +1368,16 @@ func prefetch_item(slot: int) -> void:
 
 ## Any item's delve text kept for its hover box under `key` (DetailRequest object_type / object_id: 1 a slot - yours or
 ## the open listing chest's - 10 an exchange result's place on the page).
-func prefetch_detail(key: Variant, object_type: int, object_id: int, caption := "") -> void:
+## strict: the answer's caption is surely `caption` (a skill's delve names it): an answer naming something else is
+## never kept under this key (GitHub issue #50: one late answer filed every later tooltip one row off).
+func prefetch_detail(key: Variant, object_type: int, object_id: int, caption := "", strict := false) -> void:
 	if client == null or _item_lines.has(key):
 		return
 	for q in _detail_queue:
 		if q.key != null and typeof(q.key) == typeof(key) and q.key == key:
 			return
-	_detail_queue.append({"key": key, "at": Time.get_ticks_msec(), "caption": caption.to_lower()})
+	_detail_queue.append({"key": key, "at": Time.get_ticks_msec(), "caption": caption.strip_edges().to_lower(),
+			"strict": strict and caption.strip_edges() != ""})
 	_quiet_delves += 1
 	client.call("Detail", object_type, object_id)
 
@@ -1253,6 +1415,8 @@ func _forget_details(prefix: String) -> void:
 ## specs): 100 + n, by its page - 6 a style, 3 a hybrid's spell or song (owner 2026-10-14: "my buffs don't even have
 ## a tooltip" - they were asked as abilities, 8, and the server had nothing to say), 8 an ability / realm ability.
 func skill_detail(e: Dictionary) -> Array:
+	if e.has("missing"):
+		return []                                          # (a quickbar skill you no longer have: nothing to ask)
 	var parts := String(e.get("id", "")).split(":")
 	if parts.size() >= 4 and parts[0] == "srv" and parts[1] == "spell":
 		return [2, int(parts[2]) * 100 + int(parts[3])]
@@ -1275,7 +1439,7 @@ func skill_detail(e: Dictionary) -> Array:
 func prefetch_skill(e: Dictionary) -> void:
 	var r := skill_detail(e)
 	if not r.is_empty():
-		prefetch_detail("sk:%d:%d" % r, r[0], r[1], String(e.get("name", "")))
+		prefetch_detail("sk:%d:%d" % r, r[0], r[1], String(e.get("name", "")), true)
 
 
 func skill_lines(e: Dictionary) -> Dictionary:
@@ -1306,19 +1470,66 @@ func detail_shown(object_type: int, object_id: int) -> void:
 func take_detail(d: Dictionary) -> bool:
 	var now := Time.get_ticks_msec()
 	while not _detail_queue.is_empty() and now - int(_detail_queue[0].at) > DETAIL_WAIT_MS:
-		_detail_queue.pop_front()                          # never answered (the item went away): drop it
-	if int(d.get("mode", 0)) != 0 or _detail_queue.is_empty():
+		_set_aside(_detail_queue.pop_front())              # not answered in time (or never: the item went away)
+	while not _detail_late.is_empty() and now - int(_detail_late[0].at) > DETAIL_LATE_MS:
+		_detail_late.pop_front()
+	if int(d.get("mode", 0)) != 0:
 		return false                                       # the server's own windows (statistics, news ...)
-	# the server sends nothing when it has nothing to say: an answer naming a later request skips the silent ones
-	var cap := String(d.get("caption", "")).to_lower()
-	for i in _detail_queue.size():
-		if i > 0 and String(_detail_queue[i].get("caption", "")) == cap and cap != "" 				and String(_detail_queue[0].get("caption", "")) != cap:
-			for _j in i:
-				_detail_queue.pop_front()
-			break
-	var q: Dictionary = _detail_queue.pop_front()
-	if q.key == null:
+	var cap := String(d.get("caption", "")).strip_edges().to_lower()
+	# a late answer (GitHub issue #50): it goes to the request it names, set aside earlier - never to the next one
+	if cap != "" and (_detail_queue.is_empty() or String(_detail_queue[0].get("caption", "")) != cap):
+		for i in _detail_late.size():
+			if String(_detail_late[i].get("caption", "")) == cap:
+				var late: Dictionary = _detail_late[i]
+				_detail_late.remove_at(i)
+				return _keep_detail(late, d)
+	if _detail_queue.is_empty():
 		return false
+	# the server sends nothing when it has nothing to say: an answer naming a later request skips the silent ones
+	for i in _detail_queue.size():
+		if i > 0 and String(_detail_queue[i].get("caption", "")) == cap and cap != "" \
+				and String(_detail_queue[0].get("caption", "")) != cap:
+			for _j in i:
+				_set_aside(_detail_queue.pop_front())
+			break
+	# a skill's request knows its caption: an answer naming something else is not its answer (it was silent, or this is
+	# a window nobody here asked for) - set it aside, never file this answer under it
+	while not _detail_queue.is_empty() and cap != "" and bool(_detail_queue[0].get("strict", false)) \
+			and String(_detail_queue[0].get("caption", "")) != cap:
+		_set_aside(_detail_queue.pop_front())
+	if _detail_queue.is_empty():
+		return false
+	return _keep_detail(_detail_queue.pop_front(), d)
+
+
+var _detail_late: Array = []             # requests given up on, oldest first: a late answer still finds its own
+const DETAIL_LATE_MS := 60000
+
+
+## A new skill list: a skill's key ("sk:<type>:<place>") now means another skill, so answers still to come for the old
+## places are kept under nothing (their requests stay queued, to keep the order).
+func _forget_skill_requests() -> void:
+	for q in _detail_queue:
+		if q.key is String and (q.key as String).begins_with("sk:"):
+			q["key"] = "old:" + String(q.key)
+	for i in range(_detail_late.size() - 1, -1, -1):
+		if _detail_late[i].key is String and (_detail_late[i].key as String).begins_with("sk:"):
+			_detail_late.remove_at(i)
+
+
+func _set_aside(q: Dictionary) -> void:
+	if String(q.get("caption", "")) == "":
+		return                                             # (an answer can't be told apart without its caption)
+	_detail_late.append(q)
+	if _detail_late.size() > 32:
+		_detail_late.pop_front()
+
+
+func _keep_detail(q: Dictionary, d: Dictionary) -> bool:
+	if q.key == null:
+		return false                                       # (a request that opens the information window)
+	if q.key is String and (q.key as String).begins_with("old:"):
+		return true                                        # (asked before the skill list changed: kept nowhere)
 	_item_lines[q.key] = {"caption": String(d.caption), "lines": d.lines}
 	return true
 

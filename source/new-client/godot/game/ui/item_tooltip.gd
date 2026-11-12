@@ -75,6 +75,8 @@ static func con_color(item_level: int, player_level: int) -> Color:
 static func skill(e: Dictionary) -> Control:
 	if e.is_empty() or String(e.get("kind", "")) in ["item", "macro", "petcmd"]:
 		return null
+	if Server.active and e.has("missing"):             # (a quickbar skill you no longer have - GitHub issue #50)
+		return text_box(String(e.get("name", "")), ["You no longer have this skill."])
 	if Server.active:
 		var d := Server.skill_lines(e)
 		return null if d.is_empty() else text_box(String(d.caption), d.lines)

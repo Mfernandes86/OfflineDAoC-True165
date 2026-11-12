@@ -190,7 +190,9 @@ class QuickSlot extends Control:
 
 	func _notification(what: int) -> void:
 		if what == NOTIFICATION_MOUSE_ENTER and Server.active:
-			Server.prefetch_skill(entry())                 # the server's delve text, ready for the hover box
+			var e := entry()
+			Server.resolve_entry(e)                        # (the skill's place now, from the live list: issue #50)
+			Server.prefetch_skill(e)                       # the server's delve text, ready for the hover box
 
 	func _make_custom_tooltip(_for_text: String) -> Object:
 		return ItemTooltip.skill(entry())
@@ -199,6 +201,10 @@ class QuickSlot extends Control:
 		var e := entry()
 		_icon.texture = ItemDb.icon(int(e.get("icon", -1))) if not e.is_empty() else null
 		_border.texture = ItemDb.border(int(e.get("border", -1))) if not e.is_empty() else null
+		# a skill you no longer have (its slot is kept, never used for another skill - GitHub issue #50): dimmed
+		var gone := e.has("missing")
+		_icon.modulate = Color(0.35, 0.35, 0.35) if gone else Color.WHITE
+		_border.modulate = _icon.modulate
 		_text.text = String(e.get("name", "")).to_upper() if String(e.get("kind", "")) in ["petcmd", "macro"] 				or (not e.is_empty() and int(e.get("icon", -1)) < 0) else ""      # (an ability without an icon: its name)
 		_plate.visible = _text.text != ""
 		var keys: Array = Keybinds.bindings.get("qb%d_%d" % [bar + 1, slot + 1], [])
@@ -221,6 +227,12 @@ class QuickSlot extends Control:
 		elif String(e.get("kind", "")) == "macro":       # /macro: its command, as if typed
 			PlayerData.macro_run.emit(String(e.get("id", "")))
 		else:
+			# the skill this slot names, at its place in the live list (GitHub issue #50: a Berserker's Left Axe slots
+			# fired other styles after the server's list order changed at login)
+			if Server.active and not Server.resolve_entry(e):
+				PlayerData.message.emit("You no longer have %s." % String(e.get("name", "that skill")), "error")
+				refresh()
+				return
 			PlayerData.use_skill.emit(e)                    # spells, styles, abilities
 
 	func _get_drag_data(_pos: Vector2) -> Variant:
@@ -266,6 +278,8 @@ class QuickSlot extends Control:
 		var e: Dictionary = data.get("entry", {}) if data.kind == "quickslot" else \
 				{"kind": data.kind, "id": data.get("id", ""), "icon": data.get("icon", -1), "name": data.get("name", ""),
 				"border": data.get("border", -1)}
+		if Server.active and data.kind != "quickslot":
+			Server.resolve_entry(e)                         # keeps the skill itself (its id), not only its place
 		var old := entry()
 		_assign(e)
 		# what was in the slot goes onto the mouse pointer, as the old client did (owner 2026-10-14: a replaced spell

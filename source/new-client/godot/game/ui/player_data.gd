@@ -99,6 +99,10 @@ func load_character(c: Dictionary) -> void:
 	var banks = c.get("quickbar_bank")                     # patch 1.54: the quickbar page persists across quitting
 	quickbar_bank = (banks as Array).map(func(x): return int(x)) if banks is Array and banks.size() == 3 else [0, 0, 0]
 	load_sheet(c)
+	# the server's lists came before the zone (and these bars): each slot finds its skill in them now, so it shows what
+	# it will fire (GitHub issue #50); an old slot converted by its name is saved in the new form once
+	if Server.active and Server.refresh_bar_entries():
+		_save_server_quickbars()
 	_load_vault()
 	changed.emit()
 	inventory_changed.emit()
