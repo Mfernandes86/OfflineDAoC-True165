@@ -3068,7 +3068,7 @@ public static partial class AutonomousBotGroupCoordinator
     }
 
     /// <summary>The bot knows a single-target mesmerize at its level (crowd control for the party).</summary>
-    private static bool HasMesmerize(GameBot bot)
+    internal static bool HasMesmerize(GameBot bot)
     {
         if (bot?.Spells is not { } spells)
             return false;

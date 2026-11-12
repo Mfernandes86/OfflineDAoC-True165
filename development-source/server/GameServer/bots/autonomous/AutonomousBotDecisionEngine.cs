@@ -197,7 +197,7 @@ public static class AutonomousBotDecisionEngine
     }
 
     public static PveEnvironment SelectPveEnvironment(IEnumerable<Camp> camps, int groupSize,
-        int level, Random random = null)
+        int level, Random random = null, int soloPreferencePermille = SoloDungeonPreferencePermille)
     {
         Camp[] choices = camps?.Where(camp => camp != null).ToArray() ?? Array.Empty<Camp>();
         bool hasDungeon = choices.Any(camp => camp.IsDungeon);
@@ -208,7 +208,7 @@ public static class AutonomousBotDecisionEngine
         random ??= Random.Shared;
         int preference = groupSize >= 2
             ? level >= 50 ? Level50GroupDungeonPreferencePermille : GroupDungeonPreferencePermille
-            : SoloDungeonPreferencePermille;
+            : soloPreferencePermille;
         int availability = choices.Where(camp => camp.IsDungeon)
             .GroupBy(camp => camp.RegionId)
             .Select(group => DungeonAvailability(group))

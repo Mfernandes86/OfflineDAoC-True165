@@ -225,7 +225,8 @@ namespace DOL.GS
             bool IsDungeon,
             bool IsFrontier,
             ConColor? FallbackMaximumCon = null,
-            int TargetLevel = 0);
+            int TargetLevel = 0,
+            AutonomousCampKnowledge.Traits Traits = default);
 
         private sealed record CampCatalogCell(
             string Id,
@@ -253,7 +254,9 @@ namespace DOL.GS
             // owner 2026-11-08: a merged camp's other anchors (x, y, z triples) tried in turn when its own fails projection
             int[] FallbackAnchors = null,
             // owner 2026-11-10: most live monsters of its name around it fly (AutonomousFlyerCampPolicy)
-            bool FlyerCamp = false);
+            bool FlyerCamp = false,
+            // veteran review M11: pack density, caster share, creature type and width (AutonomousCampKnowledge)
+            AutonomousCampKnowledge.Traits Traits = default);
 
         private static CampCatalogCell[] _campCatalog = [];
 
@@ -3842,7 +3845,7 @@ namespace DOL.GS
                     : (int)Math.Round(validLevels.Average());
 
                 destinations[cell.Id] = new(cell.Id, cell.MonsterName, cell.ZoneName, cell.RegionId,
-                    cell.X, cell.Y, cell.Z, cell.LiveMobCount, cell.IsDungeon, cell.IsFrontier);
+                    cell.X, cell.Y, cell.Z, cell.LiveMobCount, cell.IsDungeon, cell.IsFrontier, Traits: cell.Traits);
                 camps.Add(new(
                     cell.Id,
                     cell.ZoneName,
@@ -3924,8 +3927,12 @@ namespace DOL.GS
                 legal = AutonomousDeathRecoveryPolicy.PreferFreshTargets(
                     legal, _recentFailedSoloTargets, GameLoop.GameLoopTime);
                 AutonomousBotDecisionEngine.Camp[] categoryCandidates = legal.ToArray();
+                // veteran review M11: the solo dungeon chance follows the class (AutonomousCampKnowledge)
                 environment = AutonomousBotDecisionEngine.SelectPveEnvironment(
-                    categoryCandidates, groupSize, planningLevel, Random.Shared);
+                    categoryCandidates, groupSize, planningLevel, Random.Shared,
+                    AutonomousCampKnowledge.Enabled && Classic165Mode.IsOn
+                        ? AutonomousCampKnowledge.SoloDungeonPermille((eCharacterClass)bot.CharacterClass.ID)
+                        : AutonomousBotDecisionEngine.SoloDungeonPreferencePermille);
                 legal = categoryCandidates.Where(camp => environment == AutonomousBotDecisionEngine.PveEnvironment.Dungeon
                     ? camp.IsDungeon : !camp.IsDungeon);
             }
@@ -3981,14 +3988,20 @@ namespace DOL.GS
                 // region x1, another region x0.25; AutonomousHuntingGround)
                 var home = !sharedGroup && bot.Group == null && AutonomousHuntingGround.Enabled
                     ? AutonomousHuntingGround.Home(bot.DatabaseID) : default;
+                // veteran review M11: camp traits from the background builder weigh the draw (AutonomousCampKnowledge)
+                bool knowledge = AutonomousCampKnowledge.Enabled && Classic165Mode.IsOn;
+                bool partyHasCrowdControl = knowledge && sharedGroup && bot.Group != null &&
+                    bot.Group.GetMembersInTheGroup().Any(member => member is GameBot mate && AutonomousBotGroupCoordinator.HasMesmerize(mate));
+                eCharacterClass soloClass = (eCharacterClass)bot.CharacterClass.ID;
                 Zone homeZone = home.Region != 0 ? WorldMgr.GetZone(home.Zone) : null;
                 if (homeZone == null)
                     home = default;
                 legalCells = legalCells.Select(camp => camp with
                 {
-                    SpreadWeight = SpreadWeight(bot, camp, destinations, ownCamp, party,
+                    SpreadWeight = KnowledgeWeight(SpreadWeight(bot, camp, destinations, ownCamp, party,
                         campsPerMonster.GetValueOrDefault(AutonomousCampCompetition.NormalizeName(camp.MonsterName), 1),
-                        home.Region, homeZone)
+                        home.Region, homeZone), knowledge, sharedGroup, partyHasCrowdControl, soloClass,
+                        destinations.TryGetValue(camp.Id, out CampDestination known) ? known.Traits : default)
                 }).ToArray();
             }
             // This is the deployed selection point. Each distinct verified
@@ -4419,6 +4432,22 @@ namespace DOL.GS
                 return AutonomousFlyerCampPolicy.IsFlyerCamp(flying, total);
             }
 
+            // veteran review M11: the camp's monsters (its name, within the pool radius) as AutonomousCampKnowledge sees them
+            AutonomousCampKnowledge.Traits TraitsNear(CampCatalogCell cell)
+            {
+                string name = AutonomousCampCompetition.NormalizeName(cell.MonsterName);
+                long reach = (long)poolCell * poolCell;
+                var found = new List<AutonomousCampKnowledge.Member>();
+                int cx = FloorDiv(cell.X, poolCell), cy = FloorDiv(cell.Y, poolCell);
+                for (int dx = -1; dx <= 1; dx++)
+                    for (int dy = -1; dy <= 1; dy++)
+                        if (byName.TryGetValue((cell.RegionId, name, cx + dx, cy + dy), out var list))
+                            foreach (CampMonster npc in list)
+                                if (DistanceSquared(npc.X, npc.Y, cell.X, cell.Y) <= reach)
+                                    found.Add(new(new Vector3(npc.X, npc.Y, npc.Z), npc.AggroRange, npc.Caster, npc.BodyType));
+                return AutonomousCampKnowledge.Measure(found, new Vector3(cell.X, cell.Y, cell.Z));
+            }
+
             // one level per distinct live monster of the camp's name within the pool radius (what a bot there hunts)
             int[] PoolLevels(CampCatalogCell cell)
             {
@@ -4496,6 +4525,8 @@ namespace DOL.GS
                 }
                 if (FlyerNear(cell))
                     cell = cell with { FlyerCamp = true };
+                if (!cell.IsDungeon)
+                    cell = cell with { Traits = TraitsNear(cell) };
                 result.Add(cell);
             }
             // camps per realm and 5-level band; a band with none keeps its source-empty camps as a fallback
@@ -4511,7 +4542,8 @@ namespace DOL.GS
                 if (!needed)
                     continue;
                 fallback++;
-                result.Add(cell with { PoolMobs = PoolNear(cell), ThreatLevel = ThreatNear(cell), FlyerCamp = FlyerNear(cell) });
+                result.Add(cell with { PoolMobs = PoolNear(cell), ThreatLevel = ThreatNear(cell), FlyerCamp = FlyerNear(cell),
+                    Traits = cell.IsDungeon ? default : TraitsNear(cell) });
             }
             if (fallback > 0)
                 coverage = CampCoverage(result);
@@ -6729,6 +6761,17 @@ namespace DOL.GS
             Zone campZone = WorldMgr.GetRegion(d.RegionId)?.GetZone(d.X, d.Y);
             double factor = AutonomousHuntingGround.ZoneFactor(homeRegion, homeZone?.ID ?? 0, d.RegionId, campZone?.ID ?? 0,
                 AutonomousHuntingGround.AreNeighbours(homeZone, campZone));
+            return Math.Max(1, (int)Math.Round(weight * factor));
+        }
+
+        /// <summary>Veteran review M11: the spread weight times the camp-trait factor for this bot or party.</summary>
+        private static int KnowledgeWeight(int weight, bool enabled, bool party, bool partyHasCrowdControl,
+            eCharacterClass soloClass, AutonomousCampKnowledge.Traits traits)
+        {
+            if (!enabled || !traits.Known)
+                return weight;
+            double factor = party ? AutonomousCampKnowledge.GroupFactor(partyHasCrowdControl, traits)
+                : AutonomousCampKnowledge.SoloFactor(soloClass, traits);
             return Math.Max(1, (int)Math.Round(weight * factor));
         }
 
