@@ -223,7 +223,8 @@ namespace DOL.GS
                 // draw, which is also when the doubled draw time is taken.
                 if (bot.rangeAttackComponent.RangedAttackState == eRangedAttackState.None &&
                     bot.rangeAttackComponent.RangedAttackType == eRangedAttackType.Normal &&
-                    bot.GetAbilityLevel(Abilities.Critical_Shot) > 0 && _target is GameLiving opening && !opening.InCombat &&
+                    bot.GetAbilityLevel(Abilities.Critical_Shot) > 0 && CompanionControls165.CriticalShotAllowed(bot) &&
+                    _target is GameLiving opening && !opening.InCombat &&
                     opening.CurrentSpeed <= 90 && EffectListService.GetEffectOnTarget(opening, eEffect.Mez) == null &&
                     bot.Endurance >= RangeAttackComponent.CRITICAL_SHOT_ENDURANCE_COST + RangeAttackComponent.DEFAULT_ENDURANCE_COST)
                     bot.rangeAttackComponent.RangedAttackType = eRangedAttackType.Critical;

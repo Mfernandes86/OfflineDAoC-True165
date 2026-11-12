@@ -36,7 +36,8 @@ namespace DOL.GS
             KindLifeTransfer = 16, KindAmnesia = 17, KindPerform = 18, KindSavePower = 26, KindPositioning = 27,
             KindDebuffLine = 28, KindSavePowerCaster = 29, KindAttackSpells = 30;
         /// <summary>Companion controls (veteran review M7 and the owner's twist option, 2026-11-11; CompanionControls165).</summary>
-        public const byte KindTwist = 40, KindStance = 41, KindCrowdControl = 42, KindPetJob = 43, KindWeapon = 44;
+        public const byte KindTwist = 40, KindStance = 41, KindCrowdControl = 42, KindPetJob = 43, KindWeapon = 44,
+            KindStag = 47, KindCriticalShot = 48, KindOpeningStun = 49;
         /// <summary>The fourth Role choice of every healer's Role row (owner 2026-11-11; CompanionSpellOptions165).</summary>
         public const string MeleeHealChoice = "Melee and heal, no attack spells (melee interrupts casts)";
         public static readonly HashSet<string> Verbs = ["charm", "pet", "subpet", "song", "option"];
@@ -152,6 +153,15 @@ namespace DOL.GS
             // as the melee weapon, otherwise in melee (a spear Hunter, a no-bow Ranger) with the bow only to pull
             new(KindWeapon, "weapon", "Weapon", ["Automatic (by training)", "Bow", "Melee (the bow only to pull)"],
                 bot => CompanionControls165.ArcheryLine((eCharacterClass)bot.CharacterClass.ID) != null),
+            // M7 class ability rows: the Hero's Stag (as Berserk: hard fights, on cooldown, off), the archer's Critical Shot
+            // opener, and the Pacification Healer's opening stun on the kill target
+            new(KindStag, "stag", "Stag", ["Automatic (hard fights)", "On cooldown", "Off"],
+                bot => bot.HasAbility(Abilities.Stag)),
+            new(KindCriticalShot, "critshot", "Critical Shot opener", ["Automatic (on an idle monster)", "Off"],
+                bot => bot.HasAbility(Abilities.Critical_Shot)),
+            new(KindOpeningStun, "openstun", "Opening stun", ["Automatic (once as the tank engages)", "Off"],
+                bot => (eCharacterClass)bot.CharacterClass.ID == eCharacterClass.Healer &&
+                       (bot.HarmfulSpells ?? []).Concat(bot.InstantHarmfulSpells ?? []).Any(BotControlSpells.IsStun)),
         ];
 
         /// <summary>A generic AI option's stored key and choices (choice 0 Automatic), or null for an unknown kind.</summary>

@@ -231,6 +231,28 @@ namespace DOL.GS
         public static bool OffHealerInFight(eCharacterClass characterClass, int roleChoice, bool inCombat) =>
             inCombat && roleChoice == WardenRoleOffHealer && characterClass is eCharacterClass.Friar or eCharacterClass.Warden;
 
+        // ---- Class ability rows (M7): Stag, Critical Shot, opening stun
+
+        /// <summary>The "Stag" row: 0 Automatic (hard fights), 1 on cooldown, 2 off (as the Berserk row).</summary>
+        public const int StagAutomatic = 0, StagOnCooldown = 1, StagOff = 2;
+
+        /// <summary>Pure: a Hero starts Stag - on cooldown, or Automatic in a hard fight; never when Off.</summary>
+        public static bool StagWanted(int choice, bool hardFight) => choice switch
+        {
+            StagOnCooldown => true,
+            StagOff => false,
+            _ => hardFight,
+        };
+
+        /// <summary>The on/off rows (Critical Shot, Opening stun): 0 Automatic (on), 1 off.</summary>
+        public const int AbilityOff = 1;
+
+        /// <summary>Whether this companion may open with Critical Shot (always for gamebots).</summary>
+        public static bool CriticalShotAllowed(GameBot bot) => CompanionOptions165.Choice(bot, "critshot") != AbilityOff;
+
+        /// <summary>Whether this companion may use its opening stun on the kill target (always for gamebots).</summary>
+        public static bool OpeningStunAllowed(GameBot bot) => CompanionOptions165.Choice(bot, "openstun") != AbilityOff;
+
         /// <summary>Whether this companion's add control runs now (its own choice, and no Main CC to leave it to).</summary>
         public static bool AddControlRuns(GameBot bot)
         {

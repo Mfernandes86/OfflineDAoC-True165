@@ -13,7 +13,7 @@ namespace DOL.AI.Brain
         public bool HoldsPetForCriticalShot(GameLiving target, IControlledBrain petBrain)
         {
             GameBot bot = BotBody;
-            if (bot == null || target == null || !target.IsAlive)
+            if (bot == null || target == null || !target.IsAlive || !CompanionControls165.CriticalShotAllowed(bot))
                 return false;
             long now = GameLoop.GameLoopTime;
             if (_criticalShotHoldTarget != target)

@@ -5202,7 +5202,9 @@ namespace DOL.AI.Brain
                         {
                             // Stag is a 15-minute ability: save it for fights that need it (the
                             // same hard-fight test Berserk uses) instead of the first grey mob.
-                            if (Body.TargetObject is GameLiving target && HardFight(target) &&
+                            // M7: a hired Hero's Stag row - on cooldown, or off
+                            if (Body.TargetObject is GameLiving target &&
+                                CompanionControls165.StagWanted(CompanionOptions165.Choice(BotBody, "stag"), HardFight(target)) &&
                                 EffectListService.GetAbilityEffectOnTarget(Body, eEffect.Stag) == null)
                             {
                                 if (Body.IsWithinRadius(Body.TargetObject, Body.MeleeAttackRange) &&
