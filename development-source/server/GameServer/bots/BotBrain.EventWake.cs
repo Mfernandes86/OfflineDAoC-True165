@@ -77,14 +77,53 @@ namespace DOL.AI.Brain
             if (!AddWakeAllowed(attacker == _lastAddWakeAttacker, now, _lastAddWakeTick) ||
                 !IsAddWake(true, victim?.TargetObject == attacker, Body.TargetObject == attacker,
                     attacker == GroupKillTarget()) ||
-                bot.Spells?.Any(spell => spell != null &&
-                    (IsAddControlSpell(spell) || ShamanBotCombatPolicy.IsRoot(spell))) != true)
+                !HasAddControlOrRoot(bot))
                 return;
             _lastAddWakeAttacker = attacker;
             _lastAddWakeTick = now;
             _nextPveAddControlLook = 0;
             _nextPveAddRootLook = 0;
             WakeForEvent();
+        }
+
+        /// <summary>
+        /// The bot knows a mesmerize, stun or root (performance review 2026-11-11): worked out once per spell list
+        /// (GameBot.SortSpells clears it), not a LINQ walk of another bot's spell list on every hit from the attacker's
+        /// thread. A list changed mid-walk (respec, SortSpells) counts as none this once and is looked at again next hit.
+        /// </summary>
+        private static bool HasAddControlOrRoot(GameBot bot) => CachedFlag(ref bot.AddControlKnown, bot, KnowsAddControlOrRoot);
+
+        private static bool KnowsAddControlOrRoot(GameBot bot)
+        {
+            var spells = bot.Spells;
+            if (spells == null)
+                return false;
+            foreach (Spell spell in spells)
+                if (spell != null && (IsAddControlSpell(spell) || ShamanBotCombatPolicy.IsRoot(spell)))
+                    return true;
+            return false;
+        }
+
+        /// <summary>
+        /// A yes/no worked out once: <paramref name="cache"/> is -1 (unknown), 0 or 1. When <paramref name="compute"/> throws
+        /// InvalidOperationException (the list changed while it was read) the answer is no and the cache stays unknown.
+        /// </summary>
+        public static bool CachedFlag<T>(ref int cache, T state, Func<T, bool> compute)
+        {
+            int known = System.Threading.Volatile.Read(ref cache);
+            if (known >= 0)
+                return known == 1;
+            bool value;
+            try
+            {
+                value = compute(state);
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
+            System.Threading.Interlocked.CompareExchange(ref cache, value ? 1 : 0, -1);
+            return value;
         }
 
         /// <summary>A groupmate is about to be (or is) under the wake line: the group's healers think now.</summary>

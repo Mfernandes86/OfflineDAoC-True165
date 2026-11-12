@@ -47,6 +47,25 @@ namespace DOL.UnitTests
             Assert.That(BotBrain.AddWakeAllowed(sameAttacker, now, last), Is.EqualTo(allowed));
         }
 
+        [Test]
+        public void TheAddControlLookIsWorkedOutOncePerSpellList()
+        {
+            int cache = -1, computed = 0;
+            Assert.Multiple(() =>
+            {
+                Assert.That(BotBrain.CachedFlag(ref cache, 0, _ => { computed++; return true; }), Is.True);
+                Assert.That(BotBrain.CachedFlag(ref cache, 0, _ => { computed++; return false; }), Is.True, "cached");
+                Assert.That(computed, Is.EqualTo(1), "the spell list is walked once, not on every hit");
+                cache = -1;   // SortSpells: a new spell list
+                Assert.That(BotBrain.CachedFlag(ref cache, 0, _ => { computed++; return false; }), Is.False);
+                Assert.That(computed, Is.EqualTo(2));
+                cache = -1;
+                Assert.That(BotBrain.CachedFlag<int>(ref cache, 0, _ => throw new System.InvalidOperationException()), Is.False,
+                    "a list changed mid-walk counts as none this once");
+                Assert.That(cache, Is.EqualTo(-1), "and is looked at again next time");
+            });
+        }
+
         [TestCase(true, false, true, true)]
         [TestCase(false, false, true, false)]   // a heal or buff is not worth interrupting from here
         [TestCase(true, true, true, false)]     // an instant cast cannot be interrupted

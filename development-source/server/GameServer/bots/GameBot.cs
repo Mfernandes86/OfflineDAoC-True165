@@ -2529,9 +2529,16 @@ namespace DOL.GS
             }
         }
 
+        /// <summary>
+        /// Whether the bot knows a mesmerize, stun or root to control adds with: -1 not worked out yet, 0 no, 1 yes. Read on
+        /// every qualifying hit by BotBrain.WakeForAdd, so it is cached with the spell list (cleared here in SortSpells).
+        /// </summary>
+        internal int AddControlKnown = -1;
+
         public override void SortSpells()
         {
             _playbook = null;   // rebuilt on the next read, from the new list
+            System.Threading.Volatile.Write(ref AddControlKnown, -1);
             InstantHarmfulSpells?.Clear();
             HarmfulSpells?.Clear();
             InstantHealSpells?.Clear();
