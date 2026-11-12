@@ -306,6 +306,10 @@ namespace DOL.GS
                 return false;
             OfflineTrue165RelistRecord record = RelistOf(item);
             bool online = AutonomousBotRegistry.TryGet(botId, out GameBot live) && live?.Inventory != null;
+            // owner 2026-11-11: a logged-off bot's listing waits for it - no relist, no pull, no coin. It stays expired
+            // (hidden from searches, not buyable) until its owner is online again (WaitForOwner / OwnerOnline).
+            if (ListingWaitsForOwner(true, IsOwnerOnline(botId)))
+                return false;
             eRealm realm = MarketSearchEngine.GetRealmOfLot(item.OwnerLot);
             int ask = item.SellPrice;
             if (online && (record == null || record.Tries < TriesRelisted))
@@ -347,6 +351,9 @@ namespace DOL.GS
         {
             if (item == null)
                 return false;
+            // a logged-off owner's listing is never pulled or paid out (owner 2026-11-11): it waits for its owner
+            if (ListingWaitsForOwner(true, IsOwnerOnline(botId)))
+                return false;
             eRealm realm = MarketSearchEngine.GetRealmOfLot(item.OwnerLot);
             if (AutonomousBotRegistry.TryGet(botId, out GameBot live) && live?.Inventory != null)
             {
@@ -377,6 +384,56 @@ namespace DOL.GS
                 }
             }
             return Credit(item, botId, realm, originalPrice);
+        }
+
+        // ---- a logged-off owner's listings wait (owner 2026-11-11)
+
+        /// <summary>How long the sweep leaves a waiting listing alone before it looks again (its owner coming online
+        /// brings it forward at once, <see cref="OwnerOnline"/>).</summary>
+        public static readonly TimeSpan WaitRecheck = TimeSpan.FromMinutes(15);
+
+        /// <summary>Pure rule: a bot's listing does nothing while its owner is logged off - it is not relisted, repriced,
+        /// pulled or paid out. A player's listing has its own rule (it stays in the listing chest).</summary>
+        public static bool ListingWaitsForOwner(bool botListing, bool ownerOnline) => botListing && !ownerOnline;
+
+        /// <summary>Tests only: answers "is this bot logged in" instead of the registry.</summary>
+        public static Func<long, bool> OwnerOnlineForTests;
+
+        /// <summary>Whether a listing's owner is logged in (in the world with its bags loaded).</summary>
+        public static bool IsOwnerOnline(long botId) =>
+            OwnerOnlineForTests?.Invoke(botId) ?? (AutonomousBotRegistry.TryGet(botId, out GameBot bot) && bot?.Inventory != null);
+
+        /// <summary>The sweep found an expired listing whose owner is logged off: it is looked at again later.</summary>
+        public static void WaitForOwner(DbInventoryItem item, DateTime utcNow) =>
+            MarketCache.DeferExpiry(item, utcNow.ToUniversalTime().Add(WaitRecheck));
+
+        private static readonly ConcurrentQueue<long> CameOnline = new();
+
+        /// <summary>A gamebot logged in: its waiting listings are looked at by the next sweep (AutonomousBotRegistry).</summary>
+        public static void OwnerOnline(long botId)
+        {
+            if (botId > 0 && CameOnline.Count < 20_000)
+                CameOnline.Enqueue(botId);
+        }
+
+        /// <summary>
+        /// Brings the expired listings of bots that just logged in to the front of the expiry wheel (at most
+        /// <paramref name="max"/> owners a call; the market pass calls it every 30 s). The sweep then relists or returns
+        /// them by the normal rules, with its own caps. Returns the listings brought forward.
+        /// </summary>
+        public static int ReleaseWaiting(DateTime utcNow, int max = 200)
+        {
+            int released = 0;
+            long nowTicks = utcNow.ToUniversalTime().Ticks;
+            for (int i = 0; i < max && CameOnline.TryDequeue(out long botId); i++)
+            {
+                string owner = AutonomousBotEconomy.GetOwnerId(botId);
+                MarketBook.Listing[] listings = MarketCache.ReadBook(book => book.OwnerListings(owner));
+                foreach (MarketBook.Listing listing in listings)
+                    if (listing.ExpiresTicks > 0 && listing.ExpiresTicks <= nowTicks && MarketCache.DeferExpiry(listing.Item, utcNow))
+                        released++;
+            }
+            return released;
         }
 
         private static int _credits;

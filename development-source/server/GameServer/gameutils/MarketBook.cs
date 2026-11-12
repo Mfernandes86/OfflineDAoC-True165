@@ -425,6 +425,24 @@ namespace DOL.GS
             return book.SellerSnapshot;
         }
 
+        /// <summary>
+        /// Looks at a listing again at <paramref name="untilUtc"/> instead of at its expiry minute (owner 2026-11-11: an
+        /// offline bot's expired listing waits for its owner; it stays expired - hidden and unbuyable - and only its place
+        /// on the wheel moves, so the sweep is not held up by it). False when the listing is not on the wheel.
+        /// </summary>
+        internal bool Defer(DbInventoryItem item, DateTime untilUtc)
+        {
+            if (item == null || !_all.TryGetValue(item, out Listing listing) || listing.ExpiresTicks <= 0)
+                return false;
+            long minute = untilUtc.ToUniversalTime().Ticks / TimeSpan.TicksPerMinute;
+            if (minute == listing.WheelMinute)
+                return true;
+            RemoveFrom(_wheel, listing.WheelMinute, listing);
+            listing.WheelMinute = minute;
+            AddTo(_wheel, minute, listing);
+            return true;
+        }
+
         /// <summary>The listings whose expiry minute has come, oldest first (the expiry wheel): only these are looked at.</summary>
         public List<DbInventoryItem> Due(DateTime utcNow, int max)
         {

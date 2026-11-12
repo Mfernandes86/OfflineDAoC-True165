@@ -84,6 +84,20 @@ namespace DOL.GS
         /// 2026-11-11: a remove-then-add outside the exchange locks could interleave with a buy, refusing it, or put back an
         /// item a sale had just taken out). False when the item is no longer in the cache.
         /// </summary>
+        /// <summary>Moves a listing's place on the expiry wheel (MarketBook.Defer).</summary>
+        public bool DeferExpiry(DbInventoryItem item, DateTime untilUtc)
+        {
+            _lock.EnterWriteLock();
+            try
+            {
+                return SalesBook.Defer(item, untilUtc);
+            }
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
+        }
+
         public bool Refresh(DbInventoryItem item)
         {
             _lock.EnterWriteLock();

@@ -63,6 +63,7 @@ public sealed class UT_RealmExchangeExpiry
     [TearDown]
     public void TearDown()
     {
+        Exchange165.OwnerOnlineForTests = null;
         MarketSearchEngine testMarket = GetMarketEngine();
         testMarket.Dispose();
         SetMarketEngine(_previousMarket);
@@ -128,8 +129,46 @@ public sealed class UT_RealmExchangeExpiry
     }
 
     [Test]
+    public void ExpireDue_ALoggedOffBotsListingWaitsForIt()
+    {
+        // owner 2026-11-11: no relist, no pull, no coin while the owner is logged off
+        DateTime now = new(2026, 8, 30, 12, 0, 0, DateTimeKind.Utc);
+        DbInventoryItem due = BotListing(now.AddHours(-24).ToString("O"));
+        due.OwnerID = AutonomousBotEconomy.GetOwnerId(311);
+        Add(due);
+        Exchange165.OwnerOnlineForTests = _ => false;
+        try
+        {
+            Assert.That(RealmExchangeExpiry.ExpireDue(now), Is.Zero);
+            Assert.That(_store.Deleted, Is.Empty, "never deleted or paid out while its owner is away");
+            Assert.That(MarketCache.SearchItems(new ItemQuery { Owner = due.OwnerID }), Does.Contain(due));
+            Assert.That(RealmExchangeExpiry.IsExpired(due, now), Is.True, "it stays expired: hidden and not buyable");
+            Assert.That(MarketCache.ReadBook(book => book.Due(now.AddMinutes(1), 10)), Is.Empty, "the sweep leaves it alone for a while");
+            Assert.That(MarketCache.ReadBook(book => book.Due(now.Add(Exchange165.WaitRecheck).AddMinutes(1), 10)), Does.Contain(due));
+            // its owner logs in: the listing is brought forward at once
+            Exchange165.OwnerOnline(311);
+            Assert.That(Exchange165.ReleaseWaiting(now.AddMinutes(2)), Is.EqualTo(1));
+            Assert.That(MarketCache.ReadBook(book => book.Due(now.AddMinutes(2), 10)), Does.Contain(due));
+        }
+        finally
+        {
+            Exchange165.OwnerOnlineForTests = null;
+        }
+    }
+
+    [Test]
+    public void ListingWaitsForOwner_OnlyABotsListingWithItsOwnerAway() => Assert.Multiple(() =>
+    {
+        Assert.That(Exchange165.ListingWaitsForOwner(true, false), Is.True);
+        Assert.That(Exchange165.ListingWaitsForOwner(true, true), Is.False);
+        Assert.That(Exchange165.ListingWaitsForOwner(false, false), Is.False, "a player's listing has its own rule");
+    });
+
+    [Test]
     public void ExpireDue_DeletesOnlyDueBotsAndFreesTheirMarketIndexIdempotently()
     {
+        // (the owner is logged in with no room in its bag: it is paid the merchant value)
+        Exchange165.OwnerOnlineForTests = _ => true;
         DateTime now = new(2026, 8, 30, 12, 0, 0, DateTimeKind.Utc);
         DbInventoryItem dueBot = BotListing(now.AddHours(-24).ToString("O"));
         dueBot.OwnerID = AutonomousBotEconomy.GetOwnerId(101);
@@ -157,6 +196,7 @@ public sealed class UT_RealmExchangeExpiry
     [Test]
     public void ExpireDue_WhenDatabaseDeleteFails_PreservesTheDueListingInCache()
     {
+        Exchange165.OwnerOnlineForTests = _ => true;
         DateTime now = new(2026, 8, 30, 12, 0, 0, DateTimeKind.Utc);
         DbInventoryItem dueBot = BotListing(now.AddHours(-24).ToString("O"));
         _store.DeleteSucceeds = false;

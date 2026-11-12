@@ -28,6 +28,8 @@ public static class RealmMarketPass
 
     public static int Run(DateTime utcNow)
     {
+        // the expired listings of bots that logged in since the last pass go to the front of the expiry wheel
+        Exchange165.ReleaseWaiting(utcNow);
         int actions = 0;
         foreach (eRealm realm in new[] { eRealm.Albion, eRealm.Midgard, eRealm.Hibernia })
             actions += RunRealm(realm, utcNow);
@@ -67,6 +69,9 @@ public static class RealmMarketPass
     public static bool Step(string seller, DateTime utcNow)
     {
         if (!AutonomousBotEconomy.TryParseOwnerId(seller, out long botId))
+            return false;
+        // a logged-off seller's listings wait for it: no bump, no re-undercut (owner 2026-11-11)
+        if (Exchange165.ListingWaitsForOwner(true, Exchange165.IsOwnerOnline(botId)))
             return false;
         MarketBook.Listing[] listings = MarketCache.ReadBook(book => book.OwnerListings(seller));
         if (listings.Length == 0)

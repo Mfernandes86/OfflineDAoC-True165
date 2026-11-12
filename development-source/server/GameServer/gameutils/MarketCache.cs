@@ -112,6 +112,9 @@ namespace DOL.GS
         /// hold) and only while the item is still listed, so it is safe outside the exchange locks.</summary>
         public static bool Refresh(DbInventoryItem item) => item != null && _searchEngine.Refresh(item);
 
+        /// <summary>The expiry sweep looks at this listing again at <paramref name="untilUtc"/> (a waiting listing).</summary>
+        public static bool DeferExpiry(DbInventoryItem item, DateTime untilUtc) => item != null && _searchEngine.DeferExpiry(item, untilUtc);
+
         public static MarketBook.RealmSummary Summary(eRealm realm) => ReadBook(book => book.Summary(realm));
 
         /// <summary>The exchange index's change counter (no lock: one int read).</summary>

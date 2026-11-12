@@ -143,6 +143,7 @@ namespace DOL.UnitTests
         [TearDown]
         public void TearDown()
         {
+            Exchange165.OwnerOnlineForTests = null;
             foreach (GameBot bot in _bots)
                 AutonomousBotRegistry.Unregister(bot);
             _bots.Clear();
@@ -553,6 +554,8 @@ namespace DOL.UnitTests
         [Test]
         public void QueuedSave_OfACreditedListing_IsNeverInsertedAgain()
         {
+            // (its owner is logged in with no room in its bag: paid the merchant value; a logged-off owner's listing waits)
+            Exchange165.OwnerOnlineForTests = _ => true;
             _store.Realistic = true;
             RealmExchangeWriteQueue.Enabled = true;
             DateTime now = DateTime.UtcNow;
@@ -757,6 +760,7 @@ namespace DOL.UnitTests
         [Test]
         public void ExpirySweep_PaysOutAtMostTwentyOwnersPerMinute()
         {
+            Exchange165.OwnerOnlineForTests = _ => true;
             DateTime now = DateTime.UtcNow;
             for (int i = 0; i < 25; i++)
                 List(Valuable("capped robe " + i), AutonomousBotEconomy.GetOwnerId(874_000 + i), 0, 50_000, now.AddHours(-25));

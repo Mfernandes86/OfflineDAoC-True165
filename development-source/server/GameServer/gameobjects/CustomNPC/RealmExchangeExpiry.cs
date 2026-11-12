@@ -270,6 +270,8 @@ public static class RealmExchangeExpiry
 
     /// <summary>Most expired listings handled per sweep (bounded writes; the rest wait a minute).</summary>
     public const int MaxPerSweep = 200;
+    /// <summary>Most due listings a sweep looks at (a logged-off owner's waiting listing costs one lookup).</summary>
+    public const int MaxDuePerSweep = 2_000;
     /// <summary>Most owners paid out per sweep: each payout writes to the database under the exchange and money locks
     /// (review 2026-11-11: after a restart the catch-up of offline owners stalled merchant trades behind them).</summary>
     public const int MaxCreditsPerSweep = 20;
@@ -280,9 +282,10 @@ public static class RealmExchangeExpiry
         int creditsAtStart = Exchange165.CreditCount;
         // Once a minute, only the listings whose expiry minute has come (the expiry wheel): no full copy, no parsing of
         // every timestamp. Nothing runs in individual AI turns.
-        foreach (DbInventoryItem item in MarketCache.ReadBook(book => book.Due(utcNow, MaxPerSweep)))
+        int handled = 0;
+        foreach (DbInventoryItem item in MarketCache.ReadBook(book => book.Due(utcNow, MaxDuePerSweep)))
         {
-            if (Exchange165.CreditCount - creditsAtStart >= MaxCreditsPerSweep)
+            if (Exchange165.CreditCount - creditsAtStart >= MaxCreditsPerSweep || handled >= MaxPerSweep)
                 break;   // the rest wait for the next minute
             if (!IsExpired(item, utcNow))
             {
@@ -290,6 +293,15 @@ public static class RealmExchangeExpiry
                 MarketCache.Refresh(item);
                 continue;
             }
+            // owner 2026-11-11: a logged-off bot's listing waits for it (no relist, no pull, no coin): the sweep looks
+            // again later, or as soon as the owner logs in. No lock, no write, not counted against the sweep's work.
+            if (AutonomousBotEconomy.TryParseOwnerId(item.OwnerID, out long waitingOwner) &&
+                Exchange165.ListingWaitsForOwner(true, Exchange165.IsOwnerOnline(waitingOwner)))
+            {
+                Exchange165.WaitForOwner(item, utcNow);
+                continue;
+            }
+            handled++;
             // never wait long for the locks: a busy exchange tries again next minute
             if (!RealmExchangeLocks.TryEnter(25, true, out RealmExchangeLocks.Scope scope))
                 break;

@@ -119,6 +119,8 @@ public static class AutonomousBotRegistry
         {
             Active[bot.DatabaseID] = bot;
             _snapshot = new(-1, []);
+            // its Realm Exchange listings that ran out while it was away are relisted or returned now (owner 2026-11-11)
+            Exchange165.OwnerOnline(bot.DatabaseID);
         }
     }
 
