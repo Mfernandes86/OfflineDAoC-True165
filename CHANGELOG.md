@@ -17,6 +17,103 @@ hold). Its changelog has the history of everything this version inherits.
   left out.)
 - Banter: ask about a zone by name ("what is in Spindelhalla?") and a gamebot with something to say about that place
   answers with it.
+- Companions: new AI Options rows - Stance (their own aggressive, defensive or passive), Crowd control (Automatic,
+  Main CC, Adds only, Off), Pet (Automatic, Guard me, Take adds, Attack my target), Weapon for archers (Automatic,
+  Bow, Melee), Twist songs / chants (off by default), Warden chants and role, Stag, Critical Shot opener and Opening
+  stun. Mentalists get the caster and healer rows.
+- Companions: `/camp` sets a hold point. They wait there in formation and `/pull` brings the monster back to it.
+- Companions: on `/defensive` they defend the whole group and keep the 350 leash during `/pull`, `/grind` and any
+  pull you lead. On `/passive` they still use escapes, instant heals and cure mez on the move, heal when you stop,
+  and keep the speed song. The tank companion is the main assist while you are not attacking. Healer companions on
+  a fighting role join your fights.
+- Companions and gamebots: Cabalists use Juggernaut, as a second timed pet beside the simulacrum. Clerics pull with
+  smite, smite, stun, smite once the stun lasts long enough (level 26 and up). Bots and companions drink their
+  potions.
+- Companions: a healer no longer restarts a cure it is already casting (GitHub issue #45). The duplicate companion
+  that could appear after a ride or a recall is gone, the group window follows a companion through a move, and your
+  own row shows your class (GitHub issue #49).
+- Gamebots fight more like veteran players. Casters and hybrids cast in a fixed order, casters stop bolting into
+  melee, healers share heal claims and raise the raisers first, tanks peel and use Engage and Slam, mezzers try a
+  resisted mez again at once, Bards use their area mez on clustered adds, melee keeps an endurance reserve and
+  steps to a monster's flank, groups pick roles by spec, and a party calls RUN from a lost fight.
+- Gamebots, by class: Hero Stag, Hunter Critical Shot with the pet at heel, Pacification Healer stun on the kill
+  target, Bonedancer healer minion first, Theurgist pet waves, Spiritmaster and Druid pets, Blademaster Triple
+  Wield and Flurry, Ranger Rapid Fire, Paladin chants by situation, assassin poisons for RvR, Skald and Minstrel
+  songs that fit the group. Realm abilities follow the spec, and Albion class actives are bought and used.
+- Gamebots: solo bots keep a hunting ground, take kill tasks from named guards at levels 4-19, rest only as long
+  as the next pull needs, and skip a horse landing where their level band keeps dying. New Midgard bots follow the
+  period spec mix.
+- Gamebots: night and day spawns keep the aggression their data gives them. About 490 night spawns that stood
+  passive attack again.
+- Gamebots no longer stand on merchants, healers, stable masters or the Realm Exchange. Each takes its own spot
+  beside the NPC, riders step off a horse landing, and meeting points keep clear of service NPCs. In the new
+  client a click reaches a service NPC through a gamebot standing in front of it (GitHub issue #48).
+- Gamebot chat and social life: they talk on the period channels, put out `/lfg` lines and show LFG in `/who`,
+  answer `/advice` and `/as` questions and questions about keeps and relics, make party calls (pulling, oom, rez
+  pls), emote on RvR kills and keep captures, remember the enemy player who last killed them, and guildmates say
+  hi, gratz and gn.
+- Gamebot economy: gear is valued by class and only up to each bonus's cap, vendor armour is bought only for an
+  empty slot or a piece that cons green, crafters work to orders and make milestone sets at levels 20, 30 and 40,
+  and each bot dyes its kept pieces in one signature colour.
+- Performance for large populations: shared planning views, cached reachable regions, a per-tick cap on
+  non-combat decisions, less log traffic, and the console and server.log written from a background queue.
+
+### Realm Exchange
+
+- One row per item with its number of copies, the cheapest shown. USABLE BY ME is on by default, ALL COPIES shows
+  every copy, there are AMMUNITION, POISONS and GEMS & TINCTURES categories and FIT and NEWEST sorts, and the page
+  refreshes after a buy.
+- Gamebots sell and buy with more sense: they list what others can use, price stacks per unit, never ask less
+  than 1.1 times their materials for a crafted item, and window-shop between tasks. Unsold listings are repriced
+  on a 12, 24 and 36 hour cycle and then paid out as coin instead of deleted.
+- The exchange stays fast with many listings: an in-memory index per realm, queued writes, and no database read
+  under its locks.
+
+### Quests
+
+- A quest audit of every classic quest: 2,084 checked fixes for quests that could not be finished, wrong places,
+  missing or wrong rewards, monster levels and names, and quest guide texts. Reward items now sell for a price.
+- New quest features: a whisper step that takes either of two answers (the Arawn Commander's riddle), optional
+  side turn-ins (the lieutenants' heads in Under Attack), steps that need items worn, kill steps that count only
+  the quest's own monster, quest monsters that walk a path with an escort (Cadoc, Golga), monsters that appear
+  only at certain hours (Commander Slor'vid, midnight to 3 AM), and real items given mid-quest in your class's
+  version.
+- The patrol route of a quest's target is drawn on the map as a dashed red line.
+- Level 50 epics follow the True 1.65 routes and need the earlier parts of their chain. A chain part needs the
+  part just before it.
+- Serenity and Striking the Soul show their description text (GitHub issue #46).
+
+### Realm events, keeps and relics
+
+These come from ten code audits of the Horn of Rallying raids (Darkness Falls, Summoner's Hall, the dragons, the
+epic dungeons) and of keep and relic takings by gamebots. They are fixed in code and unit-tested, but not yet seen
+in a live raid: a new world has no level 50 gamebots until they level up.
+
+- Keeps: 13 of the 21 frontier keeps had no lord and could not be taken. Their lords and guards are back, the
+  relic keeps have their garrisons, and the corpse summoners are restored.
+- Horn raids: a raid has an end. The rally clock is 160, 200 or 300 seconds by size, a raid that wipes three times
+  on the final encounter or stalls for an hour is called off, and the sounder can call it off with a second sound
+  or `/horn calloff`. Every boss gets a muster, not only the last. Released raiders come back in waves instead of
+  walking alone.
+- Darkness Falls: gamebots can enter again (the navigation check tolerated no change to the dungeon's spawns), the
+  door follows the keep count, and raiders stand where Legion can be damaged and cast no bladeturn on him.
+- Dragons: raiders stop hitting a dragon outside its lair and lead it home, sister parties open the fight
+  together, and healers purge the long stun.
+- Bosses: the princes' devour, Govannon's reset, Moran, Olcasgean's primals and the tether clocks behave as the
+  scripts intend. Bots step out of a boss's area spell while it is cast, keep fighting a boss that turns
+  untargetable mid-fight, and send pets at the adds of a boss pets cannot hurt.
+- Keep sieges: rams get full crews, gates are battered in order, operators hold their post under arrow fire, and
+  holders repair doors by the player rules.
+- Relics: a realm takes the sentinel keeps one after another and then the relic keep. The carrier can go home
+  through its own realm's portal keep, as relic raids of the period did, and through nothing else. A dropped
+  relic returns after 30 minutes.
+
+### New client
+
+- Dungeon floors come from each piece's pick floor, so Spindelhalla's cobweb sheets no longer lift you to the
+  ceiling (GitHub issue #42). A wet sliver at the edge of a water mask is no longer water (GitHub issue #44, Emain
+  Macha).
+- Broadcast chat has its own channel instead of the system one.
 
 ## 0.6 (2026-11-11)
 
