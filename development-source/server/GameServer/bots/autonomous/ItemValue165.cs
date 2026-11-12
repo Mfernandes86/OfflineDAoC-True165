@@ -200,33 +200,53 @@ namespace DOL.GS
         // ---- merchant stock
 
         private static volatile HashSet<string> _testMerchantStock;
-        private static readonly Lazy<HashSet<string>> MerchantStock = new(LoadMerchantStock, LazyThreadSafetyMode.ExecutionAndPublication);
+        private static volatile HashSet<string> _merchantStock;
+        private static readonly HashSet<string> NoStock = new(StringComparer.OrdinalIgnoreCase);
+        private static readonly object StockGate = new();
+        private static long _nextStockRetryTick;
 
         /// <summary>Whether some merchant sells this template.</summary>
         public static bool IsMerchantStock(string templateId)
         {
             if (string.IsNullOrEmpty(templateId))
                 return false;
-            HashSet<string> stock = _testMerchantStock ?? MerchantStock.Value;
+            HashSet<string> stock = _testMerchantStock ?? MerchantStock();
             return stock.Contains(templateId);
         }
 
-        private static HashSet<string> LoadMerchantStock()
+        /// <summary>Startup, before the market cache is built and outside its lock: the merchant-stock set is read now, not
+        /// by the first listing's MarketBook.Add under the index write lock (review 2026-11-11).</summary>
+        public static void WarmMerchantStock() => MerchantStock();
+
+        /// <summary>The MerchantItem template ids, read once. A failed read is not kept (every Fair price would have lost
+        /// its shelf price for the life of the process): it is tried again a minute later, with no stock known meanwhile.</summary>
+        private static HashSet<string> MerchantStock()
         {
-            var ids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            try
+            HashSet<string> stock = _merchantStock;
+            if (stock != null)
+                return stock;
+            lock (StockGate)
             {
-                IList<DbMerchantItem> rows = GameServer.Database?.SelectAllObjects<DbMerchantItem>();
-                if (rows != null)
-                    foreach (DbMerchantItem row in rows)
+                if (_merchantStock != null)
+                    return _merchantStock;
+                IObjectDatabase database = GameServer.Database;
+                if (database == null || Environment.TickCount64 < Interlocked.Read(ref _nextStockRetryTick))
+                    return NoStock;
+                try
+                {
+                    var ids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    foreach (DbMerchantItem row in database.SelectAllObjects<DbMerchantItem>() ?? [])
                         if (!string.IsNullOrEmpty(row?.ItemTemplateID))
                             ids.Add(row.ItemTemplateID);
+                    _merchantStock = ids;
+                    return ids;
+                }
+                catch (Exception)
+                {
+                    Interlocked.Exchange(ref _nextStockRetryTick, Environment.TickCount64 + 60_000);
+                    return NoStock;
+                }
             }
-            catch (Exception)
-            {
-                // no database (tests): no merchant stock known
-            }
-            return ids;
         }
 
         /// <summary>Tests only: the merchant stock to use instead of the database (null restores it).</summary>
