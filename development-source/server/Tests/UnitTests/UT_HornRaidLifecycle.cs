@@ -69,4 +69,14 @@ public class UT_HornRaidLifecycle
         Assert.That(RealmRaidRecruitmentPolicy.HornBattleStalled(start, start + 50 * Minute, start + 100 * Minute), Is.False, "a kill resets it");
         Assert.That(RealmRaidRecruitmentPolicy.HornBattleStalled(0, 0, 500 * Minute), Is.False, "not in battle");
     }
+
+    [Test]
+    public void EventCooldownIsNoneAfterAKillOrAStopAndShortAfterAFailedBattle()
+    {
+        Assert.That(RealmRaidRecruitmentPolicy.EventCooldownMilliseconds(false, true, true), Is.Zero, "a kill: the respawn is the wait");
+        Assert.That(RealmRaidRecruitmentPolicy.EventCooldownMilliseconds(true, true, false), Is.Zero, "a player stop");
+        Assert.That(RealmRaidRecruitmentPolicy.EventCooldownMilliseconds(false, false, false), Is.Zero, "a failed rally never went in");
+        Assert.That(RealmRaidRecruitmentPolicy.EventCooldownMilliseconds(false, true, false), Is.EqualTo(10 * Minute),
+            "route blocked, failed or timed out");
+    }
 }

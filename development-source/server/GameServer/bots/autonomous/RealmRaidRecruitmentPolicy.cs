@@ -153,4 +153,13 @@ public static class RealmRaidRecruitmentPolicy
         engaged = false;
         return true;
     }
+
+    /// <summary>After a battle that did not kill the final encounter (route blocked, failed, timed out): a short pause
+    /// before the event may be sounded again.</summary>
+    public const long FailedBattleCooldownMilliseconds = 10 * 60_000L;
+
+    /// <summary>The event's own cooldown. None after a kill (the encounter's respawn is the wait), after a player stop, or
+    /// after a rally that never went in; 10 minutes after a battle that did not kill the final encounter.</summary>
+    public static long EventCooldownMilliseconds(bool stoppedByPlayer, bool battleBegan, bool finalDefeated) =>
+        stoppedByPlayer || finalDefeated || !battleBegan ? 0 : FailedBattleCooldownMilliseconds;
 }

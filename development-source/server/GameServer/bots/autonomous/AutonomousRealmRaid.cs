@@ -1268,9 +1268,12 @@ namespace DOL.GS
             foreach (var reservation in Reservations.Where(p => p.Value == raid.Definition.Id).ToArray()) Reservations.TryRemove(reservation.Key, out _);
             // horn guests loot, linger 5-20 minutes and log out; after a stop before the start they stay 10 minutes
             if (raid.Horn) RallyGuests165.OnRaidEnded(raid.Definition.Id, raid.Started, now);
-            // A player stop is not a failed attempt: no cooldown, so it can be restarted at once.
-            if (!stoppedByPlayer)
-                Cooldowns[raid.Definition.Id] = now + (30 + Random.Shared.Next(61)) * 60_000L;
+            // The event's own cooldown (realm event audit 2026-11-12): none after a kill (the encounter's 60-minute respawn is
+            // the wait; a random 30-90 minutes was either pointless or locked a living encounter), none after a player stop
+            // or a rally that never went in, 10 minutes after a battle that did not kill the final encounter.
+            long cooldown = RealmRaidRecruitmentPolicy.EventCooldownMilliseconds(stoppedByPlayer, raid.Started, outcome == "Boss defeated");
+            if (cooldown > 0)
+                Cooldowns[raid.Definition.Id] = now + cooldown;
             RealmEventNotices.Queue(raid.Definition.Id, raid.Definition.Realm, RealmEventBanter.RaidOutcome(raid.Definition.Name, outcome));
         }
 
