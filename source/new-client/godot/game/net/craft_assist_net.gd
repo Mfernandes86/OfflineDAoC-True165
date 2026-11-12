@@ -47,6 +47,8 @@ static var _enchant_new := {}                       # the op 43 list while it ar
 
 ## recipe id -> {level, cost, sell, sec_min, trains, status, secs, trade} (op 42; the last full list of each trade)
 static var recipe_info := {}
+## points per crafting skill gain: the launcher's crafting skill rate (op 42's end marker, byte 6; 1 = the original)
+static var points_per_gain := 1
 ## op 40's fields (see _status); {} until the first one
 static var status := {}
 ## op 41's fields (see _estimate); {} until the first one
@@ -202,6 +204,8 @@ static func _recipes(b: PackedByteArray) -> bool:
 	var trade := int(b[4])
 	var k := int(b[5])
 	if k == 0:
+		if b.size() > 6:
+			points_per_gain = maxi(1, int(b[6]))
 		for id in recipe_info.keys():
 			if int(recipe_info[id].trade) == trade:
 				recipe_info.erase(id)
@@ -348,7 +352,7 @@ static func cost_per_point(recipe_id: int, skills: Dictionary, sell := true) -> 
 		gain = 0.55
 	else:
 		gain = 0.65
-	return float(int(r.cost) - (int(r.sell) if sell else 0)) / gain
+	return float(int(r.cost) - (int(r.sell) if sell else 0)) / gain / maxi(1, points_per_gain)
 
 
 ## A recipe's name from the client's recipe list (any trade of your realm).

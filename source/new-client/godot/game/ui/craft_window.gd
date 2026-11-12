@@ -511,6 +511,12 @@ static func _has_any(s: String, words: Array) -> bool:
 	return false
 
 
+## Points per skill gain: the server's crafting skill rate (launcher option, op 42), 1 = the original single point.
+static func points_per_gain() -> int:
+	var net = assist_net()
+	return maxi(1, int(net.points_per_gain)) if net != null else 1
+
+
 ## The crafting assistant's net script (C2's craft_assist_net.gd), or null when it is not there.
 static func assist_net() -> Variant:
 	if not _net_checked:
@@ -605,11 +611,12 @@ func _row(r: Dictionary) -> Dictionary:
 	var pm := make_chance(con)
 	var pg := gain_chance(con)
 	var secs: int = int(info.secs) if int(info.get("secs", 0)) > 0 else player_secs(lvl, int(f.units), con)
-	var point := pm * pg / 10000.0
+	var rate := points_per_gain()                       # a skill gain gives this many points
+	var point := pm * pg / 10000.0 * rate
 	var spp := secs / point if point > 0.0 else INF
 	var cpp := INF
 	if info.has("cost") and pg > 0:
-		cpp = float(int(info.cost) - int(info.get("sell", 0))) / (pg / 100.0)
+		cpp = float(int(info.cost) - int(info.get("sell", 0))) / (pg / 100.0) / rate
 	var have_all := true
 	for ing in r.get("ingredients", []):
 		if int(_have_map.get(String(ing[0]).to_lower(), 0)) < int(ing[1]):
@@ -1130,13 +1137,19 @@ func _show_recipe() -> void:
 	elif con <= -3:
 		lines.append("Chance to make [b]%d%%[/b] - grey: [b]0%%[/b] chance of a %s point (too easy now)." % [int(row.pm), tname])
 	else:
-		lines.append("Chance to make [b]%d%%[/b]   -   chance of a %s point [b]%d%%[/b] on a success" % [int(row.pm), tname, int(row.pg)])
-	var tr := [tname]
+		var rate := points_per_gain()
+		if rate > 1:
+			lines.append("Chance to make [b]%d%%[/b]   -   chance of %d %s points [b]%d%%[/b] on a success" % [int(row.pm), rate, tname, int(row.pg)])
+		else:
+			lines.append("Chance to make [b]%d%%[/b]   -   chance of a %s point [b]%d%%[/b] on a success" % [int(row.pm), tname, int(row.pg)])
+	var per := points_per_gain()
+	var tr := [tname if per == 1 else "%s (+%d)" % [tname, per]]
 	var ks := (row.trains as Dictionary).keys()
 	ks.sort()
 	for s in ks:
-		tr.append("%s (+%d)" % [skill_name(int(s)), int(row.trains[s])])
-	lines.append("Trains: [b]%s[/b]%s" % [" + ".join(tr), "" if ks.is_empty() else "  (when you gain a %s point)" % tname])
+		tr.append("%s (+%d)" % [skill_name(int(s)), int(row.trains[s]) * per])
+	var when := ("  (when you gain a %s point)" % tname) if per == 1 else ("  (each time you gain %s skill)" % tname)
+	lines.append("Trains: [b]%s[/b]%s" % [" + ".join(tr), "" if ks.is_empty() else when])
 	for x in row.reqs:
 		if int(x[2]) < int(x[1]):
 			lines.append("[color=#ff6b59][b]%s[/b][/color]" % needs_text(x))
