@@ -32,6 +32,7 @@ namespace DOL.GS
             KindShroomSpore = 23, KindShroomBurst = 24, KindShroomHeal = 25;
         public const byte KindAggro = 5, KindHealAt = 6, KindDebuff = 7, KindBolts = 8, KindBerserk = 9, KindGuard = 10,
             KindHunterPet = 11, KindStealthOpen = 12, KindHealerRole = 13, KindShamanRole = 14, KindFriarRole = 15,
+            KindWardenRole = 46,
             KindLifeTransfer = 16, KindAmnesia = 17, KindPerform = 18, KindSavePower = 26, KindPositioning = 27,
             KindDebuffLine = 28, KindSavePowerCaster = 29, KindAttackSpells = 30;
         /// <summary>Companion controls (veteran review M7 and the owner's twist option, 2026-11-11; CompanionControls165).</summary>
@@ -76,6 +77,11 @@ namespace DOL.GS
             new(KindFriarRole, "role", "Role", ["Automatic (fight and heal)", "Off-healer (heals under 40% in a fight)",
                     "Main healer (stays back)", MeleeHealChoice],
                 bot => (eCharacterClass)bot.CharacterClass.ID == eCharacterClass.Friar),
+            // M7: the Warden too (period: a Warden backs up the healer with its heals and bladeturn, or is the group's
+            // healer in a small group) - the Friar's choices on the same stored key
+            new(KindWardenRole, "role", "Role", ["Automatic (fight and heal)", "Off-healer (heals under 40% in a fight)",
+                    "Main healer (stays back)"],
+                bot => (eCharacterClass)bot.CharacterClass.ID == eCharacterClass.Warden),
             new(KindLifeTransfer, "lifetransfer", "Life transfer", ["Automatic (groupmate under 35%)", "Off"],
                 bot => bot.Spells?.Any(spell => spell.SpellType == eSpellType.LifeTransfer) == true),
             new(KindAmnesia, "amnesia", "Amnesia", ["Automatic (interrupt enemy casters in RvR; send monsters on me back to my own pet, if I have one)", "Off"],
@@ -383,11 +389,13 @@ namespace DOL.GS
                 .Where(entry => entry.Level > 0)
                 .ToList();
 
-        /// <summary>The songs or chants the companion holds, one per kind (its best rank), in a fixed order.</summary>
+        /// <summary>The songs or chants the companion holds, one per kind (its best rank), in a fixed order. A Warden's
+        /// are its three chants (speed, bladeturn, damage add; M7).</summary>
         private static List<(eSpellType Type, string Name, int Id)> Songs(GameBot bot) =>
             (bot.MiscSpells ?? []).Concat(bot.InstantMiscSpells ?? [])
                 .Where(spell => spell != null && spell.Level <= bot.Level && spell.IsPulsing && !spell.IsHarmful &&
-                                BotBrain.IsMaintainableClassBuff(spell))
+                                BotBrain.IsMaintainableClassBuff(spell) &&
+                                (bot.CharacterClass.ID != (int)eCharacterClass.Warden || BotSongTwistPolicy.IsManagedSong(bot, spell)))
                 .GroupBy(spell => spell.SpellType)
                 .Select(group => group.OrderByDescending(spell => spell.Level).First())
                 .Select(best => (Type: best.SpellType, Name: best.Name, Id: best.ID))
@@ -443,13 +451,14 @@ namespace DOL.GS
                     }
                 }
             }
-            if (Performs(bot) || cls == eCharacterClass.Paladin)
+            // M7: the Warden's chant rows - in a fight, standing around, travelling - as a performer's
+            if (Performs(bot) || cls is eCharacterClass.Paladin or eCharacterClass.Warden)
             {
                 var songs = Songs(bot);
                 if (songs.Count > 0)
                 {
                     List<string> names = ["Automatic", .. songs.Select(s => s.Name)];
-                    for (int slot = 1; slot <= (Performs(bot) ? 3 : 2); slot++)
+                    for (int slot = 1; slot <= (cls == eCharacterClass.Paladin ? 2 : 3); slot++)
                     {
                         int index = Song(bot, slot) is { } type ? songs.FindIndex(s => s.Type == type) + 1 : 0;
                         rows.Add(new Row(KindSong, (byte)slot, Math.Max(0, index), names, 0, 0, [0, .. songs.Select(s => s.Id)]));

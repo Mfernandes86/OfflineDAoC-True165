@@ -215,6 +215,22 @@ namespace DOL.GS
             _ => null,
         };
 
+        // ---- Warden rows (M7)
+
+        /// <summary>The Warden's Role row (stored key "role"): 0 Automatic (fight and heal), 1 off-healer (heals under 40%
+        /// in a fight), 2 main healer (stays back and heals).</summary>
+        public const int WardenRoleAutomatic = 0, WardenRoleOffHealer = 1, WardenRoleMainHealer = 2;
+
+        /// <summary>Pure: a Warden, Friar or Shaman that stays back as the group's healer (grouped only). The Shaman's
+        /// "Stay back and heal" is choice 1; the Friar's and Warden's "Main healer (stays back)" is choice 2.</summary>
+        public static bool StaysBackAsHealer(eCharacterClass characterClass, int roleChoice, bool grouped) => grouped &&
+            (characterClass == eCharacterClass.Shaman && roleChoice == 1 ||
+             characterClass is eCharacterClass.Friar or eCharacterClass.Warden && roleChoice == 2);
+
+        /// <summary>Pure: a Friar or Warden off-healer heals only emergencies while it fights.</summary>
+        public static bool OffHealerInFight(eCharacterClass characterClass, int roleChoice, bool inCombat) =>
+            inCombat && roleChoice == WardenRoleOffHealer && characterClass is eCharacterClass.Friar or eCharacterClass.Warden;
+
         /// <summary>Whether this companion's add control runs now (its own choice, and no Main CC to leave it to).</summary>
         public static bool AddControlRuns(GameBot bot)
         {

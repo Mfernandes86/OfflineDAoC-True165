@@ -931,9 +931,11 @@ namespace DOL.AI.Brain
             BotPartyRoles.IsSupport(BotBody) && !CompanionOptions165.HealerRoleFights(
                 (eCharacterClass)BotBody.CharacterClass.ID, RoleChoice);
 
+        // M7: the Friar's and the Warden's "Main healer (stays back)" is choice 2 (the Friar's stayed back on its
+        // "Off-healer" choice 1 before), the Shaman's "Stay back and heal" choice 1
         private bool HoldsExclusiveSupportRole() =>
-            BotBody?.CharacterClass?.ID is (int)eCharacterClass.Shaman or (int)eCharacterClass.Friar && RoleChoice == 1 &&
-                BotBody.Group?.MemberCount > 1 ||
+            BotBody?.CharacterClass != null && CompanionControls165.StaysBackAsHealer((eCharacterClass)BotBody.CharacterClass.ID,
+                RoleChoice, BotBody.Group?.MemberCount > 1) ||
             (RoleChoice == 0 || BotBody?.CharacterClass?.ID is not ((int)eCharacterClass.Cleric or (int)eCharacterClass.Druid or
                 (int)eCharacterClass.Healer)) &&
             BotPartyRoles.IsSupport(BotBody) &&
@@ -3129,6 +3131,10 @@ namespace DOL.AI.Brain
                 bool traveling = bot.IsMoving || bot.IsReturningAfterRelease || bot.Group?.LivingLeader?.IsMoving == true;
                 eSpellType anchor = BotSongTwistPolicy.WardenAnchor(traveling, combat,
                     bot.Group?.MemberCount > 1, chants.Any(spell => spell.SpellType == eSpellType.Bladeturn));
+                // M7: a hired Warden's chant rows - in a fight (1), standing around (2), travelling (3)
+                if (CompanionOptions165.Song(bot, combat ? 1 : traveling ? 3 : 2) is { } pickedChant &&
+                    chants.Any(spell => spell.SpellType == pickedChant))
+                    anchor = pickedChant;
                 // A faster speed in the group (a performer's song) replaces the
                 // Warden's travel chant; it keeps bladeturn or damage add instead.
                 Spell speedChant = chants.FirstOrDefault(spell => spell.SpellType == eSpellType.SpeedEnhancement);
@@ -6674,11 +6680,10 @@ namespace DOL.AI.Brain
             // True 1.65: healers start at two-thirds health too (BotHealTriage165), normal mode at 80%
             bool classic165 = Classic165Mode.IsOn;
             int healerNeedAt = BotHealTriage165.HealerNeedAt(healAt, classic165);
-            // Role (AI Options): an attacking healer, or an off-healer Friar in a fight, heals emergencies only
-            bool emergenciesOnly = healAt == 0 &&
-                (RoleChoice == 2 && BotBody.CharacterClass != null &&
-                     CompanionSpellOptions165.UsesHealerRoleRow((eCharacterClass)BotBody.CharacterClass.ID) ||
-                 RoleChoice == 1 && BotBody.CharacterClass?.ID == (int)eCharacterClass.Friar && Body.InCombat);
+            // Role (AI Options): an attacking healer, or an off-healer Friar or Warden in a fight, heals emergencies only
+            bool emergenciesOnly = healAt == 0 && BotBody.CharacterClass != null &&
+                (RoleChoice == 2 && CompanionSpellOptions165.UsesHealerRoleRow((eCharacterClass)BotBody.CharacterClass.ID) ||
+                 CompanionControls165.OffHealerInFight((eCharacterClass)BotBody.CharacterClass.ID, RoleChoice, Body.InCombat));
             if (emergenciesOnly)
                 needAt = healerNeedAt = 40;
 
