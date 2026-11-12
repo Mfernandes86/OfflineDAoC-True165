@@ -210,8 +210,9 @@ namespace DOL.GS
                 RelistOf(item) != null || !MarketCache.Contains(item))
                 return false;
             MarketBook.Listing listing = MarketCache.ReadBook(book => book.Find(item));
-            if (listing == null || listing.ListedTicks <= 0 || utcNow.Ticks - listing.ListedTicks < UndercutAge.Ticks)
-                return false;
+            if (listing == null || listing.ListedTicks <= 0 || utcNow.Ticks - listing.ListedTicks < UndercutAge.Ticks ||
+                listing.ExpiresTicks > 0 && listing.ExpiresTicks <= utcNow.Ticks)
+                return false;   // an expired listing is the expiry sweep's (it relists or pulls it)
             long cheapestOther = MarketCache.ReadBook(book => book.Name(listing.Realm, listing.NameKey, listing.Owner)).CheapestOther;
             long ask = item.SellPrice;
             long target = UndercutPrice(ask, cheapestOther, ItemValue165.AskFloor(item));
@@ -334,6 +335,8 @@ namespace DOL.GS
             long copper = ItemValue165.Floor(item);
             if (!GameServer.Database.DeleteObject(item))
                 return false;
+            // a reprice or relist of this row may still wait in the write queue: it must not insert the row again
+            RealmExchangeWriteQueue.Cancel(item);
             MarketCache.RemoveItem(item);
             Forget(item);
             if (copper > 0)

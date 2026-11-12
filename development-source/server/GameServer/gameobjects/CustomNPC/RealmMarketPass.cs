@@ -77,10 +77,11 @@ public static class RealmMarketPass
                 return true;
             }
         }
-        // then the oldest listing unsold for 12 h is re-undercut once
+        // then the oldest listing unsold for 12 h is re-undercut once (an expired one is left to the expiry sweep)
         MarketBook.Listing oldest = null;
         foreach (MarketBook.Listing listing in listings)
             if (listing.ListedTicks > 0 && (oldest == null || listing.ListedTicks < oldest.ListedTicks) &&
+                (listing.ExpiresTicks <= 0 || listing.ExpiresTicks > utcNow.Ticks) &&
                 Exchange165.RelistOf(listing.Item) == null && utcNow.Ticks - listing.ListedTicks >= Exchange165.UndercutAge.Ticks)
                 oldest = listing;
         return oldest != null && Exchange165.TryUndercut(oldest.Item, utcNow);

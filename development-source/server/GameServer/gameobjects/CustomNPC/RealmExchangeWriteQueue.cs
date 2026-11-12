@@ -18,7 +18,11 @@ public static class RealmExchangeWriteQueue
     private static readonly object Gate = new();
     // true = save (insert when not yet stored), false = delete
     private static readonly Dictionary<DataObject, bool> Pending = new(ReferenceEqualityComparer.Instance);
+    private static readonly Dictionary<DataObject, int> Failures = new(ReferenceEqualityComparer.Instance);
     private static long _nextErrorTick;
+
+    /// <summary>Attempts before a queued write that keeps failing is dropped (logged).</summary>
+    public const int MaxAttempts = 5;
 
     /// <summary>When false (tests) every queued change is written at once.</summary>
     public static bool Enabled { get; set; } = true;
@@ -30,7 +34,8 @@ public static class RealmExchangeWriteQueue
 
     public static void Save(DataObject row)
     {
-        if (row == null)
+        // a row already deleted (a credit, a vendor sale, a sale transaction) is never saved again
+        if (row == null || row.IsDeleted)
             return;
         if (!Enabled)
         {
@@ -60,77 +65,147 @@ public static class RealmExchangeWriteQueue
         }
     }
 
-    /// <summary>Drops a queued change (the sale transaction deletes the row itself).</summary>
+    /// <summary>Drops a queued change (the sale transaction, a credit or the archive deletes the row itself).</summary>
     public static void Cancel(DataObject row)
     {
         if (row == null)
             return;
         lock (Gate)
+        {
             Pending.Remove(row);
+            Failures.Remove(row);
+        }
     }
 
-    /// <summary>Writes everything queued: inserts, updates and deletes, under one DatabaseWriteLock hold. Rows whose
-    /// write failed are queued again for the next flush.</summary>
+    /// <summary>Whether a change to this row is waiting.</summary>
+    public static bool IsQueued(DataObject row)
+    {
+        if (row == null)
+            return false;
+        lock (Gate)
+            return Pending.ContainsKey(row);
+    }
+
+    /// <summary>
+    /// Writes everything queued: updates, relist inserts and deletes, under one DatabaseWriteLock hold. The queue is read
+    /// inside that lock, so no exchange change (a sale, a credit - both hold it) can run between the read and the write.
+    /// A row deleted meanwhile (IsDeleted) is dropped and never inserted again: a deleted listing row must not come back
+    /// as a live listing at the next start (review 2026-11-11). Only relist rows are ever inserted, and a relist row whose
+    /// key is already stored updates it instead. Rows whose write failed are queued again, at most
+    /// <see cref="MaxAttempts"/> times.
+    /// </summary>
     public static int Flush()
     {
-        KeyValuePair<DataObject, bool>[] work;
         lock (Gate)
-        {
             if (Pending.Count == 0)
                 return 0;
-            work = Pending.ToArray();
-            Pending.Clear();
-        }
         IObjectDatabase database = GameServer.Database;
         if (database == null)
-        {
-            Requeue(work);
             return 0;
-        }
-        DataObject[] inserts = work.Where(entry => entry.Value && !entry.Key.IsPersisted).Select(entry => entry.Key).ToArray();
-        DataObject[] updates = work.Where(entry => entry.Value && entry.Key.IsPersisted).Select(entry => entry.Key).ToArray();
-        DataObject[] deletes = work.Where(entry => !entry.Value && entry.Key.IsPersisted).Select(entry => entry.Key).ToArray();
+        KeyValuePair<DataObject, bool>[] work = Array.Empty<KeyValuePair<DataObject, bool>>();
         try
         {
             lock (AutonomousBotStatusPersistence.DatabaseWriteLock)
             {
+                lock (Gate)
+                {
+                    work = Pending.ToArray();
+                    Pending.Clear();
+                }
+                var inserts = new List<DataObject>();
+                var updates = new List<DataObject>();
+                var deletes = new List<DataObject>();
+                foreach ((DataObject row, bool save) in work)
+                {
+                    if (row.IsDeleted)
+                        continue;
+                    if (!save)
+                    {
+                        if (row.IsPersisted)
+                            deletes.Add(row);
+                        continue;
+                    }
+                    if (row.IsPersisted)
+                        updates.Add(row);
+                    else if (row is OfflineTrue165RelistRecord relist)
+                    {
+                        if (database.FindObjectByKey<OfflineTrue165RelistRecord>(relist.InventoryId) != null)
+                        {
+                            relist.IsPersisted = true;
+                            relist.Dirty = true;
+                            updates.Add(relist);
+                        }
+                        else
+                            inserts.Add(relist);
+                    }
+                    // any other row that was never stored is not inserted by the queue
+                }
                 bool ok = true;
-                if (inserts.Length > 0)
+                if (inserts.Count > 0)
                     ok &= database.AddObject(inserts);
-                if (updates.Length > 0)
+                if (updates.Count > 0)
                     ok &= database.SaveObject(updates);
-                if (deletes.Length > 0)
+                if (deletes.Count > 0)
                     ok &= database.DeleteObject(deletes);
-                if (!ok)
-                    Requeue(work.Where(entry => entry.Value ? entry.Key.Dirty || !entry.Key.IsPersisted : entry.Key.IsPersisted).ToArray());
+                Settle(work, ok ? null : work.Where(entry => !entry.Key.IsDeleted &&
+                    (entry.Value ? entry.Key.Dirty || !entry.Key.IsPersisted : entry.Key.IsPersisted)).ToArray());
             }
             return work.Length;
         }
         catch (Exception error)
         {
-            Requeue(work);
-            long now = Environment.TickCount64;
-            if (now >= _nextErrorTick)
-            {
-                _nextErrorTick = now + 60_000;
-                try { Logging.LoggerManager.Create(typeof(RealmExchangeWriteQueue)).Error("Realm Exchange queued writes failed; they wait for the next flush.", error); }
-                catch { }
-            }
+            Settle(work, work);
+            LogError("Realm Exchange queued writes failed; they wait for the next flush.", error);
             return 0;
         }
     }
 
-    private static void Requeue(IEnumerable<KeyValuePair<DataObject, bool>> entries)
+    /// <summary>Forgets the failure counts of the rows written and queues the failed ones again (a newer change queued
+    /// meanwhile wins); a row that failed <see cref="MaxAttempts"/> times is dropped.</summary>
+    private static void Settle(KeyValuePair<DataObject, bool>[] work, KeyValuePair<DataObject, bool>[] failed)
     {
+        int dropped = 0;
         lock (Gate)
-            foreach ((DataObject row, bool save) in entries)
-                Pending.TryAdd(row, save);   // a newer change queued meanwhile wins
+        {
+            HashSet<DataObject> retry = failed == null
+                ? null
+                : new HashSet<DataObject>(failed.Select(entry => entry.Key), ReferenceEqualityComparer.Instance);
+            foreach ((DataObject row, bool save) in work)
+            {
+                if (retry == null || !retry.Contains(row))
+                {
+                    Failures.Remove(row);
+                    continue;
+                }
+                int attempts = Failures.GetValueOrDefault(row) + 1;
+                if (attempts >= MaxAttempts)
+                {
+                    Failures.Remove(row);
+                    dropped++;
+                    continue;
+                }
+                Failures[row] = attempts;
+                Pending.TryAdd(row, save);
+            }
+        }
+        if (dropped > 0)
+            LogError($"Realm Exchange queued writes: {dropped} row(s) failed {MaxAttempts} times and were dropped.", null);
+    }
+
+    private static void LogError(string message, Exception error)
+    {
+        long now = Environment.TickCount64;
+        if (now < _nextErrorTick)
+            return;
+        _nextErrorTick = now + 60_000;
+        try { Logging.LoggerManager.Create(typeof(RealmExchangeWriteQueue)).Error(message, error); }
+        catch { }
     }
 
     private static void WriteNow(DataObject row, bool save)
     {
         IObjectDatabase database = GameServer.Database;
-        if (database == null)
+        if (database == null || row.IsDeleted)
             return;
         if (!save)
         {
@@ -148,6 +223,9 @@ public static class RealmExchangeWriteQueue
     public static void Clear()
     {
         lock (Gate)
+        {
             Pending.Clear();
+            Failures.Clear();
+        }
     }
 }
