@@ -15,7 +15,7 @@ namespace DOL.GS
             int EffectiveLevel, ushort CurrentRegionID, Zone CurrentZone,
             AutonomousDungeonGoalCatalog.Point DungeonPoint, bool Aggressive = false, bool Flying = false,
             // veteran review M11: what the background builder needs for camp traits (AutonomousCampKnowledge)
-            int AggroRange = 0, bool Caster = false, byte BodyType = 0);
+            int AggroRange = 0, bool Caster = false, byte BodyType = 0, int Race = 0);
 
         private static BackgroundSnapshotBuilder<CampMonster[], CampCatalogCell[]> _campBuilder;
         private static CampCatalogCell[] _campDraft;
@@ -138,7 +138,8 @@ namespace DOL.GS
                         (npc.Flags & GameNPC.eFlags.FLYING) != 0,
                         (npc.Brain as DOL.AI.Brain.IOldAggressiveBrain)?.AggroRange ?? 0,
                         npc.CanCastHarmfulSpells || npc.CanCastInstantHarmfulSpells,
-                        (byte)Math.Min(byte.MaxValue, (int)npc.BodyType)));
+                        (byte)Math.Min(byte.MaxValue, (int)npc.BodyType),
+                        npc.Race));
                 }
             }
             return monsters.ToArray();

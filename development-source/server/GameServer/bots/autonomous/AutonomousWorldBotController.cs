@@ -4006,6 +4006,7 @@ namespace DOL.GS
                 bool partyHasCrowdControl = knowledge && sharedGroup && bot.Group != null &&
                     bot.Group.GetMembersInTheGroup().Any(member => member is GameBot mate && AutonomousBotGroupCoordinator.HasMesmerize(mate));
                 eCharacterClass soloClass = (eCharacterClass)bot.CharacterClass.ID;
+                eDamageType soloDamage = knowledge && !sharedGroup ? AutonomousCampKnowledge.MainDamageType(bot) : eDamageType.Natural;
                 // owner decision O5: a solo bot's live kill task draws its monster's camps x10 (BotKillTasks165)
                 string taskMonster = !sharedGroup && bot.Group == null
                     ? BotKillTasks165.HuntedMonster(bot.DatabaseID, GameLoop.GameLoopTime, bot.Level) : null;
@@ -4017,7 +4018,7 @@ namespace DOL.GS
                     SpreadWeight = (taskMonster != null && string.Equals(camp.MonsterName, taskMonster, StringComparison.Ordinal)
                         ? KillTaskCampWeight : 1) * KnowledgeWeight(SpreadWeight(bot, camp, destinations, ownCamp, party,
                         campsPerMonster.GetValueOrDefault(AutonomousCampCompetition.NormalizeName(camp.MonsterName), 1),
-                        home.Region, homeZone), knowledge, sharedGroup, partyHasCrowdControl, soloClass,
+                        home.Region, homeZone), knowledge, sharedGroup, partyHasCrowdControl, soloClass, soloDamage,
                         destinations.TryGetValue(camp.Id, out CampDestination known) ? known.Traits : default)
                 }).ToArray();
             }
@@ -4461,8 +4462,9 @@ namespace DOL.GS
                         if (byName.TryGetValue((cell.RegionId, name, cx + dx, cy + dy), out var list))
                             foreach (CampMonster npc in list)
                                 if (DistanceSquared(npc.X, npc.Y, cell.X, cell.Y) <= reach)
-                                    found.Add(new(new Vector3(npc.X, npc.Y, npc.Z), npc.AggroRange, npc.Caster, npc.BodyType));
-                return AutonomousCampKnowledge.Measure(found, new Vector3(cell.X, cell.Y, cell.Z));
+                                    found.Add(new(new Vector3(npc.X, npc.Y, npc.Z), npc.AggroRange, npc.Caster, npc.BodyType, npc.Race));
+                return AutonomousCampKnowledge.WithWeaknesses(
+                    AutonomousCampKnowledge.Measure(found, new Vector3(cell.X, cell.Y, cell.Z)));
             }
 
             // one level per distinct live monster of the camp's name within the pool radius (what a bot there hunts)
@@ -6783,12 +6785,12 @@ namespace DOL.GS
 
         /// <summary>Veteran review M11: the spread weight times the camp-trait factor for this bot or party.</summary>
         private static int KnowledgeWeight(int weight, bool enabled, bool party, bool partyHasCrowdControl,
-            eCharacterClass soloClass, AutonomousCampKnowledge.Traits traits)
+            eCharacterClass soloClass, eDamageType soloDamage, AutonomousCampKnowledge.Traits traits)
         {
             if (!enabled || !traits.Known)
                 return weight;
             double factor = party ? AutonomousCampKnowledge.GroupFactor(partyHasCrowdControl, traits)
-                : AutonomousCampKnowledge.SoloFactor(soloClass, traits);
+                : AutonomousCampKnowledge.SoloFactor(soloClass, traits, soloDamage);
             return Math.Max(1, (int)Math.Round(weight * factor));
         }
 

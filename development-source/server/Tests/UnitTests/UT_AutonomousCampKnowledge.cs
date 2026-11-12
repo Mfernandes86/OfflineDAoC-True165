@@ -83,4 +83,54 @@ public sealed class UT_AutonomousCampKnowledge
                 Is.EqualTo(AutonomousBotDecisionEngine.SoloDungeonPreferencePermille));
         });
     }
+    [Test]
+    public void TheMainRaceIsAMajorityOnly()
+    {
+        var humanoids = AutonomousCampKnowledge.Measure(new[]
+        {
+            new AutonomousCampKnowledge.Member(Vector3.Zero, 300, false, 1, 2005),
+            new AutonomousCampKnowledge.Member(new Vector3(900, 0, 0), 300, false, 1, 2005),
+            new AutonomousCampKnowledge.Member(new Vector3(0, 900, 0), 300, false, 1, 2000),
+        }, Vector3.Zero);
+        var mixed = AutonomousCampKnowledge.Measure(new[]
+        {
+            new AutonomousCampKnowledge.Member(Vector3.Zero, 300, false, 1, 2005),
+            new AutonomousCampKnowledge.Member(new Vector3(900, 0, 0), 300, false, 1, 2000),
+        }, Vector3.Zero);
+        Assert.That(humanoids.Race, Is.EqualTo(2005));
+        Assert.That(mixed.Race, Is.Zero, "one of each is no majority");
+    }
+
+    [Test]
+    public void WeaknessesComeFromLowResists()
+    {
+        // the server's Animal row: cold -15, thrust -15, slash +5
+        ushort mask = AutonomousCampKnowledge.WeaknessMask(type => type switch
+        {
+            eDamageType.Cold => -15, eDamageType.Thrust => -15, eDamageType.Slash => 5, eDamageType.Heat => -5, _ => 0,
+        });
+        var animals = new AutonomousCampKnowledge.Traits(0.5f, 0, 1, 1000, 6, 2000, mask);
+        Assert.Multiple(() =>
+        {
+            Assert.That(AutonomousCampKnowledge.IsWeakTo(animals, eDamageType.Cold), Is.True);
+            Assert.That(AutonomousCampKnowledge.IsWeakTo(animals, eDamageType.Thrust), Is.True);
+            Assert.That(AutonomousCampKnowledge.IsWeakTo(animals, eDamageType.Heat), Is.False, "-5 is no weakness");
+            Assert.That(AutonomousCampKnowledge.IsWeakTo(animals, eDamageType.Slash), Is.False);
+            Assert.That(AutonomousCampKnowledge.IsWeakTo(animals, eDamageType.Natural), Is.False);
+            // a solo bot whose damage the camp is weak to draws it 1.5x; others unchanged
+            Assert.That(AutonomousCampKnowledge.SoloFactor(eCharacterClass.Infiltrator, animals, eDamageType.Thrust), Is.EqualTo(1.5));
+            Assert.That(AutonomousCampKnowledge.SoloFactor(eCharacterClass.Infiltrator, animals, eDamageType.Slash), Is.EqualTo(1));
+            Assert.That(AutonomousCampKnowledge.SoloFactor(eCharacterClass.Infiltrator, animals), Is.EqualTo(1));
+            Assert.That(AutonomousCampKnowledge.WeaknessMask(null), Is.Zero);
+        });
+    }
+
+    [Test]
+    public void CastersAreTheSpellDamageClasses()
+    {
+        Assert.That(AutonomousCampKnowledge.DamagesWithSpells(eCharacterClass.Eldritch), Is.True);
+        Assert.That(AutonomousCampKnowledge.DamagesWithSpells(eCharacterClass.Runemaster), Is.True);
+        Assert.That(AutonomousCampKnowledge.DamagesWithSpells(eCharacterClass.Thane), Is.False);
+        Assert.That(AutonomousCampKnowledge.DamagesWithSpells(eCharacterClass.Cleric), Is.False);
+    }
 }
