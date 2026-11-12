@@ -448,18 +448,35 @@ namespace DOL.GS.Quests
             return false;
         }
 
+        /// <summary>Grants of a real item (one with a sale price or a use) already handed out: character, quest, step, item.
+        /// Kept for the server's run (a relog does not hand it out again); dropped when the character is seen online
+        /// without that quest.</summary>
+        private static readonly ConcurrentDictionary<(string Character, int Quest, int Step, string Item), byte> RealGrantsGiven = new();
+
+        /// <summary>
+        /// May a step's Grant item be handed out again when the player no longer has it? Only a plain quest item: a generic
+        /// object (Object_Type 0) with no sale price. Quest audit 2026-11-11 (P09): a real reward granted mid-quest was
+        /// re-issued every minute while the player lacked it, so it could be sold and handed out again.
+        /// </summary>
+        public static bool IsReissuableQuestItem(DbItemTemplate template) =>
+            template != null && template.Object_Type == (int)eObjectType.GenericItem && template.Price <= 0;
+
         private static void GrantItems(GamePlayer player, DataQuest quest, StepInfo step)
         {
             for (int i = 0; i < step.Grant.Count; i++)
             {
                 string id = step.Grant[i];
                 if (string.IsNullOrEmpty(id) || player.Inventory.GetFirstItemByID(id, eInventorySlot.Min_Inv, eInventorySlot.Max_Inv) != null) continue;
+                var given = (player.InternalID ?? player.Name, quest.ID, quest.Step, id.ToLowerInvariant());
+                if (RealGrantsGiven.ContainsKey(given)) continue;
                 var key = (player, quest.ID, quest.Step * 100 + i + 1);
                 long now = GameLoop.GameLoopTime;
                 if (GiveCooldown.TryGetValue(key, out long until) && now < until) continue;
                 GiveCooldown[key] = now + 60_000;
                 DbItemTemplate template = GameServer.Database.FindObjectByKey<DbItemTemplate>(id);
                 if (template == null || !player.Inventory.AddTemplate(GameInventoryItem.Create(template), 1, eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack)) continue;
+                if (!IsReissuableQuestItem(template))
+                    RealGrantsGiven[given] = 0;
                 string from = string.IsNullOrEmpty(step.GrantFrom) ? "You receive" : step.GrantFrom + " gives you";
                 player.Out.SendMessage($"{from} {template.GetName(1, false)}.", PacketHandler.eChatType.CT_System, PacketHandler.eChatLoc.CL_SystemWindow);
             }
@@ -899,6 +916,12 @@ namespace DOL.GS.Quests
                             foreach (GameNPC npc in gone) if (npc?.ObjectState == GameObject.eObjectState.Active) npc.Delete();
                     foreach (var key in EventCooldown.Keys.Where(k => k.Item1 == player && active.All(q => q.ID != k.Item2)).ToArray())
                         EventCooldown.TryRemove(key, out _);
+                    if (!RealGrantsGiven.IsEmpty)
+                    {
+                        string character = player.InternalID ?? player.Name;
+                        foreach (var key in RealGrantsGiven.Keys.Where(k => k.Character == character && active.All(q => q.ID != k.Quest)).ToArray())
+                            RealGrantsGiven.TryRemove(key, out _);
+                    }
                     // Every active classic quest shows its current step on the map, each with its own marker
                     // (owner 2026-10-07: one shared marker hid every quest behind the first one), and every active
                     // quest's step can spawn its monster.
