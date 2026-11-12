@@ -747,6 +747,14 @@ namespace DOL.GS
         /// <summary>Who is called onto a kill-first add first: idle ranged, busy ranged, idle melee, busy melee.</summary>
         public static int KillFirstRank(bool ranged, bool busy) => (ranged ? 0 : 2) + (busy ? 1 : 0);
 
+        /// <summary>The event record keeps each scripted boss and final encounter that fell or was set aside (the travel
+        /// lane's ledger); ordinary route targets are left out so the record stays short. One write per boss.</summary>
+        private void RecordEncounter(string result)
+        {
+            if (_target is GameEpicBoss || _target != null && _finalTypes.Contains(_target.GetType().Name))
+                RealmEventRecords.Encounter(_region, _realm, _target.Name, result);
+        }
+
         /// <summary>
         /// Calls up to <see cref="KillFirstCallers"/> raiders within 2,500 onto each living kill-first add beside the target,
         /// nearest idle ranged raiders first; raiders already on it count. The boss stays the raid's target.
@@ -922,6 +930,7 @@ namespace DOL.GS
             {
                 log.Info($"REALM_EXPEDITION_TARGET_DEFEATED region={_region} target=\"{_target.Name}\" level={_target.Level} " +
                          $"minutes={(now - _targetStartTick) / 60_000.0:0.0}");
+                RecordEncounter("defeated");
                 _cleared.Add(_target);
                 _clearedNames.Add(_target.Name);
                 if (_target is GameEpicBoss) _clearedBossNames.Add(_target.Name);
@@ -972,6 +981,7 @@ namespace DOL.GS
                 log.Warn($"REALM_EXPEDITION_TARGET_SKIPPED region={_region} target=\"{_target.Name}\" at={_target.X},{_target.Y},{_target.Z} " +
                          $"health={_target.HealthPercent} front={(int)Front.X},{(int)Front.Y},{(int)Front.Z} near={near} " +
                          $"reason=\"{(wipedOut ? $"wiped {_musterWipes} times" : "no damage for five minutes")}\"");
+                RecordEncounter("skipped");
                 _routeRetry[_target] = now + BlockedTargetRetryMilliseconds;
                 _musterTarget = null; // a fresh muster (and wipe count) when it is tried again
             }
