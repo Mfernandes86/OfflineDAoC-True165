@@ -107,4 +107,31 @@ public sealed class UT_RelicLaneFixes
             Assert.That(AutonomousRvrEventLayer.SkipFailedStep(true, eRealm.Hibernia, eRealm.Hibernia), Is.False, "still under siege");
         });
     }
+
+    [Test]
+    public void ARelicRoadStruggleHasAHardEndThatGrowsOnlyWithRegionsCrossed()
+    {
+        long window = AutonomousRvrEventLayer.CarrierEventMilliseconds;
+        long extension = AutonomousRvrEventLayer.CarrierCrossingExtensionMilliseconds;
+        Assert.Multiple(() =>
+        {
+            Assert.That(AutonomousRvrEventLayer.CarrierHardEnd(1_000, 0), Is.EqualTo(1_000 + window));
+            Assert.That(AutonomousRvrEventLayer.CarrierHardEnd(1_000, 1), Is.EqualTo(1_000 + window + extension), "the port home");
+            Assert.That(AutonomousRvrEventLayer.CarrierHardEnd(1_000, 99),
+                Is.EqualTo(1_000 + window + AutonomousRvrEventLayer.MaxCarrierCrossingExtensions * extension), "bounded");
+        });
+    }
+
+    [Test]
+    public void ARelicRoadStruggleHoldsBackOnlyTheSiegesOfTheRealmsInIt()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(AutonomousRvrEventLayer.CarrierBlocksSiege(eRealm.Albion, eRealm.Albion, eRealm.Hibernia, []), Is.True, "carrier");
+            Assert.That(AutonomousRvrEventLayer.CarrierBlocksSiege(eRealm.Hibernia, eRealm.Albion, eRealm.Hibernia, []), Is.True, "robbed");
+            Assert.That(AutonomousRvrEventLayer.CarrierBlocksSiege(eRealm.Midgard, eRealm.Albion, eRealm.Hibernia, []), Is.False, "uninvolved");
+            Assert.That(AutonomousRvrEventLayer.CarrierBlocksSiege(eRealm.Midgard, eRealm.Albion, eRealm.Hibernia, [eRealm.Midgard]), Is.True, "intercepting");
+            Assert.That(AutonomousRvrEventLayer.CarrierBlocksSiege(eRealm.Midgard, eRealm.None, eRealm.None, [eRealm.Albion]), Is.False);
+        });
+    }
 }

@@ -22,15 +22,63 @@ public static partial class AutonomousRvrEventLayer
     private static readonly Dictionary<string, long> CarrierMountedSeen = new(StringComparer.Ordinal);
 
     /// <summary>
+    /// Relic audit L6: a relic that kept being picked up (dropped at a bad spot, lifted again) held its carrier event open
+    /// without limit, and while it lasted the realms in it started no siege. The road struggle now has a hard end:
+    /// <see cref="CarrierEventMilliseconds"/> from the first pickup plus one extension for each region the relic really
+    /// crossed (at most <see cref="MaxCarrierCrossingExtensions"/>). Then the escorts and interceptors stand down and the
+    /// relic is left to its own return timer; a carrier still on its way goes on alone.
+    /// </summary>
+    public static long CarrierCrossingExtensionMilliseconds => Classic165Mode.TravelTime(30 * 60_000L);
+    public const int MaxCarrierCrossingExtensions = 3;
+
+    /// <summary>Pure rule (L6): when a relic's road struggle ends at the latest.</summary>
+    public static long CarrierHardEnd(long firstPickupTick, int regionsCrossed) =>
+        firstPickupTick + CarrierEventMilliseconds + Math.Clamp(regionsCrossed, 0, MaxCarrierCrossingExtensions) * CarrierCrossingExtensionMilliseconds;
+
+    /// <summary>Pure rule (L6): a road struggle holds back the new sieges of the realms in it only (the carrying realm, the
+    /// realm it was taken from, and any realm with forces in it), not of every realm.</summary>
+    public static bool CarrierBlocksSiege(eRealm realm, eRealm taker, eRealm takenFrom, IEnumerable<eRealm> realmsWithForces) =>
+        realm != eRealm.None && (realm == taker || realm == takenFrom || (realmsWithForces ?? []).Contains(realm));
+
+    /// <summary>Called under Sync from ChooseCore: whether a live road struggle holds back this realm's new siege.</summary>
+    private static bool CarrierBlocksSiegeFor(eRealm realm)
+    {
+        foreach (var (id, carrier) in CarrierEvents)
+        {
+            CarrierOrigins.TryGetValue(id, out var origin);
+            if (CarrierBlocksSiege(realm, origin.Attacker, origin.Defender,
+                    carrier.Participants.Where(pair => pair.Value.Count > 0).Select(pair => pair.Key)))
+                return true;
+        }
+        return false;
+    }
+
+    /// <summary>One relic off its pad, from its first pickup until it is mounted again.</summary>
+    private sealed class CarrierRun
+    {
+        public long FirstTick;
+        public ushort Region;
+        public int Crossings;
+        public bool Lapsed;
+    }
+    private static readonly Dictionary<string, CarrierRun> CarrierRuns = new(StringComparer.Ordinal);
+
+    private static ushort RelicRegion(GameRelic relic) => relic.CurrentCarrier?.CurrentRegionID ?? relic.CurrentRegionID;
+
+    /// <summary>
     /// Called under Sync from Expire. A relic that went back onto a pad by itself (return timer, lost item) never fired
     /// RelicMounted, so its carrier event lived on for hours and ChooseCore refused every new siege of every realm (L5).
-    /// While the relic is still carried or on the ground the event stays open (L6).
+    /// While the relic is still carried or on the ground the event stays open (L6), up to its hard end (CarrierHardEnd).
     /// </summary>
     private static void RefreshCarrierEvents(long nowTick)
     {
-        if (CarrierEvents.Count == 0) return;
+        if (CarrierEvents.Count == 0 && CarrierRuns.Count == 0) return;
         GameRelic[] relics = RelicMgr.GetRelics();
         if (relics.Length == 0) return;
+        // A relic back on a pad (or gone) ends its run, lapsed or not.
+        foreach (string id in CarrierRuns.Keys.ToArray())
+            if (relics.FirstOrDefault(r => RelicCarrierTargetId(r) == id) is not { IsMounted: false })
+                CarrierRuns.Remove(id);
         foreach (string id in CarrierEvents.Keys.ToArray())
         {
             GameRelic relic = relics.FirstOrDefault(r => RelicCarrierTargetId(r) == id);
@@ -48,8 +96,40 @@ public static partial class AutonomousRvrEventLayer
             }
             CarrierMountedSeen.Remove(id);
             var entry = CarrierEvents[id];
-            long keepOpen = nowTick + CarrierKeepOpenMilliseconds;
-            if (entry.ExpiresTick < keepOpen) CarrierEvents[id] = (keepOpen, entry.Participants);
+            ushort region = RelicRegion(relic);
+            if (!CarrierRuns.TryGetValue(id, out CarrierRun run))
+                CarrierRuns[id] = run = new CarrierRun { FirstTick = nowTick, Region = region };
+            else if (region != 0 && region != run.Region)
+            {
+                if (run.Region != 0) run.Crossings++;
+                run.Region = region;
+            }
+            var log = DOL.Logging.LoggerManager.Create(typeof(AutonomousRvrEventLayer));
+            if (run.Lapsed)
+            {
+                // An event joined again after the hard end (TryJoinCarrier) ends at once, quietly: the relic is on its own timer.
+                RealmEventRecords.Finish(id, "Timed out", "Relic escort/interception: the road struggle had already run its course.");
+                foreach (string force in entry.Participants.Values.SelectMany(realm => realm.Keys))
+                    ReleasedForces[force] = "Relic event ended: the road struggle had already run its course";
+                CarrierEvents.Remove(id);
+                CarrierTargets.Remove(id);
+                CarrierOrigins.Remove(id);
+                Cooldowns[id] = nowTick + TargetCooldownMilliseconds;
+                continue;
+            }
+            long hardEnd = CarrierHardEnd(run.FirstTick, run.Crossings);
+            if (nowTick >= hardEnd)
+            {
+                // Expire's timeout below ends it this pass, with its notices and its release of every force.
+                run.Lapsed = true;
+                CarrierEvents[id] = (nowTick, entry.Participants);
+                if (log.IsInfoEnabled) log.Info($"RVR_RELIC_CARRIER_LAPSED carrier={id} relic=\"{relic.Name}\" minutes={(nowTick - run.FirstTick) / 60_000} " +
+                    $"crossings={run.Crossings} carried={relic.CurrentCarrier != null} region={region}");
+                continue;
+            }
+            long keepOpen = Math.Min(nowTick + CarrierKeepOpenMilliseconds, hardEnd);
+            long expires = Math.Min(Math.Max(entry.ExpiresTick, keepOpen), hardEnd);
+            if (expires != entry.ExpiresTick) CarrierEvents[id] = (expires, entry.Participants);
         }
     }
 
