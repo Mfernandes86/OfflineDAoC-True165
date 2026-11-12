@@ -133,6 +133,11 @@ public static class AutonomousRvrRally
         // Classic relic keeps have commanders and a shrine, not a keep lord.
         lord ??= keep.IsRelic ? keep.Guards.Values.OfType<GuardCommander>()
             .OrderBy(guard=>Vector2.DistanceSquared(new(guard.X,guard.Y),new(keep.X,keep.Y))).FirstOrDefault() : null;
+        // Keeps audit 2026-11-11 (M6): an ordinary keep without a lord in the world data (13 keeps until their rows are
+        // restored) gave its defenders no interior post at all; they anchor on its innermost fighting guard instead.
+        lord ??= !keep.IsRelic ? keep.Guards.Values
+            .Where(guard => guard is not GuardArcher && AutonomousRvrKeepPolicy.IsDefendingGuard(guard))
+            .OrderBy(guard => Vector2.DistanceSquared(new(guard.X, guard.Y), new(keep.X, keep.Y))).FirstOrDefault() : null;
         if (lord == null || !nav.IsAvailable) return false;
         bool protectObjective = routeStart.HasValue && AutonomousRvrDefense.ObjectiveExposed(keep);
         bool ranged = AutonomousRvrDefense.IsRangedDefender(bot);
