@@ -116,9 +116,10 @@ in a live raid: a new world has no level 50 gamebots until they level up.
   relic returns after 30 minutes.
 - Keeps: the inner gate of Caer Erasleigh, Caer Boldiam, Caer Sursbrooke and Caer Berkstead can be hit in melee. The
   server had that door about 1,380 units from the gate the game draws, so melee said out of range (GitHub issue #52).
-- Keeps: the server's walking map of the Pennine Mountains is rebuilt around those four keeps from the 1.64 keep,
-  as the other Albion frontier zones were in 0.3. Gamebots are held by a closed inner gate (they could walk past
-  it), and the four keeps lose the two side doors of the later keep model, which the 1.64 keep does not have.
+- Keeps: the server's walking map of the Pennine Mountains is rebuilt from the 1.64 client around those four keeps
+  and at the ruined monastery, as the other Albion frontier zones were in 0.3. Gamebots are held by a closed inner
+  gate (they could walk past it), and the four keeps lose the two side doors of the later keep model, which the
+  1.64 keep does not have.
 
 ### Launcher and commands
 
