@@ -3190,9 +3190,17 @@ namespace DOL.AI.Brain
                 eSpellType.AcuityBuff => classic165 ? cls.ClassType == eClassType.ListCaster : cls.ManaStat is not eStat.UNDEFINED,
                 eSpellType.CombatSpeedBuff when classic165 => cls.ClassType != eClassType.ListCaster,
                 eSpellType.PowerRegenBuff when classic165 => cls.ManaStat is not eStat.UNDEFINED,
+                // Q14 (veteran review 2026-11-11): damage adds and weapon procs only help a class that fights in melee -
+                // not a Runemaster, Spiritmaster or Healer
+                eSpellType.DamageAdd or eSpellType.OffensiveProc => MeleeBuffHelps(cls),
                 _ => true,
             };
         }
+
+        /// <summary>Q14: a class whose weapon swings a damage add or proc helps - not a pure caster or a healer.</summary>
+        public static bool MeleeBuffHelps(ICharacterClass cls) =>
+            cls == null || cls.ClassType != eClassType.ListCaster &&
+            BotPartyRoles.For((eCharacterClass)cls.ID) != BotPartyRole.Support;
 
         private bool CastCoordinatedBuff(Spell spell, bool? queued = null)
         {
