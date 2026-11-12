@@ -357,7 +357,10 @@ namespace DOL.AI.Brain
 		{
 			if(Body.IsAlive)
             {
-				if(!CanSpawnProvisioner)
+				// Only a real player wakes the Provisioner, so in a horn raid it appeared or not depending on whether the
+				// player walked past its spawner, and then wandered the halls as one more route target (epic-bosses M2).
+				// While a bot raid is in Caer Sidi it is not created; one already in the world stays, as a wanderer does.
+				if(!CanSpawnProvisioner && !AutonomousRealmRaid.HasActiveRaidIn(Body.CurrentRegionID))
                 {
 					foreach(GamePlayer player in Body.GetPlayersInRadius(500))
                     {
