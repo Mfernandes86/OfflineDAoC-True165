@@ -4556,10 +4556,12 @@ namespace DOL.AI.Brain
             // True 1.65: an add is mezzed before a top-up heal; a groupmate under 40% is healed first
             if (Classic165Mode.IsOn && AddControlBeforeHeals(true, LowestGroupHealthPercent()))
             {
-                if (!TryPvpCrowdControl() && !TryPveAddControl() && !CheckHeals() && !TryGroupCelerity())
+                if (!TryPvpCrowdControl() && !TryPveAddControl() && !CheckHeals() && !TryHealerOpeningStun() &&
+                    !TryGroupCelerity())
                     CheckSpells(eCheckSpellType.Defensive);
             }
-            else if (!CheckHeals() && !TryPvpCrowdControl() && !TryPveAddControl() && !TryGroupCelerity())
+            else if (!CheckHeals() && !TryPvpCrowdControl() && !TryPveAddControl() && !TryHealerOpeningStun() &&
+                     !TryGroupCelerity())
                 CheckSpells(eCheckSpellType.Defensive);
             if (BotBody.IsPlayerLedGroup)
             {
