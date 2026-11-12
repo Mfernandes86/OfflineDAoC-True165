@@ -27,6 +27,19 @@ namespace DOL.UnitTests
             Assert.That(Split(true, 95, 50), Is.EqualTo(BotGroupSupport.OrdinaryHealSplit.Other));
 
         [Test]
+        public void ATankInAnEmergencyKeepsBothHealers() => Assert.Multiple(() =>
+        {
+            Assert.That(BotGroupSupport.ChooseOrdinaryHealSplit(true, 95, 50, preferredHealthPercent: 20),
+                Is.EqualTo(BotGroupSupport.OrdinaryHealSplit.Preferred), "under 40%: the cast-time damage is not projected");
+            Assert.That(BotGroupSupport.ChooseOrdinaryHealSplit(true, 95, double.MaxValue, 60, preferredMeleeAttackers: 2),
+                Is.EqualTo(BotGroupSupport.OrdinaryHealSplit.Preferred), "two monsters on it in melee");
+            Assert.That(BotGroupSupport.ChooseOrdinaryHealSplit(true, 95, 50, 60, preferredMeleeAttackers: 1),
+                Is.EqualTo(BotGroupSupport.OrdinaryHealSplit.Other), "one monster, healthy enough: the split as before");
+            Assert.That(BotGroupSupport.ChooseOrdinaryHealSplit(true, 95, 50, BotGroupSupport.EmergencyHealPercent),
+                Is.EqualTo(BotGroupSupport.OrdinaryHealSplit.Other), "at the line it is not an emergency");
+        });
+
+        [Test]
         public void ACoveredTargetWithNobodyElseHurtMeansNoDoubleHeal() => Assert.Multiple(() =>
         {
             Assert.That(Split(true, 95, double.MaxValue), Is.EqualTo(BotGroupSupport.OrdinaryHealSplit.Skip));

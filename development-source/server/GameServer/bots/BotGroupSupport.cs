@@ -201,15 +201,38 @@ namespace DOL.GS
         /// would mostly be wasted and the healer looks for someone else.</summary>
         public const double SecondHealWastedPercent = 90;
 
+        /// <summary>Below this health percent the preferred target is an emergency and always keeps a second heal (the
+        /// healers' emergency line).</summary>
+        public const int EmergencyHealPercent = 40;
+
+        /// <summary>Enemies hitting the preferred target in melee from which it always keeps a second heal (burst).</summary>
+        public const int BurstMeleeAttackers = 2;
+
         /// <summary>
         /// Pure: an ordinary bot party's heal split. The healer keeps its own triage (tank first, emergencies) - it only
         /// moves off its target when another healer's heal already covers it: then the most hurt other member under 80%
-        /// in range, or no heal this think. A target still short after the heals on the way keeps the second heal.
+        /// in range, or no heal this think. A target still short after the heals on the way keeps the second heal, and so
+        /// does one in an emergency (under 40%, or hit in melee by two or more enemies): the projection ignores the damage
+        /// it takes during the cast, so two healers on a tank under burst stay on it (combat review 2026-11-11).
         /// </summary>
         public static OrdinaryHealSplit ChooseOrdinaryHealSplit(bool preferredHasIncoming, double preferredProjected,
-            double bestOtherProjected) =>
-            !preferredHasIncoming || preferredProjected < SecondHealWastedPercent ? OrdinaryHealSplit.Preferred :
+            double bestOtherProjected, int preferredHealthPercent = 100, int preferredMeleeAttackers = 0) =>
+            !preferredHasIncoming || preferredProjected < SecondHealWastedPercent ||
+            preferredHealthPercent < EmergencyHealPercent || preferredMeleeAttackers >= BurstMeleeAttackers
+                ? OrdinaryHealSplit.Preferred :
             bestOtherProjected < 80 ? OrdinaryHealSplit.Other : OrdinaryHealSplit.Skip;
+
+        /// <summary>Enemies hitting <paramref name="target"/> in melee, counted up to <see cref="BurstMeleeAttackers"/>.</summary>
+        private static int MeleeAttackersOn(GameLiving target)
+        {
+            if (target?.attackComponent == null)
+                return 0;
+            int count = 0;
+            foreach (GameLiving attacker in target.attackComponent.AttackerTracker.Attackers)
+                if (DOL.AI.Brain.BotBrain.IsMeleeAttackerOn(attacker, target) && ++count >= BurstMeleeAttackers)
+                    break;
+            return count;
+        }
 
         public static GameLiving ReserveHeal(GameBot bot, Spell spell, GameLiving preferred)
         {
@@ -282,7 +305,10 @@ namespace DOL.GS
                     : preferred.HealthPercent;
                 GameLiving other = null;
                 double otherProjected = double.MaxValue;
-                if (preferredHasIncoming && preferredProjected >= SecondHealWastedPercent)
+                int preferredMelee = preferredHasIncoming && preferredProjected >= SecondHealWastedPercent &&
+                    preferred.HealthPercent >= EmergencyHealPercent ? MeleeAttackersOn(preferred) : 0;
+                if (ChooseOrdinaryHealSplit(preferredHasIncoming, preferredProjected, 0, preferred.HealthPercent, preferredMelee) !=
+                    OrdinaryHealSplit.Preferred)
                 {
                     int range = bot.castingComponent.CalculateSpellRange(spell);
                     foreach (GameLiving member in AutonomousRealmRaid.SupportMembers(bot))
@@ -294,7 +320,8 @@ namespace DOL.GS
                         if (projected < otherProjected) { other = member; otherProjected = projected; }
                     }
                 }
-                switch (ChooseOrdinaryHealSplit(preferredHasIncoming, preferredProjected, otherProjected))
+                switch (ChooseOrdinaryHealSplit(preferredHasIncoming, preferredProjected, otherProjected, preferred.HealthPercent,
+                            preferredMelee))
                 {
                     case OrdinaryHealSplit.Preferred:
                         state.Heals[bot] = new(preferred, spell, now, expires);
