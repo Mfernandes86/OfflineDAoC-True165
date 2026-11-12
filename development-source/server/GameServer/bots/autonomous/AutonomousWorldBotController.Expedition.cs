@@ -20,6 +20,9 @@ public sealed partial class AutonomousWorldBotController
     private int _dragonRallyLeg;
     private string _dragonRallyEvent;
     private long _dragonRallyRetry;
+    private int _dragonRallyFailures;
+    private Vector3? _dragonRallyFallback;
+    private long _dragonRallyFallbackUntil;
     private bool TravelRealmExpedition(GameBot bot, AutonomousRealmRaid.View order)
     {
         if (GameLoop.GameLoopTime < _expeditionRouteRetry) return true;
@@ -147,6 +150,16 @@ public sealed partial class AutonomousWorldBotController
         {
             _dragonRallyEvent=order.EventId; _dragonRallyGoal=goal;
             _dragonRallyPlanning=null; _dragonRallyRoute=null; _dragonRallyRetry=0;
+            _dragonRallyFailures=0; _dragonRallyFallback=null;
+        }
+        if(_dragonRallyFallback is Vector3 fallback)
+        {
+            if(now<_dragonRallyFallbackUntil && Vector3.DistanceSquared(current,fallback)>300*300 && IssuePath(bot,fallback,preciseArrival:false))
+            {
+                SetStatus(bot,"Closing in on the dragon rally",order.Camp.MonsterName,"No checked route from here; walking to the ring outside the dragon's reach to plan again");
+                return true;
+            }
+            _dragonRallyFallback=null; _dragonRallyRetry=0;
         }
         if(now<_dragonRallyRetry) return true;
         if(_dragonRallyRoute==null)
@@ -172,11 +185,20 @@ public sealed partial class AutonomousWorldBotController
             if(!found)
             {
                 _dragonRallyRoute=null;_dragonRallyRetry=now+30_000;
+                if(DragonRallyRoute.UseFallback(++_dragonRallyFailures) &&
+                   PathfindingProvider.Instance.GetClosestPoint(bot.CurrentZone,DragonRallyRoute.FallbackRingPoint(current,home),96,96,4096,
+                       PathfindingProvider.Instance.DefaultFilters) is Vector3 ring && DragonRallyRoute.Outside(ring,home))
+                {
+                    _dragonRallyFailures=0;_dragonRallyFallback=ring;_dragonRallyFallbackUntil=now+180_000;_dragonRallyRetry=0;
+                    Log.Warn($"DRAGON_RALLY_ROUTE_FALLBACK bot={bot.Name} event={order.EventId} from={current} ring={ring}");
+                    return true;
+                }
                 SetStatus(bot,"Dragon rally route retry",order.Camp.MonsterName,"No verified approach outside dragon aggro; not charging through the boss");
                 Log.Warn($"DRAGON_RALLY_ROUTE_RETRY bot={bot.Name} event={order.EventId} from={current} goal={goal} queries={work.Queries}");
                 return true;
             }
             _dragonRallyLeg=0;
+            _dragonRallyFailures=0;
         }
         while(_dragonRallyLeg<_dragonRallyRoute.Length && Vector3.DistanceSquared(current,_dragonRallyRoute[_dragonRallyLeg])<=80*80)
             _dragonRallyLeg++;

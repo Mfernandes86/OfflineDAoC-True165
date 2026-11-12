@@ -88,6 +88,25 @@ public static class DragonRallyRoute
         return Vector2.Dot(radial,delta)>=0;
     }
 
+    /// <summary>
+    /// After this many failed plans in a row the bot walks with the ordinary mover to the ring point on its own side of
+    /// the lair, then plans again from there. Dragon-routes M1: from 8,000 west of Golestandt every leg is longer than
+    /// one Detour path, so TryBuild failed for all 38 posts and the bot stood still, retrying every 30 s, for good.
+    /// </summary>
+    public const int PlanFailuresBeforeFallback = 3;
+    public const int FallbackRingRadius = 6000;
+
+    public static bool UseFallback(int failures) => failures >= PlanFailuresBeforeFallback;
+
+    /// <summary>The point FallbackRingRadius from the lair in the bot's direction (outside the clearance, never past
+    /// the lair).</summary>
+    public static Vector3 FallbackRingPoint(Vector3 position, Vector3 home)
+    {
+        Vector2 radial = new(position.X - home.X, position.Y - home.Y);
+        radial = radial.LengthSquared() < 1 ? Vector2.UnitX : Vector2.Normalize(radial);
+        return new Vector3(home.X + radial.X * FallbackRingRadius, home.Y + radial.Y * FallbackRingRadius, home.Z);
+    }
+
     public static bool AtAssembly(Vector3 position, IEnumerable<Vector3> posts, Vector3? dragonHome = null) =>
         (!dragonHome.HasValue || Outside(position,dragonHome.Value)) &&
         posts.Any(post => Vector3.DistanceSquared(position,post) <= 600*600);

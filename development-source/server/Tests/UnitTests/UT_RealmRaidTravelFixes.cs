@@ -80,4 +80,17 @@ public class UT_RealmRaidTravelFixes
         Assert.That(tries, Is.EqualTo(1), "a slot that just failed is not searched again");
         Assert.That(AutonomousRealmRaid.NextPlaceableSlot(2, s => false, s => false, s => false, s => { }), Is.EqualTo(-1));
     }
+
+    [Test]
+    public void DragonRallyFallsBackToTheRingOnItsOwnSideAfterThreeFailedPlans()
+    {
+        Assert.That(DragonRallyRoute.UseFallback(2), Is.False);
+        Assert.That(DragonRallyRoute.UseFallback(3), Is.True);
+        Vector3 home = new(391326, 755351, 391);
+        Vector3 ring = DragonRallyRoute.FallbackRingPoint(new Vector3(383305, 755494, 300), home);
+        Assert.That(Vector2.Distance(new(ring.X, ring.Y), new(home.X, home.Y)), Is.EqualTo(6000).Within(1));
+        Assert.That(ring.X, Is.LessThan(home.X), "west of the lair, on the bot's side");
+        Assert.That(DragonRallyRoute.Outside(ring, home), Is.True);
+        Assert.That(DragonRallyRoute.SafeSegment(new Vector3(383305, 755494, 300), ring, home), Is.True, "the walk there stays outside the clearance");
+    }
 }
