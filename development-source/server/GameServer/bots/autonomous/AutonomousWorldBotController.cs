@@ -2975,6 +2975,17 @@ namespace DOL.GS
                 return true;
             _nextTargetSearchTick = GameLoop.GameLoopTime + 900 + bot.ObjectID % 500;
 
+            // owner decision O6 (bot_death_xp_loss, off by default): by its grave, a solo bot prays for the experience
+            // left there (DeathXp165); never a special trip
+            if (bot.Group == null && _groupDirective?.IsDynamic != true && !brain.HasAggro && DeathXp165.TryPray(bot))
+            {
+                bot.StopMovingOnPath();
+                bot.StopMoving();
+                SetStatus(bot, "Praying at its grave", GoalText(), "Getting back the experience left at its grave",
+                    string.Empty, _camp.ZoneName);
+                return true;
+            }
+
             // veteran review M3: most of the last kills here conned green - a solo bot moves up a spot, as a player did
             if (bot.Group == null && _groupDirective?.IsDynamic != true && !_camp.IsDungeon &&
                 _camp.RegionId != AutonomousDarknessFallsPolicy.RegionId && !brain.HasAggro &&

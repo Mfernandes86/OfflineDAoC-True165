@@ -1197,6 +1197,7 @@ namespace DOL.GS
             _deathRegionId = CurrentRegionID;
             _deathLocation = new Point3D(X, Y, Z);
             (_lastDeathRvR165, _pendingConLoss165) = DeathPenalty165.OnDeath(this, killer, ref _deathsLevel165, ref _deathsThisLevel165);
+            DeathXp165.OnDeath(this, _lastDeathRvR165, _deathsThisLevel165 - 1);   // owner decision O6 (off by default)
             LogDeath165(killer);
             if (IsAutonomousWorldBot)
                 AutonomousStableLandingWatch.Died(this, killer);   // owner 2026-11-10: landing death watch
@@ -1287,8 +1288,20 @@ namespace DOL.GS
 
         /// <summary>True 1.65 Mode: back alive. A release costs the Constitution the death set aside; either way the bot
         /// gets resurrection sickness (DeathPenalty165).</summary>
+        /// <summary>Owner decision O6 (DeathXp165): experience a death takes, never below <paramref name="floor"/>.</summary>
+        public long TakeExperience165(long amount, long floor)
+        {
+            long taken = Math.Min(amount, Math.Max(0, Experience - floor));
+            if (taken <= 0)
+                return 0;
+            Experience -= taken;
+            MarkAutonomousStateDirty();
+            return taken;
+        }
+
         private void AfterRevive165(bool released)
         {
+            DeathXp165.OnRevive(this, released, _deathRegionId, _deathLocation?.X ?? X, _deathLocation?.Y ?? Y);   // owner decision O6 (off by default)
             if (released && _pendingConLoss165 > 0)
             {
                 TotalConstitutionLostAtDeath += _pendingConLoss165;
