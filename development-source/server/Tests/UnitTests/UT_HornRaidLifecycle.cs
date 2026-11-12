@@ -161,4 +161,14 @@ public class UT_HornRaidLifecycle
         Assert.That(AutonomousRealmRaid.RaidCorpseWaitMilliseconds(true, false), Is.EqualTo(90_000), "as before");
         Assert.That(AutonomousRealmRaid.RaidCorpseWaitMilliseconds(false, false), Is.EqualTo(20_000), "nobody of the raid in sight");
     }
+
+    [Test]
+    public void DragonBattlePostsStayWithinAThousandOfTheLair()
+    {
+        var lair = new System.Numerics.Vector3(1000, 1000, 0);
+        Assert.That(AutonomousRealmRaid.ClampToLair(new(1500, 1000, 0), lair), Is.EqualTo(new System.Numerics.Vector3(1500, 1000, 0)), "inside: on the dragon");
+        var clamped = AutonomousRealmRaid.ClampToLair(new(3500, 1000, 0), lair);
+        Assert.That(clamped.X, Is.EqualTo(2000).Within(0.01), "dragged 2,500 off: posts 1,000 from the lair toward it");
+        Assert.That(clamped.Y, Is.EqualTo(1000).Within(0.01));
+    }
 }

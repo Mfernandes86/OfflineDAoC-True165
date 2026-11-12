@@ -1102,7 +1102,11 @@ namespace DOL.GS
             // dragon-fight T5: after the battle began only a dragon in the air holds the raid; a grounded dragon beyond 2,000
             // that nobody hit for a few seconds used to send every fighting party back to its staging post for a pulse
             bool hold = BattleHold(raid.Started, landed, (raid.Boss.Flags & GameNPC.eFlags.FLYING) != 0);
-            Vector3 point = hold ? party.Staging : new(raid.Boss.X, raid.Boss.Y, raid.Boss.Z);
+            Point3D lair = DragonLairPlacement.Home(raid.Definition.Realm);
+            // dragon-fight L1: the dragon takes no damage beyond 2,000 from its lair, and the posts used to follow it wherever
+            // heal threat dragged it; they are now centred on it but never more than 1,000 from the lair, so the raid stands
+            // where the dragon can be hurt and draws it back there
+            Vector3 point = hold ? party.Staging : ClampToLair(new(raid.Boss.X, raid.Boss.Y, raid.Boss.Z), new(lair.X, lair.Y, lair.Z));
             if (!hold && !TryBattlePost(raid, party, point, raid.Definition.Region, out point))
             { point = party.Anchor ?? party.Staging; hold = true; }
             string state = !raid.Started ? !landed
@@ -1111,6 +1115,16 @@ namespace DOL.GS
             party.DestinationView = new(raid.Definition.Id, state,
                 new($"realm-event-{raid.Definition.Id}", raid.Boss.Name, raid.Boss.CurrentZone?.Description ?? raid.Definition.Name,
                     raid.Definition.Region, (int)point.X, (int)point.Y, (int)point.Z, false, false, raid.Boss.Level), hold);
+        }
+
+        public const float DragonPostLairRadius = 1_000f;
+
+        /// <summary>The centre of a dragon raid's battle posts: the dragon, pulled back to within 1,000 of its lair.</summary>
+        public static Vector3 ClampToLair(Vector3 dragon, Vector3 lair)
+        {
+            Vector3 offset = dragon - lair;
+            float distance = offset.Length();
+            return distance <= DragonPostLairRadius ? dragon : lair + offset * (DragonPostLairRadius / distance);
         }
 
         /// <summary>A dragon raid holds at staging before its battle until the dragon has landed; once the battle began, only
