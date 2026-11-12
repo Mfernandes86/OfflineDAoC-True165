@@ -86,4 +86,15 @@ public class UT_AutonomousServiceNpcClearance
         Assert.That(AutonomousSupplyMerchantSpace.IsAtOwnSpot(npc, npc + new Vector3(40, 0, 0), npc + new Vector3(40, 0, 0), range),
             Is.False, "a spot on the NPC is never a stop");
     }
+
+    [Test]
+    public void TownBreakSpotsKeepClearOfServiceNpcs()
+    {
+        Vector3[] services = [new(1_000, 1_000, 0), new(2_000, 1_000, 0)];
+        float clear = AutonomousServiceNpcClearance.TownBreakClearRadius;
+        Assert.That(AutonomousServiceNpcClearance.IsClearOf(new(1_090, 1_000, 0), services, clear), Is.False, "on the merchant");
+        Assert.That(AutonomousServiceNpcClearance.IsClearOf(new(1_150, 1_100, 0), services, clear), Is.False, "inside 250");
+        Assert.That(AutonomousServiceNpcClearance.IsClearOf(new(1_500, 1_000, 0), services, clear), Is.True, "between them, clear");
+        Assert.That(AutonomousServiceNpcClearance.IsClearOf(new(1_500, 1_000, 0), [], clear), Is.True);
+    }
 }

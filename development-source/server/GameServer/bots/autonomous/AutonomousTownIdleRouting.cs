@@ -267,15 +267,24 @@ namespace DOL.GS
             IPathfindingMgr nav = PathfindingProvider.Instance;
             if (anchor?.ObjectState != GameObject.eObjectState.Active || !nav.IsAvailable || !nav.HasNavmesh(anchor.CurrentZone)) return false;
             Vector3 center = new(anchor.X, anchor.Y, anchor.Z);
-            for (int attempt = 0; attempt < 4; attempt++)
+            // One radius scan per choice (it used to run once per candidate). GitHub #48: the same list rejects a
+            // break spot within 250 units of a merchant, trainer, stable master, healer or vault keeper, which bots
+            // stood on for 15-30 minutes; two more candidates make up for the spots this rejects.
+            List<GameNPC> nearby = anchor.GetNPCsInRadius(3_500);
+            List<Vector3> services = nearby.Where(npc => npc.ObjectState == GameObject.eObjectState.Active &&
+                    AutonomousServiceNpcClearance.IsServiceNpc(npc))
+                .Select(npc => new Vector3(npc.X, npc.Y, npc.Z)).ToList();
+            for (int attempt = 0; attempt < 6; attempt++)
             {
                 Vector3? candidate = nav.GetRandomPoint(anchor.CurrentZone, center, town.Capital ? 900 : 600, nav.DefaultFilters);
                 if (!candidate.HasValue || anchor.CurrentRegion.GetZone((int)candidate.Value.X, (int)candidate.Value.Y) != anchor.CurrentZone ||
                     !town.Capital && town.Area?.IsContaining(new Point3D((int)candidate.Value.X, (int)candidate.Value.Y, (int)candidate.Value.Z), false) != true)
                     continue;
+                if (!AutonomousServiceNpcClearance.IsClearOf(candidate.Value, services, AutonomousServiceNpcClearance.TownBreakClearRadius))
+                    continue;
                 // Safe PvP areas need not exclude aggressive monsters. Reject a
                 // resting spot that lies in a currently live monster's aggro bubble.
-                bool dangerous = anchor.GetNPCsInRadius(3_500).Any(npc => npc.IsAlive && IsExperienceMonster(npc) && npc.IsAggressive &&
+                bool dangerous = nearby.Any(npc => npc.IsAlive && IsExperienceMonster(npc) && npc.IsAggressive &&
                     npc.Brain is StandardMobBrain mobBrain &&
                     Vector3.DistanceSquared(candidate.Value, new(npc.X, npc.Y, npc.Z)) <= (double)mobBrain.AggroRange * mobBrain.AggroRange);
                 if (dangerous) continue;
