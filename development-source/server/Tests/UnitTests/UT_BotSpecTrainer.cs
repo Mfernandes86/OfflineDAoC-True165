@@ -149,6 +149,20 @@ namespace DOL.UnitTests
         }
 
         [Test]
+        public void NewMidgardBotsFollowThePeriodSpecMix()
+        {
+            // M8: Pac and Mend Healers common, Aug rare; shield Warriors and Thanes common
+            int weight(eCharacterClass c, eSpecType s) => BotSpec.GetSpecializationWeights(c).Single(w => w.Spec == s).Weight;
+            Assert.That(weight(eCharacterClass.Healer, eSpecType.AugHealer), Is.LessThan(weight(eCharacterClass.Healer, eSpecType.PacHealer)));
+            Assert.That(weight(eCharacterClass.Healer, eSpecType.AugHealer), Is.LessThan(weight(eCharacterClass.Healer, eSpecType.MendHealer)));
+            foreach (eCharacterClass tank in new[] { eCharacterClass.Warrior, eCharacterClass.Thane })
+                Assert.That(weight(tank, eSpecType.OneHandAndShield), Is.GreaterThan(2 * weight(tank, eSpecType.TwoHanded)), $"{tank}");
+            Dictionary<eSpecType, int> healers = Enumerable.Range(1, 20000)
+                .GroupBy(id => BotSpec.ChoosePersistentSpecialization(eCharacterClass.Healer, id)).ToDictionary(g => g.Key, g => g.Count());
+            Assert.That(healers[eSpecType.AugHealer] / 20000.0, Is.EqualTo(0.1).Within(0.02));
+        }
+
+        [Test]
         public void PickFollowsTheWeights()
         {
             int[] seen = new int[3];

@@ -130,6 +130,13 @@ namespace DOL.GS
             eCharacterClass.Animist => [(eSpecType.ArborealAnimist, 17), (eSpecType.CreepingAnimist, 2), (eSpecType.VerdantAnimist, 1)],
             eCharacterClass.Mentalist => [(eSpecType.LightMenta, 9), (eSpecType.ManaMenta, 9), (eSpecType.MentaMenta, 2)],
             eCharacterClass.Enchanter => [(eSpecType.LightEnchanter, 6), (eSpecType.ManaEnchanter, 6), (eSpecType.EnchantmentEnchanter, 1)],
+            // Midgard (M8, owner 2026-11-11). Prima: "Augmentation Healers are rare"; Warriors and Thanes tanked with a
+            // shield (two-handers were "weak for tanking"); Suppression was the big group Spiritmaster.
+            eCharacterClass.Healer => [(eSpecType.MendHealer, 4), (eSpecType.AugHealer, 1), (eSpecType.PacHealer, 5)],
+            eCharacterClass.Warrior => [(eSpecType.OneHandAndShield, 3), (eSpecType.TwoHanded, 1)],
+            eCharacterClass.Thane => [(eSpecType.OneHandAndShield, 3), (eSpecType.TwoHanded, 1)],
+            eCharacterClass.Spiritmaster => [(eSpecType.DarkSpirit, 2), (eSpecType.SuppSpirit, 2), (eSpecType.SummSpirit, 1)],
+            eCharacterClass.Shadowblade => [(eSpecType.LeftAxe, 3), (eSpecType.TwoHanded, 2)],
             _ => [.. GetSpecializationChoices(charClass).Select(spec => (spec, 1))],
         };
 
