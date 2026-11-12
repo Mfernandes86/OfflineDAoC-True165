@@ -145,6 +145,28 @@ public class UT_QuestFix07
         Assert.That(guide.Level, Is.EqualTo(expected));
     }
 
+    [TestCase(8, 8, 16, true)]
+    [TestCase(15, 8, 16, true)]
+    [TestCase(16, 8, 16, false)]
+    [TestCase(23, 16, 24, true)]
+    [TestCase(0, 16, 24, false)]
+    [TestCase(0, 0, 8, true)]
+    [TestCase(2, 22, 4, true)]
+    [TestCase(12, 22, 4, false)]
+    public void SkullPostHoursRotate(int hour, int start, int end, bool shown)
+    {
+        Assert.That(HourWindows.Contains(hour, start, end), Is.EqualTo(shown));
+    }
+
+    [Test]
+    public void TheSkullPostSpawnsEachHaveAThirdOfTheDay()
+    {
+        Assert.That(HourWindows.TryGet("thraxia", out var t) && t == (8, 16), Is.True);
+        Assert.That(HourWindows.TryGet("Terje", out var te) && te == (16, 24), Is.True);
+        Assert.That(HourWindows.TryGet("Lord Lauur", out var l) && l == (0, 8), Is.True);
+        Assert.That(HourWindows.TryGet("anyone else", out _), Is.False);
+    }
+
     [TestCase(0, false)]
     [TestCase(3, true)]
     [TestCase(35, true)]
