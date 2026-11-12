@@ -13,16 +13,31 @@ namespace DOL.AI.Brain
     /// When an assassin with a stealth style picks a target that is not attacking it, it hides (the same rules as a
     /// player's Stealth: CompanionStealth.MayHide), walks at stealth speed to the target's back (Backstab, Backstab II) or
     /// front (Perforate Artery, not on a monster facing a groupmate), faces it and opens with that style. The swing
-    /// reveals it (WeaponAction), as it does a player. It gives up on a target after 25 seconds, or at once when it cannot
+    /// reveals it (WeaponAction), as it does a player. It gives up on a target after 12 seconds, or at once when it cannot
     /// hide, and then attacks normally. A hired companion's "Open from stealth" AI option can switch it off.
     /// </summary>
     public partial class BotBrain
     {
-        private const long StealthOpenerGiveUpMilliseconds = 25_000;
+        // Q31 (veteran review 2026-11-11): patience like a player's - open only on a still or slow target, re-plan the
+        // route at most once a second, walk straight inside 300 units and give up after 12 s (it re-planned on every
+        // think for up to 25 s: 15-25 route requests per opener)
+        public const long StealthOpenerGiveUpMilliseconds = 12_000;
+        public const long StealthOpenerRepathMilliseconds = 1_000;
+        public const int StealthOpenerStraightWalk = 300;
+        public const int StealthOpenerMaxTargetSpeed = 100;
         private const int StealthOpenerStandOff = 70;
         private GameLiving _openerTarget;
         private GameLiving _openerGaveUpOn;
         private long _openerSince;
+        private long _openerNextPath;
+
+        /// <summary>Pure (Q31): a stealth approach starts only on a target standing still or walking slowly.</summary>
+        public static bool OpenerTargetSlowEnough(int targetSpeed) => targetSpeed <= StealthOpenerMaxTargetSpeed;
+
+        /// <summary>Pure (Q31): how the bot moves to its opener spot this turn - 0 keep going, 1 a straight walk (close),
+        /// 2 a new route (far, at most once a second).</summary>
+        public static int OpenerMove(float distanceToSpot, long now, long nextPathTick) =>
+            distanceToSpot <= StealthOpenerStraightWalk ? 1 : now >= nextPathTick ? 2 : 0;
 
         /// <summary>True while this bot is hidden on its way to (or about to swing) a stealth opener.</summary>
         public bool StealthOpenerActive => _openerTarget != null && Body?.IsStealthed == true;
@@ -81,8 +96,15 @@ namespace DOL.AI.Brain
             long now = GameLoop.GameLoopTime;
             if (_openerTarget != target)
             {
+                // a running monster is not stalked: fight it the ordinary way
+                if (!bot.IsStealthed && !OpenerTargetSlowEnough(target.CurrentSpeed))
+                {
+                    _openerTarget = null;
+                    return false;
+                }
                 _openerTarget = target;
                 _openerSince = now;
+                _openerNextPath = 0;
             }
             // the opener is queued and the swing not yet done: leave it be
             if (bot.IsStealthed && bot.attackComponent.AttackState && bot.TargetObject == target &&
@@ -110,9 +132,19 @@ namespace DOL.AI.Brain
             ushort heading = back ? (ushort)((target.Heading + 2048) % 4096) : target.Heading;
             Point2D spot = target.GetPointFromHeading(heading, StealthOpenerStandOff);
             Vector3 destination = new(spot.X, spot.Y, target.Z);
-            if (Vector2.DistanceSquared(new(bot.X, bot.Y), new(spot.X, spot.Y)) > 35 * 35)
+            float toSpot = Vector2.Distance(new(bot.X, bot.Y), new(spot.X, spot.Y));
+            if (toSpot > 35)
             {
-                bot.PathTo(destination, bot.MaxSpeed);
+                switch (OpenerMove(toSpot, now, _openerNextPath))
+                {
+                    case 1:
+                        bot.WalkTo(destination, bot.MaxSpeed);
+                        break;
+                    case 2:
+                        _openerNextPath = now + StealthOpenerRepathMilliseconds;
+                        bot.PathTo(destination, bot.MaxSpeed);
+                        break;
+                }
                 return true;
             }
 
