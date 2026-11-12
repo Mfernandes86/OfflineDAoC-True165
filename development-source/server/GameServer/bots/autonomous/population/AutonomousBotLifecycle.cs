@@ -788,6 +788,8 @@ namespace DOL.GS
                     Monitor.TryEnter(AutonomousBotStatusPersistence.DatabaseWriteLock, 0, ref write);
                     if (!write)
                         return false;
+                    // queued relist rows and reprices are written first, so an archive blob reads them from the database
+                    RealmExchangeWriteQueue.Flush();
                     work();
                     return true;
                 }
@@ -805,27 +807,71 @@ namespace DOL.GS
             }
         }
 
+        private sealed record ListingsToken(DbInventoryItem[] Listings, List<OfflineTrue165RelistRecord> Relists);
+
+        /// <summary>
+        /// Takes the bot's listings off the exchange and its items' relist records out of memory (their queued writes are
+        /// cancelled): the archive or retirement deletes their rows (review 2026-11-11: the records stayed in memory and
+        /// their writes failed every second). <see cref="RestoreListings"/> puts both back when the move fails.
+        /// </summary>
         public object RemoveListings(string ownerId)
         {
             DbInventoryItem[] listings = MarketCache.SearchItems(new ItemQuery { Owner = ownerId })
                 .Where(item => RealmExchangeBroker.IsExchangeOwnerLot(item.OwnerLot)).ToArray();
             foreach (DbInventoryItem item in listings)
                 MarketCache.RemoveItem(item);
-            return listings;
+            var relists = new List<OfflineTrue165RelistRecord>();
+            if (Exchange165.RelistCount > 0)
+            {
+                var ids = new HashSet<string>(listings.Select(item => item.ObjectId).Where(id => id != null), StringComparer.Ordinal);
+                try
+                {
+                    foreach (DbInventoryItem item in DOLDB<DbInventoryItem>.SelectObjects(DB.Column("OwnerID").IsEqualTo(ownerId)) ?? [])
+                        if (item?.ObjectId != null)
+                            ids.Add(item.ObjectId);
+                }
+                catch (Exception)
+                {
+                    // the listings' own records are still detached
+                }
+                relists = Exchange165.Detach(ids);
+            }
+            return new ListingsToken(listings, relists);
         }
 
         public void RestoreListings(object token)
         {
-            if (token is DbInventoryItem[] listings)
-                foreach (DbInventoryItem item in listings)
-                    MarketCache.AddItem(item);
+            if (token is not ListingsToken restored)
+                return;
+            foreach (DbInventoryItem item in restored.Listings)
+                MarketCache.AddItem(item);
+            Exchange165.Adopt(restored.Relists);
         }
 
+        /// <summary>Offers a restored bot's listings again and adopts its items' relist rows (the restore wrote them to the
+        /// database only, so a restored bot listed its failed items again and repeated its relists).</summary>
         public void AddListings(string ownerId)
         {
+            var ids = new List<string>();
             foreach (DbInventoryItem item in DOLDB<DbInventoryItem>.SelectObjects(DB.Column("OwnerID").IsEqualTo(ownerId)))
+            {
+                if (item?.ObjectId == null)
+                    continue;
+                ids.Add(item.ObjectId);
                 if (RealmExchangeBroker.IsExchangeOwnerLot(item.OwnerLot))
                     MarketCache.AddItem(GameInventoryItem.Create(item));
+            }
+            try
+            {
+                var rows = new List<OfflineTrue165RelistRecord>();
+                foreach (string[] chunk in ids.Chunk(500))
+                    rows.AddRange(DOLDB<OfflineTrue165RelistRecord>.SelectObjects(DB.Column("InventoryId").IsIn(chunk)) ?? []);
+                Exchange165.Adopt(rows);
+            }
+            catch (Exception)
+            {
+                // no relist table: nothing to adopt
+            }
         }
 
         public void OnColdChanged(long botId, string name, bool cold)

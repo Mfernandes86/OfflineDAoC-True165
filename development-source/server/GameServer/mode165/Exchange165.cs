@@ -130,6 +130,54 @@ namespace DOL.GS
         public static int RelistCount => Relists.Count;
 
         /// <summary>
+        /// A bot's items leave the world (cold archive, retirement): their records leave memory and their queued writes are
+        /// cancelled, as their rows are deleted with the bot. Returns the records taken (put back by <see cref="Adopt"/>
+        /// when the move fails).
+        /// </summary>
+        public static List<OfflineTrue165RelistRecord> Detach(IEnumerable<string> inventoryIds)
+        {
+            var taken = new List<OfflineTrue165RelistRecord>();
+            if (inventoryIds == null)
+                return taken;
+            foreach (string id in inventoryIds)
+            {
+                if (id == null || !Relists.TryRemove(id, out OfflineTrue165RelistRecord record))
+                    continue;
+                RealmExchangeWriteQueue.Cancel(record);
+                taken.Add(record);
+            }
+            return taken;
+        }
+
+        /// <summary>Relist rows that are in the database again (a bot restored from the cold archive, or a failed move put
+        /// back) come into memory. A record already in memory stays and is saved over the stored row.</summary>
+        public static int Adopt(IEnumerable<OfflineTrue165RelistRecord> rows)
+        {
+            int adopted = 0;
+            if (rows == null)
+                return 0;
+            foreach (OfflineTrue165RelistRecord row in rows)
+            {
+                if (string.IsNullOrEmpty(row?.InventoryId))
+                    continue;
+                if (Relists.TryAdd(row.InventoryId, row))
+                {
+                    adopted++;
+                    if (row.Dirty || !row.IsPersisted)
+                        RealmExchangeWriteQueue.Save(row);
+                    continue;
+                }
+                if (Relists.TryGetValue(row.InventoryId, out OfflineTrue165RelistRecord existing) && !ReferenceEquals(existing, row))
+                {
+                    existing.IsPersisted = true;
+                    existing.Dirty = true;
+                    RealmExchangeWriteQueue.Save(existing);
+                }
+            }
+            return adopted;
+        }
+
+        /// <summary>
         /// Startup: reads the relist table once and removes its orphan rows (2026-11-11 exchange audit: 249 rows pointed at
         /// items that had sold; a buyer listing such an item later skipped its discount). Only bookkeeping rows are touched,
         /// never an item: a row is an orphan when its item is no longer listed (a relist or undercut row), or, for a
