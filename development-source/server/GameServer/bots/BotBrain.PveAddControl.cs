@@ -79,7 +79,13 @@ namespace DOL.AI.Brain
             return lowest;
         }
 
-        private const long PveAddControlRetryMilliseconds = 15_000;
+        /// <summary>
+        /// Pure (Q20, veteran review 2026-11-11): how long the mezzer leaves an add alone after casting at it - just
+        /// until the cast has landed. A mez or stun that lands shows on the add (it is skipped while mezzed or immune);
+        /// a resisted one is tried again straight away instead of 15 s later.
+        /// </summary>
+        public static long AddControlRetryMilliseconds(int castTimeMilliseconds) =>
+            Math.Max(1_500, castTimeMilliseconds + 1_000);
         private const long EmergencyRecastMilliseconds = 60_000;
         private const int EmergencyAddCount = 3;
         /// <summary>A healing class keeps this much power for heals, as a real healer does, before it mezzes or hastes.</summary>
@@ -211,7 +217,7 @@ namespace DOL.AI.Brain
 
                     if (_pveAddControlRetryUntil.Count >= 32)
                         _pveAddControlRetryUntil.Remove(_pveAddControlRetryUntil.OrderBy(pair => pair.Value).First().Key);
-                    _pveAddControlRetryUntil[add] = now + PveAddControlRetryMilliseconds;
+                    _pveAddControlRetryUntil[add] = now + AddControlRetryMilliseconds(spell.CastTime);
                     // True 1.65: tanks and protection leave the add alone while the mez goes off
                     bool reserve = classic165 && isMez;
                     if (reserve)
