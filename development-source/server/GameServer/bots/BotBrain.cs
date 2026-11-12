@@ -5056,7 +5056,7 @@ namespace DOL.AI.Brain
         /// <summary>Q10 (veteran review 2026-11-11): how long one protection answer is kept.</summary>
         public const int ProtectionSearchIntervalMs = 750;
         /// <summary>... and how often an area search may find a monster running at a groupmate that has not hit anyone
-        /// yet. M5: that search is now the group fight board's one search per group every 2 s (shared by all members),
+        /// yet. M5: that search is now the group fight board's one search per group every second (shared by all members),
         /// so a tank no longer runs its own.</summary>
         public const int ProtectionAreaScanIntervalMs = 3000;
         private long _nextProtectionSearchTick;

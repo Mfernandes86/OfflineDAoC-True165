@@ -23,7 +23,9 @@ namespace DOL.AI.Brain
         /// <summary>The one area search per group (for adds running in before their first blow).</summary>
         public const int ScanRadius = 2_000;
         /// <summary>... at most this often; boards built in between re-read the NPCs the last search found.</summary>
-        public const long ScanIntervalMilliseconds = 2_000;
+        // one second (owner 2026-11-11: a tank or a guarding pet must see an add running at the healer before it lands;
+        // still one search per group, not one per member per think)
+        public const long ScanIntervalMilliseconds = 1_000;
 
         public long BuiltAt { get; init; }
         public ushort RegionId { get; init; }

@@ -26,7 +26,7 @@ namespace DOL.UnitTests
         public void OneAreaSearchPerGroupAtMostEveryTwoSeconds() => Assert.Multiple(() =>
         {
             Assert.That(GroupFightBoard.ScanRadius, Is.LessThanOrEqualTo(2_600), "never wider than the old protection search");
-            Assert.That(GroupFightBoard.ScanIntervalMilliseconds, Is.EqualTo(2_000));
+            Assert.That(GroupFightBoard.ScanIntervalMilliseconds, Is.EqualTo(1_000));
             Assert.That(GroupFightBoard.ScanIntervalMilliseconds, Is.GreaterThanOrEqualTo(GroupFightBoard.RebuildMilliseconds));
         });
 
