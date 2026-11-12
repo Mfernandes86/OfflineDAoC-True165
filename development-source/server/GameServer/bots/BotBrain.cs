@@ -464,6 +464,7 @@ namespace DOL.AI.Brain
                 // Damage is an event, so wake combat immediately without
                 // increasing the ordinary idle/travel AI cadence.
                 NextThinkTick = GameLoop.GameLoopTime;
+                WakeForAdd(ad.Attacker, Body);   // M12: an add on this bot is looked at now, not at the next 1 s check
             }
         }
 
@@ -529,6 +530,9 @@ namespace DOL.AI.Brain
                 !attacker.IsAlive || !group.IsInTheGroup(groupMember))
                 return;
 
+            // M12: a groupmate dropping low wakes the group's healers at once (also while a pull is brought back)
+            WakeHealersIfLow(group, victim, ad);
+
             // A hired tank bringing a /pull monster back to its player: the group waits for it there (True 1.65 Mode).
             if (PlayerLedPullCoordinator.IsBringingBack(groupMember, attacker))
                 return;
@@ -549,6 +553,7 @@ namespace DOL.AI.Brain
                     continue;
 
                 brain.OnGroupMemberAttacked(victim, ad);
+                brain.WakeForAdd(attacker, victim);   // M12: an add joined the fight
             }
             if (groupMember is GameBot raidVictim)
                 foreach (GameLiving member in AutonomousRealmRaid.ClaimNearbyDefenseBroadcast(raidVictim, GameLoop.GameLoopTime))

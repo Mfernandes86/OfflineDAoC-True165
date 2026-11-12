@@ -1114,6 +1114,8 @@ namespace DOL.GS.Spells
 							SendCastAnimation();
 							CastState = eCastState.Casting;
 							NotifyCompanionsOfHarmfulCast();
+							// M12: the bots fighting this caster react to the cast at once (stun, interrupt)
+							DOL.AI.Brain.BotBrain.NotifyEnemyCastStarted(Caster, Target, Spell);
 						}
 					}
 					else
