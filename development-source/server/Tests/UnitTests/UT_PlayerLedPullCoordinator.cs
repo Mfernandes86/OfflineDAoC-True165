@@ -466,6 +466,26 @@ namespace DOL.UnitTests
             Assert.That(pet.Attacks, Is.EqualTo(1));
         }
 
+        [Test] public void OwnPassiveCompanionLeavesTheGroupsPullOrderAlone_OnlyThePullerOrAPassiveGroupCancelsIt()
+        {
+            var (player, tank, damage, healer, enemy) = Party();
+            Assert.That(PlayerLedPullCoordinator.Begin(player, enemy), Does.Contain("leads"));
+            // M7: "healer passive" while the group stays aggressive - its think must not call off the tank's /pull
+            Assert.That(PlayerLedPullCoordinator.CancelPendingForPassive(player, healer), Is.False);
+            Assert.That(B(tank).Cancellations, Is.Zero);
+            Assert.That(PlayerLedPullCoordinator.IsWaiting(damage), Is.True, "the order and its wait survive the think");
+            // the pull's own puller going passive does call it off
+            Assert.That(PlayerLedPullCoordinator.CancelPendingForPassive(player, tank), Is.True);
+            Assert.That(B(tank).Cancellations, Is.EqualTo(1));
+        }
+
+        [TestCase(false, false, false)]
+        [TestCase(false, true, true)]
+        [TestCase(true, false, true)]
+        [TestCase(true, true, true)]
+        public void PassiveCancelsThePullOnlyForAPassiveGroupOrItsPuller(bool groupPassive, bool puller, bool cancels) =>
+            Assert.That(PlayerLedPullCoordinator.PassiveCancelsPull(groupPassive, puller), Is.EqualTo(cancels));
+
         [Test] public void GrindRangeReachesPastTheManualPullRadius_ManualPullKeeps2000()
         {
             var (player, tank, damage, _, enemy) = Party();

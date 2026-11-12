@@ -1171,7 +1171,7 @@ namespace DOL.AI.Brain
             GamePlayer leader = CompanionEngagementMode.PassiveLeader(bot);
             if (leader == null) return false;
             bool acted = false;
-            if (bot.Group != null) acted |= PlayerLedPullCoordinator.CancelPending(leader);
+            if (bot.Group != null) acted |= PlayerLedPullCoordinator.CancelPendingForPassive(leader, bot);
             if (_orderedPullTarget != null) { CancelOrderedPull(_orderedPullTarget); _orderedPullTarget = null; acted = true; }
             if (HasAggro) { ClearAggroList(); acted = true; }
             if (Body.IsAttacking) { Body.StopAttack(); acted = true; }

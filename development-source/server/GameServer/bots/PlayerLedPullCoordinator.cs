@@ -64,6 +64,8 @@ namespace DOL.GS
             Cancel(state.Pending, false);
             GameBot[] helpers = group.GetMembersInTheGroup().OfType<GameBot>()
                 .Where(bot => Available(bot, player) && bot.IsWithinRadius(target, range) &&
+                    // M7: a companion on its own Passive stance takes no part (it would refuse the order)
+                    CompanionEngagementMode.PassiveLeader(bot) == null &&
                     bot.Brain is BotBrain).ToArray();
             foreach (GameBot bot in helpers) bot.EnterPlayerLedGroup(player);
             if (CompanionPvpEngagement.Enemy(player, target) && helpers.Any(bot => CompanionPvpEngagement.Leader(bot) == player))
@@ -454,13 +456,22 @@ namespace DOL.GS
             GameServer.ServerRules.IsAllowedToAttack(player, target, true);
 
         /// <summary>
-        /// /passive: the player's open /pull order (and its bring-back) is called off without a message. True when one was.
+        /// Pure (M7 review 2026-11-11): a companion on passive calls off its group's open /pull only when the whole group is
+        /// on /passive, or when it is the pull's own puller. One companion set to Passive on its own ("healer passive")
+        /// leaves the group's /pull and /grind pulls alone.
         /// </summary>
-        public static bool CancelPending(GamePlayer player)
+        public static bool PassiveCancelsPull(bool groupPassive, bool companionIsPuller) => groupPassive || companionIsPuller;
+
+        /// <summary>
+        /// A passive companion's think: the player's open /pull order (and its bring-back) is called off without a message when
+        /// <see cref="PassiveCancelsPull"/> says so. True when one was.
+        /// </summary>
+        public static bool CancelPendingForPassive(GamePlayer player, GameBot companion)
         {
             if (player?.Group == null || !States.TryGetValue(player.Group, out GroupState state)) return false;
             Order order = Volatile.Read(ref state.Pending);
             if (order == null || order.Leader != player || Volatile.Read(ref order.Finished) != 0) return false;
+            if (!PassiveCancelsPull(CompanionEngagementMode.IsPassive(player), order.Tank == companion)) return false;
             Cancel(order, false);
             return true;
         }
