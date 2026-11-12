@@ -39,3 +39,20 @@ public class UT_BotRvrKnowledge165
             Is.EqualTo("we have 1 relic, quiet out there atm"));
     }
 }
+
+/// <summary>Guild hello and gratz lines (veteran-bots review M10 / rvr-social G9).</summary>
+[TestFixture]
+public class UT_BotGuildGratz165
+{
+    [Test]
+    public void GratzNamesThePlayerOrTheLevelWhenItSaysEither()
+    {
+        for (int seed = 0; seed < 20; seed++)
+        {
+            string line = AutonomousBotGuilds.GratzLine("Aldric", 24, new System.Random(seed));
+            Assert.That(line, Does.Not.Contain("{"));
+            Assert.That(line.ToLowerInvariant(), Does.StartWith("g"));
+        }
+        Assert.That(AutonomousBotGuilds.HelloChance, Is.EqualTo(0.3));
+    }
+}

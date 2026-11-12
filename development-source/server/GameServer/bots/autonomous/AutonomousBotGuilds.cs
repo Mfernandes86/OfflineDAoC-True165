@@ -117,6 +117,57 @@ namespace DOL.GS
             if (count >= 20) return;
             LoginNotices[guild.GuildID] = (start, count + 1);
             guild.NotifyBotMemberLogin(bot.Name);
+            // now and then a "hi all" in guild chat a few seconds later (veteran-bots review 2026-11-11, rvr-social G9)
+            if (Random.Shared.NextDouble() < HelloChance)
+                new ECSGameTimer(bot, _ =>
+                {
+                    if (CanTalk(bot) && GuildOf(bot.DatabaseID) == guild && guild.GetListOfOnlineMembers().Count > 0)
+                        SpeakInGuild(bot, guild, Pick(HelloLines));
+                    return 0;
+                }, 5_000 + Random.Shared.Next(15_000));
+        }
+
+        public const double HelloChance = 0.3;
+        private static readonly string[] HelloLines = ["hi all", "evening guild", "o/", "hey guild", "hi everyone", "heya"];
+        private static readonly string[] GratzLines = ["gratz!", "grats", "gz", "gratz {name}!", "grats on {level}!", "gz {name}"];
+        private static readonly ConcurrentDictionary<string, int> LastGratz = new();
+
+        /// <summary>A gratz line for a player's ding.</summary>
+        public static string GratzLine(string name, int level, Random random) =>
+            GratzLines[(random ?? Random.Shared).Next(GratzLines.Length)].Replace("{name}", name).Replace("{level}", level.ToString());
+
+        /// <summary>
+        /// A player of a guild with gamebot members gained a level: one to three online bot guildmates say gratz in guild chat
+        /// 2-6 seconds later, once per level (veteran-bots review 2026-11-11, rvr-social G9).
+        /// </summary>
+        public static void OnPlayerLevelUp(GamePlayer player)
+        {
+            try
+            {
+                Guild guild = player?.Guild;
+                if (guild == null || !Members.Values.Any(m => m.GuildID == guild.GuildID))
+                    return;
+                string key = player.InternalID ?? player.Name;
+                if (LastGratz.TryGetValue(key, out int level) && level >= player.Level)
+                    return;
+                LastGratz[key] = player.Level;
+                GameBot[] talkers = OnlineMembers(guild).Where(CanTalk).OrderBy(_ => Random.Shared.Next()).Take(1 + Random.Shared.Next(3)).ToArray();
+                var used = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                for (int index = 0; index < talkers.Length; index++)
+                {
+                    GameBot bot = talkers[index];
+                    string line = GratzLine(player.Name, player.Level, Random.Shared);
+                    if (!used.Add(line))
+                        continue;
+                    new ECSGameTimer(bot, _ =>
+                    {
+                        if (CanTalk(bot) && GuildOf(bot.DatabaseID) == guild)
+                            SpeakInGuild(bot, guild, line);
+                        return 0;
+                    }, 2_000 + index * 1_200 + Random.Shared.Next(2_500));
+                }
+            }
+            catch (Exception) { }
         }
 
         public static IEnumerable<long> MembersOf(Guild guild) =>

@@ -4546,6 +4546,8 @@ namespace DOL.GS
         public virtual void OnLevelUp(int previouslevel)
         {
             IsLevelSecondStage = false;
+            // gamebot guildmates say gratz (AutonomousBotGuilds, veteran-bots review 2026-11-11)
+            AutonomousBotGuilds.OnPlayerLevelUp(this);
             int isHardcore = 0;
             int realm = 0;
 
