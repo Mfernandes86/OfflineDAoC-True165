@@ -93,4 +93,19 @@ public class UT_RealmRaidTravelFixes
         Assert.That(DragonRallyRoute.Outside(ring, home), Is.True);
         Assert.That(DragonRallyRoute.SafeSegment(new Vector3(383305, 755494, 300), ring, home), Is.True, "the walk there stays outside the clearance");
     }
+
+    [Test]
+    public void RaidersSpreadOverAZoneCrossingWithinTheLegRadius()
+    {
+        var offsets = new System.Collections.Generic.HashSet<Vector2>();
+        for (long id = 1; id <= 300; id++)
+        {
+            Vector2 offset = AutonomousWorldBotController.CrossingSpreadOffset(id);
+            Assert.That(offset.Length(), Is.InRange(39f, AutonomousWorldBotController.CrossingSpread + 1));
+            Assert.That(AutonomousWorldBotController.CrossingSpreadOffset(id), Is.EqualTo(offset), "the same spot every time");
+            offsets.Add(offset);
+        }
+        Assert.That(offsets.Count, Is.GreaterThan(250));
+        Assert.That(AutonomousWorldBotController.CrossingSpread + 32, Is.LessThan(175), "a member at its spot still ticks the leg off");
+    }
 }

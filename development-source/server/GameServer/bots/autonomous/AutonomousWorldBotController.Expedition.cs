@@ -46,6 +46,7 @@ public sealed partial class AutonomousWorldBotController
         // gate, all-eight meetup or dead leader can hold them in another region.
         if (bot.CurrentRegionID != c.RegionId) return TravelAcrossRegions(bot);
         Vector3 post = new(c.X,c.Y,c.Z);
+        if (order.Crossing) post = CrossingPoint(bot, post);
         int arrival = order.Crossing ? 32 : 175;
         if (Vector3.DistanceSquared(new(bot.X,bot.Y,bot.Z),post) > arrival * arrival)
         {
@@ -121,6 +122,40 @@ public sealed partial class AutonomousWorldBotController
         { _expeditionSeams = null; _expeditionRouteRetry = GameLoop.GameLoopTime + 15_000; }
         SetStatus(bot, state, c.MonsterName, detail);
         return true;
+    }
+
+    /// <summary>
+    /// Each raider aims at its own spot within CrossingSpread of a zone crossing instead of the one point all 300 used
+    /// to walk to (dragon-routes M5). The spot is on the crossing's own side, so the leg still counts (a member within
+    /// 175 of the crossing, in its zone).
+    /// </summary>
+    public const float CrossingSpread = 120;
+    public static Vector2 CrossingSpreadOffset(long botId)
+    {
+        uint hash = unchecked((uint)botId * 2654435761u);
+        double angle = (hash % 360) * Math.PI / 180;
+        float radius = 40 + (hash >> 9) % 81;
+        return new((float)Math.Cos(angle) * radius, (float)Math.Sin(angle) * radius);
+    }
+
+    private Vector3 _crossingFor, _crossingSpread;
+
+    // One closest-point query and one short corridor check per crossing per bot, cached; never per tick.
+    private Vector3 CrossingPoint(GameBot bot, Vector3 seam)
+    {
+        if (_crossingFor == seam) return _crossingSpread;
+        _crossingFor = seam; _crossingSpread = seam;
+        var nav = PathfindingProvider.Instance;
+        Zone zone = bot.CurrentRegion?.GetZone((int)seam.X, (int)seam.Y);
+        if (zone == null || nav == null || !nav.IsAvailable || !nav.HasNavmesh(zone)) return seam;
+        Vector3 raw = seam + new Vector3(CrossingSpreadOffset(bot.DatabaseID), 0);
+        if (nav.GetClosestPoint(zone, raw, 32, 32, 128, nav.DefaultFilters) is Vector3 floor &&
+            Vector3.DistanceSquared(floor, seam) <= (CrossingSpread + 16) * (CrossingSpread + 16) && Math.Abs(floor.Z - seam.Z) <= 96 &&
+            // the leg is ticked off only by a member standing in the crossing's own zone
+            bot.CurrentRegion.GetZone((int)floor.X, (int)floor.Y) == zone &&
+            AutonomousZoneItinerary.HasCompleteCorridor(nav, zone, seam, floor))
+            _crossingSpread = floor;
+        return _crossingSpread;
     }
 
     private bool TravelToReinforcementWave(GameBot bot, AutonomousRealmRaid.View order, AutonomousRealmRaid.ReinforcementOrder wave)
