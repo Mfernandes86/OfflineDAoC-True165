@@ -502,9 +502,8 @@ namespace DOL.GS
                 // Removing a party must not make its count reuse a surviving
                 // party's staging slot and pile reinforcements on top of it.
                 if (raid.Support.Length + members.Length > RealmRaidRecruitmentPolicy.MaximumBots) return false;
-                int slot = Enumerable.Range(0, RealmRaidRecruitmentPolicy.MaximumParties).FirstOrDefault(candidate =>
-                    raid.Parties.Values.All(p => p.FormationSlot != candidate), -1);
-                if (slot < 0 || !TryStaging(raid, slot, out Vector3 staging) || !TryHubPost(raid, slot, out var hubPost)) return false;
+                // the first free slot whose staging and hub posts can be placed (a failed slot rests a minute)
+                if (!TryPlaceableSlot(raid, out int slot, out Vector3 staging, out Vector3 hubPost)) return false;
                 var party = new Party { Members = members, FormationSlot = slot, Staging = staging, HubPost = hubPost, Target = members.Length };
                 raid.Parties[leader.Group] = party;
                 Membership[leader.Group] = raid;
@@ -937,8 +936,8 @@ namespace DOL.GS
             lock (Sync)
             {
                 if (!Raids.TryGetValue(id, out var raid) || raid.Parties.Count >= RealmRaidRecruitmentPolicy.MaximumParties) return false;
-                int slot = Enumerable.Range(0, RealmRaidRecruitmentPolicy.MaximumParties).First(i => raid.Parties.Values.All(p => p.FormationSlot != i));
-                if (!TryStaging(raid, slot, out _) || !TryHubPost(raid, slot, out var staging))
+                // one unplaceable slot no longer blocks every later party (epic-routes 7)
+                if (!TryPlaceableSlot(raid, out int slot, out _, out Vector3 staging))
                 {
                     if (GameLoop.GameLoopTime >= raid.NextPostWarning)
                     {
@@ -965,8 +964,7 @@ namespace DOL.GS
                 if (members.Length is not (4 or 8) || raid.Support.Length + members.Length > RealmRaidRecruitmentPolicy.MaximumBots ||
                     members.Any(b => !IsEligible(b) || b.Realm != raid.Definition.Realm ||
                     Reservations.GetValueOrDefault(b.DatabaseID) != id)) return false;
-                int slot = Enumerable.Range(0, RealmRaidRecruitmentPolicy.MaximumParties).First(i => raid.Parties.Values.All(p => p.FormationSlot != i));
-                if (!TryStaging(raid, slot, out var staging) || !TryHubPost(raid, slot, out var hubPost)) return false;
+                if (!TryPlaceableSlot(raid, out int slot, out Vector3 staging, out Vector3 hubPost)) return false;
                 var party = new Party { Members = members, FormationSlot = slot, Staging = staging, HubPost = hubPost, Target = members.Length };
                 raid.Parties[group] = party;
                 Membership[group] = raid;
@@ -1234,7 +1232,10 @@ namespace DOL.GS
                     return AutonomousBotGroupCoordinator.PveCorpseDisposition.NotManaged;
                 long now = GameLoop.GameLoopTime;
                 if (!party.CorpseSince.TryGetValue(bot.DatabaseID, out CorpseWatch watch))
+                {
                     party.CorpseSince[bot.DatabaseID] = watch = new CorpseWatch { Since = now };
+                    RealmEventRecords.CountDeath(raid.Definition.Id);
+                }
                 // Bounded per-corpse wait, even during an endless nearby fight. Shared resurrection claims still select one
                 // safe caster. sh-bosses L6: a fixed 90 s held corpses nobody could raise and released corpses a resurrector
                 // was about to reach; the wait now follows who is in sight (rechecked every 15 s, one roster pass).
@@ -1288,7 +1289,8 @@ namespace DOL.GS
         /// </summary>
         public static bool IsHighEndRaidEncounter(GameNPC victim)
         {
-            if (victim is IGameEpicNpc) return true;
+            // scripted epic encounters only, not plain epic-class trash (sh-bosses M8, epic-bosses M3)
+            if (RealmRaidLootOwner.SharesWithPlayers(victim)) return true;
             lock (Sync)
                 return CompletedLoot.ContainsKey(victim) || Raids.Values.Any(r => ReferenceEquals(r.Boss, victim) ||
                     r.DungeonRoute?.FinalBosses.Contains(victim) == true);
