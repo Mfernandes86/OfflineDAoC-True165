@@ -100,7 +100,7 @@ namespace DOL.UnitTests
         }
         private static Zone Zone() => new(null, 2, "test", 0, 0, 65536, 65536, 2, false, 0, false, 0, 0, 0, 0, 0);
         [Test]
-        public void RvrPlanningView_IsSharedOnlyWithinOneNpcPhase()
+        public void RvrPlanningView_IsSharedForAShortWindowThenRebuilt()
         {
             Actor first = Bot(), second = Bot();
             first.DatabaseID = 9000000001; second.DatabaseID = 9000000002;
@@ -117,7 +117,12 @@ namespace DOL.UnitTests
                 var count = view.GetType().GetMethod("Count");
                 Assert.That(count.Invoke(view, new object[] { (ushort)0, eRealm.Albion }), Is.EqualTo((1, 1)));
                 second.Realm = eRealm.Albion;
+                // veteran review Q30: within its 0.75 s window the next NPC phase keeps the same view ...
                 AutonomousWorldBotController.PrepareRvrPlanningTick();
+                Assert.That(method.Invoke(null, null), Is.SameAs(view));
+                // ... and once it expires the view is rebuilt from the live roster
+                typeof(AutonomousWorldBotController).GetMethod("ResetRvrPlanningView", BindingFlags.NonPublic | BindingFlags.Static)
+                    .Invoke(null, null);
                 object next = method.Invoke(null, null);
                 Assert.That(next, Is.Not.SameAs(view));
                 Assert.That(count.Invoke(next, new object[] { (ushort)0, eRealm.Albion }), Is.EqualTo((2, 0)));
