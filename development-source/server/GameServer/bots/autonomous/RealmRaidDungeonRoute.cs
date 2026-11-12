@@ -200,7 +200,7 @@ namespace DOL.GS
                 // A fresh start: the chain's target kept the previous target's start, so Prince Ba'alorien
                 // inherited Prince Abdin's absence allowance and was skipped at 100% with the raid arriving (2026-10-14).
                 _targetProgressTick = _targetStartTick = now; _targetLowestHealth = _target.Health;
-                _targetClosest = float.MaxValue; _targetApproachTick = now;
+                _targetClosest = float.MaxValue; _targetApproachTick = now; _targetPresentTick = 0;
                 Hold = false; Status = "Clearing " + _target.Name;
                 return true;
             }
@@ -450,6 +450,24 @@ namespace DOL.GS
         public const int MinimumRaidersAtTarget = 8;
         public const long TargetAbsencePauseLimitMilliseconds = 20 * 60_000;
         public const float TargetApproachStepUnits = 300f;
+        // The last pulse at which 8 raiders stood by the target (0: never since it was chosen).
+        private long _targetPresentTick;
+
+        /// <summary>
+        /// The health a target must fall below to count as damaged. A target out of combat above its old low has reset
+        /// or healed: its current health becomes the mark, so the first blow of the next attempt is progress again.
+        /// </summary>
+        public static int ProgressMark(int lowest, int health, bool inCombat) =>
+            !inCombat && health > lowest ? health : lowest;
+
+        /// <summary>
+        /// Fewer than 8 raiders by the target pauses the no-damage clock for up to 20 minutes counted from the last time
+        /// 8 stood there (or from the target's start when they never did), and for as long as the raid is still closing
+        /// in. Counted from the start only, a raid that wiped 21 minutes in had its boss set aside while it walked back.
+        /// </summary>
+        public static bool AbsencePausesClock(int near, long now, long targetStart, long lastPresent, bool approaching) =>
+            near < MinimumRaidersAtTarget &&
+            (now - Math.Max(targetStart, lastPresent) < TargetAbsencePauseLimitMilliseconds || approaching);
         private int _healthSample = -1;
         private GameLiving _healthSampleTarget;
         private long _nextHealLog;
@@ -632,19 +650,24 @@ namespace DOL.GS
             if (finalDeaths) { Complete = true; Status = "Final encounter defeated"; return; }
             if (_target?.IsAlive == true && _target.ObjectState == GameObject.eObjectState.Active)
             {
+                // A target that reset (a wipe, a leash home, a heal on a kill) is measured from its new health: against the
+                // old low the returning raid showed no progress until it was below it again, and the boss was set aside
+                // while the raid was winning (Summoner Roesia skipped at 28%, 2026-10-07).
+                _targetLowestHealth = ProgressMark(_targetLowestHealth, _target.Health, _target.InCombat);
                 if (_target.Health < _targetLowestHealth) { _targetLowestHealth = _target.Health; _targetProgressTick = now; }
                 ReportHealthJump(participants, now);
                 // The no-damage clock runs only while the raid is actually at its target. A raid
                 // wiped or regrouping elsewhere skipped Prince Ba'alorien and Princess Nahemah at
-                // 100% (run 11). Paused at most 20 minutes per target, so an unreachable one still goes.
+                // 100% (run 11). Paused at most 20 minutes per absence, so an unreachable one still goes.
                 int near = participants.Count(p => p.IsAlive && p.CurrentRegionID == _region &&
                                                    p.IsWithinRadius(_target, TargetPresenceRadius));
+                if (near >= MinimumRaidersAtTarget) _targetPresentTick = now;
                 // Still closing in also pauses it: a raid walking a long way to its target is not stalled.
                 float closest = participants.Where(p => p.IsAlive && p.CurrentRegionID == _region)
                     .Select(p => (float)p.GetDistanceTo(_target)).DefaultIfEmpty(float.MaxValue).Min();
                 if (closest < _targetClosest - TargetApproachStepUnits) { _targetClosest = closest; _targetApproachTick = now; }
                 bool approaching = now - _targetApproachTick < TargetApproachStallMilliseconds;
-                if (near < MinimumRaidersAtTarget && (now - _targetStartTick < TargetAbsencePauseLimitMilliseconds || approaching))
+                if (AbsencePausesClock(near, now, _targetStartTick, _targetPresentTick, approaching))
                     _targetProgressTick = Math.Max(_targetProgressTick, now - 1_000);
                 // A tethered boss outside its tether is immune while the raid leads it home: not a stall.
                 if (_target is GameNPC tethered && AutonomousTetherReset.IsOutOfTether(tethered))
@@ -774,7 +797,7 @@ namespace DOL.GS
                 { _routeRetry[npc] = now + BlockedTargetRetryMilliseconds; continue; }
                 _target = npc; Front = Destination = approach; TargetName = npc.Name; TargetLevel = npc.Level;
                 _targetProgressTick = _targetStartTick = now; _targetLowestHealth = npc.Health;
-                _targetClosest = float.MaxValue; _targetApproachTick = now;
+                _targetClosest = float.MaxValue; _targetApproachTick = now; _targetPresentTick = 0;
                 _probeCursor = 0; _blockedSince = 0;
                 Hold = false; Status = "Clearing " + npc.Name; return;
             }
