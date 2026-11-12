@@ -15,7 +15,6 @@ namespace DOL.GS
     {
         private static readonly Logger Log = LoggerManager.Create(typeof(AutonomousTetherReset));
         private static long _nextLog;
-        private static readonly System.Collections.Concurrent.ConcurrentDictionary<GameNPC, long> StrandedSince = new();
 
         /// <summary>
         /// Run 2026-10-13: Aidon the Archwizard (Hall of the Corrupt, on the way to Summoner's Hall) stood 4,126 units
@@ -29,34 +28,19 @@ namespace DOL.GS
         // Out of its tether this long, it goes home even while fighting (run 6: Princess Nahemah fought raiders at the
         // edge of her tether for over twenty minutes, immune, while the raid tried to draw her home).
         public const long OutOfTetherLeashMilliseconds = 90_000;
-        private static readonly System.Collections.Concurrent.ConcurrentDictionary<GameNPC, long> OutOfTetherSince = new();
+        private static readonly TetherExcursionClock<GameNPC> Excursions = new();
 
         private static void LeashIfStranded(GameNPC boss)
         {
             long now = GameLoop.GameLoopTime;
             if (boss.IsReturningToSpawnPoint)
             {
-                StrandedSince.TryRemove(boss, out _);
-                OutOfTetherSince.TryRemove(boss, out _);
+                Excursions.Forget(boss);
                 return;
             }
-            long outSince = OutOfTetherSince.GetOrAdd(boss, now);
-            if (OutOfTetherSince.TryGetValue(boss, out long seen) && now - seen > 2 * OutOfTetherLeashMilliseconds)
-                OutOfTetherSince[boss] = outSince = now; // a stale entry from an earlier excursion
             bool engaged = boss.TargetObject is GameLiving foe && foe.IsAlive && boss.IsWithinRadius(foe, boss.attackComponent.AttackRange + 100);
-            bool longOut = now - outSince >= OutOfTetherLeashMilliseconds;
-            if (engaged && !longOut)
-            {
-                StrandedSince.TryRemove(boss, out _);
+            if (!Excursions.DueForLeash(boss, now, engaged))
                 return;
-            }
-            if (!longOut)
-            {
-                long since = StrandedSince.GetOrAdd(boss, now);
-                if (now - since < StrandedLeashMilliseconds) return;
-            }
-            StrandedSince.TryRemove(boss, out _);
-            OutOfTetherSince.TryRemove(boss, out _);
             (boss.Brain as StandardMobBrain)?.ClearAggroList();
             boss.StopAttack();
             boss.TargetObject = null;
@@ -83,7 +67,15 @@ namespace DOL.GS
         /// </summary>
         public static bool TryHandle(GameBot bot, GameNPC boss)
         {
-            if (bot?.IsAutonomousWorldBot != true || bot.IsPlayerLedGroup || !IsOutOfTether(boss)) return false;
+            if (bot?.IsAutonomousWorldBot != true || bot.IsPlayerLedGroup || !IsTetheredEncounter(boss)) return false;
+            if (!IsOutOfTether(boss))
+            {
+                // Back inside its tether: the next trip out starts its clocks afresh. They used to be cleared only by a
+                // leash or a walk home, so a boss that stepped out again 90-180 s after its first trip was leashed at
+                // once (dragon-fight T1).
+                Excursions.BackInside(boss);
+                return false;
+            }
             if (bot.IsCasting && bot.castingComponent?.SpellHandler?.Spell?.IsHarmful == true) bot.StopCurrentSpellcast();
             bot.StopAttack();
             (bot.Brain as BotBrain)?.RemoveFromAggroList(boss);
@@ -103,6 +95,59 @@ namespace DOL.GS
                 Log.Info($"AUTONOMOUS_TETHER_RESET boss=\"{boss.Name}\" region={boss.CurrentRegionID} bot={bot.Name} " +
                          $"leading={chased} fromSpawn={(int)boss.GetDistanceTo(boss.SpawnPoint)} tether={boss.TetherRange}");
             }
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// The two clocks of a boss outside its tether (<see cref="AutonomousTetherReset"/>): how long it has been out, and how
+    /// long it has been out with nobody fighting it in reach. Pure bookkeeping keyed by the boss, so the rule can be tested.
+    /// </summary>
+    public sealed class TetherExcursionClock<TKey> where TKey : class
+    {
+        private readonly System.Collections.Concurrent.ConcurrentDictionary<TKey, long> _outSince = new();
+        private readonly System.Collections.Concurrent.ConcurrentDictionary<TKey, long> _strandedSince = new();
+
+        public bool IsTracking(TKey boss) => _outSince.ContainsKey(boss) || _strandedSince.ContainsKey(boss);
+
+        /// <summary>The boss is inside its tether again. Lock-free reads first: this runs on bot thinks.</summary>
+        public void BackInside(TKey boss)
+        {
+            if (_outSince.ContainsKey(boss))
+                _outSince.TryRemove(boss, out _);
+            if (_strandedSince.ContainsKey(boss))
+                _strandedSince.TryRemove(boss, out _);
+        }
+
+        public void Forget(TKey boss)
+        {
+            _outSince.TryRemove(boss, out _);
+            _strandedSince.TryRemove(boss, out _);
+        }
+
+        /// <summary>
+        /// Called while the boss is outside its tether. True when it is to be leashed now: out for
+        /// <see cref="AutonomousTetherReset.OutOfTetherLeashMilliseconds"/> whatever it is doing, or out with nobody
+        /// fighting it in reach for <see cref="AutonomousTetherReset.StrandedLeashMilliseconds"/>. A leash forgets both clocks.
+        /// </summary>
+        public bool DueForLeash(TKey boss, long now, bool engaged)
+        {
+            long outSince = _outSince.GetOrAdd(boss, now);
+            if (now - outSince > 2 * AutonomousTetherReset.OutOfTetherLeashMilliseconds)
+                _outSince[boss] = outSince = now; // a stale entry from an earlier trip nobody saw end
+            bool longOut = now - outSince >= AutonomousTetherReset.OutOfTetherLeashMilliseconds;
+            if (engaged && !longOut)
+            {
+                _strandedSince.TryRemove(boss, out _);
+                return false;
+            }
+            if (!longOut)
+            {
+                long since = _strandedSince.GetOrAdd(boss, now);
+                if (now - since < AutonomousTetherReset.StrandedLeashMilliseconds)
+                    return false;
+            }
+            Forget(boss);
             return true;
         }
     }

@@ -38,5 +38,42 @@ namespace DOL.Tests
             Assert.That(main["archer"], Is.EqualTo(20));
             Assert.That(main.Count, Is.EqualTo(3));
         }
+
+        private const long Out = AutonomousTetherReset.OutOfTetherLeashMilliseconds;
+        private const long Stranded = AutonomousTetherReset.StrandedLeashMilliseconds;
+
+        [Test]
+        public void ASecondTripOutsideTheTetherStartsItsOwnClock()
+        {
+            var clock = new TetherExcursionClock<string>();
+            Assert.That(clock.DueForLeash("dragon", 0, engaged: true), Is.False);
+            Assert.That(clock.DueForLeash("dragon", Out - 1_000, engaged: true), Is.False, "Fighting in reach, not yet out long enough");
+            clock.BackInside("dragon");
+            Assert.That(clock.IsTracking("dragon"), Is.False);
+            // Out again 100 s after the first trip began: before the fix the old clock still read 100 s and leashed at once.
+            Assert.That(clock.DueForLeash("dragon", 100_000, engaged: true), Is.False);
+            Assert.That(clock.DueForLeash("dragon", 100_000 + Out - 1, engaged: true), Is.False);
+            Assert.That(clock.DueForLeash("dragon", 100_000 + Out, engaged: true), Is.True, "A long trip is still leashed");
+            Assert.That(clock.IsTracking("dragon"), Is.False, "A leash forgets both clocks");
+        }
+
+        [Test]
+        public void AStrandedBossIsLeashedAfterThirtySecondsAndFightingResetsThatClock()
+        {
+            var clock = new TetherExcursionClock<string>();
+            Assert.That(clock.DueForLeash("aidon", 0, engaged: false), Is.False);
+            Assert.That(clock.DueForLeash("aidon", Stranded - 1, engaged: false), Is.False);
+            Assert.That(clock.DueForLeash("aidon", Stranded - 1, engaged: true), Is.False, "Someone in reach again");
+            Assert.That(clock.DueForLeash("aidon", Stranded, engaged: false), Is.False, "The stranded clock restarted");
+            Assert.That(clock.DueForLeash("aidon", 2 * Stranded, engaged: false), Is.True);
+        }
+
+        [Test]
+        public void BackInsideOnAnUntrackedBossIsHarmless()
+        {
+            var clock = new TetherExcursionClock<string>();
+            clock.BackInside("nobody");
+            Assert.That(clock.IsTracking("nobody"), Is.False);
+        }
     }
 }
