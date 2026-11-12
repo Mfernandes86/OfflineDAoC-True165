@@ -65,4 +65,25 @@ public class UT_AutonomousServiceNpcClearance
         Assert.That(AutonomousServiceNpcClearance.TryResolveLandingStepOff(new Mesh { FloorShift = 90 }, TestZone, end, null, 5, out _),
             Is.False, "the floor found is far from the chosen spot");
     }
+
+    [Test]
+    public void ServiceStopSpotsAreOwnAndClearButInRange()
+    {
+        Vector3 npc = new(5_000, 5_000, 0);
+        const int range = 256;
+        var spots = new System.Collections.Generic.HashSet<(int, int)>();
+        for (long id = 1; id <= 40; id++)
+        {
+            Vector3 spot = npc + AutonomousSupplyMerchantSpace.Offset(id, 0, range);
+            Assert.That(AutonomousSupplyMerchantSpace.IsInteractionSpot(npc, spot, range - 8), Is.True,
+                "100+ from the NPC and inside the interaction range");
+            spots.Add(((int)spot.X, (int)spot.Y));
+        }
+        Assert.That(spots.Count, Is.GreaterThan(30), "bots coming in on one road no longer share one approach point");
+        Vector3 own = npc + AutonomousSupplyMerchantSpace.Offset(9, 0, range);
+        Assert.That(AutonomousSupplyMerchantSpace.IsAtOwnSpot(npc, own, own + new Vector3(20, 0, 0), range), Is.True);
+        Assert.That(AutonomousSupplyMerchantSpace.IsAtOwnSpot(npc, own, own + new Vector3(60, 0, 0), range), Is.False);
+        Assert.That(AutonomousSupplyMerchantSpace.IsAtOwnSpot(npc, npc + new Vector3(40, 0, 0), npc + new Vector3(40, 0, 0), range),
+            Is.False, "a spot on the NPC is never a stop");
+    }
 }

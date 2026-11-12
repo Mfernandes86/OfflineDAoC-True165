@@ -35,8 +35,26 @@ namespace DOL.GS
             return new(MathF.Cos(angle) * radius, MathF.Sin(angle) * radius, 0);
         }
 
+        /// <summary>GitHub #48: a bot walking to its own spot beside an ordinary service gives up the walk after this
+        /// long and uses the service where it stands (it is already inside the interaction range).</summary>
+        public const int SpotWalkLimitMs = 20_000;
+
+        /// <summary>How close to its own spot counts as there.</summary>
+        public const int SpotArrivalRadius = 32;
+
+        /// <summary>Pure: the bot stands at its resolved spot (across the ground) and the spot is a valid one.</summary>
+        public static bool IsAtOwnSpot(Vector3 center, Vector3 spot, Vector3 position, int interactionRadius) =>
+            Vector2.DistanceSquared(new(spot.X, spot.Y), new(position.X, position.Y)) <= SpotArrivalRadius * SpotArrivalRadius &&
+            IsInteractionSpot(center, position, interactionRadius);
+
         public static bool TryResolve(IPathfindingMgr nav, Region region, eRealm realm, Vector3 actor,
-            Vector3 center, long botId, int interactionRadius, out Vector3 point)
+            Vector3 center, long botId, int interactionRadius, out Vector3 point) =>
+            TryResolve(nav, region, realm, actor, center, botId, interactionRadius, null, out point);
+
+        /// <summary>As above; <paramref name="accept"/> can reject a spot (the realm exchange wants a clear view of
+        /// its broker).</summary>
+        public static bool TryResolve(IPathfindingMgr nav, Region region, eRealm realm, Vector3 actor,
+            Vector3 center, long botId, int interactionRadius, Func<Vector3, bool> accept, out Vector3 point)
         {
             point = default;
             Zone zone = region?.GetZone((int)center.X, (int)center.Y);
@@ -46,6 +64,7 @@ namespace DOL.GS
                 Vector3 desired = center + Offset(botId, attempt, interactionRadius);
                 Vector3? floor = nav.GetClosestPoint(zone, desired, 24, 24, 128, nav.DefaultFilters);
                 if (!floor.HasValue || !IsInteractionSpot(center, floor.Value, interactionRadius - 8) ||
+                    accept != null && !accept(floor.Value) ||
                     !AutonomousRendezvousNavigation.HasLocalExit(nav, zone, floor.Value) ||
                     !AutonomousRvrRally.HasRoute(region, nav, realm, actor, floor.Value)) continue;
                 point = floor.Value;
@@ -57,19 +76,32 @@ namespace DOL.GS
 
     public sealed partial class AutonomousWorldBotController
     {
-        private GameMerchant _supplySpaceMerchant;
+        private GameNPC _supplySpaceMerchant;
         private Vector3 _supplySpaceCenter;
         private Vector3? _supplySpacePoint;
         private Zone _supplySpaceOriginZone;
         private long _nextSupplySpaceSearch;
+        private long _supplySpaceWalkUntil;
+        private bool _supplySpaceGaveUp;
 
         // Returns true only when a real transaction is in range and the bot
         // is clear of the NPC. Cached per visit; no population scan per AI turn.
-        private bool ApproachSupplyMerchant(GameBot bot, GameMerchant merchant)
+        private bool ApproachSupplyMerchant(GameBot bot, GameMerchant merchant) => ApproachServiceSpot(bot, merchant, strict: true);
+
+        /// <summary>
+        /// strict (frontier supply, medallion and siege merchants): the bot waits for a spot clear of the merchant.
+        /// Otherwise (GitHub #48: every merchant, stable masters included, healers and the exchange reached through
+        /// TryRouteToNeededService): the bot, already inside the interaction range, walks once to its own spot 100+
+        /// units from the NPC (angle from its id) instead of standing on the shared approach point; with no spot
+        /// found, or not reached within 20 s, it uses the service where it stands, as before. One spot search per
+        /// visit.
+        /// </summary>
+        private bool ApproachServiceSpot(GameBot bot, GameNPC merchant, bool strict)
         {
             Vector3 center = new(merchant.X, merchant.Y, merchant.Z);
             int radius = ServerProperties.Properties.WORLD_PICKUP_DISTANCE;
-            if (AutonomousSupplyMerchantSpace.IsInteractionSpot(center, new(bot.X, bot.Y, bot.Z), radius))
+            Vector3 position = new(bot.X, bot.Y, bot.Z);
+            if (strict && AutonomousSupplyMerchantSpace.IsInteractionSpot(center, position, radius))
             {
                 bot.StopMovingOnPath();
                 bot.StopMoving();
@@ -82,6 +114,40 @@ namespace DOL.GS
                 _supplySpaceOriginZone = bot.CurrentZone;
                 _supplySpacePoint = null;
                 _nextSupplySpaceSearch = 0;
+                _supplySpaceWalkUntil = 0;
+                _supplySpaceGaveUp = false;
+            }
+            if (!strict)
+            {
+                if (_supplySpaceGaveUp)
+                    return true;
+                if (!_supplySpacePoint.HasValue)
+                {
+                    if (!AutonomousSupplyMerchantSpace.TryResolve(PathfindingProvider.Instance, bot.CurrentRegion, bot.Realm,
+                            position, center, bot.DatabaseID, radius,
+                            merchant is RealmExchangeBroker
+                                ? AutonomousZonePointApproach.ClearSightOf(PathfindingProvider.Instance, merchant.CurrentZone, center)
+                                : null, out Vector3 own))
+                    {
+                        _supplySpaceGaveUp = true;
+                        return true;
+                    }
+                    _supplySpacePoint = own;
+                    _supplySpaceWalkUntil = GameLoop.GameLoopTime + AutonomousSupplyMerchantSpace.SpotWalkLimitMs;
+                }
+                if (AutonomousSupplyMerchantSpace.IsAtOwnSpot(center, _supplySpacePoint.Value, position, radius))
+                {
+                    bot.StopMovingOnPath();
+                    bot.StopMoving();
+                    return true;
+                }
+                if (GameLoop.GameLoopTime >= _supplySpaceWalkUntil)
+                {
+                    _supplySpaceGaveUp = true;
+                    return true;
+                }
+                IssuePath(bot, _supplySpacePoint.Value, preciseArrival: true);
+                return false;
             }
             int distance = bot.GetDistanceTo(merchant);
             if (!_supplySpacePoint.HasValue && AutonomousSupplyMerchantSpace.ShouldResolveSpot(distance) &&

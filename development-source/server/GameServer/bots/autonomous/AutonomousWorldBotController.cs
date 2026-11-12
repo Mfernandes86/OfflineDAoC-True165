@@ -1285,12 +1285,15 @@ namespace DOL.GS
                 return true;
             }
 
-            if (_serviceNpc is GameMerchant supplyMerchant &&
-                FrontierSupplyMerchantPolicy.Label(supplyMerchant.TradeItems?.ItemsListID) != null &&
-                !ApproachSupplyMerchant(bot, supplyMerchant))
+            // GitHub #48: every merchant (stable masters too), healer and the exchange gets the per-bot spot beside it
+            // that frontier supply merchants already had, so bots no longer stand on the NPC the player clicks.
+            bool frontierSupply = _serviceNpc is GameMerchant supplyMerchant &&
+                FrontierSupplyMerchantPolicy.Label(supplyMerchant.TradeItems?.ItemsListID) != null;
+            if ((frontierSupply || AutonomousServiceNpcClearance.IsServiceNpc(_serviceNpc)) &&
+                !ApproachServiceSpot(bot, _serviceNpc, strict: frontierSupply))
             {
-                SetStatus(bot, $"Approaching {_serviceNpc.Name}", "Use a nearby merchant interaction spot",
-                    "Leaving room around the supply merchant", _serviceNpc.Name, destination.ZoneName);
+                SetStatus(bot, $"Approaching {_serviceNpc.Name}", "Use a nearby interaction spot",
+                    "Leaving room around the service", _serviceNpc.Name, destination.ZoneName);
                 return true;
             }
             bot.StopMovingOnPath();
