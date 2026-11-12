@@ -4884,9 +4884,10 @@ namespace DOL.AI.Brain
         {
             if (target is GamePlayer or GameBot || target.Level >= Body.Level || Body.HealthPercent < 60)
                 return true;
+            // Q9: two or more enemies on the bot, from its own attacker list (no 600-unit area search)
             int onMe = 0;
-            foreach (GameNPC npc in Body.GetNPCsInRadius(600))
-                if (npc.IsAlive && npc.TargetObject == Body && npc.InCombat && npc is not GameBot && ++onMe >= 2)
+            foreach (GameLiving attacker in Body.attackComponent.AttackerTracker.Attackers)
+                if (attacker.IsAlive && attacker.TargetObject == Body && attacker.InCombat && ++onMe >= 2)
                     return true;
             return false;
         }

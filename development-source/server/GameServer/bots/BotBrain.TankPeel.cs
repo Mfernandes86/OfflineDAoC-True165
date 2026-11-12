@@ -108,15 +108,25 @@ namespace DOL.AI.Brain
             _ => null,
         };
 
-        /// <summary>A monster in melee range is attacking this member.</summary>
-        private static bool BeingHitInMelee(GameLiving member)
+        /// <summary>
+        /// An enemy in melee range is attacking this member. Q9 (veteran review 2026-11-11): read from the member's own
+        /// attacker list (what the game already keeps) instead of a 400-unit area search per groupmate per second - and
+        /// enemy players and bots count too, so Guard and Intercept work in RvR (the area search skipped them).
+        /// </summary>
+        public static bool BeingHitInMelee(GameLiving member)
         {
-            foreach (GameNPC npc in member.GetNPCsInRadius(400))
-                if (npc.IsAlive && npc.TargetObject == member && (npc.IsAttacking || npc.InCombat) &&
-                    npc.IsWithinRadius(member, npc.MeleeAttackRange + 50) && npc is not GameBot)
+            if (member?.attackComponent == null)
+                return false;
+            foreach (GameLiving attacker in member.attackComponent.AttackerTracker.Attackers)
+                if (IsMeleeAttackerOn(attacker, member))
                     return true;
             return false;
         }
+
+        /// <summary>A live attacker that is on <paramref name="member"/>, fighting, and in melee reach of it.</summary>
+        public static bool IsMeleeAttackerOn(GameLiving attacker, GameLiving member) =>
+            attacker != null && attacker.IsAlive && attacker.TargetObject == member &&
+            (attacker.IsAttacking || attacker.InCombat) && attacker.IsWithinRadius(member, attacker.MeleeAttackRange + 50);
 
         private static bool ShieldInUse(GameBot bot) =>
             bot.ActiveWeaponSlot == eActiveWeaponSlot.Standard &&
