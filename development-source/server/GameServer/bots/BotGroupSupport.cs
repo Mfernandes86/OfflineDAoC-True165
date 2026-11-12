@@ -172,14 +172,38 @@ namespace DOL.GS
                 lock (state.Sync) state.Heals.Remove(bot);
         }
 
+        /// <summary>What a healer in an ordinary party does with its own chosen heal target when another healer of the
+        /// party already has a heal on the way to it (veteran review 2026-11-11, Q5).</summary>
+        public enum OrdinaryHealSplit { Preferred, Other, Skip }
+
+        /// <summary>Health percent the target reaches with the heals already on the way, above which a second heal on it
+        /// would mostly be wasted and the healer looks for someone else.</summary>
+        public const double SecondHealWastedPercent = 90;
+
+        /// <summary>
+        /// Pure: an ordinary bot party's heal split. The healer keeps its own triage (tank first, emergencies) - it only
+        /// moves off its target when another healer's heal already covers it: then the most hurt other member under 80%
+        /// in range, or no heal this think. A target still short after the heals on the way keeps the second heal.
+        /// </summary>
+        public static OrdinaryHealSplit ChooseOrdinaryHealSplit(bool preferredHasIncoming, double preferredProjected,
+            double bestOtherProjected) =>
+            !preferredHasIncoming || preferredProjected < SecondHealWastedPercent ? OrdinaryHealSplit.Preferred :
+            bestOtherProjected < 80 ? OrdinaryHealSplit.Other : OrdinaryHealSplit.Skip;
+
         public static GameLiving ReserveHeal(GameBot bot, Spell spell, GameLiving preferred)
         {
-            if ((!CompanionRaid.IsMember(bot) && !AutonomousRealmRaid.HasSharedSupport(bot)) || !spell.IsHealing || spell.Target != eSpellTarget.REALM || spell.IsInstantCast || spell.Duration > 0)
+            if (!spell.IsHealing || spell.Target != eSpellTarget.REALM || spell.IsInstantCast || spell.Duration > 0)
+                return preferred;
+            bool sharedSupport = CompanionRaid.IsMember(bot) || AutonomousRealmRaid.HasSharedSupport(bot);
+            // Q5: every bot party shares heal claims, not only raids (two healers of an 8-man landed on the same target)
+            if (!sharedSupport && !(bot.Group?.MemberCount > 1))
                 return preferred;
             object scope = Scope(bot);
             if (scope == null)
                 return preferred;
             State state = States.GetOrCreateValue(scope);
+            if (!sharedSupport)
+                return ReserveOrdinaryHeal(bot, spell, preferred, state, scope);
             int range = bot.castingComponent.CalculateSpellRange(spell);
             var candidates = AutonomousRealmRaid.SupportMembers(bot).Concat(AutonomousRealmRaid.SupportPets(bot, range)).Concat(
                 TemporaryCompanionPetHealing.TriageTargets(bot, range).Cast<GameLiving>()).Distinct().ToArray();
@@ -204,6 +228,62 @@ namespace DOL.GS
                 if (best != null)
                     state.Heals[bot] = new(best, spell, now, now + Math.Clamp(spell.CastTime + 500, 1000, 15000));
                 return best;
+            }
+        }
+
+        private static double IncomingHeal(State state, GameLiving target)
+        {
+            double incoming = 0;
+            foreach (var claim in state.Heals)
+                if (claim.Value.Target == target)
+                    incoming += Math.Max(0, GameBot.HealAmount(claim.Value.Spell, target));
+            return incoming;
+        }
+
+        /// <summary>The ordinary party's split (ChooseOrdinaryHealSplit): the bot's own triage target unless another
+        /// healer's heal already covers it. The preferred target may be out of range (the healer walks to it).</summary>
+        private static GameLiving ReserveOrdinaryHeal(GameBot bot, Spell spell, GameLiving preferred, State state, object scope)
+        {
+            lock (state.Sync)
+            {
+                long now = GameLoop.GameLoopTime;
+                foreach (var entry in state.Heals.ToArray())
+                    if (entry.Value.Expires <= now || !entry.Key.IsAlive || !ReferenceEquals(AutonomousRealmRaid.SupportScope(entry.Key), scope) ||
+                        now - entry.Value.Started > 500 && entry.Key.castingComponent.SpellHandler?.Spell != entry.Value.Spell)
+                        state.Heals.Remove(entry.Key);
+                state.Heals.Remove(bot);
+                long expires = now + Math.Clamp(spell.CastTime + 500, 1000, 15000);
+                bool preferredHasIncoming = false;
+                foreach (var claim in state.Heals)
+                    if (claim.Value.Target == preferred) { preferredHasIncoming = true; break; }
+                double preferredProjected = preferredHasIncoming
+                    ? ProjectedHealthPercent(preferred.Health, preferred.MaxHealth, IncomingHeal(state, preferred))
+                    : preferred.HealthPercent;
+                GameLiving other = null;
+                double otherProjected = double.MaxValue;
+                if (preferredHasIncoming && preferredProjected >= SecondHealWastedPercent)
+                {
+                    int range = bot.castingComponent.CalculateSpellRange(spell);
+                    foreach (GameLiving member in AutonomousRealmRaid.SupportMembers(bot))
+                    {
+                        if (member == null || member == preferred || !member.IsAlive ||
+                            member.CurrentRegionID != bot.CurrentRegionID || member.HealthPercent >= 80 ||
+                            !bot.IsWithinRadius(member, range)) continue;
+                        double projected = ProjectedHealthPercent(member.Health, member.MaxHealth, IncomingHeal(state, member));
+                        if (projected < otherProjected) { other = member; otherProjected = projected; }
+                    }
+                }
+                switch (ChooseOrdinaryHealSplit(preferredHasIncoming, preferredProjected, otherProjected))
+                {
+                    case OrdinaryHealSplit.Preferred:
+                        state.Heals[bot] = new(preferred, spell, now, expires);
+                        return preferred;
+                    case OrdinaryHealSplit.Other:
+                        state.Heals[bot] = new(other, spell, now, expires);
+                        return other;
+                    default:
+                        return null;
+                }
             }
         }
     }
