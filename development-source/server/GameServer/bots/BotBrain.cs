@@ -2710,10 +2710,7 @@ namespace DOL.AI.Brain
                 // never played.
                 // A Skald has no endurance song: its fight chant is the group damage add (Chant of the Brawl ... Chant of
                 // Blood; Prima: open with the damage-add song and keep fighting under it). Before, it played nothing in a fight.
-                bool knowsDamageAddSong = (bot.MiscSpells ?? []).Concat(bot.InstantMiscSpells ?? []).Any(s => s != null &&
-                    s.Level <= bot.Level && s.IsPulsing && s.SpellType == eSpellType.DamageAdd);
-                eSpellType? fightSong = CompanionOptions165.Song(bot, 1) ??
-                    (knowsDamageAddSong ? eSpellType.DamageAdd : eSpellType.EnduranceRegenBuff);
+                eSpellType? fightSong = CompanionOptions165.Song(bot, 1) ?? DefaultFightSong(bot);
                 ECSPulseEffect playing = Body.effectListComponent.GetPulseEffects().FirstOrDefault(effect => !effect.IsEnding && !effect.IsEnded &&
                     effect.SpellHandler?.Spell is Spell s && s.IsPulsing && !s.IsHarmful && IsMaintainableClassBuff(s));
                 bool knowsFightSong = (bot.MiscSpells ?? []).Concat(bot.InstantMiscSpells ?? []).Any(s => s != null &&
@@ -2792,6 +2789,10 @@ namespace DOL.AI.Brain
                 songsByType.Keys, activeType,
                 audience.Any(member => member.effectListComponent.GetSpellEffects().Any(effect =>
                     effect.SpellHandler?.Spell?.SpellType == eSpellType.PowerRegenBuff && effect.SpellHandler.Caster != bot)));
+            // Q23: in a fight, the song that fits the group (a Minstrel's power song for casters, a second Skald's speed or
+            // regeneration) when known - the same song the fight-song start above looks for
+            if (immediateCombat && DefaultFightSong(bot) is var groupFightSong && songsByType.ContainsKey(groupFightSong))
+                wanted = groupFightSong;
             // the player's choice for this situation, for a hired performer (CompanionOptions165, owner 2026-11-05)
             if (CompanionOptions165.Song(bot, immediateCombat ? 1 : _songTraveling ? 3 : 2) is { } picked && songsByType.ContainsKey(picked))
                 wanted = picked;
@@ -3201,6 +3202,51 @@ namespace DOL.AI.Brain
         public static bool MeleeBuffHelps(ICharacterClass cls) =>
             cls == null || cls.ClassType != eClassType.ListCaster &&
             BotPartyRoles.For((eCharacterClass)cls.ID) != BotPartyRole.Support;
+
+        private eSpellType _cachedFightSong;
+        private long _cachedFightSongUntil;
+
+        /// <summary>Q23: the fight song for this performer's group (BotSongTwistPolicy.DefaultFightSong), worked out at
+        /// most every 2 s.</summary>
+        private eSpellType DefaultFightSong(GameBot bot)
+        {
+            long now = GameLoop.GameLoopTime;
+            if (now < _cachedFightSongUntil)
+                return _cachedFightSong;
+            _cachedFightSongUntil = now + 2_000;
+            return _cachedFightSong = WorkOutFightSong(bot);
+        }
+
+        private eSpellType WorkOutFightSong(GameBot bot)
+        {
+            var known = new HashSet<eSpellType>();
+            foreach (Spell s in (bot.MiscSpells ?? []).Concat(bot.InstantMiscSpells ?? []))
+                if (s != null && s.Level <= bot.Level && s.IsPulsing)
+                    known.Add(s.SpellType);
+            var cls = (eCharacterClass)bot.CharacterClass.ID;
+            int others = 0, powerUsers = 0;
+            bool anotherSkald = false;
+            if (bot.Group is Group group && cls is eCharacterClass.Minstrel or eCharacterClass.Skald)
+            {
+                foreach (GameLiving member in group.GetMembersInTheGroup())
+                {
+                    if (member == null || member == bot || !member.IsAlive || !bot.IsWithinRadius(member, 2000))
+                        continue;
+                    others++;
+                    ICharacterClass memberClass = member switch { GameBot b => b.CharacterClass, GamePlayer p => p.CharacterClass, _ => null };
+                    if (memberClass == null)
+                        continue;
+                    var memberId = (eCharacterClass)memberClass.ID;
+                    if (memberClass.ClassType == eClassType.ListCaster || BotPartyRoles.For(memberId) == BotPartyRole.Support)
+                        powerUsers++;
+                    // the Skald with the lowest object id keeps the damage chant
+                    if (cls == eCharacterClass.Skald && memberId == eCharacterClass.Skald && member.ObjectID < bot.ObjectID)
+                        anotherSkald = true;
+                }
+            }
+            return BotSongTwistPolicy.DefaultFightSong(cls, known, BotSongTwistPolicy.CasterHeavy(powerUsers, others),
+                anotherSkald, bot.CurrentRegion?.IsRvR == true);
+        }
 
         private bool CastCoordinatedBuff(Spell spell, bool? queued = null)
         {

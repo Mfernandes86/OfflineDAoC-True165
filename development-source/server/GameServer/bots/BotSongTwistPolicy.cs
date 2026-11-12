@@ -139,6 +139,31 @@ namespace DOL.GS
                 ?? (available.Contains(eSpellType.SpeedEnhancement) ? eSpellType.SpeedEnhancement : null);
         }
 
+        /// <summary>
+        /// Pure (Q23, veteran review 2026-11-11): the song a performer holds in a fight when its player chose none.
+        /// A Minstrel in a caster-heavy group holds the power song (casters run dry first); a second Skald does not double
+        /// the first one's damage chant - it plays speed in RvR and a regeneration chant in PvE. Otherwise as before: the
+        /// damage chant when known, else the endurance song.
+        /// </summary>
+        public static eSpellType DefaultFightSong(eCharacterClass characterClass, ICollection<eSpellType> known,
+            bool casterHeavyGroup, bool anotherSkaldChants, bool rvr)
+        {
+            if (characterClass == eCharacterClass.Minstrel && casterHeavyGroup && known.Contains(eSpellType.PowerRegenBuff))
+                return eSpellType.PowerRegenBuff;
+            if (characterClass == eCharacterClass.Skald && anotherSkaldChants)
+            {
+                if (rvr && known.Contains(eSpellType.SpeedEnhancement))
+                    return eSpellType.SpeedEnhancement;
+                foreach (eSpellType regen in new[] { eSpellType.HealthRegenBuff, eSpellType.PowerRegenBuff, eSpellType.EnduranceRegenBuff })
+                    if (known.Contains(regen))
+                        return regen;
+            }
+            return known.Contains(eSpellType.DamageAdd) ? eSpellType.DamageAdd : eSpellType.EnduranceRegenBuff;
+        }
+
+        /// <summary>Pure (Q23): at least half of the other groupmates (two or more) are casters or healers.</summary>
+        public static bool CasterHeavy(int powerUsers, int others) => others >= 2 && powerUsers * 2 >= others;
+
         /// <summary>The one chant a Paladin holds (owner 2026-10-30: endurance in a fight), grouped or solo.</summary>
         public static eSpellType PaladinHold(ICollection<eSpellType> available) =>
             new[] { eSpellType.EnduranceRegenBuff, eSpellType.DamageAdd, eSpellType.SpecArmorFactorBuff, eSpellType.CombatHeal }
