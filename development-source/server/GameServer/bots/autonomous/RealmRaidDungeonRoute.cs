@@ -80,6 +80,22 @@ namespace DOL.GS
         private long _musterSince, _nextMusterLog, _musterEngagedTick;
         private bool _musterEngaged;
         private float _musterKeepOut;
+        // The muster target was seen in combat since the last (re-)muster, and since when it is out of combat again.
+        private bool _musterSawCombat;
+        private long _musterOutOfCombatSince;
+        private int _musterWipes;
+
+        /// <summary>
+        /// Fights with a final encounter that ended with the boss back out of combat: wiped (or broken-off) attempts on the
+        /// final. Read-only for the raid, which ends an event after repeated wipes.
+        /// </summary>
+        public int FinalWipes { get; private set; }
+
+        /// <summary>A boss that was fought and has been out of combat for two pulses (10 s) is a wiped attempt.</summary>
+        public const long WipeConfirmMilliseconds = 10_000;
+
+        public static bool WipeConfirmed(bool sawCombat, long outOfCombatSince, long now) =>
+            sawCombat && outOfCombatSince > 0 && now - outOfCombatSince >= WipeConfirmMilliseconds;
 
         public const long TargetNoProgressMilliseconds = 5 * 60_000;
         public const long BlockedTargetRetryMilliseconds = 15 * 60_000;
@@ -331,12 +347,13 @@ namespace DOL.GS
         }
 
         /// <summary>
-        /// Raiders a final encounter waits for before it is pulled: half of the living raid, at least
-        /// <see cref="MinimumRaidersAtTarget"/> and at most 150; after 20 minutes of mustering a third will do.
+        /// Raiders a final encounter waits for before it is pulled: half of the raid's roster, at least
+        /// <see cref="MinimumRaidersAtTarget"/> and at most 150; after 20 minutes of mustering a third will do. The roster,
+        /// not the living: after a wipe with 30 survivors, half of the living let 15 go back in while the dead walked.
         /// </summary>
-        public static int FinalMusterNeeded(int livingRaiders, long musterMilliseconds) =>
+        public static int FinalMusterNeeded(int raiders, long musterMilliseconds) =>
             Math.Max(MinimumRaidersAtTarget, Math.Min(FinalMusterMaximum,
-                (int)(livingRaiders * (musterMilliseconds >= FinalMusterPatienceMilliseconds ? 0.33 : 0.5))));
+                (int)(raiders * (musterMilliseconds >= FinalMusterPatienceMilliseconds ? 0.33 : 0.5))));
         public const int FinalMusterMaximum = 150;
         public const long FinalMusterPatienceMilliseconds = 20 * 60_000;
         public const int FinalMusterRadius = 1_500;
@@ -365,7 +382,8 @@ namespace DOL.GS
         /// and Legion reset to full health a minute after the last raider fell. A final encounter not yet in a
         /// fight now waits at a muster point on the walked approach, outside its aggro range, until enough of
         /// the raid stands there (<see cref="FinalMusterNeeded"/>); then the whole muster goes in together. After a
-        /// wipe the boss leaves combat and the raid musters again. True while the raid is holding.
+        /// wipe the boss leaves combat and the raid musters again at once: arrivals are held at the muster point instead
+        /// of walking one by one into a boss at full health (the old two-minute grace held nobody). True while holding.
         /// </summary>
         private bool MusterForFinal(GameLiving[] participants, long now)
         {
@@ -374,6 +392,9 @@ namespace DOL.GS
                 _musterTarget = _target;
                 _musterSince = now;
                 _musterEngaged = false;
+                _musterSawCombat = false;
+                _musterOutOfCombatSince = 0;
+                _musterWipes = 0;
                 RealmRaidFormation.ClearKeepOut(_musterPoint);
                 int aggro = AggroRangeOf(_target);
                 _musterKeepOut = MusterKeepOutRadius(aggro);
@@ -381,19 +402,40 @@ namespace DOL.GS
                 RealmRaidFormation.SetKeepOut(_musterPoint, new(_target.X, _target.Y, _target.Z), _musterKeepOut);
             }
             if (_target.InCombat)
-                return false; // a fight in progress is never interrupted
-            // The raid needs time to cross from the muster point to the boss (run 5: the engage repeated every ten
-            // seconds while Govannon was still out of combat); only after that is "out of combat" a wipe.
-            if (_musterEngaged && now - _musterEngagedTick < FinalEngageGraceMilliseconds)
-                return false;
-            if (_musterEngaged)
             {
-                // Out of combat after the pull: wiped or broke off. Muster again from scratch.
+                // A fight in progress is never interrupted, and the raid joins it (a pull by the first arrivals left the
+                // rest standing at the muster point).
+                _musterSawCombat = true;
+                _musterOutOfCombatSince = 0;
+                Destination = Front;
+                return false;
+            }
+            if (_musterSawCombat)
+            {
+                // Fought and out of combat again: wiped or broken off, once confirmed over two pulses.
+                if (_musterOutOfCombatSince == 0) _musterOutOfCombatSince = now;
+                if (!WipeConfirmed(_musterSawCombat, _musterOutOfCombatSince, now))
+                    return false;
+                _musterWipes++;
+                if (_finalTypes.Contains(_target.GetType().Name)) FinalWipes++;
+                log.Warn($"REALM_EXPEDITION_ENGAGE_WIPED region={_region} target=\"{_target.Name}\" health={_target.HealthPercent} " +
+                         $"wipes={_musterWipes} finalWipes={FinalWipes} alive={participants.Count(p => p.IsAlive)} roster={participants.Length}");
+                _musterSawCombat = false;
+                _musterOutOfCombatSince = 0;
+                _musterEngaged = false;
+                _musterSince = now;
+            }
+            else if (_musterEngaged)
+            {
+                // The raid needs time to cross from the muster point to the boss (run 5: the engage repeated every ten
+                // seconds while Govannon was still out of combat). A pull that never reached a fight musters again.
+                if (now - _musterEngagedTick < FinalEngageGraceMilliseconds)
+                    return false;
                 _musterEngaged = false;
                 _musterSince = now;
             }
             int living = participants.Count(p => p.IsAlive);
-            int needed = FinalMusterNeeded(living, now - _musterSince);
+            int needed = FinalMusterNeeded(participants.Length, now - _musterSince);
             var point = new Point3D((int)_musterPoint.X, (int)_musterPoint.Y, (int)_musterPoint.Z);
             // Only raiders at the muster point count, never those standing by the boss: anyone within 2,000 of it counted
             // before, so the first arrivals inside its reach filled the muster themselves.

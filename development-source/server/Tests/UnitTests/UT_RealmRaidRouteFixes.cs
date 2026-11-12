@@ -54,6 +54,21 @@ namespace DOL.UnitTests
             Assert.That(RealmRaidDungeonRoute.MusterKeepOutRadius(aggro), Is.EqualTo(keepOut));
         }
 
+        // The re-muster after a wipe asks for half of the roster, not half of whoever is alive at that moment.
+        [TestCase(300, 0, 150)]
+        [TestCase(60, 0, 30)]     // 60 in the roster: 30, even if only 10 are alive just after the wipe
+        [TestCase(300, 20 * 60_000, 99)]
+        public void ReMusterIsBasedOnTheRoster(int roster, long mustering, int needed) =>
+            Assert.That(RealmRaidDungeonRoute.FinalMusterNeeded(roster, mustering), Is.EqualTo(needed));
+
+        // A boss that was fought and has been out of combat for two pulses is a wiped attempt.
+        [TestCase(true, 100_000, 110_000, true)]
+        [TestCase(true, 100_000, 105_000, false)]  // one pulse out of combat: not yet
+        [TestCase(true, 0, 110_000, false)]        // still in combat
+        [TestCase(false, 100_000, 200_000, false)] // never fought since the muster: the raid is still crossing
+        public void AWipeIsTheBossBackOutOfCombatAfterAFight(bool sawCombat, long outSince, long now, bool wiped) =>
+            Assert.That(RealmRaidDungeonRoute.WipeConfirmed(sawCombat, outSince, now), Is.EqualTo(wiped));
+
         [Test]
         public void MusterPostsNeverLandInsideTheKeepOutCircle()
         {
