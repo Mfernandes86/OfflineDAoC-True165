@@ -197,16 +197,82 @@ namespace DOL.GS
             double value = style.GrowthRate;
             if (bot?.Styles == null || style.ID == 0)
                 return value;
-            foreach (Style next in bot.Styles)
+            // M1 (veteran review 2026-11-11): the best follow-up comes from the bot's style-chain table, built once per
+            // style list and level, instead of comparing every style against every other on each swing.
+            if (ChainsFor(bot).TryGetValue(style.ID, out FollowUps followUps))
             {
-                if (next == null || next.OpeningRequirementType != Style.eOpening.Offensive ||
-                    next.OpeningRequirementValue != style.ID || next.Level > bot.Level ||
-                    !mayTaunt && ThreatSign(next) > 0)
-                    continue;
-                value = System.Math.Max(value, (style.GrowthRate + next.GrowthRate) / 2);
+                double next = mayTaunt ? followUps.Any : followUps.NoTaunt;
+                if (!double.IsNaN(next))
+                    value = System.Math.Max(value, (style.GrowthRate + next) / 2);
             }
             return value;
         }
+
+        /// <summary>The best follow-up growth of one opener: with taunt follow-ups, and without them (NaN: none).</summary>
+        public readonly record struct FollowUps(double Any, double NoTaunt);
+
+        /// <summary>The style-chain table of one bot: opener style ID to its best trained follow-ups.</summary>
+        public sealed class StyleChains
+        {
+            internal System.Collections.Generic.List<Style> Source;
+            internal int Count;
+            internal int Level;
+            internal System.Collections.Generic.Dictionary<int, FollowUps> Table;
+        }
+
+        /// <summary>Pure: the chain table for a style list at a level (follow-ups the bot has not trained are left out).</summary>
+        public static System.Collections.Generic.Dictionary<int, FollowUps> BuildChains(
+            System.Collections.Generic.IEnumerable<Style> styles, int level)
+        {
+            var table = new System.Collections.Generic.Dictionary<int, FollowUps>();
+            if (styles == null)
+                return table;
+            foreach (Style next in styles)
+            {
+                if (next == null || next.OpeningRequirementType != Style.eOpening.Offensive ||
+                    next.OpeningRequirementValue == 0 || next.Level > level)
+                    continue;
+                if (!table.TryGetValue(next.OpeningRequirementValue, out FollowUps current))
+                    current = new FollowUps(double.NaN, double.NaN);
+                double any = double.IsNaN(current.Any) ? next.GrowthRate : System.Math.Max(current.Any, next.GrowthRate);
+                double noTaunt = current.NoTaunt;
+                if (ThreatSign(next) <= 0)
+                    noTaunt = double.IsNaN(noTaunt) ? next.GrowthRate : System.Math.Max(noTaunt, next.GrowthRate);
+                table[next.OpeningRequirementValue] = new FollowUps(any, noTaunt);
+            }
+            return table;
+        }
+
+        private static System.Collections.Generic.Dictionary<int, FollowUps> ChainsFor(GameBot bot)
+        {
+            StyleChains chains = bot.StyleChainTable;
+            System.Collections.Generic.List<Style> styles = bot.Styles;
+            if (chains == null || chains.Source != styles || chains.Count != styles.Count || chains.Level != bot.Level)
+                bot.StyleChainTable = chains = new StyleChains
+                {
+                    Source = styles, Count = styles.Count, Level = bot.Level, Table = BuildChains(styles, bot.Level),
+                };
+            return chains.Table;
+        }
+
+        /// <summary>Grouped melee under this much endurance keeps the rest for a peel, a stun or a needed taunt.</summary>
+        public const int EnduranceReservePercent = 30;
+        /// <summary>Under this much endurance (grouped, in reserve) the bot swings without a style at all.</summary>
+        public const int EnduranceReservePlainSwingPercent = 15;
+        /// <summary>A target under this much health is finished with whatever is left.</summary>
+        public const int EnduranceReserveFinishTargetPercent = 25;
+
+        /// <summary>
+        /// Pure (M1; Prima, Mercenary: keep some endurance to pull an enemy off a friend; Armsman solo: spend freely): the
+        /// endurance reserve applies to grouped melee under 30% endurance, unless the target is nearly dead.
+        /// </summary>
+        public static bool EnduranceReserveApplies(bool grouped, int endurancePercent, int targetHealthPercent) =>
+            grouped && endurancePercent < EnduranceReservePercent && targetHealthPercent >= EnduranceReserveFinishTargetPercent;
+
+        /// <summary>Pure: what the reserve is for - a stun the rules asked for (a peel or an interrupt), or a taunt the tank
+        /// needs because the monster is not on it.</summary>
+        public static bool ReserveSpendsOn(bool stunStyle, bool tauntStyle, bool targetOnBot) =>
+            stunStyle || tauntStyle && !targetOnBot;
 
         public static bool Better(Style candidate, Style current) => current == null ||
             candidate.GrowthRate > current.GrowthRate ||
@@ -254,13 +320,20 @@ namespace DOL.GS
             bool mayTaunt = MayTaunt(bot);
             Style queued = bot.styleComponent.NextCombatStyle;
             GameLiving target = bot.TargetObject as GameLiving;
+            // M1: grouped and low on endurance, a style queued earlier keeps its place only when it is what the reserve
+            // is for (a wanted stun, a taunt the tank needs); otherwise the cheap choice below
+            bool inReserve = bot.Group?.MemberCount > 1 &&
+                EnduranceReserveApplies(true, bot.EndurancePercent, target?.HealthPercent ?? 100);
             if (preserveQueued && Usable(bot, queued, lastAttack) && (mayTaunt || ThreatSign(queued) <= 0) &&
-                (!IsStunStyle(queued) || StunWanted(bot, target, lastAttack))) return queued;
+                (!IsStunStyle(queued) || StunWanted(bot, target, lastAttack)) &&
+                (!inReserve || queued.StealthRequirement ||
+                 ReserveSpendsOn(IsStunStyle(queued), ThreatSign(queued) > 0, target?.TargetObject == bot))) return queued;
             bool detaunt = ShouldDetaunt(bot);
             Style best = null;
             double bestValue = 0;
             Style detauntStyle = null;
             Style anytime = null;
+            Style cheapest = null;
             Style stealthOpener = null;
             bool? stunWanted = null;
             foreach (Style style in bot.Styles)
@@ -282,9 +355,17 @@ namespace DOL.GS
                     best = style;
                     bestValue = value;
                 }
+                if (threat <= 0 && !IsStunStyle(style) &&
+                    (cheapest == null || style.EnduranceCost < cheapest.EnduranceCost ||
+                     style.EnduranceCost == cheapest.EnduranceCost && style.GrowthRate > cheapest.GrowthRate))
+                    cheapest = style;
                 if (SavageBotCombatPolicy.IsReliableAnytimeStyle(style) && Better(style, anytime)) anytime = style;
             }
             bot.styleComponent.NextCombatBackupStyle = anytime;
+            if (stealthOpener == null && detauntStyle == null && best != null && inReserve &&
+                !ReserveSpendsOn(IsStunStyle(best), ThreatSign(best) > 0, target?.TargetObject == bot))
+                // M1: grouped and low on endurance - the cheap style, or a plain swing once under 15%
+                return bot.EndurancePercent >= EnduranceReservePlainSwingPercent ? cheapest : null;
             return stealthOpener ?? detauntStyle ?? best;
         }
     }

@@ -2436,6 +2436,9 @@ namespace DOL.GS
 
         private BotPlaybook _playbook;
 
+        /// <summary>M1: the style-chain table (BotMeleeStylePolicy), rebuilt when the style list or the level changes.</summary>
+        internal BotMeleeStylePolicy.StyleChains StyleChainTable;
+
         /// <summary>
         /// M1 (veteran review 2026-11-11): the bot's playbook - its attack spell order, damage types and pull spell - built
         /// once after each spell-list change (SortSpells clears it) or level change, then read on every cast decision.
