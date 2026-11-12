@@ -378,7 +378,8 @@ public static class AutonomousPetSupport
         if (owner is GameBot bonedancerPlanBot && characterClass == eCharacterClass.Bonedancer)
             bonedancerPlanBot.EnsureBonedancerFocusedSpecPlan();
 
-        bool defensiveOnlyPet = IsDefensiveOnlyPetClass(characterClass, owner is GameBot && owner.Group?.MemberCount > 1) ||
+        bool defensiveOnlyPet = IsDefensiveOnlyPetClass(characterClass, owner is GameBot && owner.Group?.MemberCount > 1,
+                                    characterClass == eCharacterClass.Druid && IsNatureDruid(owner)) ||
                                 owner is not GameBot && characterClass == eCharacterClass.Mentalist;
 
         IControlledBrain petBrain = owner.ControlledBrain;
@@ -1067,7 +1068,24 @@ public static class AutonomousPetSupport
     }
 
     public static bool IsDefensiveOnlyPetClass(eCharacterClass characterClass, bool groupedBot = false) =>
-        characterClass == eCharacterClass.Druid || characterClass == eCharacterClass.Minstrel && !groupedBot;
+        IsDefensiveOnlyPetClass(characterClass, groupedBot, false);
+
+    /// <summary>
+    /// Q24 (veteran review 2026-11-11; Prima, Druid: the Nature Druid's summoned pet does its fighting): a Nature-spec
+    /// Druid's pet attacks; Regrowth and Nurture Druids keep theirs on defence as before.
+    /// </summary>
+    public static bool IsDefensiveOnlyPetClass(eCharacterClass characterClass, bool groupedBot, bool natureDruid) =>
+        characterClass == eCharacterClass.Druid && !natureDruid || characterClass == eCharacterClass.Minstrel && !groupedBot;
+
+    /// <summary>A Druid built for Nature: its Nature template, or Nature trained above 1 and at least as high as both
+    /// Regrowth and Nurture.</summary>
+    public static bool IsNatureDruid(GameLiving owner) => owner is GameBot bot &&
+        bot.CharacterClass?.ID == (int)eCharacterClass.Druid &&
+        (bot.BotSpec?.SpecType == eSpecType.NatureDruid ||
+         NatureSpecced(bot.GetBaseSpecLevel(Specs.Nature), bot.GetBaseSpecLevel(Specs.Regrowth), bot.GetBaseSpecLevel(Specs.Nurture)));
+
+    /// <summary>Pure (Q24).</summary>
+    public static bool NatureSpecced(int nature, int regrowth, int nurture) => nature > 1 && nature >= regrowth && nature >= nurture;
 
     /// <summary>
     /// Five-to-thirty second pet shields and procs are combat preparations, not

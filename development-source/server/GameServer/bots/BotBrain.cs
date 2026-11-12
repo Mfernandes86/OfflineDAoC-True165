@@ -856,7 +856,8 @@ namespace DOL.AI.Brain
         }
 
         private bool UsesDefensiveOnlyPet => BotBody?.CharacterClass != null &&
-            AutonomousPetSupport.IsDefensiveOnlyPetClass((eCharacterClass)BotBody.CharacterClass.ID, BotBody.Group?.MemberCount > 1);
+            AutonomousPetSupport.IsDefensiveOnlyPetClass((eCharacterClass)BotBody.CharacterClass.ID, BotBody.Group?.MemberCount > 1,
+                BotBody.CharacterClass.ID == (int)eCharacterClass.Druid && AutonomousPetSupport.IsNatureDruid(BotBody));
 
         // Class role, not pet ownership: includes Runemaster/Wizard as well as
         // summoners. Melee hybrids and archers retain their own combat policy.
