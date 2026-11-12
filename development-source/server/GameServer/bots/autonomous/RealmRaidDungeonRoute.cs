@@ -88,6 +88,9 @@ namespace DOL.GS
         // position the target was proven from. The muster point lies on the way back toward it.
         private Vector3 _approachFrom;
         private bool _hasApproachFrom;
+        // Before the first target: when 8 raiders first stood formed inside, and whether a target was ever chosen.
+        private long _entryWaitSince;
+        private bool _firstTargetChosen;
 
         /// <summary>
         /// While the raid musters for an encounter (the first time, or again after a wipe): the place to gather, on the
@@ -872,6 +875,27 @@ namespace DOL.GS
             else _frontAbsentSince = 0;
             if (inside.Length < 8 || !atFront)
             { Hold = true; Destination = Front; Status = "Waiting for formed parties inside"; return; }
+            // Form up inside the door before the first target: the first 8 through it set the whole raid walking into the
+            // first summoner (or Caer Sidi's first rooms) while most of it was still in the approach dungeon (sh-routes 1).
+            if (!_firstTargetChosen)
+            {
+                if (_entryWaitSince == 0) _entryWaitSince = now;
+                var door = new Point3D((int)Front.X, (int)Front.Y, (int)Front.Z);
+                int formed = inside.Count(p => p.IsWithinRadius(door, 1000));
+                int formNeeded = EncounterMusterNeeded(participants.Length, now - _entryWaitSince);
+                if (formed < formNeeded)
+                {
+                    Hold = true; Destination = Front; RegroupPoint = Front;
+                    Status = $"Forming up inside ({formed}/{formNeeded})";
+                    if (now >= _nextMusterLog)
+                    {
+                        _nextMusterLog = now + 2 * 60_000;
+                        log.Info($"REALM_EXPEDITION_ENTRY_MUSTER region={_region} formed={formed} needed={formNeeded} inside={inside.Length} " +
+                                 $"roster={participants.Length} minutes={(now - _entryWaitSince) / 60_000.0:0.0}");
+                    }
+                    return;
+                }
+            }
             var nav = PathfindingProvider.Instance;
             Zone zone = WorldMgr.GetRegion(_region)?.GetZone((int)Front.X, (int)Front.Y);
             if (zone == null || !nav.IsAvailable || !nav.HasNavmesh(zone))
@@ -933,7 +957,7 @@ namespace DOL.GS
                     if (start < 0)
                     { _routeRetry[npc] = now + 60_000; continue; }
                     _chain = chain; _chainIndex = start; _chainTarget = npc;
-                    TargetName = npc.Name; TargetLevel = npc.Level; _probeCursor = 0; _blockedSince = 0;
+                    TargetName = npc.Name; TargetLevel = npc.Level; _probeCursor = 0; _blockedSince = 0; _firstTargetChosen = true;
                     AdvanceChain(inside, now);
                     return;
                 }
@@ -948,7 +972,7 @@ namespace DOL.GS
                 _target = npc; Front = Destination = approach; TargetName = npc.Name; TargetLevel = npc.Level;
                 _targetProgressTick = _targetStartTick = now; _targetLowestHealth = npc.Health;
                 _targetClosest = float.MaxValue; _targetApproachTick = now; _targetPresentTick = 0;
-                _probeCursor = 0; _blockedSince = 0;
+                _probeCursor = 0; _blockedSince = 0; _firstTargetChosen = true;
                 Hold = false; Status = "Clearing " + npc.Name; return;
             }
             Hold = true;
@@ -971,6 +995,7 @@ namespace DOL.GS
             if (AutonomousZonePointApproach.TryResolve(nav, zone, Front, _trigger, 220, out Vector3 trigger))
                 Front = Destination = trigger;
             TargetName = "Final encounter staging";
+            _firstTargetChosen = true;
             Status = candidates.Length == 0 ? "Waiting for the next scripted encounter phase" :
                 $"Waiting for the next scripted encounter phase; {candidates.Length} airborne patrols remain";
         }
