@@ -230,7 +230,8 @@ public static partial class AutonomousRvrEventLayer
     public static LiveObjective ObjectiveForKeep(DOL.GS.Keeps.AbstractGameKeep keep) =>
         new($"rvr-keep-{keep.KeepID}", keep.Name, keep.IsRelic ? Intent.AssaultRelicKeep : Intent.AssaultKeep,
             keep.Realm, keep.Region, keep.X, keep.Y, keep.Z, keep.IsRelic, 0, 0,
-            keep.Guards.Values.Count(g => g.IsAlive && AutonomousRvrKeepPolicy.IsDefendingGuard(g)), keep.Doors.Values.Count(d => d.IsAlive && d.State == eDoorState.Closed));
+            keep.Guards.Values.Count(g => g.IsAlive && AutonomousRvrKeepPolicy.IsDefendingGuard(g)) + AutonomousRelicShrine.StandingSentinels(keep),
+            keep.Doors.Values.Count(d => d.IsAlive && d.State == eDoorState.Closed));
 
     private static DOL.GS.Keeps.AbstractGameKeep NextSentinelKeep(LiveObjective relic, long now) =>
         HeldSentinelKeeps(relic)
@@ -253,10 +254,11 @@ public static partial class AutonomousRvrEventLayer
                     reason = $"{GlobalConstants.RealmToName(other.Attacker)} is already on a relic campaign against {target.Name}.";
                     return false;
                 }
+                if (RefuseUnplaceableRelicRaid(target, attacker, out reason)) return false;
                 int[] held = HeldSentinelKeeps(target);
                 if (held.Length > MaxSentinelsForRelicAssault)
                 {
-                    var next = NextSentinelKeep(target, now);
+                    var next = NextRelicStep(target, attacker, now);
                     if (next == null)
                     {
                         reason = $"{target.Name} still has {held.Length} sentinels, and none of their keeps can be attacked right now (a siege or a cooldown).";
@@ -689,42 +691,25 @@ public static partial class AutonomousRvrEventLayer
             // Several sieges can run at once, one attack per realm (Midgard on Albion while Hibernia hits
             // Midgard). A new one starts on a once-a-minute roll: likely within minutes when none is
             // running, occasional with one, rare with two (owner, 2026-10-07).
-            if (CarrierEvents.Count != 0 || Events.Values.Any(active => !active.DefenseReaction &&
+            if (CarrierBlocksSiegeFor(force.Realm) || Events.Values.Any(active => !active.DefenseReaction &&
                     (!SiegeScheduling || active.AttackerRealm == force.Realm)))
                 return ReservePlan(force, objectives);
 
             bool hasEnemy = objectives.Any(objective => objective.Kind == Intent.HuntEnemy && objective.EnemyCount > 0);
-            LiveObjective[] relicCandidates = objectives.Where(objective => objective.Kind == Intent.AssaultRelicKeep && objective.IsRelicKeep &&
-                                                               objective.OwningRealm != force.Realm && !Events.ContainsKey(objective.Id) && !OnCooldown(objective.Id, nowTick))
-                .ToArray();
-            // Relic audit 2026-10-31 (M5): a realm whose own relic sits in an enemy relic keep goes for that keep first.
-            LiveObjective[] retakes = relicCandidates.Where(candidate => HoldsRelicOf(candidate, force.Realm)).ToArray();
-            LiveObjective relic = ChooseVariedTarget(retakes.Length > 0 ? retakes : relicCandidates, SelectedRelics);
             LiveObjective keep = ChooseVariedTarget(objectives.Where(objective => objective.Kind == Intent.AssaultKeep && !objective.IsRelicKeep &&
                                                               objective.OwningRealm != force.Realm && !Events.ContainsKey(objective.Id) && !OnCooldown(objective.Id, nowTick) &&
                                                               CanBeCaptured(objective))
                 , SelectedKeeps);
-            if (relic != null && HeldSentinelKeeps(relic) is { Length: > MaxSentinelsForRelicAssault } held)
-            {
-                // Too many sentinels at that relic keep: a warband that would go for it takes one of their keeps instead
-                // (owner 2026-10-30, the live way to open a relic siege). Ordinary keep choices are left alone.
-                LiveObjective feeder = objectives
-                    .Where(o => o.Kind == Intent.AssaultKeep && !o.IsRelicKeep && o.OwningRealm == relic.OwningRealm &&
-                                !Events.ContainsKey(o.Id) && !OnCooldown(o.Id, nowTick) &&
-                                held.Any(id => o.Id == $"rvr-keep-{id}") && CanBeCaptured(o))
-                    .OrderBy(o => (long)(o.X - relic.X) * (o.X - relic.X) + (long)(o.Y - relic.Y) * (o.Y - relic.Y))
-                    .FirstOrDefault();
-                if (feeder != null && Random.Shared.NextDouble() < RelicSiegeShare)
-                    keep = feeder;
-                relic = null;
-            }
+            // Relics lane (B3/L3, AutonomousRvrEventLayer.Relic.cs): an open relic keep whose relic this realm can lift and place
+            // is the next siege; otherwise the realm's relic aim may name the next sentinel keep instead of the ordinary choice.
+            LiveObjective relic = ChooseRelicSiege(force, objectives, nowTick, ref keep);
             bool siegeCapable = force.MemberCount >= 4 && force.AverageLevel >= 50 && force.CanSupplySiege;
             if (SiegeScheduling && (keep != null || relic != null) && siegeCapable && !SiegeStartAllowed(nowTick))
                 return ReservePlan(force, objectives);
-            // Relic sieges are the larger, rarer event: about one new siege in eight, strong warbands only.
+            // A relic siege needs a strong warband of six or more (relics lane B3: no 12 % roll any more).
             Intent intent = !SiegeScheduling ? ChooseIntent(force, hasEnemy, keep != null, relic != null, roll)
                 : !siegeCapable || keep == null && relic == null ? ChooseIntent(force, hasEnemy, false, false, roll)
-                : relic != null && force.MemberCount >= 6 && force.AverageLevel >= 50 && (keep == null || Random.Shared.NextDouble() < RelicSiegeShare)
+                : relic != null && force.MemberCount >= 6 && force.AverageLevel >= 50
                     ? Intent.AssaultRelicKeep : keep != null ? Intent.AssaultKeep : ChooseIntent(force, hasEnemy, false, false, roll);
             LiveObjective selected = intent switch
             {
@@ -752,6 +737,7 @@ public static partial class AutonomousRvrEventLayer
                 };
                 active.Attackers[force.GroupId] = force.MemberCount;
                 Events[selected.Id] = active;
+                NoteRelicSiegeOpened(force.Realm, selected, nowTick);
                 _siegeStartReady = false;
                 RealmEventRecords.Begin(selected.Id, selected.Name, selected.IsRelicKeep ? "Relic keep" : "Keep", GlobalConstants.RealmToName(force.Realm), "Automatic continuous siege; defender: " + GlobalConstants.RealmToName(selected.OwningRealm));
                 if (!StagedAssault)
@@ -1681,9 +1667,9 @@ public static partial class AutonomousRvrEventLayer
             else if (DeadlineReady(active, nowTick))
                 StartBattle(active, nowTick, "preparation deadline reached with a viable attacking force");
             else
-                EndEvent(active, nowTick, MarchedArmy(active)
+                EndEvent(active, nowTick, active.RelicKeep ? RallyFailedReason(true) : MarchedArmy(active)
                     ? $"Rally failed: too few of the {active.MarchedAttackers} who marched reached the keep by the march deadline"
-                    : "Rally failed: insufficient physical attackers at the one-hour deadline");
+                    : RallyFailedReason(false));
         }
         if (nowTick >= _nextStragglerSweep)
         {

@@ -138,6 +138,8 @@ public static class AutonomousRvrRally
         lord ??= !keep.IsRelic ? keep.Guards.Values
             .Where(guard => guard is not GuardArcher && AutonomousRvrKeepPolicy.IsDefendingGuard(guard))
             .OrderBy(guard => Vector2.DistanceSquared(new(guard.X, guard.Y), new(keep.X, keep.Y))).FirstOrDefault() : null;
+        // Relics lane (L4): a relic keep with no commander anchors its defenders on the shrine floor.
+        if (lord == null && keep.IsRelic) return AutonomousRelicShrine.TryShrineDefenderPost(bot, keep, slot, nav, routeStart, out point);
         if (lord == null || !nav.IsAvailable) return false;
         bool protectObjective = routeStart.HasValue && AutonomousRvrDefense.ObjectiveExposed(keep);
         bool ranged = AutonomousRvrDefense.IsRangedDefender(bot);
