@@ -43,6 +43,8 @@ namespace DOL.GS;
             public bool OwnCrafted { get; init; }
             /// <summary>The cheapest copy of this name another seller lists (0: none).</summary>
             public long CheapestOther { get; init; }
+            /// <summary>The least this listing may ask (a crafter's 1.1 x materials; 0: the ask floor only).</summary>
+            public long MinimumAsk { get; init; }
         }
     public sealed record PurchaseCandidate(DbInventoryItem Item, int Utility, eInventorySlot EquipSlot, bool IsEquipmentUpgrade, bool IsPlayerListing);
 
@@ -1570,7 +1572,15 @@ namespace DOL.GS;
         ListingCandidate candidate = Appraise(bot, product, context.Owner, materialCost, mood);
         if (candidate == null)
             return null;
-        candidate = candidate with { Gain = Math.Max(0, ItemValue165.Fair(product, materialCost) - ItemValue165.Floor(product)) };
+        // never listed at a loss: when 1.1 x its materials is over the merchant's ceiling, or can't undercut the cheapest
+        // copy already listed, a merchant buys it (review 2026-11-11)
+        long minimum = ItemValue165.CraftedFloor(materialCost);
+        if (minimum > 0 && (minimum > ItemValue165.AskCeiling(product) || candidate.CheapestOther > 0 && minimum >= candidate.CheapestOther))
+            return null;
+        candidate = candidate with
+        {
+            Gain = Math.Max(0, ItemValue165.Fair(product, materialCost) - ItemValue165.Floor(product)), MinimumAsk = minimum,
+        };
         if (!context.CeilingReached && context.Room.For(candidate.OwnCrafted))
             return candidate;
         if (SwappedThisVisit(bot))
@@ -2049,7 +2059,7 @@ namespace DOL.GS;
     {
         if (plan?.Item == null)
             return 0;
-        long ask = ItemValue165.Ask(plan.Item, ItemValue165.RollMood(), plan.CheapestOther);
+        long ask = Math.Max(ItemValue165.Ask(plan.Item, ItemValue165.RollMood(), plan.CheapestOther), plan.MinimumAsk);
         if (plan.Bump != null && ask >= plan.Bump.PriceFor(plan.Item.Count))
             ask = plan.PriceCopper;
         return (int)Math.Clamp(ask, 1, int.MaxValue);
@@ -2164,7 +2174,7 @@ namespace DOL.GS;
                 // per unit: the bumped copy's price for as many items as this listing holds
                 long bumpPrice = bump.PriceFor(plan.Item.Count);
                 if (priceCopper >= bumpPrice)
-                    priceCopper = (int)Math.Max(ItemValue165.AskFloor(plan.Item), bumpPrice - 1);
+                    priceCopper = (int)Math.Max(Math.Max(ItemValue165.AskFloor(plan.Item), plan.MinimumAsk), bumpPrice - 1);
                 if (priceCopper >= bumpPrice)
                     return false;
             }

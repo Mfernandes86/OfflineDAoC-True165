@@ -168,6 +168,7 @@ namespace DOL.GS
         /// <summary>
         /// The ask: Fair x (1 + mood), kept between <see cref="AskFloor"/> and <see cref="AskCeiling"/>. When other copies
         /// are listed (<paramref name="cheapestOther"/> above 0) it undercuts the cheapest by 3-5%, never below the floor.
+        /// A crafter's product (<paramref name="materialCost"/> above 0) never asks under <see cref="CraftedFloor"/>.
         /// </summary>
         public static long Ask(DbInventoryItem item, double mood, long cheapestOther = 0, long materialCost = 0)
         {
@@ -175,6 +176,10 @@ namespace DOL.GS
                 return 0;
             long low = AskFloor(item);
             long high = AskCeiling(item);
+            // crafted at least 1.1 x its materials (an enchanted piece's include the enchant), still under the ceiling
+            // (review 2026-11-11: the undercut could take it under its materials)
+            if (materialCost > 0)
+                low = Math.Max(low, Math.Min(high, CraftedFloor(materialCost)));
             double price = Fair(item, materialCost) * (1 + Math.Clamp(mood, -0.5, 1.0));
             if (cheapestOther > 0)
                 price = Math.Min(price, cheapestOther * (0.95 + 0.02 * Math.Clamp(mood - MoodLow, 0, MoodHigh - MoodLow) / (MoodHigh - MoodLow)));
@@ -185,6 +190,9 @@ namespace DOL.GS
                 ask = low;
             return Math.Clamp(ask, 1, int.MaxValue);
         }
+
+        /// <summary>The least a crafter asks for its product: 1.1 x its materials.</summary>
+        public static long CraftedFloor(long materialCost) => materialCost > 0 ? materialCost * 11 / 10 : 0;
 
         public static bool HasProcOrCharges(DbInventoryItem item) =>
             item != null && (item.SpellID != 0 || item.SpellID1 != 0 || item.ProcSpellID != 0 || item.ProcSpellID1 != 0);
