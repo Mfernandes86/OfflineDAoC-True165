@@ -57,18 +57,7 @@ namespace DOL.GS
 
             try
             {
-                IndexKeys keys = GetIndexKeys(item);
-
-                if (!_itemKeyCache.TryAdd(item, keys))
-                    return false;
-
-                AddToIndex(_byRealm, keys.Realm, item);
-                AddToIndex(_bySlot, keys.Slot, item);
-                AddToIndex(_byCrafted, keys.IsCrafted, item);
-                AddToIndex(_byVisual, keys.HasVisual, item);
-                AddToIndex(_byOwner, keys.Owner, item);
-                _book.Add(item, keys.Slot);
-                return true;
+                return AddCore(item);
             }
             finally
             {
@@ -82,21 +71,61 @@ namespace DOL.GS
 
             try
             {
-                if (!_itemKeyCache.Remove(item, out IndexKeys keys))
-                    return false;
-
-                RemoveFromIndex(_byRealm, keys.Realm, item);
-                RemoveFromIndex(_bySlot, keys.Slot, item);
-                RemoveFromIndex(_byCrafted, keys.IsCrafted, item);
-                RemoveFromIndex(_byVisual, keys.HasVisual, item);
-                RemoveFromIndex(_byOwner, keys.Owner, item);
-                _book.Remove(item);
-                return true;
+                return RemoveCore(item);
             }
             finally
             {
                 _lock.ExitWriteLock();
             }
+        }
+
+        /// <summary>
+        /// Re-reads a listed item's facts into every index in one write-lock hold, only while it is still listed (review
+        /// 2026-11-11: a remove-then-add outside the exchange locks could interleave with a buy, refusing it, or put back an
+        /// item a sale had just taken out). False when the item is no longer in the cache.
+        /// </summary>
+        public bool Refresh(DbInventoryItem item)
+        {
+            _lock.EnterWriteLock();
+
+            try
+            {
+                return RemoveCore(item) && AddCore(item);
+            }
+            finally
+            {
+                _lock.ExitWriteLock();
+            }
+        }
+
+        private bool AddCore(DbInventoryItem item)
+        {
+            IndexKeys keys = GetIndexKeys(item);
+
+            if (!_itemKeyCache.TryAdd(item, keys))
+                return false;
+
+            AddToIndex(_byRealm, keys.Realm, item);
+            AddToIndex(_bySlot, keys.Slot, item);
+            AddToIndex(_byCrafted, keys.IsCrafted, item);
+            AddToIndex(_byVisual, keys.HasVisual, item);
+            AddToIndex(_byOwner, keys.Owner, item);
+            _book.Add(item, keys.Slot);
+            return true;
+        }
+
+        private bool RemoveCore(DbInventoryItem item)
+        {
+            if (!_itemKeyCache.Remove(item, out IndexKeys keys))
+                return false;
+
+            RemoveFromIndex(_byRealm, keys.Realm, item);
+            RemoveFromIndex(_bySlot, keys.Slot, item);
+            RemoveFromIndex(_byCrafted, keys.IsCrafted, item);
+            RemoveFromIndex(_byVisual, keys.HasVisual, item);
+            RemoveFromIndex(_byOwner, keys.Owner, item);
+            _book.Remove(item);
+            return true;
         }
 
         public IEnumerable<DbInventoryItem> Search(in ItemQuery query)

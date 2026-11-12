@@ -104,8 +104,9 @@ namespace DOL.GS
         /// <summary>Reads the Realm Exchange index (MarketBook) under the cache's read lock; the reader must not change the market.</summary>
         public static T ReadBook<T>(Func<MarketBook, T> read) => _searchEngine.ReadBook(read);
 
-        /// <summary>Re-reads an item's facts into the index after a field changed outside UpdateItem.</summary>
-        public static bool Refresh(DbInventoryItem item) => UpdateItem(item, static (_, _) => { }, 0);
+        /// <summary>Re-reads an item's facts into the index after a field changed outside UpdateItem: atomic (one write-lock
+        /// hold) and only while the item is still listed, so it is safe outside the exchange locks.</summary>
+        public static bool Refresh(DbInventoryItem item) => item != null && _searchEngine.Refresh(item);
 
         public static MarketBook.RealmSummary Summary(eRealm realm) => ReadBook(book => book.Summary(realm));
 
