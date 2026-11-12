@@ -20,8 +20,10 @@ namespace DOL.AI.Brain
                 Body.Group?.GetMembersInTheGroup().Any(m=>m.IsAttacking && BotPvpCrowdControl.PlayerLike(m.TargetObject as GameLiving))!=true) return false;
             // PvE never enters this policy; native levels, specs, mana, immunity,
             // interruption and spell timers still decide whether a cast succeeds.
+            // Q22 (veteran review 2026-11-11): the warband's called target is the group's kill - the mezzer leaves it alone
+            GameLiving called = AutonomousRvrAssist.CalledTarget(Body.Group, GameLoop.GameLoopTime);
             GameLiving[] enemies = Body.GetNPCsInRadius(1800).Where(BotPvpCrowdControl.PlayerLike).Cast<GameLiving>()
-                .Concat(Body.GetPlayersInRadius(1800)).Where(t => BotSiegeRuntime.LegalEnemy(Body,t) && !t.IsMezzed &&
+                .Concat(Body.GetPlayersInRadius(1800)).Where(t => t != called && BotSiegeRuntime.LegalEnemy(Body,t) && !t.IsMezzed &&
                     StealthDetection.BotCanSee(Body,t) && !BotPvpCrowdControl.Protected(Body,t) && CompanionEngagementMode.Allows(Body,t) &&
                     !CompanionPvpEngagement.Focused(Body,t) && !CompanionPvpEngagement.Defending(Body,t))
                 .OrderBy(Body.GetDistanceTo).Take(24).ToArray();

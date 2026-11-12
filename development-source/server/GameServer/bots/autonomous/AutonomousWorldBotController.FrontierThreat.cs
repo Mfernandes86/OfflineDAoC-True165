@@ -190,7 +190,7 @@ public sealed partial class AutonomousWorldBotController
                 target => AutonomousRvrStealthers.Vulnerability(target) * 5 + AutonomousRvrAssist.KillOrderRank(AutonomousRvrAssist.ClassOf(target)),
                 target => bot.GetDistanceTo(target))
             : callsTargets
-            ? AutonomousRvrAssist.Pick(visibleTargets, operatorThreats.Contains, GameRelic.IsPlayerCarryingRelic,
+            ? AutonomousRvrAssist.Pick(AutonomousRvrAssist.CallableCandidates(visibleTargets), operatorThreats.Contains, GameRelic.IsPlayerCarryingRelic,
                 target => AutonomousRvrAssist.KillOrderRank(AutonomousRvrAssist.ClassOf(target)), target => bot.GetDistanceTo(target))
             : SelectDistributedRvrTarget(bot, operatorThreats.Length>0 ? operatorThreats : visibleTargets);
         if (enemy == null || !Eligible(enemy)) return false;
@@ -256,7 +256,9 @@ public sealed partial class AutonomousWorldBotController
         bool fightingEnemy = current is GamePlayer or GameBot && current.IsAlive && current.Realm != bot.Realm && current.Realm != eRealm.None;
         if (mainAssist == bot)
         {
-            if (fightingEnemy) AutonomousRvrAssist.CallTarget(bot.Group, current, now);
+            // Q22: never call a mezzed enemy (the call lapses and the next scan picks an awake one)
+            if (fightingEnemy && AutonomousRvrAssist.Callable(current.IsMezzed))
+                AutonomousRvrAssist.CallTarget(bot.Group, current, now);
             return;
         }
         // Healers keep healing; a member already on someone else's player switches to the call when it is close

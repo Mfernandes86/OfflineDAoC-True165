@@ -42,10 +42,29 @@ public static class AutonomousRvrAssist
         if (group == null || !Calls.TryGetValue(group, out Call call)) return null;
         lock (call)
         {
-            if (call.Until <= now || call.Target is not { IsAlive: true, ObjectState: GameObject.eObjectState.Active })
+            if (call.Until <= now || call.Target is not { IsAlive: true, ObjectState: GameObject.eObjectState.Active } ||
+                !Callable(call.Target.IsMezzed))
                 return null;
             return call.Target;
         }
+    }
+
+    /// <summary>
+    /// Pure (Q22, veteran review 2026-11-11): a mezzed enemy is never the assist target - hitting it wakes the mez the
+    /// group's mezzer just landed. The call lapses while it is mezzed, and the main assist picks someone else.
+    /// </summary>
+    public static bool Callable(bool mezzed) => !mezzed;
+
+    /// <summary>Q22: the main assist's candidates without the mezzed ones (all of them when every one is mezzed).</summary>
+    public static IReadOnlyList<GameLiving> CallableCandidates(IReadOnlyList<GameLiving> candidates)
+    {
+        List<GameLiving> awake = null;
+        for (int i = 0; i < candidates.Count; i++)
+        {
+            if (Callable(candidates[i].IsMezzed))
+                (awake ??= new List<GameLiving>(candidates.Count)).Add(candidates[i]);
+        }
+        return awake ?? (IReadOnlyList<GameLiving>)candidates;
     }
 
     /// <summary>0 healers/support, 1 cloth casters, 2 archers, 3 other classes, 4 anything without a class (pets, engines).</summary>
