@@ -57,6 +57,8 @@ namespace DOL.GS
                     var key = (region, keep, bot.Realm, index);
                     if (Jobs.ContainsKey(key)) continue;
                     kind = SlotKind(index, attacking);
+                    // Keeps audit L5: the second ram only when the raid can crew both (AutonomousRamCrews.RamsForDoor).
+                    if (attacking && kind == BotSiegeKind.Ram && index >= AutonomousRamCrews.RamsForDoor(present)) continue;
                     if (kind == BotSiegeKind.Ballista && !enemyEngines) continue;
                     Jobs[key] = new(new(bot), now + 120_000, kind);
                     bot.TempProperties.SetProperty("SiegeJobUntil", now + 120_000);

@@ -47,7 +47,8 @@ namespace DOL.GS
         public static bool NeedsRepair(int healthPercent, eRealm keepRealm, bool keepInCombat, bool portalKeep, bool enemiesNear = false) =>
             healthPercent < 100 && keepRealm != eRealm.None && !keepInCombat && !portalKeep && !enemiesNear;
 
-        private static long WoodUnitCopper()
+        /// <summary>The board price of one wood unit (rowan boards), read once; also used for siege repairs (BotSiegeRuntime).</summary>
+        public static long WoodUnitCopper()
         {
             if (_woodUnitCopper is { } known)
                 return known;

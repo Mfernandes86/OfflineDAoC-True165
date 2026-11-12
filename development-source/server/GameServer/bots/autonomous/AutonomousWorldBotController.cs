@@ -503,9 +503,11 @@ namespace DOL.GS
 
                 // Native siege damage sets the operator's combat timer. That
                 // alone must not hand control back to the ordinary melee FSM
-                // after the first shot. Real incoming aggro still wins.
-                if (!brain.HasAggro && !bot.IsAttacking && !bot.IsCasting &&
-                    AutonomousObjectiveAssignments.Is(bot,eAutonomousObjectiveKind.RvR) && BotSiegeRuntime.HoldingPosition(bot))
+                // after the first shot. Keeps audit L5: an operator or ram crew
+                // member holds its post against arrows and spells from the walls
+                // too; only a blow at melee reach takes it off.
+                if (!bot.IsCasting && AutonomousObjectiveAssignments.Is(bot,eAutonomousObjectiveKind.RvR) && BotSiegeRuntime.HoldingPosition(bot) &&
+                    (!brain.HasAggro && !bot.IsAttacking || !BotSiegeRuntime.StruckInMeleeReach(bot)))
                     return ExecuteRvr(brain,bot);
 
                 bool postCombatRecovery = BotRestRecovery.NeedsOrContinuesRest(bot) && !BotRestRecovery.BlocksRest(bot);

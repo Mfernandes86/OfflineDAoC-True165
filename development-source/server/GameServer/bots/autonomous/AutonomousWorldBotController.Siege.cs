@@ -94,6 +94,12 @@ namespace DOL.GS
         {
             long now = GameLoop.GameLoopTime;
             ReportBattleAttendance(bot, now);
+            if (TryRunSiegeJobCore(bot, now)) return true;
+            return TryCrewRam(bot, now);
+        }
+
+        private bool TryRunSiegeJobCore(GameBot bot, long now)
+        {
             if (_rvrIntent is not (AutonomousRvrEventLayer.Intent.AssaultKeep or AutonomousRvrEventLayer.Intent.AssaultRelicKeep or AutonomousRvrEventLayer.Intent.DefendEvent))
             { if (_siegeJobKeep!=null) ReleaseSiegeJob(bot); return false; }
             if (_siegeSupplyItem != null)
@@ -167,7 +173,7 @@ namespace DOL.GS
             if (owned == null)
             {
                 GameSiegeWeapon abandoned = engines.Where(w => w.Realm == bot.Realm && w.Owner == null &&
-                    BotSiegeRuntime.Kind(w) == _siegeKind && (w.Health > w.DecayedHp || w.TimesRepaired<=3 && BotSiegeRuntime.Item(bot,BotSiegeRuntime.RepairKit)!=null) && InSiegeRange(w, target))
+                    BotSiegeRuntime.Kind(w) == _siegeKind && (w.Health > w.DecayedHp || w.TimesRepaired<=3 && BotSiegeRuntime.HasRepairMeans(bot,w)) && InSiegeRange(w, target))
                     .OrderBy(bot.GetDistanceTo).FirstOrDefault();
                 if (abandoned != null)
                 {
@@ -292,6 +298,7 @@ namespace DOL.GS
             if (!bot.IsWithinRadius(owned, Math.Max(32, owned.SIEGE_WEAPON_CONTROLE_DISTANCE - 20)))
             { IssuePath(bot, new(owned.X, owned.Y, owned.Z), preciseArrival:true); return true; }
             bot.StopMovingOnPath(); bot.StopMoving(); bot.TargetObject = target;
+            if (attacking && owned is GameSiegeRam crewedRam) AutonomousRamCrews.Register(_siegeJobKeep, crewedRam);
             if (owned.TargetObject != target && !owned.SiegeWeaponTimer.IsAlive)
             { owned.TargetObject = target; owned.CurrentState &= ~GameSiegeWeapon.eState.Aimed; }
             if (!owned.SiegeWeaponTimer.IsAlive)
@@ -532,7 +539,7 @@ namespace DOL.GS
                 // Incoming attacks do not qualify for this safe wait.
                 if (weapon.Owner==bot && weapon.IsAlive && weapon.TimesRepaired<=3 && !weapon.InCombat &&
                     !bot.IsCasting && !bot.IsIncapacitated && now-bot.LastAttackedByEnemyTick>10_000 &&
-                    BotSiegeRuntime.Item(bot,BotSiegeRuntime.RepairKit)!=null)
+                    BotSiegeRuntime.HasRepairMeans(bot,weapon))
                 { weapon.SiegeWeaponTimer.Stop(); SiegeStatus(bot,"Pausing fire before safe repair",weapon); return true; }
                 return false;
             }
@@ -540,13 +547,112 @@ namespace DOL.GS
             if (_siegeRepairUntil==0 || _siegeRepairCombatTick!=combatTick)
             { _siegeRepairUntil=now+20_000; _siegeRepairCombatTick=combatTick; weapon.SiegeWeaponTimer.Stop(); }
             if (now<_siegeRepairUntil) { SiegeStatus(bot,"Repairing siege equipment",weapon); return true; }
-            lock (AutonomousSiegeOwnership.ChangeGate)
-            {
-                if (BotSiegeRuntime.CanRepair(bot,weapon) && weapon.Repair(weapon.MaxHealth*15/100,
-                    ()=>BotSiegeRuntime.Consume(bot,BotSiegeRuntime.RepairKit,1)))
-                { _siegeLastProgress=now; SiegeLog(bot,"repaired",weapon,$"health={weapon.HealthPercent}"); }
-            }
+            if (BotSiegeRuntime.RepairOnce(bot,weapon))
+            { _siegeLastProgress=now; SiegeLog(bot,"repaired",weapon,$"health={weapon.HealthPercent} times={weapon.TimesRepaired}"); }
+            else SiegeLog(bot,"repair_failed",weapon,$"health={weapon.HealthPercent}");
             _siegeRepairUntil=0; return true;
+        }
+
+        // ---- ram crews (keeps audit 2026-11-11, L5; AutonomousRamCrews)
+        private Vector3? _crewSpot;
+        private GameSiegeRam _crewSpotRam;
+        private int _crewSpotSeat = -1;
+        private long _crewNextLook, _crewRepairUntil;
+
+        /// <summary>
+        /// A melee fighter of the raid with no siege job takes a seat at the raid's ram with the most empty places, walks to
+        /// its own spot behind the ram and stays there: its presence is what drives the ram (GameSiegeRam.Crew). It leaves the
+        /// seat only to strike back at an enemy in melee reach, as the operator does; healers and the army's casters and
+        /// archers protect it. A crew member with woodworking 301+ repairs the ram by the player rule while it is not under
+        /// attack. Nothing here when the raid has no working ram at a raid door.
+        /// </summary>
+        private bool TryCrewRam(GameBot bot, long now)
+        {
+            if (_rvrIntent is not (AutonomousRvrEventLayer.Intent.AssaultKeep or AutonomousRvrEventLayer.Intent.AssaultRelicKeep) ||
+                _rvrDestination?.Id?.StartsWith("rvr-keep-", StringComparison.Ordinal) != true ||
+                bot.CurrentRegionID != _rvrDestination.RegionId || BotSiegeRuntime.Assigned(bot) ||
+                GameRelic.IsPlayerCarryingRelic(bot) || !IsRamCrewCandidate(bot))
+            {
+                LeaveRamCrew(bot);
+                return false;
+            }
+            GameSiegeRam ram = AutonomousRamCrews.KeepSeat(bot, out int seat);
+            if (ram != null && (!AutonomousRamCrews.Working(ram, bot.Realm) || ram.TargetObject is not GameKeepDoor { IsAlive: true, State: eDoorState.Closed }))
+            {
+                LeaveRamCrew(bot);
+                ram = null;
+            }
+            if (ram == null)
+            {
+                if (now < _crewNextLook ||
+                    Distance(bot.X, bot.Y, _rvrDestination.X, _rvrDestination.Y) > 6_000) return false;
+                _crewNextLook = now + 5_000;
+                if (!AutonomousRamCrews.TryTakeSeat(bot, _rvrDestination.Id, out ram, out seat)) return false;
+                SiegeLog(bot, "crew_seat", ram, $"seat={seat} crew={ram.Crew}");
+            }
+            // Only a blow at melee reach takes a crew member off the ram (the ordinary combat turn answers it).
+            if (BotSiegeRuntime.StruckInMeleeReach(bot)) return false;
+            if (bot.IsAttacking) bot.StopAttack();
+            if (TryRepairCrewedRam(bot, ram, now)) return true;
+            if (_crewSpotRam != ram || _crewSpotSeat != seat || !_crewSpot.HasValue)
+            {
+                _crewSpotRam = ram; _crewSpotSeat = seat;
+                GameObject door = ram.TargetObject ?? ram;
+                Vector2 spot = AutonomousRamCrews.CrewSpot(new(ram.X, ram.Y), new(door.X, door.Y), seat);
+                var nav = PathfindingProvider.Instance;
+                Vector3 raw = new(spot.X, spot.Y, ram.Z);
+                Vector3? floor = nav.IsAvailable && nav.HasNavmesh(ram.CurrentZone)
+                    ? nav.GetClosestPoint(ram.CurrentZone, raw, 48, 48, 128, nav.DefaultFilters) : raw;
+                _crewSpot = floor.HasValue && Vector2.Distance(new(floor.Value.X, floor.Value.Y), new(ram.X, ram.Y)) <= 280
+                    ? floor.Value : new Vector3(ram.X, ram.Y, ram.Z);
+            }
+            if (Vector3.Distance(new(bot.X, bot.Y, bot.Z), _crewSpot.Value) > 60 && !(bot.IsWithinRadius(ram, 280) && !bot.IsMoving &&
+                    Vector3.Distance(new(bot.X, bot.Y, bot.Z), _crewSpot.Value) <= 160))
+            {
+                IssuePath(bot, _crewSpot.Value, preciseArrival: true);
+                SiegeStatus(bot, "Joining the ram crew", ram);
+                return true;
+            }
+            bot.StopMovingOnPath(); bot.StopMoving();
+            if (ram.TargetObject != null) bot.TurnTo(ram.TargetObject);
+            AutonomousStuckWatchdog.MarkProgress(bot, eAutonomousProgressKind.SiegeParticipation);
+            SiegeStatus(bot, $"Crewing the ram: {ram.Crew} of {ram.MAX_PASSENGERS} places", ram);
+            return true;
+        }
+
+        /// <summary>Who crews a ram: melee fighters (AutonomousRamCrews.IsCrewCandidate).</summary>
+        private static bool IsRamCrewCandidate(GameBot bot) => bot.CharacterClass != null &&
+            AutonomousRamCrews.IsCrewCandidate(AutonomousRvrDefense.IsRangedDefender(bot),
+                BotPartyRoles.For((eCharacterClass)bot.CharacterClass.ID) == BotPartyRole.Support ||
+                (eCharacterClass)bot.CharacterClass.ID == eCharacterClass.Shaman);
+
+        /// <summary>A crew member who can repair a siege engine by the player rule keeps its decaying ram working: 20 seconds
+        /// standing at it, not while it or the ram is under attack.</summary>
+        private bool TryRepairCrewedRam(GameBot bot, GameSiegeRam ram, long now)
+        {
+            if (ram.HealthPercent > 70 || !BotSiegeRuntime.HasRepairMeans(bot, ram) || ram.InCombat || bot.InCombat)
+            { _crewRepairUntil = 0; return false; }
+            if (!bot.IsWithinRadius(ram, WorldMgr.INTERACT_DISTANCE - 20))
+            {
+                _crewRepairUntil = 0;
+                IssuePath(bot, new(ram.X, ram.Y, ram.Z), preciseArrival: true);
+                SiegeStatus(bot, "Going to repair the ram", ram);
+                return true;
+            }
+            bot.StopMovingOnPath(); bot.StopMoving();
+            if (_crewRepairUntil == 0) _crewRepairUntil = now + 20_000;
+            if (now < _crewRepairUntil) { SiegeStatus(bot, "Repairing the ram", ram); return true; }
+            _crewRepairUntil = 0;
+            SiegeLog(bot, BotSiegeRuntime.RepairOnce(bot, ram) ? "crew_repaired" : "crew_repair_failed", ram,
+                $"health={ram.HealthPercent} times={ram.TimesRepaired}");
+            _crewSpot = null;
+            return true;
+        }
+
+        private void LeaveRamCrew(GameBot bot)
+        {
+            AutonomousRamCrews.Leave(bot);
+            _crewSpot = null; _crewSpotRam = null; _crewSpotSeat = -1; _crewRepairUntil = 0;
         }
         private void ReleaseSiegeJob(GameBot bot)
         {

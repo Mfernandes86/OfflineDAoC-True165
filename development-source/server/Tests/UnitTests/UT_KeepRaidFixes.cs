@@ -123,6 +123,41 @@ public class UT_KeepRaidFixes
     [TestCase(true, ExpectedResult = false, TestName = "A caster does not batter a door its spells cannot hurt")]
     [TestCase(false, ExpectedResult = true, TestName = "Melee and archers batter the door")]
     public bool OnlyMeleeAndArchersBatterDoors(bool listCaster) => AutonomousWorldBotController.BattersDoorsByHand(listCaster);
+    [Test]
+    public void ARaidBringsAndCrewsItsRamsLikePlayers() => Assert.Multiple(() =>
+    {
+        Assert.That(AutonomousRamCrews.RamsForDoor(3), Is.EqualTo(0));
+        Assert.That(AutonomousRamCrews.RamsForDoor(8), Is.EqualTo(1), "a warband crews one ram");
+        Assert.That(AutonomousRamCrews.RamsForDoor(16), Is.EqualTo(2), "a raid that can crew both brings two");
+        Assert.That(AutonomousRamCrews.RamsForDoor(128), Is.EqualTo(2), "a door takes two rams at most");
+        Assert.That(AutonomousRamCrews.IsCrewCandidate(false, false), Is.True, "melee fighters crew the ram");
+        Assert.That(AutonomousRamCrews.IsCrewCandidate(true, false), Is.False, "casters and archers shoot the walls");
+        Assert.That(AutonomousRamCrews.IsCrewCandidate(false, true), Is.False, "healers keep the crew alive");
+    });
+
+    [Test]
+    public void EveryCrewSpotStandsBehindTheRamWithinItsCrewReach()
+    {
+        Vector2 ram = new(1000, 0), door = new(700, 0);
+        var spots = new HashSet<(int, int)>();
+        for (int seat = 0; seat < 12; seat++)
+        {
+            Vector2 spot = AutonomousRamCrews.CrewSpot(ram, door, seat);
+            Assert.That(Vector2.Distance(spot, ram), Is.LessThan(280), $"seat {seat} is counted by the ram (300)");
+            Assert.That(spot.X, Is.GreaterThan(ram.X - 60), $"seat {seat} stands on the far side from the door");
+            Assert.That(spots.Add(((int)spot.X, (int)spot.Y)), Is.True, $"seat {seat} has its own spot");
+        }
+    }
+
+    [Test]
+    public void SiegeEnginesAreRepairedByThePlayerRuleOnly() => Assert.Multiple(() =>
+    {
+        Assert.That(BotSiegeRuntime.MayRepairSiege(301, 0, 10_000, 576), Is.True);
+        Assert.That(BotSiegeRuntime.MayRepairSiege(300, 0, 10_000, 576), Is.False, "woodworking 301 or more");
+        Assert.That(BotSiegeRuntime.MayRepairSiege(500, 4, 10_000, 576), Is.False, "repaired four times already");
+        Assert.That(BotSiegeRuntime.MayRepairSiege(500, 0, 100, 576), Is.False, "no free repairs: the wood is paid");
+        Assert.That(DOL.GS.Commands.RepairCommandHandler.GetNeededWoodForOneTick(3), Is.EqualTo(192), "a level-3 ram's wood");
+    });
 }
 
 /// <summary>Keeps audit T4: a captured keep keeps a holding party until its guards are back.</summary>

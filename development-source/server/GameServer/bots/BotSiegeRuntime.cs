@@ -134,11 +134,65 @@ namespace DOL.GS
 
         public static bool CanRepair(GameBot bot, GameSiegeWeapon w) => bot?.IsAlive == true && w?.IsAlive == true &&
             w.ObjectState == GameObject.eObjectState.Active && bot.CurrentRegion == w.CurrentRegion && bot.Realm == w.Realm &&
-            w.Owner == bot && !bot.InCombat && !w.InCombat && !w.IsMoving && !bot.IsMoving && !bot.IsCasting && !bot.IsIncapacitated && w.TimesRepaired <= 3 &&
-            bot.IsWithinRadius(w, WorldMgr.INTERACT_DISTANCE) && Item(bot, RepairKit) != null;
+            !bot.InCombat && !w.InCombat && !w.IsMoving && !bot.IsMoving && !bot.IsCasting && !bot.IsIncapacitated && w.TimesRepaired <= 3 &&
+            bot.IsWithinRadius(w, WorldMgr.INTERACT_DISTANCE) && HasRepairMeans(bot, w);
 
+        /// <summary>
+        /// Keeps audit 2026-11-11 (L5): True 1.65 Mode repairs a siege engine by the player rule (GameSiegeWeapon.TryRepair,
+        /// RepairCommandHandler): woodworking 301 or more and the wood for one repair (the engine level's /repair table),
+        /// paid at the board price on success. Any crafter of the engine's realm standing at it may repair it, as any player
+        /// could. The bot-only "field siege repair kit" is sold by siege merchants the 1.65 frontiers do not have, so no
+        /// bot could ever keep a ram alive; it stays the rule outside True 1.65 Mode (the operator only).
+        /// </summary>
+        public static bool HasRepairMeans(GameBot bot, GameSiegeWeapon w) => Classic165Mode.IsOn
+            ? MayRepairSiege(ItemWear165.RepairSkill(bot, eCraftingSkill.WoodWorking), w.TimesRepaired,
+                AutonomousBotEconomy.GetMoney(bot.DatabaseID), SiegeRepairCost(w.Level))
+            : w.Owner == bot && Item(bot, RepairKit) != null;
+
+        public const int SiegeRepairWoodworking = 301;
+
+        /// <summary>Pure rule: a player may repair a siege engine with woodworking 301+, the wood for one repair, and an
+        /// engine repaired at most four times.</summary>
+        public static bool MayRepairSiege(int woodworkingSkill, int timesRepaired, long money, long woodCost) =>
+            woodworkingSkill >= SiegeRepairWoodworking && timesRepaired <= 3 && money >= woodCost;
+
+        /// <summary>The coin for one siege repair: the engine level's wood units at the board price.</summary>
+        public static long SiegeRepairCost(int engineLevel) => KeepDoorRepair165.RepairCost(engineLevel, KeepDoorRepair165.WoodUnitCopper());
+
+        /// <summary>
+        /// One finished 20-second repair: in True 1.65 Mode the player's roll (woodworking / ((level + 1) x 50)), 15% of the
+        /// engine on success and the wood paid only then (a player loses no wood on a failure); otherwise one kit.
+        /// </summary>
+        public static bool RepairOnce(GameBot bot, GameSiegeWeapon w)
+        {
+            if (!CanRepair(bot, w)) return false;
+            if (!Classic165Mode.IsOn)
+                return w.Repair(w.MaxHealth * 15 / 100, () => Consume(bot, RepairKit, 1));
+            if (!Util.Chance(DOL.GS.Commands.RepairCommandHandler.RepairChance(ItemWear165.RepairSkill(bot, eCraftingSkill.WoodWorking), w.Level)))
+                return false;
+            long cost = SiegeRepairCost(w.Level);
+            return w.Repair(w.MaxHealth * 15 / 100, () => AutonomousBotEconomy.TrySpend(bot.DatabaseID, cost, BotMoneyLedger165.Kind.Siege));
+        }
+
+        /// <summary>An engine's operator at its engine, or a ram crew member at its ram (AutonomousRamCrews).</summary>
         public static bool HoldingPosition(GameBot bot) => AutonomousSiegeOwnership.All(bot).Any(w =>
-            bot.IsWithinRadius(w, w.SIEGE_WEAPON_CONTROLE_DISTANCE));
+            bot.IsWithinRadius(w, w.SIEGE_WEAPON_CONTROLE_DISTANCE)) || AutonomousRamCrews.AtSeat(bot);
+
+        /// <summary>An enemy at melee reach is striking this bot (AutonomousWorldBotController.IsSiegeOperatorThreat): the
+        /// one thing that takes an operator or a ram crew member off its post.</summary>
+        public static bool StruckInMeleeReach(GameBot bot)
+        {
+            if (bot == null) return false;
+            foreach (GameNPC npc in bot.GetNPCsInRadius(350))
+                if (npc.IsAlive && npc.TargetObject == bot && npc.IsAttacking && npc.Realm != bot.Realm &&
+                    AutonomousWorldBotController.IsSiegeOperatorThreat(System.Numerics.Vector2.Distance(new(bot.X, bot.Y), new(npc.X, npc.Y)), npc.Z - bot.Z))
+                    return true;
+            foreach (GamePlayer player in bot.GetPlayersInRadius(350))
+                if (player.IsAlive && player.TargetObject == bot && player.IsAttacking && player.Realm != bot.Realm &&
+                    AutonomousWorldBotController.IsSiegeOperatorThreat(System.Numerics.Vector2.Distance(new(bot.X, bot.Y), new(player.X, player.Y)), player.Z - bot.Z))
+                    return true;
+            return false;
+        }
         public static bool Assigned(GameBot bot) => bot?.TempProperties.GetProperty<long>("SiegeJobUntil",0) > GameLoop.GameLoopTime;
     }
 }
