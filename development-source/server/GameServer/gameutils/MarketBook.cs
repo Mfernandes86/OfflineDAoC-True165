@@ -334,8 +334,14 @@ namespace DOL.GS
             return new NameStats(bots, own, cheapest, dearest);
         }
 
-        /// <summary>Listings of one slot bucket and a band range, priced and at most <paramref name="maxPrice"/>.</summary>
-        public List<Listing> Probe(eRealm realm, int bucket, int bandLow, int bandHigh, long maxPrice, string excludeOwner)
+        /// <summary>
+        /// Listings of one slot bucket and a band range, priced and at most <paramref name="maxPrice"/>, at most
+        /// <paramref name="maxLevel"/> and not expired at <paramref name="nowTicks"/> (0: no expiry filter). Rows that fail
+        /// are rejected here, under the read lock, from the facts parsed once at Add - nothing is copied or parsed for them
+        /// (review 2026-11-11: every probed row re-parsed its timestamp).
+        /// </summary>
+        public List<Listing> Probe(eRealm realm, int bucket, int bandLow, int bandHigh, long maxPrice, string excludeOwner,
+            int maxLevel = int.MaxValue, long nowTicks = 0)
         {
             var result = new List<Listing>();
             RealmBook book = _realms[RealmIndex(realm)];
@@ -344,11 +350,16 @@ namespace DOL.GS
                 if (!book.Buckets.TryGetValue(BucketKey(bucket, band), out HashSet<Listing> set))
                     continue;
                 foreach (Listing listing in set)
-                    if (listing.Price > 0 && listing.Price <= maxPrice && listing.Owner != excludeOwner)
+                    if (listing.Price > 0 && listing.Price <= maxPrice && listing.Level <= maxLevel && Live(listing, nowTicks) &&
+                        listing.Owner != excludeOwner)
                         result.Add(listing);
             }
             return result;
         }
+
+        /// <summary>Not expired at <paramref name="nowTicks"/> (0: not checked); a listing with no expiry never runs out.</summary>
+        private static bool Live(Listing listing, long nowTicks) =>
+            nowTicks <= 0 || listing.ExpiresTicks <= 0 || listing.ExpiresTicks > nowTicks;
 
         /// <summary>Priced listings of one template (ammunition, poisons, materials).</summary>
         public List<Listing> OfTemplate(eRealm realm, string templateId, long maxPrice, string excludeOwner)
@@ -364,7 +375,8 @@ namespace DOL.GS
 
         /// <summary>Priced listings of a few templates (a crafter's missing materials), at most <paramref name="limit"/>: one
         /// dictionary lookup per template, never a category scan.</summary>
-        public List<Listing> OfTemplates(eRealm realm, IReadOnlyCollection<string> templateIds, long maxPrice, string excludeOwner, int limit)
+        public List<Listing> OfTemplates(eRealm realm, IReadOnlyCollection<string> templateIds, long maxPrice, string excludeOwner, int limit,
+            long nowTicks = 0)
         {
             var result = new List<Listing>();
             if (templateIds == null || limit <= 0)
@@ -376,7 +388,7 @@ namespace DOL.GS
                     continue;
                 foreach (Listing listing in set)
                 {
-                    if (listing.Price <= 0 || listing.Price > maxPrice || listing.Owner == excludeOwner)
+                    if (listing.Price <= 0 || listing.Price > maxPrice || listing.Owner == excludeOwner || !Live(listing, nowTicks))
                         continue;
                     result.Add(listing);
                     if (result.Count >= limit)

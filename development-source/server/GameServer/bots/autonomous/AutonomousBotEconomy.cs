@@ -368,15 +368,17 @@ namespace DOL.GS;
         int bandLow = MarketBook.BandOf(Math.Max(0, bot.Level - 15));
         int bandHigh = MarketBook.BandOf(bot.Level + PurchaseLevelsAbove);
         long maxPrice = (long)(budget * 0.80);
+        int maxLevel = bot.Level + PurchaseLevelsAbove;
         var result = new List<(DbInventoryItem, int)>();
         foreach ((int bucket, (eInventorySlot slot, int worn)) in wish.Buckets)
         {
-            List<MarketBook.Listing> listings = MarketCache.ReadBook(book => book.Probe(bot.Realm, bucket, bandLow, bandHigh, maxPrice, ownerId));
+            // the level and expiry are checked inside the probe (the buy checks the expiry again)
+            List<MarketBook.Listing> listings = MarketCache.ReadBook(book =>
+                book.Probe(bot.Realm, bucket, bandLow, bandHigh, maxPrice, ownerId, maxLevel, now.Ticks));
             foreach (MarketBook.Listing listing in listings)
             {
                 DbInventoryItem item = listing.Item;
-                if (item.OwnerLot != lot || item.Level > bot.Level + PurchaseLevelsAbove || item.LevelRequirement > bot.Level ||
-                    !item.IsTradable || RealmExchangeExpiry.IsExpired(item, now))
+                if (item.OwnerLot != lot || item.LevelRequirement > bot.Level || !item.IsTradable)
                     continue;
                 int guess = EquipmentValue(item) + WeaponSpecBonus(bot, item.Object_Type, slot) - worn;
                 if (worn == 0)
@@ -405,11 +407,12 @@ namespace DOL.GS;
         // only the categories it wants (MarketSearchEngine.GetClientSlot): ammunition and poisons
         foreach (int bucket in SupplyBuckets(ammo, poison))
         {
-            List<MarketBook.Listing> listings = MarketCache.ReadBook(book => book.Probe(bot.Realm, bucket, 0, bandHigh, budget, ownerId));
+            List<MarketBook.Listing> listings = MarketCache.ReadBook(book =>
+                book.Probe(bot.Realm, bucket, 0, bandHigh, budget, ownerId, int.MaxValue, now.Ticks));
             foreach (MarketBook.Listing listing in listings)
             {
                 DbInventoryItem item = listing.Item;
-                if (item.OwnerLot != lot || !item.IsTradable || RealmExchangeExpiry.IsExpired(item, now))
+                if (item.OwnerLot != lot || !item.IsTradable)
                     continue;
                 eObjectType type = (eObjectType)item.Object_Type;
                 if (ammo && type is eObjectType.Arrow or eObjectType.Bolt && IsOwnSupply(bot, item) ||
@@ -422,10 +425,10 @@ namespace DOL.GS;
         if (materials != null)
         {
             int room = SupplyListingsScored - result.Count;
-            foreach (MarketBook.Listing listing in MarketCache.ReadBook(book => book.OfTemplates(bot.Realm, materials, budget, ownerId, room)))
+            foreach (MarketBook.Listing listing in MarketCache.ReadBook(book => book.OfTemplates(bot.Realm, materials, budget, ownerId, room, now.Ticks)))
             {
                 DbInventoryItem item = listing.Item;
-                if (item.OwnerLot == lot && item.IsTradable && !RealmExchangeExpiry.IsExpired(item, now))
+                if (item.OwnerLot == lot && item.IsTradable)
                     result.Add(item);
             }
         }
