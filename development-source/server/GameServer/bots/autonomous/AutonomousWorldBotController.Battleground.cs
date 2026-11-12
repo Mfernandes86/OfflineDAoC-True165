@@ -204,7 +204,13 @@ namespace DOL.GS
                         central != null ? new(central.X, central.Y, central.Z) : new(entry.X, entry.Y, entry.Z), 0.6f))
                     .Append(central != null ? new Vector3(central.X, central.Y, central.Z) : current)
                     .ToArray();
-                Vector3 anchor = anchors[Random.Shared.Next(anchors.Length)];
+                // squads (veteran-bots review 2026-11-11, rvr-social G7): a realm's roamers in a battleground split into
+                // four packs that head for the same landmark in the same two-minute window, as Thidranki's gank squads
+                // camped the portal approaches and the keep, instead of every bot wandering alone
+                long window = now / BattlegroundSquads.WindowMilliseconds;
+                Vector3 anchor = BattlegroundSquads.Enabled
+                    ? anchors[BattlegroundSquads.AnchorIndex(bot.Realm, BattlegroundSquads.SquadOf(bot.DatabaseID), window, anchors.Length)]
+                    : anchors[Random.Shared.Next(anchors.Length)];
                 Zone zone = bot.CurrentRegion?.GetZone((int)anchor.X, (int)anchor.Y) ?? bot.CurrentZone;
                 IPathfindingMgr nav = PathfindingProvider.Instance;
                 if (zone != null && nav.IsAvailable && nav.HasNavmesh(zone))
@@ -214,7 +220,9 @@ namespace DOL.GS
                     anchor = nav.GetRandomPoint(zone, anchor, 900, nav.DefaultFilters) ?? anchor;
                 }
                 _battlegroundRoamPoint = anchor;
-                _nextBattlegroundRoamTick = now + 120_000 + bot.ObjectID % 30_000;
+                _nextBattlegroundRoamTick = BattlegroundSquads.Enabled
+                    ? (window + 1) * BattlegroundSquads.WindowMilliseconds + bot.ObjectID % 5_000
+                    : now + 120_000 + bot.ObjectID % 30_000;
             }
             IssueVariedRvrPath(bot, _battlegroundRoamPoint.Value);
             SetBattlegroundStatus(bot, bracket, "Roaming the battleground",
