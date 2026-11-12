@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using DOL.AI.Brain;
 
 namespace DOL.GS
@@ -194,15 +195,48 @@ namespace DOL.GS
 
         // ---- storage: "key=value;key=value" in OfflineHiredCompanionRecord.Options
 
-        private static Dictionary<string, string> Read(OfflineHiredCompanionRecord hired)
+        /// <summary>The last parsed options of each hire record, keyed by the exact Options string it was parsed from
+        /// (performance review 2026-11-11: every one of the 42+ option reads rebuilt this table). A changed Options
+        /// string - Set, a reload - is a different string reference, so the next read parses again.</summary>
+        private sealed record ParsedOptions(string Source, IReadOnlyDictionary<string, string> Map);
+
+        private sealed class ParsedSlot
+        {
+            public ParsedOptions Value;
+        }
+
+        private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<OfflineHiredCompanionRecord, ParsedSlot>
+            ParsedCache = new();
+
+        private static readonly IReadOnlyDictionary<string, string> NoOptions =
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>Pure: "key=value;key=value" to a case-insensitive table (later keys win).</summary>
+        public static Dictionary<string, string> Parse(string options)
         {
             var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            foreach (string pair in (hired?.Options ?? string.Empty).Split(';', StringSplitOptions.RemoveEmptyEntries))
+            foreach (string pair in (options ?? string.Empty).Split(';', StringSplitOptions.RemoveEmptyEntries))
             {
                 int eq = pair.IndexOf('=');
                 if (eq > 0)
                     map[pair[..eq]] = pair[(eq + 1)..];
             }
+            return map;
+        }
+
+        /// <summary>The record's options, parsed once per Options string (read-only: Set works on its own copy).</summary>
+        private static IReadOnlyDictionary<string, string> Read(OfflineHiredCompanionRecord hired)
+        {
+            if (hired == null)
+                return NoOptions;
+            string source = hired.Options ?? string.Empty;
+            ParsedSlot slot = ParsedCache.GetOrCreateValue(hired);
+            // one immutable (source, table) pair swapped as a whole: a reader never pairs a table with another string
+            ParsedOptions cached = Volatile.Read(ref slot.Value);
+            if (cached != null && ReferenceEquals(cached.Source, source))
+                return cached.Map;
+            IReadOnlyDictionary<string, string> map = Parse(source);
+            Volatile.Write(ref slot.Value, new ParsedOptions(source, map));
             return map;
         }
 
@@ -221,7 +255,7 @@ namespace DOL.GS
 
         private static void Set(OfflineHiredCompanionRecord hired, string key, string value)
         {
-            Dictionary<string, string> map = Read(hired);
+            Dictionary<string, string> map = Parse(hired.Options);
             if (value == null) map.Remove(key); else map[key] = value;
             hired.Options = string.Join(';', map.OrderBy(p => p.Key).Select(p => $"{p.Key}={p.Value}"));
             HiredCompanions165.SaveRecord(hired);
