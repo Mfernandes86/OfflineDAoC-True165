@@ -117,6 +117,7 @@ namespace DOL.GS
                 Cancel(order, false);
                 return $"Pull cancelled: {tank.Name} could not engage that target.";
             }
+            PartyCalls165.OnPull(tank, target);   // the tank calls it in party chat (PartyCalls165)
             if (order.BringBack)
                 return tagging
                     ? $"{tank.Name} tags it from range and brings it back to you. The others wait here."

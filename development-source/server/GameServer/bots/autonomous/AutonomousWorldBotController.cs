@@ -3052,6 +3052,8 @@ namespace DOL.GS
                 NotePartyPullOutcome(bot, target, partyPullWhy, partyPullNext);
                 if (deferCampClaim && AutonomousPartyPullCamp.PullStartsOnOutcome(partyPullWhy, partyPullNext))
                     AutonomousMobClaims.Take(bot, target);
+                if (bot.Group != null && AutonomousPartyPullCamp.PullStartsOnOutcome(partyPullWhy, partyPullNext))
+                    PartyCalls165.OnPull(bot, target);   // "pulling" in a party with a player (PartyCalls165)
                 if (partyPullNext == PartyPullFallback.SkipTooFar)
                     return SkipTooFarPartyTarget(bot, target, emptySinceBefore, reportedEmptyBefore);
                 if (partyPullNext == PartyPullFallback.Handled)

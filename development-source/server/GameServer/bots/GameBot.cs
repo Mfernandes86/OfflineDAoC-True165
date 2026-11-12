@@ -1204,6 +1204,7 @@ namespace DOL.GS
         {
             SetSeatedForClients(false);
             BotMemory165.NoteDeath(this, killer);   // the enemy player who killed it is remembered (BotMemory165)
+            PartyCalls165.OnDeath(this);            // "rez pls" in a player's party (PartyCalls165)
             AutonomousPetSupport.CancelPendingCharm(this);
             _deathTick = GameLoop.GameLoopTime;
             LastDeathTick165 = _deathTick;
@@ -3428,6 +3429,8 @@ namespace DOL.GS
             if (_seatedForClients)
                 SetSeatedForClients(false);
             bool started = base.CastSpell(spell, line, spellCastingAbilityHandler, checkLos);
+            if (started && Group != null)
+                PartyCalls165.OnCastStarted(this, spell);   // "oom", "mezzing add" in a player's party (PartyCalls165)
             if (started && !spell.IsHarmful)
                 SupportCastGraceUntil = GameLoop.GameLoopTime + spell.CastTime + SupportCastGraceMilliseconds;
             if (quickCastThisCast && !started)
