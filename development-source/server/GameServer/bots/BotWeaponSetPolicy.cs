@@ -75,12 +75,20 @@ namespace DOL.GS
                    bot.TrainedWeaponSpec((eObjectType)rightHand.Object_Type, rightHand.SlotPosition);
         }
 
-        /// <summary>Grouped, a tank class with Guard, a shield in the left hand, and no other living tank in the group.</summary>
+        /// <summary>
+        /// Pure (Q4, veteran review 2026-11-11): a shield is worth guard duty only when the bot trained Shields to at least
+        /// half its level. A two-hander Armsman, Paladin, Warrior or Thane was swapped to a shield it never trained.
+        /// </summary>
+        public static bool ShieldTrainedForGuard(int shieldSpec, int level) => shieldSpec * 2 >= level;
+
+        /// <summary>Grouped, a tank class with Guard, a shield in the left hand trained to half its level (Q4), and no other
+        /// living tank in the group.</summary>
         public static bool GuardDuty(GameBot bot)
         {
             if (!Classic165Mode.IsOn || bot?.Group == null || bot.Group.MemberCount < 2 || !BotPartyRoles.IsTank(bot) ||
                 !bot.HasAbility(Abilities.Guard) ||
-                bot.Inventory?.GetItem(eInventorySlot.LeftHandWeapon) is not DbInventoryItem { Object_Type: (int)eObjectType.Shield })
+                bot.Inventory?.GetItem(eInventorySlot.LeftHandWeapon) is not DbInventoryItem { Object_Type: (int)eObjectType.Shield } ||
+                !ShieldTrainedForGuard(bot.GetBaseSpecLevel(Specs.Shields), bot.Level))
                 return false;
             foreach (GameLiving member in bot.Group.GetMembersInTheGroup())
             {
