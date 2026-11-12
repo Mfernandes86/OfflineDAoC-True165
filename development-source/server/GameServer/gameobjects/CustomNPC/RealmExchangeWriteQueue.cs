@@ -99,7 +99,15 @@ public static class RealmExchangeWriteQueue
         lock (Gate)
             if (Pending.Count == 0)
                 return 0;
-        IObjectDatabase database = GameServer.Database;
+        IObjectDatabase database;
+        try
+        {
+            database = GameServer.Database;
+        }
+        catch (Exception)
+        {
+            return 0;   // no server (yet, or any more): the rows wait
+        }
         if (database == null)
             return 0;
         KeyValuePair<DataObject, bool>[] work = Array.Empty<KeyValuePair<DataObject, bool>>();
@@ -204,7 +212,15 @@ public static class RealmExchangeWriteQueue
 
     private static void WriteNow(DataObject row, bool save)
     {
-        IObjectDatabase database = GameServer.Database;
+        IObjectDatabase database;
+        try
+        {
+            database = GameServer.Database;
+        }
+        catch (Exception)
+        {
+            return;
+        }
         if (database == null || row.IsDeleted)
             return;
         if (!save)

@@ -229,11 +229,13 @@ namespace DOL.GS
             {
                 if (_merchantStock != null)
                     return _merchantStock;
-                IObjectDatabase database = GameServer.Database;
-                if (database == null || Environment.TickCount64 < Interlocked.Read(ref _nextStockRetryTick))
+                if (Environment.TickCount64 < Interlocked.Read(ref _nextStockRetryTick))
                     return NoStock;
                 try
                 {
+                    IObjectDatabase database = GameServer.Database;
+                    if (database == null)
+                        return NoStock;   // no server (tests): no stock known, nothing kept
                     var ids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                     foreach (DbMerchantItem row in database.SelectAllObjects<DbMerchantItem>() ?? [])
                         if (!string.IsNullOrEmpty(row?.ItemTemplateID))
