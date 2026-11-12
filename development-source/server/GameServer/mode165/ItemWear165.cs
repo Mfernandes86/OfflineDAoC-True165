@@ -48,7 +48,20 @@ namespace DOL.GS
                 .OrderBy(i => i.ConditionPercent).ToList();
             if (worn.Count == 0)
                 return;
-            Blacksmith smith = atTown ? bot.GetNPCsInRadius(3000).OfType<Blacksmith>().OrderBy(s => bot.GetDistanceTo(s)).FirstOrDefault() : null;
+            Blacksmith smith = null;
+            List<GameBot> crafters = null;   // one NPC scan per errand, not one per worn piece (veteran review Q33)
+            if (atTown)
+            {
+                foreach (GameNPC npc in bot.GetNPCsInRadius(3000))
+                {
+                    if (npc is Blacksmith b && (smith == null || bot.GetDistanceTo(b) < bot.GetDistanceTo(smith)))
+                        smith = b;
+                    else if (npc is GameBot c && c != bot && c.IsAutonomousWorldBot && !HiredCompanions165.IsHired(c) &&
+                             c.IsAlive && c.Realm == bot.Realm && !c.InCombat && c.PersistentRecord?.CraftLevel > 0)
+                        (crafters ??= new List<GameBot>()).Add(c);
+                }
+                crafters?.Sort((a, b) => bot.GetDistanceTo(a).CompareTo(bot.GetDistanceTo(b)));
+            }
             int self = 0, paidPieces = 0;
             long spent = 0;
             var paidTo = new HashSet<string>();
@@ -67,7 +80,7 @@ namespace DOL.GS
                 }
                 if (!atTown)
                     continue;
-                GameBot crafter = FindCrafter(bot, item, secondary);
+                GameBot crafter = FindCrafter(crafters, item, secondary);
                 bool useCrafter = crafter != null && (smith == null || bot.GetDistanceTo(crafter) < bot.GetDistanceTo(smith));
                 if (!useCrafter && smith == null)
                     continue;
@@ -126,13 +139,16 @@ namespace DOL.GS
             return works ? record.CraftLevel : 0;
         }
 
-        /// <summary>A crafter gamebot of the same realm nearby, not fighting, that repairs this piece every time.</summary>
-        private static GameBot FindCrafter(GameBot bot, DbInventoryItem item, eCraftingSkill secondary) =>
-            secondary == eCraftingSkill.NoCrafting ? null :
-            bot.GetNPCsInRadius(3000).OfType<GameBot>()
-                .Where(c => c != bot && c.IsAutonomousWorldBot && !HiredCompanions165.IsHired(c) && c.IsAlive && c.Realm == bot.Realm &&
-                            !c.InCombat && RepairChance(RepairSkill(c, secondary), item) >= 100)
-                .OrderBy(c => bot.GetDistanceTo(c))
-                .FirstOrDefault();
+        /// <summary>The nearest crafter gamebot of the same realm (from the errand's one scan, nearest first), not
+        /// fighting, that repairs this piece every time.</summary>
+        private static GameBot FindCrafter(List<GameBot> crafters, DbInventoryItem item, eCraftingSkill secondary)
+        {
+            if (crafters == null || secondary == eCraftingSkill.NoCrafting)
+                return null;
+            foreach (GameBot c in crafters)
+                if (RepairChance(RepairSkill(c, secondary), item) >= 100)
+                    return c;
+            return null;
+        }
     }
 }

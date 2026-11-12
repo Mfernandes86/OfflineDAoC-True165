@@ -14,6 +14,10 @@ namespace DOL.GS
     public static class TownErrands165
     {
         private const long CooldownMilliseconds = 30 * 60_000;
+
+        /// <summary>Condition below which worn gear is worth a town errand: 88% (veteran review Q33; period "always repair
+        /// before they drop below 90%", Prima "below 90% Condition (85% minimum, repair it)"). Was 80%.</summary>
+        public const int RepairErrandBelowPercent = 88;
         private static readonly ConcurrentDictionary<long, long> LastVisit = new();
 
         public static void Visited(GameBot bot)
@@ -33,7 +37,7 @@ namespace DOL.GS
                 return null;
             long coin = AutonomousBotEconomy.GetMoney(bot.DatabaseID);
             DbInventoryItem worst = bot.Inventory.AllItems
-                .Where(i => i != null && i.MaxCondition > 0 && i.Durability > 0 && i.ConditionPercent < 80 &&
+                .Where(i => i != null && i.MaxCondition > 0 && i.Durability > 0 && i.ConditionPercent < RepairErrandBelowPercent &&
                             i.SlotPosition is >= (int)eInventorySlot.MinEquipable and <= (int)eInventorySlot.MaxEquipable)
                 .OrderBy(i => i.ConditionPercent).FirstOrDefault();
             if (worst != null && coin >= worst.RepairCost)
