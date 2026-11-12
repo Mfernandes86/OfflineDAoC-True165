@@ -34,6 +34,13 @@ namespace DOL.GS.Quests.Albion
 		protected const int maximumLevel = 50;
 
 		private static GameNPC Lidmann = null; // Start NPC
+
+		/// <summary>True 1.65 Mode: the period Feast of the Decadent (level 50), Allakhazam quest 504: after the level 48
+		/// part (which ends with Lidmann Halsey) return to Lidmann at the tower guarding Adribard's Retreat, seek out Elvinia
+		/// Dareal at Caer Witrin, slay Cailleach Uragaig in Lyonesse, return to the trainer in Camelot (the experience), then
+		/// the trainer sends the player to master smith Kalea Tait in Castle Sauvage for the armour.</summary>
+		private const string Line165 = "Feast of the Decadent";
+		private static readonly string Title165 = Epics165.FinaleTitle(Line165);
 		private static CailleachUragaig Uragaig = null; // Mob to kill
 
 		private static DbItemTemplate sealed_pouch = null; //sealed pouch
@@ -1220,6 +1227,12 @@ namespace DOL.GS.Quests.Albion
 
 			#endregion
 
+			if (Classic165Mode.IsOn)
+			{
+				Load165();
+				return;
+			}
+
 			GameEventMgr.AddHandler(GamePlayerEvent.AcceptQuest, new DOLEventHandler(SubscribeQuest));
 			GameEventMgr.AddHandler(GamePlayerEvent.DeclineQuest, new DOLEventHandler(SubscribeQuest));
 
@@ -1238,6 +1251,11 @@ namespace DOL.GS.Quests.Albion
 		{
 			if (!ServerProperties.Properties.LOAD_QUESTS)
 				return;
+			if (Classic165Mode.IsOn)
+			{
+				Unload165();
+				return;
+			}
 			//if not loaded, don't worry
 			if (Lidmann == null)
 				return;
@@ -1251,6 +1269,86 @@ namespace DOL.GS.Quests.Albion
 			/* Now we remove to masterFrederick the possibility to give this quest to players */
 			Lidmann.RemoveQuestToGive(typeof (Defenders_50));
 		}
+
+		#region True 1.65 Mode: Feast of the Decadent (level 50): Lidmann, Elvinia Dareal, Uragaig, trainer, Kalea Tait
+
+		private static void Load165()
+		{
+			if (Lidmann == null)
+			{
+				log.Warn("True 1.65 Mode: Lidmann Halsey not found, \"" + Title165 + "\" not loaded");
+				return;
+			}
+			GameEventMgr.AddHandler(GamePlayerEvent.AcceptQuest, new DOLEventHandler(SubscribeQuest));
+			GameEventMgr.AddHandler(GamePlayerEvent.DeclineQuest, new DOLEventHandler(SubscribeQuest));
+			GameEventMgr.AddHandler(Lidmann, GameObjectEvent.Interact, new DOLEventHandler(TalkToLidmann165));
+			Lidmann.AddQuestToGive(typeof(Defenders_50));
+			if (log.IsInfoEnabled)
+				log.Info("Quest \"" + Title165 + "\" initialized (True 1.65 Mode, starts with Lidmann Halsey)");
+		}
+
+		private static void Unload165()
+		{
+			if (Lidmann == null)
+				return;
+			GameEventMgr.RemoveHandler(GamePlayerEvent.AcceptQuest, new DOLEventHandler(SubscribeQuest));
+			GameEventMgr.RemoveHandler(GamePlayerEvent.DeclineQuest, new DOLEventHandler(SubscribeQuest));
+			GameEventMgr.RemoveHandler(Lidmann, GameObjectEvent.Interact, new DOLEventHandler(TalkToLidmann165));
+			Lidmann.RemoveQuestToGive(typeof(Defenders_50));
+		}
+
+		/// <summary>No recorded period speech for Lidmann's offer: the quest window itself makes the offer.</summary>
+		private static void TalkToLidmann165(DOLEvent e, object sender, EventArgs args)
+		{
+			GamePlayer player = ((SourceEventArgs) args).Source as GamePlayer;
+			if (player == null || player.IsDoingQuest(typeof(Defenders_50)) != null || Lidmann.CanGiveQuest(typeof(Defenders_50), player) <= 0)
+				return;
+			player.Out.SendQuestSubscribeCommand(Lidmann, QuestMgr.GetIDForQuestType(typeof(Defenders_50)),
+				Title165 + ": once again seek out Elvinia Dareal at Caer Witrin.");
+		}
+
+		private static void Accept165(GamePlayer player, byte response)
+		{
+			if (response == 0x00 || Lidmann == null || player.IsDoingQuest(typeof(Defenders_50)) != null ||
+			    Lidmann.CanGiveQuest(typeof(Defenders_50), player) <= 0)
+				return;
+			Lidmann.GiveQuest(typeof(Defenders_50), player, 1);
+		}
+
+		private string Description165 => Step switch
+		{
+			1 => "Seek out Elvinia Dareal at Caer Witrin.",
+			2 => "Slay Cailleach Uragaig, the leader of the cailleach sisterhood in Lyonesse. Follow the road southwest past the " +
+			     "lesser telamon and the two houses with the pikemen and pygmy goblins; the sisterhood lives in the ruins of " +
+			     "pillars in the clearing straight west.",
+			3 => "Return to your trainer in Camelot.",
+			4 => "Seek out master smith Kalea Tait in Castle Sauvage for your reward. Make sure you have 6 free slots in your inventory.",
+			_ => base.Description
+		};
+
+		private void Notify165(DOLEvent e, GamePlayer player, EventArgs args)
+		{
+			if (Step == 2 && e == GameLivingEvent.EnemyKilled && args is EnemyKilledEventArgs killed && killed.Target != null &&
+			    Uragaig != null && killed.Target.Name == Uragaig.Name)
+			{
+				Step = 3;
+				player.Out.SendMessage("Return to your trainer in Camelot.", eChatType.CT_System, eChatLoc.CL_SystemWindow);
+				return;
+			}
+			if (e != GameObjectEvent.InteractWith || args is not InteractWithEventArgs talk)
+				return;
+			if (Step == 1 && Epics165.IsNamed(player, talk.Target, "Elvinia Dareal"))
+				Step = 2;
+			else if (Step == 3 && Epics165.IsOwnTrainer(player, talk.Target))
+			{
+				m_questPlayer.GainExperience(eXPSource.Quest, Epics165.FinaleXp, true);
+				Step = 4;
+			}
+			else if (Step == 4 && Epics165.IsNamed(player, talk.Target, "Kalea Tait") && Epics165.HasRoomForArmour(player))
+				FinishQuest();
+		}
+
+		#endregion
 
 		protected static void TalkToLidmann(DOLEvent e, object sender, EventArgs args)
 		{
@@ -1377,6 +1475,11 @@ namespace DOL.GS.Quests.Albion
 			if (player.Level < minimumLevel || player.Level > maximumLevel)
 				return false;
 
+			// True 1.65 Mode: the finale follows the line's level 48 part (quest audit 2026-11-11: it was open to any
+			// level 50 Defender of Albion).
+			if (Classic165Mode.IsOn && !Epics165.FinishedLastPart(player, Line165))
+				return false;
+
 			return true;
 		}
 
@@ -1420,6 +1523,12 @@ namespace DOL.GS.Quests.Albion
 
 		private static void CheckPlayerAcceptQuest(GamePlayer player, byte response)
 		{
+			if (Classic165Mode.IsOn)
+			{
+				Accept165(player, response);
+				return;
+			}
+
 			if(Lidmann.CanGiveQuest(typeof (Defenders_50), player)  <= 0)
 				return;
 
@@ -1443,7 +1552,7 @@ namespace DOL.GS.Quests.Albion
 		//Set quest name
 		public override string Name
 		{
-			get { return "Feast of the Decadent (Level 50 Defenders of Albion Epic)"; }
+			get { return Classic165Mode.IsOn ? Title165 : "Feast of the Decadent (Level 50 Defenders of Albion Epic)"; }
 		}
 
 		// Define Steps
@@ -1451,6 +1560,8 @@ namespace DOL.GS.Quests.Albion
 		{
 			get
 			{
+				if (Classic165Mode.IsOn)
+					return Description165;
 				switch (Step)
 				{
 					case 1:
@@ -1473,6 +1584,12 @@ namespace DOL.GS.Quests.Albion
 
 			if (sender != m_questPlayer)
 				return;
+
+			if (Classic165Mode.IsOn)
+			{
+				Notify165(e, player, args);
+				return;
+			}
 
 			if (Step == 1 && e == GameLivingEvent.EnemyKilled)
 			{
@@ -1513,10 +1630,26 @@ namespace DOL.GS.Quests.Albion
 
 		public override void FinishQuest()
 		{
+			if (Classic165Mode.IsOn)
+			{
+				// Kalea Tait gives the armour; the trainer already gave the experience.
+				base.FinishQuest();
+				GiveEpicArmour();
+				return;
+			}
+
 			RemoveItem(Lidmann, m_questPlayer, sealed_pouch);
 
 			base.FinishQuest(); //Defined in Quest, changes the state, stores in DB etc ...
 
+			GiveEpicArmour();
+
+			m_questPlayer.GainExperience(eXPSource.Quest, 1937768448, true);
+			//m_questPlayer.AddMoney(Money.GetMoney(0,0,0,2,Util.Random(50)), "You recieve {0} as a reward.");
+		}
+
+		private void GiveEpicArmour()
+		{
 			if (m_questPlayer.CharacterClass.ID == (byte)eCharacterClass.Armsman)
 			{
 				GiveItem(m_questPlayer, ArmsmanEpicBoots);
@@ -1562,9 +1695,6 @@ namespace DOL.GS.Quests.Albion
 				GiveItem(m_questPlayer, MaulerAlbEpicLegs);
 				GiveItem(m_questPlayer, MaulerAlbEpicVest);
 			}
-
-			m_questPlayer.GainExperience(eXPSource.Quest, 1937768448, true);
-			//m_questPlayer.AddMoney(Money.GetMoney(0,0,0,2,Util.Random(50)), "You recieve {0} as a reward.");		
 		}
 
 		#region Allakhazam Epic Source
