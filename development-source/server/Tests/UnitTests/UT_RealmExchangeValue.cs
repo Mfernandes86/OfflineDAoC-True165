@@ -167,5 +167,37 @@ namespace DOL.UnitTests
             Assert.That(AutonomousBotEconomy.PurseAllows(10_000, 8_100, 60, false), Is.False);
             Assert.That(AutonomousBotEconomy.PurseAllows(0, 1, 100, true), Is.False);
         }
+
+        // owner call (valuation option 8): gear ranking weights bonuses by type and leaves out the Bonus% field
+        [Test]
+        public void EquipmentValue_WeightsSkillsOverHitsAndIgnoresTheBonusPercentField()
+        {
+            bool previous = AutonomousBotEconomy.WeightedGearRanking;
+            try
+            {
+                DbInventoryItem skill = Gear(20, 90, 1_000, eObjectType.Cloth);
+                skill.Bonus1Type = (int)eProperty.Skill_Slashing;
+                skill.Bonus1 = 3;
+                DbInventoryItem hits = Gear(20, 90, 1_000, eObjectType.Cloth);
+                hits.Bonus1Type = (int)eProperty.MaxHealth;
+                hits.Bonus1 = 12;
+                DbInventoryItem plain = Gear(20, 90, 1_000, eObjectType.Cloth);
+
+                AutonomousBotEconomy.WeightedGearRanking = true;
+                int basis = AutonomousBotEconomy.EquipmentValue(plain);
+                Assert.That(AutonomousBotEconomy.EquipmentValue(skill) - basis, Is.EqualTo(45), "+3 skill = 3 x 5 x 3");
+                Assert.That(AutonomousBotEconomy.EquipmentValue(hits) - basis, Is.EqualTo(9), "+12 hits = 12 x 0.25 x 3");
+                plain.Bonus = 35;
+                Assert.That(AutonomousBotEconomy.EquipmentValue(plain), Is.EqualTo(basis), "the Bonus% field is left out");
+
+                AutonomousBotEconomy.WeightedGearRanking = false;
+                Assert.That(AutonomousBotEconomy.EquipmentValue(hits), Is.GreaterThan(AutonomousBotEconomy.EquipmentValue(skill)),
+                    "switched off, every point counts the same again");
+            }
+            finally
+            {
+                AutonomousBotEconomy.WeightedGearRanking = previous;
+            }
+        }
     }
 }

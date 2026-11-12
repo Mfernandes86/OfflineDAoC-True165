@@ -538,15 +538,24 @@ namespace DOL.GS;
     {
         if (item == null || !BotWeaponStats.HasFunctionalMeleeStats(item))
             return 0;
-        int utility = Math.Abs(item.Bonus) + Math.Abs(item.ExtraBonus) + Math.Abs(item.Bonus1) + Math.Abs(item.Bonus2) +
-                      Math.Abs(item.Bonus3) + Math.Abs(item.Bonus4) + Math.Abs(item.Bonus5) + Math.Abs(item.Bonus6) +
-                      Math.Abs(item.Bonus7) + Math.Abs(item.Bonus8) + Math.Abs(item.Bonus9) + Math.Abs(item.Bonus10);
+        // owner call (2026-11-11 exchange plan, valuation option 8): bonus points weighted by type as a period player
+        // valued them (skills 5, resists and power 2, stats/focus/AF 1, hits 0.25; ItemValue165.Weight), without the
+        // Bonus% field; bot_weighted_gear_ranking off brings back the flat count. Only the ranking changes, no combat number.
+        int utility = WeightedGearRanking
+            ? (int)Math.Round(ItemValue165.Utility(item) * 3)
+            : 3 * (Math.Abs(item.Bonus) + Math.Abs(item.ExtraBonus) + Math.Abs(item.Bonus1) + Math.Abs(item.Bonus2) +
+                   Math.Abs(item.Bonus3) + Math.Abs(item.Bonus4) + Math.Abs(item.Bonus5) + Math.Abs(item.Bonus6) +
+                   Math.Abs(item.Bonus7) + Math.Abs(item.Bonus8) + Math.Abs(item.Bonus9) + Math.Abs(item.Bonus10));
         // Body armor counts its absorption too (owner 2026-10-31 runs: level 6-9 fighters wore cloth rags because a
         // level-7 cloth piece scored the same as level-7 chain, and died to single blue monsters).
         int absorb = (eObjectType)item.Object_Type is >= eObjectType._FirstArmor and <= eObjectType._LastArmor
             ? Math.Max(0, item.SPD_ABS) * 2 : 0;
-        return Math.Max(1, item.Level) * 10 + Math.Max(1, item.Quality) + Math.Max(0, item.DPS_AF) * 2 + utility * 3 + absorb;
+        return Math.Max(1, item.Level) * 10 + Math.Max(1, item.Quality) + Math.Max(0, item.DPS_AF) * 2 + utility + absorb;
     }
+
+        [DOL.GS.ServerProperties.ServerProperty("bots", "bot_weighted_gear_ranking",
+            "Owner 2026-11-11 (Realm Exchange plan): gamebots rank gear bonuses weighted by type (skills 5, resists and power 2, stats/focus/AF 1, hits 0.25, no Bonus% field) instead of counting every point the same. Ranking only, no combat number.", true)]
+        public static bool WeightedGearRanking = true;
 
         public static bool IsPlayerListing(string ownerId) =>
             !string.IsNullOrWhiteSpace(ownerId) && !TryParseOwnerId(ownerId, out _);
