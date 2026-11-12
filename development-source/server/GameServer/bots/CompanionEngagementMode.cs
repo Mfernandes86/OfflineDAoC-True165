@@ -102,7 +102,44 @@ namespace DOL.GS
             return leader == null || PlayerLedPullCoordinator.IsOrderedPuller(actor, target) ||
                 target != null && target.CurrentRegionID == leader.CurrentRegionID &&
                 (leader.IsWithinRadius(target, DefensiveRadius) || CompanionPvpEngagement.Defending(actor, target) ||
-                 CompanionPvpEngagement.FrontierRoamerInRange(leader, target, true));
+                 CompanionPvpEngagement.FrontierRoamerInRange(leader, target, true) ||
+                 DefendsTheGroup(actor, leader, target));
+        }
+
+        /// <summary>How far from the player a /defensive companion still answers a monster that is attacking the group.</summary>
+        public const int DefendGroupRadius = 2000;
+
+        /// <summary>
+        /// Pure (Q6, veteran review 2026-11-11): /defensive starts no fight beyond 350 units of the player, but it does
+        /// defend - a monster hitting the companion itself is always answered, and one attacking any groupmate or
+        /// groupmate's pet is answered within 2,000 units of the player. Before, a monster beating on the healer 400
+        /// units away was ignored.
+        /// </summary>
+        public static bool DefensiveAnswers(bool withinDefensiveRadius, bool attacksThisCompanion, bool attacksGroupmate,
+            bool withinGroupRadius) =>
+            withinDefensiveRadius || attacksThisCompanion || attacksGroupmate && withinGroupRadius;
+
+        private static bool DefendsTheGroup(GameLiving actor, GamePlayer leader, GameLiving target)
+        {
+            if (!target.IsAlive)
+                return false;
+            // the attacker lists the game already keeps: no area scan
+            bool onMe = target.TargetObject == actor || actor.attackComponent?.AttackerTracker.ContainsAttacker(target) == true;
+            bool onGroup = !onMe && target.TargetObject is GameLiving victim && victim.IsAlive && InGroupOf(victim, leader);
+            return DefensiveAnswers(false, onMe, onGroup, leader.IsWithinRadius(target, DefendGroupRadius));
+        }
+
+        /// <summary>A member of the player's group, or a pet (or sub-pet) of one.</summary>
+        private static bool InGroupOf(GameLiving living, GamePlayer leader)
+        {
+            Group group = leader.Group;
+            for (int depth = 0; depth < 4 && living != null; depth++)
+            {
+                if (living == leader || group != null && group.IsInTheGroup(living))
+                    return true;
+                living = (living as GameNPC)?.Brain is IControlledBrain controlled ? controlled.Owner : null;
+            }
+            return false;
         }
         public static void RememberPull(GamePlayer player, GameLiving target)
         {
