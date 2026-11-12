@@ -97,5 +97,56 @@ namespace DOL.AI.Brain
             }
             return true;
         }
+        public const long BladeturnCheckMilliseconds = 1_000;
+        private long _bladeturnCheckAt;
+        private bool _bladeturnFeedsBoss;
+
+        private static bool ConsumesBladeturn(GameObject target) =>
+            target is IRaidBossTraits { RaidConsumesBladeturn: true } && target is GameLiving { IsAlive: true };
+
+        /// <summary>
+        /// df-bosses L3: Legion strips bladeturn from his target every turn and after five casts a 1,000 Body blast on
+        /// everyone within 1,000 that heals him a quarter of each hit. Bots recast self bladeturns, cast any missing
+        /// bladeturn and Wardens held the pulsing chant in a fight, so they fed it. True while the bot's own target, its
+        /// party's kill target or a target of its party's fight board consumes bladeturn; then it casts, pulses and keeps
+        /// no bladeturn (a Warden holds its damage add), and a running pulsing bladeturn of its own ends at once.
+        /// Cost: rechecked at most once a second (type tests on the bot's target, the kill target and the party's
+        /// targets on the existing board, which is never rebuilt here); no scan, no allocation.
+        /// </summary>
+        private bool BladeturnFeedsBoss()
+        {
+            long now = GameLoop.GameLoopTime;
+            if (now < _bladeturnCheckAt)
+                return _bladeturnFeedsBoss;
+            _bladeturnCheckAt = now + BladeturnCheckMilliseconds;
+            bool own = ConsumesBladeturn(Body.TargetObject);
+            bool kill = !own && Body.Group is { } group && KillTargets.TryGetValue(group, out KillTargetHolder holder) &&
+                ConsumesBladeturn(holder.Target);
+            bool party = false;
+            if (!own && !kill && Body.Group != null && PeekFightBoard(Body) is { } board)
+                foreach (GameLiving target in board.SelectedTargets)
+                    if (ConsumesBladeturn(target))
+                    {
+                        party = true;
+                        break;
+                    }
+            bool feeds = RaidBossTraits.BladeturnFeedsBoss(own, kill, party);
+            if (feeds && !_bladeturnFeedsBoss)
+                EndOwnPulsingBladeturn();
+            _bladeturnFeedsBoss = feeds;
+            return feeds;
+        }
+
+        /// <summary>A bladeturn spell this bot must not cast now (<see cref="BladeturnFeedsBoss"/>).</summary>
+        private bool BladeturnBlocked(Spell spell) => spell?.SpellType == eSpellType.Bladeturn && BladeturnFeedsBoss();
+
+        private void EndOwnPulsingBladeturn()
+        {
+            if (Body?.effectListComponent?.ContainsEffectForEffectType(eEffect.Pulse) != true)
+                return;
+            foreach (ECSPulseEffect pulse in Body.effectListComponent.GetPulseEffects())
+                if (!pulse.IsEnding && !pulse.IsEnded && pulse.SpellHandler?.Spell?.SpellType == eSpellType.Bladeturn)
+                    pulse.End();
+        }
     }
 }

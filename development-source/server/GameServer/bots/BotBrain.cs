@@ -2533,7 +2533,8 @@ namespace DOL.AI.Brain
                                  AutonomousPetSupport.ShouldMaintainRoutinePetBuff(spell, false)) &&
                                 (!waitingForLeader || CompanionFollowPolicy.CanStopForNativeTravelSpeed(bot, spell)) &&
                                 !BotSongTwistPolicy.IsReservedPulse(bot, spell) &&
-                                !BaseBuffLeftToGroupmate(spell))
+                                !BaseBuffLeftToGroupmate(spell) &&
+                                !BladeturnBlocked(spell))   // df-bosses L3
                 .DistinctBy(spell => spell.ID)
                 .ToList();
             if (known.Count == 0)
@@ -2691,7 +2692,7 @@ namespace DOL.AI.Brain
         private bool TryRestoreSelfBladeturn(bool fight = false)
         {
             GameBot bot = BotBody;
-            if (bot == null || !bot.IsAlive)
+            if (bot == null || !bot.IsAlive || BladeturnFeedsBoss())   // df-bosses L3 (BotBrain.RaidBoss)
                 return false;
             long now = GameLoop.GameLoopTime;
             // Hold the turn while our own shield cast finishes, so a route or
@@ -3177,6 +3178,9 @@ namespace DOL.AI.Brain
                 return;
             }
             List<Spell> chants = TankChants(bot);
+            // df-bosses L3: no bladeturn chant while the fight's boss consumes bladeturn; a Warden holds its damage add
+            if (BladeturnFeedsBoss())
+                chants.RemoveAll(spell => spell.SpellType == eSpellType.Bladeturn);
             if (chants.Count == 0) return;
             Spell active = bot.effectListComponent.GetPulseEffects()
                 .FirstOrDefault(effect => !effect.IsEnding && !effect.IsEnded &&
@@ -6387,7 +6391,8 @@ namespace DOL.AI.Brain
             if (spell == null || spell.IsHarmful || spell.Level > Body.Level ||
                 !BotBody.CanAffordConcentration(spell) ||
                 BotSongTwistPolicy.IsReservedPulse(BotBody, spell) ||
-                Body.Mana < BotBody.PowerCost(spell))
+                Body.Mana < BotBody.PowerCost(spell) ||
+                BladeturnBlocked(spell))   // df-bosses L3
                 return false;
 
             if (spell.CastTime > 0 && Body.IsBeingInterrupted && !spell.Uninterruptible)
@@ -6424,7 +6429,8 @@ namespace DOL.AI.Brain
             if (spell == null || spell.Level > Body.Level || Body.Mana < BotBody.PowerCost(spell) ||
                 !BotBody.CanAffordConcentration(spell) ||
                 BotSongTwistPolicy.IsReservedPulse(BotBody, spell) ||
-                spell.HasRecastDelay && Body.GetSkillDisabledDuration(spell) > 0)
+                spell.HasRecastDelay && Body.GetSkillDisabledDuration(spell) > 0 ||
+                BladeturnBlocked(spell))   // df-bosses L3
                 return false;
 
             bool castSpell = false;

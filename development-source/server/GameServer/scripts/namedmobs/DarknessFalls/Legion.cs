@@ -293,6 +293,8 @@ namespace DOL.GS.Scripts
         }
         // Raid-boss traits for the bots (bots\RaidBossTraits.cs): the 1,400 of TakeDamage above.
         public int RaidMaxDamageRange => 1400;
+        // ... and the bladeturn strip (DestroyDamnBubble) that feeds the soul consumption blast.
+        public bool RaidConsumesBladeturn => true;
     }
 }
 

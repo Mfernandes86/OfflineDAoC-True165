@@ -21,6 +21,10 @@ namespace DOL.GS
 
         /// <summary>The centre of the lair circle (null when there is none).</summary>
         Point3D RaidLairCentre => null;
+
+        /// <summary>The boss strips bladeturn from its target and turns the stripped bubbles against the raid (Legion's
+        /// soul consumption blast after five), so its attackers keep no bladeturn up.</summary>
+        bool RaidConsumesBladeturn => false;
     }
 
     /// <summary>Pure rules for <see cref="IRaidBossTraits"/>, unit tested.</summary>
@@ -40,6 +44,13 @@ namespace DOL.GS
         /// <summary>True when an attacker this far from the boss does it no damage.</summary>
         public static bool BeyondDamageRange(int maxDamageRange, double distance) =>
             maxDamageRange > 0 && distance > maxDamageRange - DamageRangeMargin / 2;
+
+        /// <summary>
+        /// df-bosses L3: a bot casts, pulses and maintains no bladeturn while its own target, its party's kill target or
+        /// any target of its party's fight is a boss that consumes bladeturn.
+        /// </summary>
+        public static bool BladeturnFeedsBoss(bool ownTargetConsumes, bool killTargetConsumes, bool partyTargetConsumes) =>
+            ownTargetConsumes || killTargetConsumes || partyTargetConsumes;
 
         public enum LairAction { Hold, Lead, Return }
 

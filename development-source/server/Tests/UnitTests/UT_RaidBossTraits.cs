@@ -59,5 +59,27 @@ namespace DOL.UnitTests
         [TestCase(typeof(HibCuuldurach))]
         public void TheDragonsStateTheirLairCircle(System.Type dragon) =>
             Assert.That(typeof(IRaidBossTraits).IsAssignableFrom(dragon), Is.True);
+        [TestCase(true, false, false, true)]
+        [TestCase(false, true, false, true)]
+        [TestCase(false, false, true, true)]
+        [TestCase(false, false, false, false)]
+        public void NoBladeturnWhileTheFightsBossConsumesIt(bool own, bool kill, bool party, bool blocked) =>
+            Assert.That(RaidBossTraits.BladeturnFeedsBoss(own, kill, party), Is.EqualTo(blocked));
+
+        [Test]
+        public void AWardenWithoutItsBladeturnChantHoldsItsDamageAdd() =>
+            // the brain drops the bladeturn chant from the Warden's list while Legion is the fight's boss
+            Assert.That(BotSongTwistPolicy.WardenAnchor(false, true, true, false), Is.EqualTo(eSpellType.DamageAdd));
+
+        [Test]
+        public void OnlyLegionConsumesBladeturnByDefault()
+        {
+            var plain = new PlainBoss();
+            Assert.That(((IRaidBossTraits)plain).RaidConsumesBladeturn, Is.False);
+            Assert.That(((IRaidBossTraits)plain).RaidMaxDamageRange, Is.Zero);
+            Assert.That(((IRaidBossTraits)plain).RaidLairRadius, Is.Zero);
+        }
+
+        private sealed class PlainBoss : IRaidBossTraits { }
     }
 }
