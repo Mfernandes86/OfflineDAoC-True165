@@ -78,6 +78,17 @@ namespace DOL.GS
                 ? smiteCleric ? SmiteClericGroupReservePercent : ClericGroupHealReservePercent
                 : smiteCleric ? 0 : ClericSoloReservePercent);
 
+        /// <summary>Q18: a melee hybrid opens with at most this many debuffs on a fight that lasts.</summary>
+        public const int MeleeHybridOpeningDebuffs = 1;
+
+        /// <summary>
+        /// Pure (Q18, veteran review 2026-11-11; Prima, Champion: the Valor debuffs go on "your opponents", not on every
+        /// grey): a melee hybrid casts an instant debuff only when the opening rule says the fight lasts, and only one -
+        /// unless the player picked debuffs for this companion, which are all cast as before.
+        /// </summary>
+        public static bool MeleeHybridDebuffAllowed(bool debuffOpening, int debuffsCastOnTarget, int pickedDebuffs) =>
+            debuffOpening && (pickedDebuffs > 0 || debuffsCastOnTarget < MeleeHybridOpeningDebuffs);
+
         public const int SavePowerBelowPercent = 50;
         public const int FinishTargetBelowPercent = 30;
 

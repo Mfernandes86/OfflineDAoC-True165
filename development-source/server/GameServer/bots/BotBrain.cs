@@ -5053,11 +5053,19 @@ namespace DOL.AI.Brain
                         instantOffense = instantOffense.OrderByDescending(BotCasterPriority.IsDamage);
                     else if (debuffOpening)
                         instantOffense = instantOffense.OrderByDescending(BotCasterPriority.IsDebuff);
+                    // Q18 (veteran review 2026-11-11): a melee hybrid (Champion, Valewalker, ...) put every instant debuff on
+                    // every mob, greys and blues too. Now one debuff on a fight that lasts (DebuffOpeningWorthwhile:
+                    // yellow or harder, grouped, or a player-like enemy), none otherwise; a player's picked debuffs stay.
+                    bool rangedNow = PrefersCurrentSpellRange();
+                    bool meleeDebuffAllowed = rangedNow || BotCasterPriority.MeleeHybridDebuffAllowed(debuffOpening,
+                        _openingDebuffsCast, CompanionOptions165.PickedDebuffCount(BotBody));
                     foreach (Spell spell in instantOffense)
                     {
                         bool meleePressure = Body.IsBeingInterruptedByOther &&
                             Body.IsWithinRadius(Body.TargetObject, Body.MeleeAttackRange + 35);
-                        if (!BotCasterPriority.AllowInstant(spell, PrefersCurrentSpellRange(), meleePressure, debuffOpening))
+                        if (!BotCasterPriority.AllowInstant(spell, rangedNow, meleePressure, debuffOpening))
+                            continue;
+                        if (!meleeDebuffAllowed && BotCasterPriority.IsDebuff(spell))
                             continue;
                         if (holdDamage && BotCasterPriority.IsDamage(spell))
                             continue;
