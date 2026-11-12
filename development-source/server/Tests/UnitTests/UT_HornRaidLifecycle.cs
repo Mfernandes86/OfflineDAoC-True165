@@ -188,4 +188,12 @@ public class UT_HornRaidLifecycle
         Assert.That(AutonomousRealmRaid.PartyDissolves(8, 7), Is.False);
         Assert.That(AutonomousRealmRaid.PartyDissolves(8, 8), Is.True, "the group is gone");
     }
+
+    [Test]
+    public void HornStartTextStatesTheHornRuleOnly()
+    {
+        Assert.That(AutonomousRealmRaid.HornStartCondition(true), Does.Contain("300").And.Not.Contain("3 minutes"));
+        Assert.That(AutonomousRealmRaid.HornStartCondition(false), Does.Contain("dragon"));
+        Assert.That(AutonomousRealmRaid.HornEndCondition, Does.Contain("160").And.Contain("call it off"));
+    }
 }

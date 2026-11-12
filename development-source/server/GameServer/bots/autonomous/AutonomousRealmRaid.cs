@@ -543,8 +543,8 @@ namespace DOL.GS
         /// <summary>
         /// Opens an event. A horn sound under the new rules passes <paramref name="rally"/>: it reserves idle live 50s
         /// first, then calls archived 50s (RallyGuests165), then busy live 50s, up to 300; it needs 200 answerers instead
-        /// of 300, and goes in at 300 staged or 200+ after 3 minutes. Without it (launcher, or the property off) nothing
-        /// changes: 300 free live 50s are needed.
+        /// of 300, and goes in at 300 staged or 200+ once arrivals stop (RealmRaidRecruitmentPolicy.HornAssaultReady). Without
+        /// it (launcher, or the property off) 300 free live 50s are needed.
         /// </summary>
         public static bool Start(string id, eRealm realm, out string reason, bool forced, RallyRequest rally, string sounderKey = null)
         {
@@ -630,7 +630,9 @@ namespace DOL.GS
                     ? $"{definition.Name}: {recruits.Sum(p => p.Length)} level-50 adventurers reserved" +
                       (rally?.GuestsSummoned > 0 ? $", {rally.GuestsSummoned} more answering the horn" : "") + $"; gather at {raid.Hub.Name}. {startCondition}"
                     : $"{definition.Name}: recruiting up to 300 level-50 adventurers via {raid.Hub.Name}; at least 200 must arrive before assault.");
-                reason = forced ? $"Reserved {recruits.Sum(p => p.Length)} level-50 bots, closest to {raid.Hub.Name} first. The raid starts as soon as 200 are staged and runs until the encounter is defeated or you press Stop event. {startCondition}" :
+                // df-routes M3 / dragon-routes M2: a horn start said "starts as soon as 200 are staged" beside its own rule
+                reason = rally != null ? $"Reserved {recruits.Sum(p => p.Length)} level-50 bots, closest to {raid.Hub.Name} first. {startCondition} {HornEndCondition}" :
+                    forced ? $"Reserved {recruits.Sum(p => p.Length)} level-50 bots, closest to {raid.Hub.Name} first. The raid starts as soon as 200 are staged and runs until the encounter is defeated or you press Stop event." :
                     $"Recruiting up to 300 level-50 bots via {raid.Hub.Name}. At least 200 must arrive before assault; staging can last up to {RealmRaidRecruitmentPolicy.AutonomousStagingLimitMilliseconds / 60_000} minutes.";
                 return true;
             }
@@ -708,6 +710,9 @@ namespace DOL.GS
             RememberRouteProof(id, plan, reason, now);
             return RouteProofs[id];
         }
+
+        public const string HornEndCondition = "It is called off if fewer than 160 gather in time, after three defeats at the final encounter " +
+            "or an hour without a kill; the one who sounded it may call it off at the horn.";
 
         public static string HornStartCondition(bool isDungeon) => isDungeon
             ? "The assault begins at 300 staged, or with 200 once arrivals stop."
