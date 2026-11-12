@@ -32,7 +32,7 @@ namespace DOL.GS
                 SpecType = eSpecType.DarkSpirit;
                 Add(Specs.Darkness, 47, 0.85f);
                 Add(Specs.Suppression, 26, 0.6f);
-                Add(Specs.Summoning, 6, 0.0f);
+                Add(Specs.Summoning, 5, 0.0f);
                 break;
 
                 // Suppression is the main line (it had ratio 0, so it trained nothing before 50).

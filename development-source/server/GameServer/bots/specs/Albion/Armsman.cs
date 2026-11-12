@@ -49,7 +49,7 @@ namespace DOL.GS
                 Add(ObjToSpec(WeaponOneType), 50, 1.0f);
                 Add(Specs.Shields, 50, 1.0f);
                 Add(Specs.Parry, 18, 0.2f);
-                Add(Specs.Crossbow, 25, 0.1f);
+                Add(Specs.Crossbow, 22, 0.1f);
                 break;
 
                 case 1:
@@ -57,7 +57,7 @@ namespace DOL.GS
                 Add(ObjToSpec(WeaponOneType), 44, 1.0f);
                 Add(Specs.Shields, 50, 1.0f);
                 Add(Specs.Parry, 32, 0.2f);
-                Add(Specs.Crossbow, 25, 0.1f);
+                Add(Specs.Crossbow, 19, 0.1f);
                 break;
 
                 case 2:
@@ -65,7 +65,7 @@ namespace DOL.GS
                 Add(ObjToSpec(WeaponOneType), 50, 0.9f);
                 Add(ObjToSpec(WeaponTwoType), 39, 0.6f);
                 Add(Specs.Shields, 42, 0.8f);
-                Add(Specs.Parry, 18, 0.1f);
+                Add(Specs.Parry, 6, 0.1f);
                 break;
 
                 case 3:
@@ -75,8 +75,8 @@ namespace DOL.GS
                 Add(ObjToSpec(WeaponOneType), 39, 0.6f);
                 Add(ObjToSpec(WeaponTwoType), 50, 1.0f);
                 Add(Specs.Shields, 42, 0.5f);
-                Add(Specs.Parry, 18, 0.1f);
-                Add(Specs.Crossbow, 3, 0.0f);
+                Add(Specs.Parry, 6, 0.1f);
+                Add(Specs.Crossbow, 1, 0.0f);
                 break;
 
                 case 5:
@@ -85,7 +85,7 @@ namespace DOL.GS
                 Add(ObjToSpec(WeaponOneType), 50, 1.0f);
                 Add(ObjToSpec(WeaponTwoType), 50, 1.0f);
                 Add(Specs.Parry, 22, 0.2f);
-                Add(Specs.Crossbow, 25, 0.1f);
+                Add(Specs.Crossbow, 18, 0.1f);
                 break;
             }
         }

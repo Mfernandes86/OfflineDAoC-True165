@@ -13,8 +13,8 @@ namespace DOL.GS
                 WeaponOneType = eObjectType.Flexible;
                 Add(Specs.Soulrending, 50, 1.0f);
                 Add(Specs.Flexible, 42, 0.8f);
-                Add(Specs.Shields, 42, 0.5f);
-                Add(Specs.Parry, 9, 0.1f);
+                Add(Specs.Shields, 39, 0.5f);
+                Add(Specs.Parry, 1, 0.1f);
                 return;
             }
 
@@ -36,16 +36,16 @@ namespace DOL.GS
                 SpecType = eSpecType.OneHandAndShield;
                 Add(ObjToSpec(WeaponOneType), 50, 0.8f);
                 Add(Specs.Soulrending, 41, 1.0f);
-                Add(Specs.Shields, 42, 0.5f);
-                Add(Specs.Parry, 13, 0.1f);
+                Add(Specs.Shields, 40, 0.5f);
+                Add(Specs.Parry, 1, 0.1f);
                 break;
 
                 case 2:
                 SpecType = eSpecType.OneHandAndShield;
                 Add(ObjToSpec(WeaponOneType), 50, 0.8f);
                 Add(Specs.Soulrending, 50, 1.0f);
-                Add(Specs.Shields, 29, 0.4f);
-                Add(Specs.Parry, 16, 0.1f);
+                Add(Specs.Shields, 28, 0.4f);
+                Add(Specs.Parry, 1, 0.1f);
                 break;
             }
         }

@@ -24,7 +24,7 @@ namespace DOL.GS
                 case 0:
                 case 1:
                 Add(ObjToSpec(WeaponOneType), 39, 0.8f);
-                Add(Specs.Celtic_Dual, 15, 0.1f);
+                Add(Specs.Celtic_Dual, 12, 0.1f);
                 Add(Specs.Critical_Strike, 44, 0.9f);
                 Add(Specs.Stealth, 37, 0.5f);
                 Add(Specs.Envenom, 37, 0.6f);

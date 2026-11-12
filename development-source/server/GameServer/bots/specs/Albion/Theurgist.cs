@@ -23,7 +23,7 @@ namespace DOL.GS
                 case 0:
                 SpecType = eSpecType.AirTheur;
                 Add(Specs.Earth_Magic, 28, 0.1f);
-                Add(Specs.Cold_Magic, 20, 0.0f);
+                Add(Specs.Cold_Magic, 10, 0.0f);
                 Add(Specs.Wind_Magic, 45, 1.0f);
                 break;
 
@@ -39,7 +39,7 @@ namespace DOL.GS
                 SpecType = eSpecType.IceTheur;
                 Add(Specs.Earth_Magic, 26, 0.1f);
                 Add(Specs.Cold_Magic, 46, 1.0f);
-                Add(Specs.Wind_Magic, 12, 0.0f);
+                Add(Specs.Wind_Magic, 10, 0.0f);
                 break;
 
                 case 3:

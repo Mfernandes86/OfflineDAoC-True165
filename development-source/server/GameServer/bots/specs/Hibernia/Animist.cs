@@ -27,13 +27,13 @@ namespace DOL.GS
                     break;
 
                 case eSpecType.VerdantAnimist:
-                    Add(Specs.Arboreal_Path, 12, 0.1f);
+                    Add(Specs.Arboreal_Path, 5, 0.1f);
                     Add(Specs.Creeping_Path, 22, 0.2f);
                     Add(Specs.Verdant_Path, 49, 1.0f);
                     break;
 
                 default:
-                    Add(Specs.Arboreal_Path, 12, 0.1f);
+                    Add(Specs.Arboreal_Path, 5, 0.1f);
                     Add(Specs.Creeping_Path, 49, 1.0f);
                     Add(Specs.Verdant_Path, 22, 0.2f);
                     break;

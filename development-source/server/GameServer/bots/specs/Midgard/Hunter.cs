@@ -15,7 +15,7 @@ namespace DOL.GS
                 Add(Specs.Spear, 50, 1.0f);
                 Add(Specs.Beastcraft, 39, 0.7f);
                 Add(Specs.Stealth, 35, 0.4f);
-                Add(Specs.CompositeBow, 25, 0.2f);
+                Add(Specs.CompositeBow, 23, 0.2f);
                 return;
             }
 
@@ -47,7 +47,7 @@ namespace DOL.GS
                 Add(ObjToSpec(WeaponOneType), 39, 0.8f);
                 Add(Specs.CompositeBow, 45, 0.9f);
                 Add(Specs.Beastcraft, 32, 0.6f);
-                Add(Specs.Stealth, 38, 0.3f);
+                Add(Specs.Stealth, 35, 0.3f);
                 break;
 
                 // Melee Hunter (period): weapon 44 / bow 35 / Beastcraft 32 / stealth 40.

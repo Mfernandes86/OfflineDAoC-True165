@@ -174,6 +174,104 @@ namespace DOL.UnitTests
             Assert.That(rolled.SpecLines.Select(line => line.Spec), Is.EqualTo(new[] { Specs.Crush, Specs.Shields }));
         }
 
+        /// <summary>Every variant of every class's build families (random weapon and variant rolls sampled).</summary>
+        private static IEnumerable<(eCharacterClass Class, eSpecType Family, BotSpec Plan)> EveryTemplate()
+        {
+            foreach (eCharacterClass characterClass in Enum.GetValues<eCharacterClass>())
+            {
+                if (BotSpec.GetSpec(characterClass, eSpecType.None) == null)
+                    continue;
+                foreach ((eSpecType family, int _) in BotSpec.GetSpecializationWeights(characterClass))
+                {
+                    HashSet<string> seen = new();
+                    for (int sample = 0; sample < 400; sample++)
+                    {
+                        BotSpec plan = BotSpec.GetSpec(characterClass, family);
+                        string key = string.Join(" ", plan.SpecLines.Select(l => $"{l.Spec}:{l.SpecCap}@{l.levelRatio}"));
+                        if (seen.Add(key))
+                            yield return (characterClass, family, plan);
+                    }
+                }
+            }
+        }
+
+        [Test]
+        public void EveryTemplateFitsTheClassPointsAtFifty()
+        {
+            // O11 (owner 2026-11-11): 13+ templates asked for more points than level 50 gives, starving their last line.
+            List<string> over = new();
+            foreach ((eCharacterClass characterClass, eSpecType family, BotSpec plan) in EveryTemplate())
+            {
+                int multiplier = Multiplier(characterClass);
+                int cost = BotSpecBudget.CostAtFifty(plan.SpecLines);
+                int budget = BotSpecBudget.PointsAtFifty(multiplier);
+                if (cost > budget)
+                    over.Add($"{characterClass} {family} {string.Join("/", plan.SpecLines.Select(l => $"{l.Spec}:{l.SpecCap}@{l.levelRatio}"))} = {cost} > {budget}");
+            }
+            Assert.That(over, Is.Empty, string.Join("\n", over));
+        }
+
+        [Test]
+        public void EveryTemplateReachesEveryCapAtFifty()
+        {
+            List<string> short_ = new();
+            foreach ((eCharacterClass characterClass, eSpecType family, BotSpec plan) in EveryTemplate())
+            {
+                Dictionary<string, int> at50 = Level(plan, Multiplier(characterClass), 50);
+                foreach (IGrouping<string, BotSpecLine> line in plan.SpecLines.Where(l => !BotSpecBudget.IsRestOfPointsLine(l)).GroupBy(l => l.Spec))
+                {
+                    int cap = (int)Math.Min(50, line.Max(l => l.SpecCap));
+                    if (at50[line.Key] < cap)
+                        short_.Add($"{characterClass} {family} {line.Key} {at50[line.Key]} < {cap}");
+                }
+            }
+            Assert.That(short_, Is.Empty, string.Join("\n", short_));
+        }
+
+        [Test]
+        public void BudgetMatchesThePointsTable()
+        {
+            Assert.That(BotSpecBudget.PointsAtFifty(10), Is.EqualTo(1494));
+            Assert.That(BotSpecBudget.PointsAtFifty(20), Is.EqualTo(2979));
+            Assert.That(BotSpecBudget.LineCost(1), Is.EqualTo(0));
+            Assert.That(BotSpecBudget.LineCost(50), Is.EqualTo(1274));
+        }
+
+        [Test]
+        public void FitTrimsAnOldOverBudgetPlansLowestRatioLine()
+        {
+            // the pre-fix Air Theurgist: Wind 45 + Earth 28 left 55 points for a planned Cold 20
+            BotSpec old = new();
+            old.SpecLines.Add(new BotSpecLine(Specs.Earth_Magic, 28, 0.1f));
+            old.SpecLines.Add(new BotSpecLine(Specs.Cold_Magic, 20, 0.0f));
+            old.SpecLines.Add(new BotSpecLine(Specs.Wind_Magic, 45, 1.0f));
+            Assert.That(BotSpecBudget.Fit(old, 10), Is.True);
+            Assert.That(old.SpecLines.Select(l => l.SpecCap), Is.EqualTo(new uint[] { 28, 10, 45 }));
+            Assert.That(BotSpecBudget.Fits(old, 10), Is.True);
+            Assert.That(BotSpecBudget.Fit(old, 10), Is.False, "a plan that fits is left alone");
+        }
+
+        [Test]
+        public void FitLeavesEveryCurrentTemplateUnchanged()
+        {
+            foreach ((eCharacterClass characterClass, eSpecType family, BotSpec plan) in EveryTemplate())
+                Assert.That(BotSpecBudget.Fit(plan, Multiplier(characterClass)), Is.False, $"{characterClass} {family}");
+        }
+
+        [Test]
+        public void FitNeverLowersPointsAlreadySpent()
+        {
+            // existing bots keep what they trained: the trainer only buys up to a cap, it never takes points back
+            BotSpec old = new();
+            old.SpecLines.Add(new BotSpecLine(Specs.Wind_Magic, 45, 1.0f));
+            old.SpecLines.Add(new BotSpecLine(Specs.Earth_Magic, 28, 0.1f));
+            old.SpecLines.Add(new BotSpecLine(Specs.Cold_Magic, 20, 0.0f));
+            BotSpecBudget.Fit(old, 10);
+            Dictionary<string, int> levels = new() { [Specs.Wind_Magic] = 45, [Specs.Earth_Magic] = 28, [Specs.Cold_Magic] = 15 };
+            BotSpecTrainer.Spend(old.SpecLines, 50, 50, 50, 40, 10, s => levels[s], (s, v) => levels[s] = v);
+            Assert.That(levels[Specs.Cold_Magic], Is.EqualTo(15));
+        }
+
         /// <summary>Prints every class's builds at 20/30/40/50 (run by hand when tuning plans).</summary>
         [Test, Explicit]
         public void ReportEveryBuild()

@@ -46,16 +46,16 @@ namespace DOL.GS
                 Add(ObjToSpec(WeaponOneType), 39, 0.6f);
                 Add(ObjToSpec(WeaponTwoType), 44, 0.8f);
                 Add(Specs.Chants, 48, 0.9f);
-                Add(Specs.Parry, 19, 0.2f);
+                Add(Specs.Parry, 8, 0.2f);
                 break;
 
                 case 1:
                 Is2H = true;
                 SpecType = eSpecType.TwoHandHybrid;
-                Add(ObjToSpec(WeaponOneType), 34, 0.6f);
+                Add(ObjToSpec(WeaponOneType), 32, 0.6f);
                 Add(ObjToSpec(WeaponTwoType), 50, 0.8f);
                 Add(Specs.Chants, 48, 0.9f);
-                Add(Specs.Parry, 13, 0.2f);
+                Add(Specs.Parry, 1, 0.2f);
                 break;
 
                 case 2:

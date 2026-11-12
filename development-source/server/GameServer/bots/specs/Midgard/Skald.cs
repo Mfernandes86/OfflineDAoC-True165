@@ -53,7 +53,7 @@ namespace DOL.GS
                 case 4:
                 Add(ObjToSpec(WeaponOneType), 44, 0.8f);
                 Add(Specs.Battlesongs, 47, 0.8f);
-                Add(Specs.Parry, 16, 0.1f);
+                Add(Specs.Parry, 14, 0.1f);
                 break;
 
                 // Period: weapon 50 / Battlesongs 43 / parry 2.

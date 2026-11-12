@@ -3047,7 +3047,11 @@ namespace DOL.GS
             // from the character record.
             bool savagePlanCorrected = persistentClass == eCharacterClass.Savage &&
                 SavageBotSpec.AlignWithPersistedSpecs(BotSpec, record.SerializedSpecs);
-            if (!buildLocked || savagePlanCorrected)
+            // O11 (owner 2026-11-11): a plan saved from an over-budget template is trimmed the way the template was;
+            // points already spent stay, future points follow the fixed plan
+            bool overBudgetPlanFixed = buildLocked && CharacterClass != null && CharacterClass.ID == (int)persistentClass &&
+                BotSpecBudget.Fit(BotSpec, CharacterClass.SpecPointsMultiplier);
+            if (!buildLocked || savagePlanCorrected || overBudgetPlanFixed)
             {
                 record.SerializedBuildPlan = BotLifetimeBuild.Encode(BotSpec);
                 MarkAutonomousStateDirty();
