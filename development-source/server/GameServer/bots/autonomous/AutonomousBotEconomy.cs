@@ -283,6 +283,9 @@ namespace DOL.GS;
         public int Revision = -1;
         public int Level = -1;
         public readonly Dictionary<int, (eInventorySlot Slot, int Worn)> Buckets = new();
+        /// <summary>Whether the bot can use a kind of item (object type, slot, damage or shield size), worked out once per
+        /// kind until its gear or level changes.</summary>
+        public readonly Dictionary<int, bool> Usable = new();
     }
 
     private static readonly ConcurrentDictionary<long, WishList> WishLists = new();
@@ -306,6 +309,7 @@ namespace DOL.GS;
             if (wish.Revision == revision && wish.Level == bot.Level)
                 return wish;
             wish.Buckets.Clear();
+            wish.Usable.Clear();
             foreach ((int bucket, eInventorySlot slot) in WishBuckets)
             {
                 int worn = slot switch
@@ -326,7 +330,38 @@ namespace DOL.GS;
         }
     }
 
-    /// <summary>Listings in the bot's wearable slot buckets and level band, with a cheap value guess against what it wears.</summary>
+    /// <summary>
+    /// Whether the bot can use this kind of item at all (the proficiency part of TryGetEquipmentUpgrade): a melee
+    /// weapon's proficiency, otherwise the server's own use check (armour type, shield size, weapon line). Remembered per
+    /// kind on the wish list; an item limited to some classes or of another realm is checked on its own.
+    /// </summary>
+    private static bool UsableKind(GameBot bot, WishList wish, DbInventoryItem item)
+    {
+        DbItemTemplate template = item?.Template;
+        eObjectType type = (eObjectType)(item?.Object_Type ?? 0);
+        if (template == null || type == eObjectType.GenericItem)
+            return false;
+        bool shared = string.IsNullOrEmpty(template.AllowedClasses) && (template.Realm == 0 || template.Realm == (int)bot.Realm) &&
+                      type != eObjectType.Instrument;
+        int key = (item.Object_Type << 16) | ((item.Item_Type & 0xFF) << 8) | (item.Type_Damage & 0xFF);
+        if (shared)
+            lock (wish)
+                if (wish.Usable.TryGetValue(key, out bool known))
+                    return known;
+        bool usable = BotWeaponStats.IsMeleeWeapon(type)
+            ? BotWeaponStats.HasConfiguredWeaponProficiency(bot, template)
+            : GameServer.ServerRules.CheckAbilityToUseItem(bot, template);
+        if (shared)
+            lock (wish)
+                wish.Usable[key] = usable;
+        return usable;
+    }
+
+    /// <summary>
+    /// Listings in the bot's wearable slot buckets and level band that it can use (review 2026-11-11: the value guess
+    /// favours heavy armour and big weapons, so a caster's top guesses were plate it can't wear and a usable upgrade was
+    /// never scored), with a cheap value guess against what it wears.
+    /// </summary>
     private static List<(DbInventoryItem Item, int Guess)> GearCandidates(GameBot bot, long budget, string ownerId, ushort lot, DateTime now)
     {
         WishList wish = WishOf(bot);
@@ -346,7 +381,7 @@ namespace DOL.GS;
                 int guess = EquipmentValue(item) + WeaponSpecBonus(bot, item.Object_Type, slot) - worn;
                 if (worn == 0)
                     guess += 250;
-                if (guess > MinimumEquipmentUpgrade)
+                if (guess > MinimumEquipmentUpgrade && UsableKind(bot, wish, item))
                     result.Add((item, guess));
             }
         }
