@@ -3227,8 +3227,10 @@ namespace DOL.GS
             StopMovingOnPath();
             StopMoving();
             _recoveryRestLocked = true;
-            if (Classic165Mode.IsOn && IsAutonomousWorldBot && log.IsInfoEnabled)
-                log.Info($"BOT_REST_BEGIN bot={Name} level={Level} hp={HealthPercent}% power={ManaPercent}% endurance={EndurancePercent}%");
+            // veteran review M4: the noisiest per-bot line (about 8 a second at 1,800 bots) is Debug: server.log keeps it,
+            // the console copy does not
+            if (Classic165Mode.IsOn && IsAutonomousWorldBot && log.IsDebugEnabled)
+                log.Debug($"BOT_REST_BEGIN bot={Name} level={Level} hp={HealthPercent}% power={ManaPercent}% endurance={EndurancePercent}%");
             // Normal mode: GameBots remain standing NPC actors (no IsSitting, emote or client-facing stance).
             // True 1.65 Mode: they sit down for the rest, visibly (SetSeatedForClients).
             if (Classic165Mode.IsOn)
@@ -3285,9 +3287,12 @@ namespace DOL.GS
         public void WakeRecoveryRest()
         {
             // True 1.65 Mode: say what stood a resting gamebot up, and how rested it was (owner 2026-10-31).
-            if (_recoveryRestLocked && Classic165Mode.IsOn && IsAutonomousWorldBot && log.IsInfoEnabled)
-                log.Info($"BOT_REST_WAKE bot={Name} level={Level} hp={HealthPercent}% power={ManaPercent}% endurance={EndurancePercent}% " +
-                         $"by={new System.Diagnostics.StackFrame(1).GetMethod()?.DeclaringType?.Name}.{new System.Diagnostics.StackFrame(1).GetMethod()?.Name}");
+            if (_recoveryRestLocked && Classic165Mode.IsOn && IsAutonomousWorldBot && log.IsDebugEnabled)
+            {
+                System.Reflection.MethodBase waker = new System.Diagnostics.StackFrame(1).GetMethod();   // one stack walk, not two
+                log.Debug($"BOT_REST_WAKE bot={Name} level={Level} hp={HealthPercent}% power={ManaPercent}% endurance={EndurancePercent}% " +
+                          $"by={waker?.DeclaringType?.Name}.{waker?.Name}");
+            }
             _recoveryRestLocked = false;
             RestStandHealthPercent = RestStandPowerPercent = 100;
             SetSeatedForClients(false);     // stands up before it moves, casts or fights (0xF1)

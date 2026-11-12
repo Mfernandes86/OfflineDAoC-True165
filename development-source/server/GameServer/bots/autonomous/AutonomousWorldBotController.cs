@@ -1260,7 +1260,8 @@ namespace DOL.GS
             if (_loggedServiceArrival != _serviceNpc)
             {
                 _loggedServiceArrival = _serviceNpc;
-                Log.Info($"AUTONOMOUS_SERVICE_ARRIVED bot={bot.Name} id={bot.DatabaseID} class=\"{bot.ClassName}\" level={bot.Level} " +
+                if (Log.IsDebugEnabled)   // veteran review M4: Debug (server.log keeps it; the console copy does not)
+                Log.Debug($"AUTONOMOUS_SERVICE_ARRIVED bot={bot.Name} id={bot.DatabaseID} class=\"{bot.ClassName}\" level={bot.Level} " +
                          $"kind={needed.Value} service=\"{_serviceNpc.Name}\" type={_serviceNpc.GetType().Name} " +
                          $"region={_serviceNpc.CurrentRegionID} at={_serviceNpc.X},{_serviceNpc.Y}");
                 // veteran review M3: bind at this town's stone when it is much nearer the hunting ground (no extra trip)

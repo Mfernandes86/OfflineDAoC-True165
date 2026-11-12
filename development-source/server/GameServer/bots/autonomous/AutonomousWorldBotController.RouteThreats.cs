@@ -317,7 +317,9 @@ namespace DOL.GS
             if (action == RouteThreatAction.Ignore)
                 return false;
 
-            Log.Info($"AUTONOMOUS_ROUTE_THREAT bot={bot.Name} id={bot.DatabaseID} class=\"{bot.ClassName}\" level={bot.Level} " +
+            // veteran review M4: Debug (server.log keeps it; the console copy does not)
+            if (Log.IsDebugEnabled)
+            Log.Debug($"AUTONOMOUS_ROUTE_THREAT bot={bot.Name} id={bot.DatabaseID} class=\"{bot.ClassName}\" level={bot.Level} " +
                      $"group={(grouped ? _groupDirective.GroupId : "solo")} action={action} target=\"{blocker.Name}\" " +
                      $"targetLevel={blocker.Level} con={con} pack={pack} aggro={blockerBrain.AggroRange} along={first:0} " +
                      $"detours={detours} zone=\"{zone.Description}\" at={blocker.X},{blocker.Y},{blocker.Z} " +

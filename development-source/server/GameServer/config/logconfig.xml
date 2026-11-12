@@ -3,8 +3,13 @@
 	<variable name="logDirectory" value="./logs" />
 
 	<targets>
+		<!-- Veteran review M4 (2026-11-11): the console and server.log write from a background queue, so a game-loop
+		     worker that logs no longer waits on the coloured console or the file. overflowAction="Block" keeps every
+		     line (the launcher copies the console to logs/server-console.log and reads no tags from it); NLog flushes
+		     the queue on shutdown. warn.log and error.log stay synchronous so a crash still leaves its last errors. -->
 		<!-- Console -->
-		<target name="console" xsi:type="ColoredConsole"
+		<target name="console" xsi:type="AsyncWrapper" overflowAction="Block" queueLimit="100000" batchSize="500" timeToSleepBetweenBatches="0">
+		<target name="consoleSync" xsi:type="ColoredConsole"
 			layout="${date:format=HH\:mm\:ss} | ${level:uppercase=true:format=TriLetter} | ${logger} | ${message}${onexception:${newline}${exception:format=tostring}">
 				<highlight-row foregroundColor="Gray" condition="level == LogLevel.Trace" />
 				<highlight-row foregroundColor="Blue" condition="level == LogLevel.Debug" />
@@ -14,9 +19,11 @@
 				<highlight-row foregroundColor="DarkRed" condition="level == LogLevel.Fatal" />
 				<highlight-row foregroundColor="Magenta" condition="level == LogLevel.Off" />
 		</target>
+		</target>
 
 		<!-- Log Files -->
-		<target name="gameServerFile" xsi:type="File"
+		<target name="gameServerFile" xsi:type="AsyncWrapper" overflowAction="Block" queueLimit="100000" batchSize="500" timeToSleepBetweenBatches="0">
+		<target name="gameServerFileSync" xsi:type="File"
 			layout="${date:format=MM/dd HH\:mm\:ss} | ${level:uppercase=true:format=TriLetter} | ${logger} | ${message}${onexception:${newline}${exception:format=tostring}}"
 			fileName="${logDirectory}/server.log"
 			keepFileOpen="true"
@@ -25,6 +32,7 @@
 			archiveAboveSize="104857600"
 			archiveEvery="Day"
 			maxArchiveDays="7" />
+		</target>
 		<target name="warnFile" xsi:type="File"
 			layout="${date:format=MM/dd HH\:mm\:ss} | ${logger} | ${message}${onexception:${newline}${exception:format=tostring}}"
 			fileName="${logDirectory}/warn.log"
@@ -114,8 +122,10 @@
 			final="true" />
 
 		<!-- Global Loggers -->
+		<!-- The launcher captures console output into logs/server-console.log,
+		     a duplicate of server.log. Debug detail stays in server.log only. -->
 		<logger name="*"
-			minLevel="Debug"
+			minLevel="Info"
 			writeTo="console" />
 		<logger name="*"
 			minLevel="Debug"
