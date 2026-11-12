@@ -180,4 +180,12 @@ public class UT_HornRaidLifecycle
         Assert.That(AutonomousBotGroupCoordinator.AnyRolesPartySize(6, true), Is.EqualTo(4));
         Assert.That(AutonomousBotGroupCoordinator.AnyRolesPartySize(3, true), Is.Zero, "too few: released");
     }
+
+    [Test]
+    public void OneMemberLeavingDoesNotDropItsParty()
+    {
+        Assert.That(AutonomousRealmRaid.PartyDissolves(8, 1), Is.False);
+        Assert.That(AutonomousRealmRaid.PartyDissolves(8, 7), Is.False);
+        Assert.That(AutonomousRealmRaid.PartyDissolves(8, 8), Is.True, "the group is gone");
+    }
 }

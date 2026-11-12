@@ -276,8 +276,21 @@ namespace DOL.GS
                     {
                         Party party = raid.Parties[group];
                         foreach (var alive in party.Members.Where(b => b.IsAlive)) party.CorpseSince.Remove(alive.DatabaseID);
-                        if (party.Members.Any(b => !IsEligible(b) || b.Group != group || !AutonomousBotRegistry.Contains(b.DatabaseID)))
-                            RemoveParty(group);
+                        // sh-bosses M10: one member leaving its group (logged out, or taken by something else) dropped the
+                        // whole party from the raid. Now only that member leaves the party (never recruited back; the
+                        // refill takes a replacement); the party goes only when none of its members is left in it.
+                        GameBot[] gone = party.Members.Where(b => !IsEligible(b) || b.Group != group || !AutonomousBotRegistry.Contains(b.DatabaseID)).ToArray();
+                        if (gone.Length == 0) continue;
+                        if (PartyDissolves(party.Members.Length, gone.Length)) { RemoveParty(group); continue; }
+                        party.Members = party.Members.Except(gone).ToArray();
+                        foreach (GameBot b in gone)
+                        {
+                            party.CatchingUp.Remove(b.DatabaseID);
+                            party.CorpseSince.Remove(b.DatabaseID);
+                            raid.Released.Add(b.DatabaseID);
+                        }
+                        Log.Info($"REALM_RAID_MEMBER_LEFT event={raid.Definition.Id} left={string.Join(',', gone.Select(b => b.Name))} " +
+                                 $"remaining={party.Members.Length}");
                     }
                     raid.Support = raid.Parties.Values.SelectMany(p => p.Members).Cast<GameLiving>().ToArray();
                     int presentAtHub = raid.Parties.Values.Sum(p => PresentAtHub(raid, p));
@@ -1140,6 +1153,9 @@ namespace DOL.GS
             float distance = offset.Length();
             return distance <= DragonPostLairRadius ? dragon : lair + offset * (DragonPostLairRadius / distance);
         }
+
+        /// <summary>A raid party leaves the raid only when none of its members is left in it.</summary>
+        public static bool PartyDissolves(int members, int gone) => gone >= members;
 
         /// <summary>A dragon raid holds at staging before its battle until the dragon has landed; once the battle began, only
         /// while the dragon is flying.</summary>
