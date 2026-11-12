@@ -7,7 +7,10 @@ extends ClassicWindow
 ## fonts and its item icons. Two pages:
 ##   BROWSE - the server's market search with its own filters (name, slot, armour, damage, level, quality, price, a
 ##            bonus, crafted only), 20 results a page with their prices; BUY (or double-click, or drag a result into
-##            the backpack - the server's way).
+##            the backpack - the server's way). 2026-11-11 exchange overhaul: one row per item with its copies "(N)"
+##            (the cheapest shown), USABLE BY ME on by default, AMMUNITION / POISONS / GEMS & TINCTURES slots, FIT
+##            (the broker's order for your level) and NEWEST sorts, a fresh search whenever BROWSE opens; after a buy
+##            the broker sends the page again.
 ##   MY LISTINGS - your listing chest: 100 slots a player (owner 2026-11-06: "100 slot cap for players"), shown as
 ##            five pages of twenty with a scroll bar beside them (no chest pages): drag a backpack item in to list it
 ##            (its price is asked), SET PRICE to change it, TAKE BACK (or drag it to the backpack) cancels. A drop the
@@ -29,7 +32,11 @@ const CAPTION := 10                                 # captions, headers, notes
 const SLOTS := [["ANY SLOT", 0], ["HEAD", 1], ["TORSO", 5], ["ARMS", 8], ["HANDS", 2], ["LEGS", 7], ["FEET", 3],
 		["CLOAK", 6], ["NECK", 9], ["JEWEL", 4], ["WAIST", 12], ["WRIST", 13], ["RING", 15], ["ONE HANDED", 100],
 		["LEFT HAND", 101], ["TWO HANDED", 102], ["RANGED", 103], ["INSTRUMENT", 104], ["SHIELD", 105],
-		["OTHER ITEMS", 106]]
+		["OTHER ITEMS", 106], ["AMMUNITION", 107], ["POISONS", 108], ["GEMS & TINCTURES", 109]]
+# (2026-11-11 exchange overhaul: 107 arrows and bolts, 108 poisons, 109 spellcraft gems and alchemy tinctures - the
+# server's own categories; 106 OTHER ITEMS is every other item without a slot)
+const FLAG_USABLE := 0x01                          # the search's flags byte (RealmExchangeBrowse.FlagUsableOnly)
+const FLAG_EVERY_COPY := 0x02                      # ... and RealmExchangeBrowse.FlagEveryCopy: every copy its own row
 const ARMORS := ["ANY ARMOR", "CLOTH", "LEATHER", "STUDDED", "CHAIN", "PLATE", "REINFORCED", "SCALE"]
 const DAMAGES := ["ANY DAMAGE", "CRUSH", "SLASH", "THRUST"]
 const BONUSES := [["ANY BONUS", 0], ["STAT", 1], ["RESIST", 5], ["HIT POINTS", 4], ["POWER", 3]]
@@ -72,6 +79,9 @@ var _level_max: LineEdit
 var _quality: LineEdit
 var _price_max: LineEdit
 var _crafted: Button
+var _usable: Button                                # USABLE BY ME (on by default): only items you can use
+var _every_copy: Button                            # ALL COPIES (off by default): every copy its own row
+var _sort_only: Array = []                         # the FIT / NEWEST headers (BROWSE only)
 var _bonus: OptionButton
 var _bonus_pick: OptionButton
 var _bonus_amount: LineEdit
@@ -79,27 +89,36 @@ var _scroll: VScrollBar                            # MY LISTINGS: its five pages
 var _paging_back := false                          # (a chest page past the first, from before the 100-slot cap: back)
 var _resynced_at := 0                              # the refusal last answered with a fresh listing chest
 var _arrows := {}                                  # sort key -> its SortArrow by the header
-var sort_key := ""                                 # BROWSE's sort ("" the broker's own order)
+## BROWSE's sort: the broker's own order is "fit" (2026-11-11 exchange overhaul: items for your level first - at or
+## below it and up to 3 above, the closest first - then the price); "newest" the listing time.
+var sort_key := "fit"
 var sort_asc := true
 var duration_hours := 48                           # a new listing's time (the broker's 12 / 24 / 48 hours)
 
 
-## A header clicked: that column sorts the search (lowest first; clicked again, highest first) - the broker is told
-## and the search runs again from its first page.
+## A header clicked: that column sorts the search (lowest first; clicked again, highest first - NEWEST starts with the
+## newest) - the broker is told and the search runs again from its first page.
 func sort_by(key: String) -> void:
-	sort_asc = (not sort_asc) if key == sort_key else true
+	sort_asc = (not sort_asc) if key == sort_key else key != "newest"
 	sort_key = key
-	for k in _arrows:
-		var a: SortArrow = _arrows[k]
-		a.visible = k == sort_key
-		a.up = sort_asc
-		a.queue_redraw()
+	_show_arrows()
 	Server.command("/whisper sort %s %s" % [key, "asc" if sort_asc else "desc"])
 	if not Server.market_search.is_empty():
 		selected = -1
 		Server.market_items = []
 		Server.exchange_search(Server.market_search, 0)
 		refresh()
+
+
+## The arrow by the sorted header (BROWSE; the FIT / NEWEST headers only there).
+func _show_arrows() -> void:
+	for k in _arrows:
+		var a: SortArrow = _arrows[k]
+		a.visible = k == sort_key and (tab == "browse" or not (k in ["fit", "newest"]))
+		a.up = sort_asc
+		a.queue_redraw()
+	for h in _sort_only:
+		(h as Control).visible = tab == "browse"
 
 
 ## The little sort arrow beside a header (the fonts have no arrow glyph): a gold triangle, point up or down.
@@ -163,15 +182,21 @@ func _tab_button(text: String, at: Vector2, which: String) -> Button:
 ## The results / listings list on the right, its header and the controls under it (shared by both pages).
 func _build_list() -> void:
 	add_child(_panel(Rect2(LIST_X - 4, LIST_Y - 26, SIZE.x - LIST_X - 6, ROWS * ROW_H + 32)))
-	var cols := [["ITEM", C_NAME, HORIZONTAL_ALIGNMENT_LEFT], ["LVL", C_LEVEL, HORIZONTAL_ALIGNMENT_RIGHT],
-			["QUA", C_QUALITY, HORIZONTAL_ALIGNMENT_RIGHT], ["PRICE", C_PRICE, HORIZONTAL_ALIGNMENT_RIGHT]]
-	var keys := {"ITEM": "name", "LVL": "level", "QUA": "quality", "PRICE": "price"}
+	# (the 4th entry: where a left-aligned header's arrow goes, after its text. FIT and NEWEST sort BROWSE without a
+	# column of their own - 2026-11-11 exchange overhaul: "fit" the broker's order for your level, "newest" first)
+	var cols := [["ITEM", C_NAME, HORIZONTAL_ALIGNMENT_LEFT, 30.0], ["FIT", [148.0, 24.0], HORIZONTAL_ALIGNMENT_LEFT, 22.0],
+			["NEWEST", [192.0, 52.0], HORIZONTAL_ALIGNMENT_LEFT, 46.0], ["LVL", C_LEVEL, HORIZONTAL_ALIGNMENT_RIGHT, 0.0],
+			["QUA", C_QUALITY, HORIZONTAL_ALIGNMENT_RIGHT, 0.0], ["PRICE", C_PRICE, HORIZONTAL_ALIGNMENT_RIGHT, 0.0]]
+	var keys := {"ITEM": "name", "FIT": "fit", "NEWEST": "newest", "LVL": "level", "QUA": "quality", "PRICE": "price"}
+	var tips := {"FIT": "SORT: ITEMS FOR YOUR LEVEL FIRST", "NEWEST": "SORT: THE NEWEST LISTINGS FIRST"}
 	for c in cols:
 		var h := UiArt.label(String(c[0]), CAPTION, UiArt.GOLD)
 		h.position = Vector2(LIST_X + float(c[1][0]), LIST_Y - 21)
 		h.size = Vector2(float(c[1][1]), 14)
 		h.horizontal_alignment = c[2]
 		add_child(h)
+		if tips.has(String(c[0])):
+			_sort_only.append(h)
 		if String(c[0]) == "PRICE":
 			_header_price = h
 		if String(c[0]) == "QUA":
@@ -181,18 +206,19 @@ func _build_list() -> void:
 		var key: String = keys[String(c[0])]
 		h.mouse_filter = Control.MOUSE_FILTER_STOP
 		h.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-		h.tooltip_text = "SORT BY " + String(c[0])
+		h.tooltip_text = String(tips.get(String(c[0]), "SORT BY " + String(c[0])))
 		h.gui_input.connect(func(e: InputEvent):
 			if e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT and tab == "browse":
 				sort_by(key))
 		var arrow := SortArrow.new()
 		arrow.size = Vector2(8, 8)
 		# (after the header's text: ITEM is left-aligned, the others end at their column's right edge)
-		var after := 30.0 if c[2] == HORIZONTAL_ALIGNMENT_LEFT else float(c[1][1]) + 2.0
+		var after := float(c[3]) if c[2] == HORIZONTAL_ALIGNMENT_LEFT else float(c[1][1]) + 2.0
 		arrow.position = Vector2(LIST_X + float(c[1][0]) + after, LIST_Y - 18)
 		arrow.visible = false
 		add_child(arrow)
 		_arrows[key] = arrow
+	_show_arrows()
 	for i in ROWS:
 		var r := ExRow.new()
 		r.window = self
@@ -286,9 +312,31 @@ func _build_browse() -> void:
 		_fix_size(c, Vector2(COL_W, 20))
 		_browse.add_child(c)
 	y += 28.0
-	_crafted = UiArt.button("PLAYER CRAFTED ONLY", Vector2(COL_W, 22), 9)
+	# three toggles side by side: USABLE BY ME (2026-11-11 exchange overhaul, on by default - the broker leaves out what
+	# you cannot use; at once when a search is shown), ALL COPIES (off by default: one row per item, the cheapest copy
+	# shown; on: every copy its own row - the old view) and CRAFTED ONLY (player crafted)
+	var third := (COL_W - 12.0) / 3.0
+	_usable = UiArt.button("USABLE BY ME", Vector2(third, 22), 9)
+	_usable.toggle_mode = true
+	_usable.set_pressed_no_signal(true)
+	_usable.position = Vector2(COL_X, y)
+	_usable.tooltip_text = "ONLY ITEMS YOU CAN USE (OFF: EVERYTHING, WHAT YOU CANNOT USE IN RED)"
+	_usable.toggled.connect(func(_on: bool):
+		if not Server.market_search.is_empty():
+			search())
+	_browse.add_child(_usable)
+	_every_copy = UiArt.button("ALL COPIES", Vector2(third, 22), 9)
+	_every_copy.toggle_mode = true
+	_every_copy.position = Vector2(COL_X + third + 6.0, y)
+	_every_copy.tooltip_text = "EVERY COPY ITS OWN ROW (OFF: ONE ROW PER ITEM, THE CHEAPEST COPY SHOWN)"
+	_every_copy.toggled.connect(func(_on: bool):
+		if not Server.market_search.is_empty():
+			search())
+	_browse.add_child(_every_copy)
+	_crafted = UiArt.button("CRAFTED ONLY", Vector2(third, 22), 9)
 	_crafted.toggle_mode = true
-	_crafted.position = Vector2(COL_X, y)
+	_crafted.position = Vector2(COL_X + (third + 6.0) * 2.0, y)
+	_crafted.tooltip_text = "ONLY PLAYER CRAFTED ITEMS"
 	_browse.add_child(_crafted)
 	var go := UiArt.button("SEARCH", Vector2(90, 24), 11)
 	go.position = Vector2(COL_X, LIST_Y + ROWS * ROW_H - 28)
@@ -350,8 +398,12 @@ func open_tab(which: String) -> void:
 	show_tab(which)
 	show_window()
 	refresh()
-	if which == "browse" and Server.market_items.is_empty():
-		search()                                          # everything for sale, first page
+	if which == "browse":
+		# a fresh search every time BROWSE opens (2026-11-11 exchange overhaul: what was shown may have sold or been
+		# relisted since) - the shown filters, your sort told again first (the broker keeps it for the session only)
+		if sort_key != "fit" or not sort_asc:
+			Server.command("/whisper sort %s %s" % [sort_key, "asc" if sort_asc else "desc"])
+		search()
 
 
 ## A tab clicked: the broker is told too - its page decides what a drop does (owner 2026-11-06: "dragging the item
@@ -395,6 +447,7 @@ func show_tab(which: String) -> void:
 	_listings.visible = which == "listings"
 	_header_price.text = "PRICE" if which == "browse" else "YOUR PRICE"
 	_header_quality.text = "QUA" if which == "browse" else "LEFT"
+	_show_arrows()
 	_scroll.visible = which == "listings"
 	_action.text = "BUY" if which == "browse" else "SET PRICE"
 	_action2.text = "INFO" if which == "browse" else "TAKE BACK"
@@ -434,7 +487,13 @@ func refresh() -> void:
 		_page_label.text = "PAGE %d / %d" % [Server.market_page + 1, Server.market_pages + 1]
 		var n := Server.market_count
 		_status.text = ("%d LISTINGS FOUND" % n) if n >= 0 else ("SEARCHING..." if Server.market_items.is_empty() else "")
-		if n > 20 * 256:
+		# the broker's "(D different item(s), K new in the last hour)": one row per item, its copies counted on it
+		var rows := n
+		if n >= 0 and Server.market_distinct >= 0:
+			rows = Server.market_distinct
+			_status.text = "%d LISTINGS  -  %d DIFFERENT ITEMS  -  %d NEW IN THE LAST HOUR" % [n, rows,
+					maxi(Server.market_new, 0)]
+		if rows > 20 * 256:
 			_status.text += " - NARROW THE SEARCH TO SEE THEM ALL"
 		_action.disabled = selected < 0 or selected >= Server.market_items.size()
 		_action2.disabled = _action.disabled
@@ -499,7 +558,9 @@ func search() -> void:
 			"damage": _damage.selected, "level_min": clampi(_value(_level_min, 1), 1, 51),
 			"level_max": 52 if lmax >= 51 else maxi(lmax, 1),   # 52: no top (the server's)
 			"quality_min": clampi(_value(_quality, 0), 0, 100), "price_max": _value(_price_max, 0) * 10000,
-			"crafted": 1 if _crafted.button_pressed else 0}
+			"crafted": 1 if _crafted.button_pressed else 0,
+			"flags": (FLAG_USABLE if _usable.button_pressed else 0) | \
+					(FLAG_EVERY_COPY if _every_copy.button_pressed else 0)}   # (one row per item: the broker's default)
 	var b := int(BONUSES[_bonus.selected][1])
 	if b > 0:
 		f["bonus1"] = b
@@ -513,9 +574,11 @@ func search() -> void:
 	refresh()
 
 
-## BROWSE searching for an item's name, every other filter cleared (the price box's SEARCH SIMILAR).
+## BROWSE searching for an item's name, every other filter cleared (the price box's SEARCH SIMILAR) - USABLE BY ME off
+## too: what the same item sells for, whoever can use it.
 func search_similar(item_name: String) -> void:
 	_clear_filters()
+	_usable.set_pressed_no_signal(false)
 	_name.text = item_name.left(_name.max_length)
 	show_tab("browse")
 	search()
@@ -527,6 +590,8 @@ func _clear_filters() -> void:
 	for o in [_slot, _armor, _damage, _bonus]:
 		(o as OptionButton).select(0)
 	_crafted.set_pressed_no_signal(false)
+	_every_copy.set_pressed_no_signal(false)
+	_usable.set_pressed_no_signal(true)                   # (its default)
 	_bonus_changed()
 
 
@@ -577,7 +642,12 @@ func buy(place: int) -> void:
 	var text := "BUY %s FOR %s?" % [String(it.get("name", "")), PlayerData.money_string(price)]
 	if price > PlayerData.total_copper():
 		text = "%s COSTS %s - MORE THAN YOU CARRY." % [String(it.get("name", "")), PlayerData.money_string(price)]
-	UiArt.confirm(get_parent(), "REALM EXCHANGE", text, "BUY", "CANCEL", func(): Server.exchange_buy(place))
+	# (the broker sends the page again after every buy - the bought copy gone, the row's count one less - so the row
+	# is let go: the same place may hold another item next)
+	UiArt.confirm(get_parent(), "REALM EXCHANGE", text, "BUY", "CANCEL", func():
+		if Server.exchange_buy(place):
+			selected = -1
+			refresh())
 
 
 ## A backpack item dropped on the listing chest: moved into `slot` (or the first free one); its price asked next.
@@ -853,11 +923,13 @@ static func money_short(c: int) -> String:
 # ---------------------------------------------------------------- a row
 
 class ExRow extends Control:
+	const COPIES_W := 46.0
 	var window: ExchangeWindow
 	var index := 0
 	var _hi: ColorRect
 	var _icon: TextureRect
 	var _name: Label
+	var _copies: Label                               # BROWSE: "(N)" - the copies a row stands for, at the name's end
 	var _level: Label
 	var _quality: Label
 	var _price: Label
@@ -877,6 +949,9 @@ class ExRow extends Control:
 		_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		add_child(_icon)
 		_name = _cell(ExchangeWindow.C_NAME, HORIZONTAL_ALIGNMENT_LEFT)
+		_copies = _cell([float(ExchangeWindow.C_NAME[0]) + float(ExchangeWindow.C_NAME[1]) - COPIES_W, COPIES_W],
+				HORIZONTAL_ALIGNMENT_RIGHT)
+		_copies.add_theme_color_override("font_color", UiArt.GOLD)
 		_level = _cell(ExchangeWindow.C_LEVEL, HORIZONTAL_ALIGNMENT_RIGHT)
 		_quality = _cell(ExchangeWindow.C_QUALITY, HORIZONTAL_ALIGNMENT_RIGHT)
 		_price = _cell(ExchangeWindow.C_PRICE, HORIZONTAL_ALIGNMENT_RIGHT)
@@ -902,6 +977,11 @@ class ExRow extends Control:
 		if not it.is_empty() and int(it.get("count", 1)) > 1:
 			n = "%d %s" % [int(it.count), n]
 		_name.text = n
+		# one row per item (2026-11-11 exchange overhaul): the copies for sale at its end, the cheapest one shown -
+		# the name shortened to leave the count room
+		var copies := int(it.get("copies", 1)) if window.tab == "browse" else 1
+		_copies.text = "(%d)" % copies if copies > 1 else ""
+		_name.size.x = float(ExchangeWindow.C_NAME[1]) - (COPIES_W + 2.0 if copies > 1 else 0.0)
 		# the name cream, red when you can't use it (the server's flag); the level in its con colour against yours
 		_name.add_theme_color_override("font_color", UiArt.CREAM if bool(it.get("can_use", true)) else UiArt.RED)
 		var lvl := int(it.get("level", 0))
@@ -946,6 +1026,9 @@ class ExRow extends Control:
 				box = VBoxContainer.new()
 				box.add_child(UiArt.label(String(it.get("name", "")), ExchangeWindow.TEXT, UiArt.CREAM))
 			box.add_child(UiArt.label("PRICE: " + PlayerData.money_string(price), ExchangeWindow.TEXT, UiArt.GOLD_HI))
+		var copies := int(it.get("copies", 1)) if window.tab == "browse" else 1
+		if copies > 1 and box != null:
+			box.add_child(UiArt.label("%d FOR SALE - THE CHEAPEST SHOWN" % copies, ExchangeWindow.TEXT, UiArt.CREAM))
 		return box
 
 	func _get_drag_data(_p: Vector2) -> Variant:

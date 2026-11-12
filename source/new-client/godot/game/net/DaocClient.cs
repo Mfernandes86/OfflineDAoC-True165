@@ -660,7 +660,7 @@ public partial class DaocClient : Node
 	}
 
 	// PlayerMarketSearchRequestHandler (the Realm Exchange's search): the name's length, 3 bytes, the name, then the
-	// filters - slot, three bonus (type, value) pairs as little-endian shorts, item ability, 1 byte, armour type, damage
+	// filters - slot, three bonus (type, value) pairs as little-endian shorts, item ability, flags, armour type, damage
 	// type, level min / max, quality min, price min / max (copper, little-endian), crafted only, visual, page.
 	public void MarketSearch(Godot.Collections.Dictionary s)
 	{
@@ -678,7 +678,9 @@ public partial class DaocClient : Node
 			w.ShortLE((ushort)Get("bonus" + i + "_value"));
 		}
 		w.Byte((byte)Get("proc"));
-		w.Byte(0);
+		// the browse flags (2026-11-11 exchange overhaul, RealmExchangeBrowse): 0x01 only items you can use, 0x02 every
+		// copy its own row; 0 (an older client's byte) is one row per item, everything shown
+		w.Byte((byte)(Get("flags") & 0x03));
 		w.Byte((byte)Get("armor"));
 		w.Byte((byte)Get("damage"));
 		w.Byte((byte)Get("level_min", 1));
@@ -1440,7 +1442,7 @@ public partial class DaocClient : Node
 					it["model"] = r.ShortLE();
 					it["color"] = r.ShortLE();
 					it["effect"] = r.ShortLE();
-					it["lot"] = r.ShortLE();
+					it["lot"] = r.ShortLE();              // 1-65000: a grouped row's copy count; 65001-65003: the lot
 					it["price"] = (long)r.IntLE();
 					it["name"] = r.IntPascal();
 					items.Add(it);
