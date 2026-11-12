@@ -97,8 +97,8 @@ namespace DOL.GS.Quests
             /// it and completes the step (classic "choose your reward" endings).</summary>
             public Dictionary<string, string> Choices { get; set; }
             public List<StepDrop> Drops { get; set; }
-            /// <summary>say: the words of power spoken aloud (/say) on the step's point; NightOnly when the walkthrough
-            /// has them work only at night.</summary>
+            /// <summary>say: the words of power spoken aloud (/say) on the step's point. NightOnly: the walkthrough has the
+            /// step work only at night (say and use_item steps).</summary>
             public string Words { get; set; }
             public bool NightOnly { get; set; }
         }
@@ -613,6 +613,13 @@ namespace DOL.GS.Quests
                     if (!InPlace(player, custom))
                     {
                         player.Out.SendMessage($"Nothing happens. This is not the place to use the {item.Name}.", PacketHandler.eChatType.CT_System, PacketHandler.eChatLoc.CL_SystemWindow);
+                        continue;
+                    }
+                    // Quest audit 2026-11-11 (P05): NightOnly was checked only for say steps; Weakened Bonds' seven wells
+                    // "can only be activated using darkness" (Gral Bermorn). The item is kept until it works.
+                    if (custom.NightOnly && player.CurrentRegion?.IsNightTime == false)
+                    {
+                        player.Out.SendMessage("Nothing happens. This can only be done in darkness.", PacketHandler.eChatType.CT_System, PacketHandler.eChatLoc.CL_SystemWindow);
                         continue;
                     }
                     if (custom.Consume) player.Inventory.RemoveCountFromStack(item, 1);
