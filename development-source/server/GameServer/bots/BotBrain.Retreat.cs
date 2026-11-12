@@ -134,8 +134,13 @@ namespace DOL.AI.Brain
             _soloBailUsedThisFight = true;
             Vector3 here = new(bot.X, bot.Y, bot.Z);
             Vector3 enemy = target != null ? new(target.X, target.Y, target.Z) : here;
-            // back the way it came: from the monster through the spot where the fight found it
-            Vector3 point = BotGroupRetreat.RetreatPoint(here, _lastPeacePosition, enemy, SoloBailDistance);
+            // M6 / M11: to the realm's bindstone close by, else the camp's safe spot worked out ahead, else back the way
+            // it came (from the monster through the spot where the fight found it); one route request either way
+            Vector3 point = BotGroupRetreat.SafePoint(here,
+                BotGroupRetreat.NearestBind(bot.CurrentRegionID, bot.X, bot.Y, bot.Realm),
+                AutonomousWorldBotController.TryCampSafeSpot(_autonomousWorldController?.CurrentCampId, bot.CurrentRegionID,
+                    out Vector3 campSafe) ? campSafe : null,
+                enemy, BotGroupRetreat.RetreatPoint(here, _lastPeacePosition, enemy, SoloBailDistance));
             log.Info($"BOT_SOLO_BAIL bot=\"{bot.Name}\" level={bot.Level} class=\"{bot.ClassName}\" health={bot.HealthPercent} " +
                      $"target=\"{target?.Name}\" targetHealth={target?.HealthPercent} attackers={attackers} " +
                      $"to={bot.CurrentRegionID}:{(int)point.X},{(int)point.Y}");

@@ -27,11 +27,78 @@ namespace DOL.GS
             "Veteran review M11 (2026-11-11): camp choices weigh pack density, caster share and creature type (worked out by the background camp builder), and solo dungeon chances follow the class.", true)]
         public static bool Enabled = true;
 
-        /// <summary>Camp traits from the background builder (default: unknown, every factor 1).</summary>
+        /// <summary>
+        /// Camp traits from the background builder (default: unknown, every factor 1). M11/M6 (completeness review
+        /// 2026-11-11): a pull spot at the camp's edge and a safe spot beyond it, on the side with the fewest monsters
+        /// (<see cref="Spots"/>), when <see cref="HasSpots"/>.
+        /// </summary>
         public readonly record struct Traits(float PackFactor, float CasterShare, byte BodyType, int Radius, int Measured,
-            int Race = 0, ushort WeakTo = 0)
+            int Race = 0, ushort WeakTo = 0, Vector3 Pull = default, Vector3 Safe = default, bool HasSpots = false)
         {
             public bool Known => Measured > 0;
+        }
+
+        // ---------------------------------------------------------------- pull spot and safe spot (M11 / M6)
+
+        /// <summary>How far past the camp's widest monster its safe spot lies.</summary>
+        public const int SafeSpotMargin = 1_000;
+
+        /// <summary>A monster this close to a candidate safe spot, or to the way out to it, counts against that side.</summary>
+        public const int SafeSpotClearance = 700;
+
+        private static readonly Vector2[] SpotDirections = BuildSpotDirections();
+
+        private static Vector2[] BuildSpotDirections()
+        {
+            var directions = new Vector2[8];
+            for (int i = 0; i < directions.Length; i++)
+                directions[i] = new Vector2(MathF.Cos(i * MathF.PI / 4), MathF.Sin(i * MathF.PI / 4));
+            return directions;
+        }
+
+        /// <summary>
+        /// Pure rule: of eight directions from the camp's anchor, the side with the fewest monsters (the camp's own and
+        /// the aggressive ones around it) near its safe spot - <see cref="SafeSpotMargin"/> past the camp's widest
+        /// monster - or near the way out to it. The pull spot is the camp's edge on that side (where a puller tags and
+        /// runs back to), the safe spot where a losing bot or party runs. Ties go to the first direction (east).
+        /// </summary>
+        public static void Spots(Vector3 anchor, int radius, IReadOnlyList<Vector3> monsters, out Vector3 pull, out Vector3 safe)
+        {
+            float edge = Math.Max(MinimumSocialRange, radius);
+            float far = edge + SafeSpotMargin;
+            float clearanceSquared = (float)SafeSpotClearance * SafeSpotClearance;
+            Vector2 centre = new(anchor.X, anchor.Y);
+            int best = 0, bestCount = int.MaxValue;
+            for (int d = 0; d < SpotDirections.Length; d++)
+            {
+                Vector2 safeSpot = centre + SpotDirections[d] * far;
+                Vector2 wayOut = centre + SpotDirections[d] * (edge + far) / 2;
+                int count = 0;
+                if (monsters != null)
+                    foreach (Vector3 m in monsters)
+                    {
+                        Vector2 p = new(m.X, m.Y);
+                        if (Vector2.DistanceSquared(p, safeSpot) <= clearanceSquared ||
+                            Vector2.DistanceSquared(p, wayOut) <= clearanceSquared)
+                            count++;
+                    }
+                if (count < bestCount)
+                {
+                    best = d;
+                    bestCount = count;
+                }
+            }
+            Vector2 pullAt = centre + SpotDirections[best] * edge;
+            Vector2 safeAt = centre + SpotDirections[best] * far;
+            pull = new Vector3(pullAt.X, pullAt.Y, anchor.Z);
+            safe = new Vector3(safeAt.X, safeAt.Y, anchor.Z);
+        }
+
+        /// <summary>The traits with the camp's pull and safe spots worked out from these monsters.</summary>
+        public static Traits WithSpots(Traits traits, Vector3 anchor, IReadOnlyList<Vector3> monsters)
+        {
+            Spots(anchor, traits.Radius, monsters, out Vector3 pull, out Vector3 safe);
+            return traits with { Pull = pull, Safe = safe, HasSpots = true };
         }
 
         /// <summary>One monster as the builder sees it.</summary>

@@ -89,6 +89,35 @@ namespace DOL.GS
         /// <see cref="RetreatDistance"/> (all the way when home is closer); with no usable home, straight away from the
         /// monsters' centre.
         /// </summary>
+        /// <summary>How far a friendly bindstone (its town and guards) may be for a losing bot or party to run to it.</summary>
+        public const int SafeBindReach = 4_000;
+
+        /// <summary>
+        /// Pure (M6 / M11, completeness review 2026-11-11): where a losing solo bot or party runs. First the realm's
+        /// nearest bindstone (a town with guards) when it is within <see cref="SafeBindReach"/>, then the camp's safe spot
+        /// worked out ahead by the camp builder, else <paramref name="fallback"/> (back along the approach). A spot is
+        /// only taken when the way to it leads away from the monsters (at least a right angle off the line to them), so
+        /// the bot never runs through its pack to reach it.
+        /// </summary>
+        public static Vector3 SafePoint(Vector3 here, Vector3? bind, Vector3? campSafe, Vector3 monsters, Vector3 fallback)
+        {
+            if (bind is { } stone && Away(here, stone, monsters) &&
+                Vector2.DistanceSquared(Flat(here), Flat(stone)) <= (float)SafeBindReach * SafeBindReach)
+                return stone;
+            if (campSafe is { } spot && Away(here, spot, monsters))
+                return spot;
+            return fallback;
+        }
+
+        private static Vector2 Flat(Vector3 v) => new(v.X, v.Y);
+
+        private static bool Away(Vector3 here, Vector3 to, Vector3 monsters) =>
+            Vector2.Dot(Flat(to) - Flat(here), Flat(monsters) - Flat(here)) <= 0;
+
+        /// <summary>The realm's nearest bindstone in the region, or null.</summary>
+        public static Vector3? NearestBind(ushort region, int x, int y, eRealm realm) =>
+            BotReleaseBindPoints.Nearest(region, x, y, realm) is { } p ? new Vector3(p.X, p.Y, p.Z) : null;
+
         public static Vector3 RetreatPoint(Vector3 fight, Vector3? home, Vector3 monsters, int distance = RetreatDistance)
         {
             Vector2 from = new(fight.X, fight.Y);

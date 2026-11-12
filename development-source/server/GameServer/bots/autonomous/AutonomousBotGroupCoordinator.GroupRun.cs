@@ -75,7 +75,12 @@ public static partial class AutonomousBotGroupCoordinator
         if (counted > 0)
             monsters = sum / counted;
         Vector3? home = session.RendezvousRegion == leader.CurrentRegionID ? session.Rendezvous : null;
-        Vector3 point = BotGroupRetreat.RetreatPoint(fight, home, monsters);
+        // M6 / M11: the realm's bindstone close by, else the camp's safe spot, else back to the rendezvous or away
+        Vector3 point = BotGroupRetreat.SafePoint(fight,
+            BotGroupRetreat.NearestBind(leader.CurrentRegionID, leader.X, leader.Y, leader.Realm),
+            AutonomousWorldBotController.TryCampSafeSpot(session.Camp?.Id, leader.CurrentRegionID, out Vector3 campSafe)
+                ? campSafe : null,
+            monsters, BotGroupRetreat.RetreatPoint(fight, home, monsters));
         string reason = $"uncontrolled={board.UncontrolledOnGroup} monsters={board.MonstersOnGroup} tanks={livingTanks} " +
                         $"healers={livingHealers} healerPower={bestHealerPower} tankHealth={lowestTank} mezzer={mezzerReady}";
         BotGroupRetreat.Publish(session.Group, new BotGroupRetreat.Order

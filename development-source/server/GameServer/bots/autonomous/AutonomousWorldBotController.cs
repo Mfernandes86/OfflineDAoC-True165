@@ -260,6 +260,32 @@ namespace DOL.GS
 
         private static CampCatalogCell[] _campCatalog = [];
 
+        /// <summary>M11 / M6: each published outdoor camp's safe spot by camp id (built with each catalog generation).</summary>
+        private static Dictionary<string, (ushort Region, Vector3 Safe)> _campSafeSpots = new(StringComparer.OrdinalIgnoreCase);
+
+        private static void PublishCampSafeSpots(IEnumerable<CampCatalogCell> cells)
+        {
+            var spots = new Dictionary<string, (ushort, Vector3)>(StringComparer.OrdinalIgnoreCase);
+            foreach (CampCatalogCell cell in cells)
+                if (cell?.Traits.HasSpots == true && !cell.IsDungeon)
+                    spots[cell.Id] = (cell.RegionId, cell.Traits.Safe);
+            System.Threading.Volatile.Write(ref _campSafeSpots, spots);
+        }
+
+        /// <summary>The safe spot of a published camp in this region (M11 / M6), worked out by the background builder.</summary>
+        public static bool TryCampSafeSpot(string campId, ushort region, out Vector3 safe)
+        {
+            safe = default;
+            if (campId == null || !System.Threading.Volatile.Read(ref _campSafeSpots).TryGetValue(campId, out var spot) ||
+                spot.Region != region)
+                return false;
+            safe = spot.Safe;
+            return true;
+        }
+
+        /// <summary>The id of the camp this bot is hunting (null when none).</summary>
+        internal string CurrentCampId => _camp?.Id;
+
         private long _nextPocketCheckTick;
         private static long _nextPocketNudgeLog;
 
@@ -4476,8 +4502,24 @@ namespace DOL.GS
                             foreach (CampMonster npc in list)
                                 if (DistanceSquared(npc.X, npc.Y, cell.X, cell.Y) <= reach)
                                     found.Add(new(new Vector3(npc.X, npc.Y, npc.Z), npc.AggroRange, npc.Caster, npc.BodyType, npc.Race));
-                return AutonomousCampKnowledge.WithWeaknesses(
-                    AutonomousCampKnowledge.Measure(found, new Vector3(cell.X, cell.Y, cell.Z)));
+                Vector3 anchor = new(cell.X, cell.Y, cell.Z);
+                AutonomousCampKnowledge.Traits traits = AutonomousCampKnowledge.WithWeaknesses(AutonomousCampKnowledge.Measure(found, anchor));
+                // M11 / M6: the pull spot and the safe spot, away from the camp's own monsters and the aggressive ones near
+                var monsters = new List<Vector3>(found.Count + 8);
+                foreach (AutonomousCampKnowledge.Member member in found)
+                    monsters.Add(member.Position);
+                long around = (long)(Math.Max(traits.Radius, AutonomousCampKnowledge.MinimumSocialRange) +
+                                     AutonomousCampKnowledge.SafeSpotMargin + AutonomousCampKnowledge.SafeSpotClearance);
+                around *= around;
+                int tx = FloorDiv(cell.X, threatCell), ty = FloorDiv(cell.Y, threatCell);
+                for (int dx = -1; dx <= 1; dx++)
+                    for (int dy = -1; dy <= 1; dy++)
+                        if (threats.TryGetValue((cell.RegionId, tx + dx, ty + dy), out var list))
+                            foreach (CampMonster npc in list)
+                                if (DistanceSquared(npc.X, npc.Y, cell.X, cell.Y) <= around &&
+                                    !string.Equals(AutonomousCampCompetition.NormalizeName(npc.Name), name, StringComparison.Ordinal))
+                                    monsters.Add(new Vector3(npc.X, npc.Y, npc.Z));
+                return AutonomousCampKnowledge.WithSpots(traits, anchor, monsters);
             }
 
             // one level per distinct live monster of the camp's name within the pool radius (what a bot there hunts)
