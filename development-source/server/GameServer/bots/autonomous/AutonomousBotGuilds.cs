@@ -431,6 +431,56 @@ namespace DOL.GS
             ScheduleReplies(guild, null, message, AutonomousBotChatCoordinator.RollResponseCount(Math.Min(2, talkers.Length)), player);
         }
 
+        private static readonly ConcurrentDictionary<string, long> LastAllianceReply = new();
+
+        /// <summary>
+        /// A player spoke on /as (veteran-bots review 2026-11-11, rvr-social G9): a gamebot member of any guild of the
+        /// alliance may answer there, as /gu is answered - the bot named in the line, else one of them now and then; a live
+        /// RvR question gets a real answer (BotRvrKnowledge165). At most one reply per alliance per 10 seconds.
+        /// </summary>
+        public static void OnPlayerAllianceChat(GamePlayer player, string message)
+        {
+            Alliance alliance = player?.Guild?.alliance;
+            if (alliance == null || string.IsNullOrWhiteSpace(message))
+                return;
+            GameBot[] talkers = alliance.Guilds.Where(g => g != null).SelectMany(OnlineMembers).Where(CanTalk).ToArray();
+            if (talkers.Length == 0)
+                return;
+            string key = alliance.DbAlliance?.ObjectId ?? player.Guild.GuildID;
+            long now = GameLoop.GameLoopTime;
+            if (LastAllianceReply.TryGetValue(key, out long last) && now - last < 10_000)
+                return;
+            LastAllianceReply[key] = now;
+            GameBot named = talkers.FirstOrDefault(bot => AutonomousBotChatCoordinator.ContainsMention(message, bot.Name));
+            bool knows = AutonomousChatKnowledge.TryAnswer(player, message, out string knowledge);
+            if (named == null && !knows && Random.Shared.NextDouble() >= 0.4)
+                return;
+            GameBot speaker = named ?? talkers[Random.Shared.Next(talkers.Length)];
+            string reply = knows ? knowledge
+                : BotBanter165.TryPlayerReply(speaker, player, message, "guild", named != null) ??
+                  AutonomousBotChatCoordinator.GenerateFactionReply(message);
+            new ECSGameTimer(speaker, _ =>
+            {
+                if (CanTalk(speaker) && player.Guild?.alliance == alliance)
+                    SpeakInAlliance(speaker, alliance, reply);
+                return 0;
+            }, 1_500 + Random.Shared.Next(1_500));
+        }
+
+        /// <summary>A gamebot's line on an alliance's chat, as the /as command sends a player's.</summary>
+        public static void SpeakInAlliance(GameBot bot, Alliance alliance, string message)
+        {
+            if (bot == null || alliance == null || string.IsNullOrWhiteSpace(message)) return;
+            string line = $"[Alliance] {bot.Name}: \"{message.Trim()}\"";
+            foreach (Guild guild in alliance.Guilds)
+            {
+                if (guild == null) continue;
+                foreach (GamePlayer member in guild.GetListOfOnlineMembers())
+                    if (guild.HasRank(member, Guild.eRank.AcHear))
+                        member.Out.SendMessage(line, eChatType.CT_Alliance, eChatLoc.CL_ChatWindow);
+            }
+        }
+
         private static void ScheduleReplies(Guild guild, GameBot starter, string incoming, int count, GamePlayer player = null,
             BotBanter165.Topic topic = null)
         {

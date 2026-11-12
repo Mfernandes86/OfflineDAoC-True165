@@ -147,6 +147,8 @@ namespace DOL.GS.Commands
 					ply.Out.SendMessage(message, eChatType.CT_Alliance, eChatLoc.CL_ChatWindow);
 				}
 			}
+			// Gamebot members of the alliance's guilds may answer (AutonomousBotGuilds).
+			AutonomousBotGuilds.OnPlayerAllianceChat(client.Player, string.Join(" ", args, 1, args.Length - 1));
 		}
 	}
 }

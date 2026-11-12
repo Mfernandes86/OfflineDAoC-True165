@@ -26,6 +26,9 @@ public static class AutonomousChatKnowledge
             return false;
 
         string query = message.Trim();
+        // live keep and relic questions first (BotRvrKnowledge165, veteran-bots review 2026-11-11)
+        if (BotRvrKnowledge165.TryAnswer(player.Realm, query, out answer))
+            return true;
         if (LooksLikeStableQuestion(query) && TryAnswerStable(player.Realm, query, out answer))
             return true;
         if (LooksLikeSpellQuestion(query) && TryAnswerSpell(player, query, out answer))
@@ -39,6 +42,8 @@ public static class AutonomousChatKnowledge
         if (string.IsNullOrWhiteSpace(message))
             return false;
         string query = message.Trim();
+        if (BotRvrKnowledge165.TryAnswer(realm, query, out answer))
+            return true;
         if (LooksLikeStableQuestion(query) && TryAnswerStable(realm, query, out answer))
             return true;
         return LooksLikeLocationQuestion(query) && TryAnswerLocation(realm, query, out answer);
