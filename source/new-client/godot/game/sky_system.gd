@@ -43,6 +43,27 @@ var _rain_ceiling := 10.0              # metres above the player that drops star
 var _follow: Node3D
 var dungeon := false                   # zone.json "dungeon": no sky, sun, day/night or weather (see _setup_dungeon)
 
+## The 1.64 client's area fog (sector.dat [forest] -> content/sky/area_fog_164.json, pipeline/build_area_fog_164.py):
+## a coloured fog over set rectangles and circles of a zone that comes in over `transition` as you walk into an area.
+## Muspelheim's red is this fog (owner 2026-11-12, issue #50: the 1.64 client has no red Muspelheim sky; the zone stands
+## under the Midgard sky like Vale of Mularn). Mine (gap-fills, no client numbers): the strength is how far inside the
+## nearest area you stand over transition_m; the fog amount maps to distance as a dungeon's does (_setup_dungeon); the
+## strength also moves at most AREA_FADE_RATE a second, so a zone line or a teleport never switches it in one frame.
+## Re-measured only after half a metre of movement; zones without area fog skip it entirely.
+const AREA_FADE_RATE := 0.5
+static var _area_fog := {}
+static var _area_fog_read := false
+var _area := {}
+var _area_w := 0.0
+var _area_target := 0.0
+var _area_at := Vector3.INF
+var _area_snap := false
+var _area_color := Color.BLACK
+var _area_begin := 0.0
+var _area_end := 0.0
+var _view_begin := 0.0
+var _view_end := 0.0
+
 
 ## Zone-only sun shadow splits (owner 2026-10-15: the Grove of Domnann's ground shadows flickered under the canopy as
 ## you moved - "without modifying all shadows across the whole game"). Measured there at a running pace
@@ -91,11 +112,14 @@ var _texture_set := "x4plus"
 
 
 ## Seamless zones: you crossed into another zone of the region - its fog, and its sky if the client gives it another.
+## (The 1.64 client keeps one sky per region - zones/sky/skyNNN.dat, NNN = region - so with content/sky/zone_skies.json
+## built from it the sky never changes at a seamless zone line; the area fog fades by distance, see _area_zone.)
 func set_zone(z: ZoneLoader) -> void:
 	zone = z
 	if dungeon:
 		return
 	apply_view()
+	_area_zone(z, false)
 	var skies: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://content/sky/zone_skies.json"))
 	var nm := String(skies.get(str(int(z.info.id)), "sky_default"))
 	if nm != sky_name:
@@ -113,8 +137,56 @@ func apply_view() -> void:
 	if dungeon or zone == null or environment == null:
 		return
 	var clip := region_fog_clip(zone) * ZoneLoader.view_mult
-	environment.fog_depth_begin = clip * 0.3
-	environment.fog_depth_end = clip * 1.6
+	_view_begin = clip * 0.3
+	_view_end = clip * 1.6
+	_apply_area_depth()
+
+
+## The zone's 1.64 area fog (none: an empty entry, and only a fade-out of the last zone's runs). snap: at load, the
+## first frame takes the strength where you stand (no fade-in after a loading screen).
+func _area_zone(z: ZoneLoader, snap: bool) -> void:
+	if not _area_fog_read:
+		_area_fog_read = true
+		var path := "res://content/sky/area_fog_164.json"
+		var parsed = JSON.parse_string(FileAccess.get_file_as_string(path)) if FileAccess.file_exists(path) else null
+		_area_fog = parsed if parsed is Dictionary else {}
+	_area = _area_fog.get(str(int(z.info.id)), {}) if z and not dungeon else {}
+	if not _area.is_empty():
+		var c: Array = _area.get("color", [0, 0, 0])
+		_area_color = Color(float(c[0]), float(c[1]), float(c[2]))
+		var clip := float(_area.get("clip_m", 400.0))
+		var amount := clampf(float(_area.get("amount", 0)) / 100.0, 0.0, 1.0)
+		_area_begin = clip * 0.05
+		_area_end = clip * (2.0 - 1.5 * amount)
+	_area_at = Vector3.INF
+	_area_snap = snap
+	if not snap:
+		_area_target = _area_strength()
+
+
+## 0 outside every area .. 1 at transition_m or more inside the nearest one (the player's zone-local x / z in metres).
+func _area_strength() -> float:
+	if _area.is_empty() or _follow == null:
+		return 0.0
+	var p := _follow.global_position
+	var fade := maxf(float(_area.get("transition_m", 0.0)), 0.001)
+	var best := 0.0
+	for r in _area.get("rects", []):
+		var d := minf(minf(p.x - float(r[0]), float(r[2]) - p.x), minf(p.z - float(r[1]), float(r[3]) - p.z))
+		if d > 0.0:
+			best = maxf(best, d / fade)
+	for c in _area.get("circles", []):
+		var d := float(c[2]) - Vector2(p.x - float(c[0]), p.z - float(c[1])).length()
+		if d > 0.0:
+			best = maxf(best, d / fade)
+	return minf(best, 1.0)
+
+
+func _apply_area_depth() -> void:
+	if environment == null or dungeon:
+		return
+	environment.fog_depth_begin = lerpf(_view_begin, minf(_view_begin, _area_begin), _area_w)
+	environment.fog_depth_end = lerpf(_view_end, minf(_view_end, _area_end), _area_w)
 
 
 static var _region_clip := {}                # region -> the fog clip (m) of its lowest-numbered built zone
@@ -210,6 +282,7 @@ func _setup_rest(z: ZoneLoader) -> void:
 	if dungeon:
 		_setup_dungeon()
 		return
+	_area_zone(z, true)
 	_update(0.0)
 
 
@@ -358,9 +431,13 @@ func _update(_delta: float) -> void:
 	# sun sprites: dawn/dusk colours, noon colours in the day, storm variants by storm level
 	var main: Dictionary = data.get("main", {})
 	var noon: float = w.day
+	# a 1.64 sky (sky164_*) names the disk colour sun_color and gives each sprite one colour for the whole day (no
+	# _noon / _storm keys); its sprites fade in storms like the later skies' (mine: the 1.64 file has no storm colour)
+	var period := main.has("sun_color")
 	for pair in [["sun_disk_color", "sundisk_color"], ["sun_glow_color", "sunglow_color"], ["sun_flare_color", "sunflare_color"]]:
-		var low := _rgba(main.get(pair[1], [255, 255, 255, 0])).lerp(_rgba(main.get(pair[1] + "_storm", [0, 0, 0, 0])), storm)
-		var high := _rgba(main.get(pair[1] + "_noon", [255, 255, 255, 0])).lerp(_rgba(main.get(pair[1] + "_noon_storm", [0, 0, 0, 0])), storm)
+		var base = main.get("sun_color" if period and pair[1] == "sundisk_color" else pair[1], [255, 255, 255, 0])
+		var low := _rgba(base).lerp(_rgba(main.get(pair[1] + "_storm", [0, 0, 0, 0])), storm)
+		var high := _rgba(main.get(pair[1] + "_noon", base if period else [255, 255, 255, 0])).lerp(_rgba(main.get(pair[1] + "_noon_storm", [0, 0, 0, 0])), storm)
 		var c := low.lerp(high, noon)
 		c.a *= clampf(sun_dir.y * 6.0 + 0.3, 0.0, 1.0)      # fade as it sinks below the horizon
 		_sky_mat.set_shader_parameter(pair[0], c)
@@ -374,6 +451,25 @@ func _update(_delta: float) -> void:
 	var dyn = _blend("lights_and_fog", "dynamic_light", w)
 	var dyn_amount = _blend("lights_and_fog", "dynamic_light_amount", w)
 	var fog = _blend("lights_and_fog", "distance_fog", w)
+	if not _area.is_empty() or _area_w > 0.0:                # the 1.64 area fog where you stand (_area_zone)
+		var p := _follow.global_position if _follow else Vector3.ZERO
+		if _area_snap:
+			if _delta > 0.0:                                 # the first frame after a load (you are placed by then)
+				_area_snap = false
+				_area_at = p
+				_area_target = _area_strength()
+				_area_w = _area_target
+				_apply_area_depth()
+		else:
+			if p.distance_squared_to(_area_at) > 0.25:
+				_area_at = p
+				_area_target = _area_strength()
+			var aw := move_toward(_area_w, _area_target, _delta * AREA_FADE_RATE)
+			if aw != _area_w:
+				_area_w = aw
+				_apply_area_depth()
+		if fog != null and _area_w > 0.0:
+			fog = Color(fog).lerp(_area_color, _area_w)
 	if amb != null:
 		environment.ambient_light_color = amb
 		environment.ambient_light_energy = float(amb_amount if amb_amount != null else 0.5) * AMBIENT_SCALE
