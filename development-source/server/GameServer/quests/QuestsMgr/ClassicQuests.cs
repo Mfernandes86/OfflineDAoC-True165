@@ -145,6 +145,11 @@ namespace DOL.GS.Quests
             /// the other: helping Growler (Growler's Necklace) or killing him (Growler Mace, Mathien's Metal), never both;
             /// Prima Revised 2002, Warcry 2004, owner 2026-11-03).</summary>
             public List<string> ExcludedBy { get; set; } = new();
+            /// <summary>Data quest IDs of which at least one must be finished before this quest is offered (empty: no such
+            /// condition). The parts of one chain share a name and are split per class, so a name cannot say which part
+            /// comes first (quest audit 2026-11-11, P08-E3: The Red Dagger 20 and 25, Thane's Blood and An End to the
+            /// Daggers opened after the level 15 part).</summary>
+            public List<int> RequiresAnyOf { get; set; } = new();
         }
 
         /// <summary>The branch rules of a classic quest (<see cref="QuestInfo.OnlyDuring"/>,
@@ -155,6 +160,8 @@ namespace DOL.GS.Quests
                 return true;
             bool needDuring = info.OnlyDuring is { Count: > 0 };
             bool hasExclusions = info.ExcludedBy is { Count: > 0 };
+            if (info.RequiresAnyOf is { Count: > 0 } && !FinishedAnyOf(player, info.RequiresAnyOf))
+                return false;
             if (!needDuring && !hasExclusions)
                 return true;
             var doing = new HashSet<string>(player.QuestList.Keys.Where(q => q != null).Select(q => q.Name),
@@ -171,6 +178,15 @@ namespace DOL.GS.Quests
                     return false;
             }
             return true;
+        }
+
+        /// <summary>Has the player finished at least one of these data quests? One scan of the finished list, at offer time only.</summary>
+        public static bool FinishedAnyOf(GamePlayer player, IReadOnlyCollection<int> ids)
+        {
+            foreach (AbstractQuest quest in player.GetFinishedQuests())
+                if (quest is DataQuest dataQuest && ids.Contains(dataQuest.ID))
+                    return true;
+            return false;
         }
 
         /// <summary>Whether the player's race may take this classic quest.</summary>
