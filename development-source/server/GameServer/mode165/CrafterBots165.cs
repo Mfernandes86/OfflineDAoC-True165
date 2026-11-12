@@ -33,8 +33,12 @@ namespace DOL.GS
         private static readonly (BotSiegeKind Kind, int Skill)[] SiegeKits =
             [(BotSiegeKind.Ram, 1), (BotSiegeKind.Catapult, 300), (BotSiegeKind.Trebuchet, 600)];
 
-        private sealed record Part(string Id, int Count, long Price);
-        private sealed record Recipe(string ProductId, int Level, long MaterialCost, Part[] Parts);
+        /// <summary>A recipe of a craft: its product (template id, object type, slot, item level), recipe level and the
+        /// merchant price of its materials.</summary>
+        public sealed record Recipe(string ProductId, int Level, long MaterialCost, int ObjectType = 0, int ItemType = 0,
+            int ProductLevel = 0, Part[] Parts = null);
+        /// <summary>One ingredient of a recipe: its template, how many, and its merchant price each.</summary>
+        public sealed record Part(string Id, int Count, long Price);
         private static readonly ConcurrentDictionary<long, long> NextCraft = new();
 
         /// <summary>A gamebot's craft, given once (fresh bots at creation; older bots the first time they work).</summary>
@@ -82,14 +86,17 @@ namespace DOL.GS
             var products = new List<Made>();
             for (int i = 0; i < CombinesPerSession(craft); i++)
             {
-                long before = AutonomousBotEconomy.GetMoney(bot.DatabaseID);
                 if (craft == eCraftingSkill.SiegeCrafting)
                 {
+                    long before = AutonomousBotEconomy.GetMoney(bot.DatabaseID);
                     BuildSiegeKit(bot, record);
                     if (AutonomousBotEconomy.GetMoney(bot.DatabaseID) >= before)
                         break;   // nothing bought: out of coin, room or kits
+                    continue;
                 }
-                else if (!CraftRecipe(bot, record, craft))
+                if (CraftRecipe(bot, record, craft, out bool combined) is { } made)
+                    products.Add(made);
+                if (!combined)
                     break;   // nothing combined: out of coin, materials, room or recipes
             }
             if (products.Count > 0)
@@ -102,66 +109,122 @@ namespace DOL.GS
         /// </summary>
         public static int CombinesPerSession(eCraftingSkill craft) => craft == eCraftingSkill.Alchemy ? 3 : 10;
 
+        /// <summary>A crafted product waiting for the end of the session (not in the bag yet).</summary>
+        private sealed record Made(DbInventoryItem Item, DbItemTemplate Template, Recipe Recipe);
+
         /// <summary>
-        /// The recipe a crafter of this skill makes (the hardest it can just make: players craft at the edge of their skill).
-        /// A new crafter starts on the line's easiest recipes: weapon, armour and tailoring begin at 15, beyond skill 1 + 10,
-        /// so those crafters never crafted and never gained (run 6, 2026-10-30).
+        /// The recipe for the next combine (veteran-bots review 2026-11-11, economy G2): a random one in the band
+        /// [skill - 3, skill + 10], weighted toward the top, instead of always the single hardest one - every crafter of a
+        /// realm at a skill made the same item (49 "minor weakening poison", 31 "bronze dagger" listings). The band is never
+        /// grey (no skill-up lost). With nothing in the band: the hardest recipe it can make, else the line's easiest (a new
+        /// weapon, armour or tailoring crafter starts at 15, beyond skill 1 + 10).
         /// </summary>
-        private static Recipe Pick(Recipe[] all, int skill)
+        public static Recipe PickRecipe(Recipe[] all, int skill, Random random)
         {
-            Recipe best = null;
-            foreach (Recipe recipe in all)
-                if (recipe.Level <= skill + 10 && (best == null || recipe.Level > best.Level))
-                    best = recipe;
-            return best ?? (all.Length > 0 ? all[0] : null);
+            if (all == null || all.Length == 0)
+                return null;
+            int low = skill - 3, high = skill + 10;
+            int total = 0;
+            foreach (Recipe r in all)
+                if (r.Level >= low && r.Level <= high)
+                    total += 1 + r.Level - low;
+            if (total == 0)
+                return all.Where(r => r.Level <= high).OrderByDescending(r => r.Level).FirstOrDefault() ?? all[0];
+            int roll = (random ?? Random.Shared).Next(total);
+            foreach (Recipe r in all)
+            {
+                if (r.Level < low || r.Level > high)
+                    continue;
+                roll -= 1 + r.Level - low;
+                if (roll < 0)
+                    return r;
+            }
+            return all[0];
         }
 
-        /// <summary>One combine; true when the materials were paid (crafted or failed), false when nothing happened.</summary>
-        private static bool CraftRecipe(GameBot bot, OfflineWorldBotRecord record, eCraftingSkill craft)
+        /// <summary>
+        /// The product of a session that is listed (veteran-bots review 2026-11-11, economy G2): only one per session, the
+        /// best - a masterpiece, else the highest quality, gear before stackables - so the realm's listings get the 99%s and
+        /// masterpieces players sold, and an enchant (which needs a free listing) goes on that one piece.
+        /// </summary>
+        public static int BestProductIndex(IReadOnlyList<(bool Stackable, int Quality)> products)
         {
+            int best = -1;
+            for (int i = 0; i < products.Count; i++)
+            {
+                if (best < 0 || products[best].Stackable && !products[i].Stackable ||
+                    products[best].Stackable == products[i].Stackable && products[i].Quality > products[best].Quality)
+                    best = i;
+            }
+            return best;
+        }
+
+        /// <summary>
+        /// What an unlisted product brings back (veteran-bots review 2026-11-11, economy G2): the better of a merchant's price
+        /// and its salvage (the server's crafted-item salvage, SalvageCalculator: materials worth 45% of its value, halved
+        /// for crafted items), and never less than half its materials (today's floor). Players salvaged skill-up items or
+        /// sold them, whichever paid.
+        /// </summary>
+        public static long DisposalValue(long materialCost, long vendorSale, long itemPrice, bool stackable)
+        {
+            long salvage = stackable ? 0 : (long)(itemPrice * 0.45 / 2);
+            return Math.Max(materialCost / 2, Math.Max(vendorSale, salvage));
+        }
+
+        /// <summary>One combine. <paramref name="combined"/>: the materials were paid (crafted or failed); false when
+        /// nothing happened (out of coin, materials, room or recipes).</summary>
+        private static Made CraftRecipe(GameBot bot, OfflineWorldBotRecord record, eCraftingSkill craft, out bool combined)
+        {
+            combined = false;
             Recipe[] all = RecipesOf(craft, bot.Realm);
             int skill = Math.Max(1, record.CraftLevel);
-            Recipe recipe = Pick(all, skill);
+            Recipe recipe = PickRecipe(all, skill, Random.Shared);
+            // a crafter keeps the coin it needs for repairs and arrows, as a shopper does (veteran-bots review 2026-11-11:
+            // crafters averaged 0.56 gold at levels 15-29, below the non-crafters' 1.97)
             if (recipe == null || bot.Inventory.FindFirstEmptySlot(eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack) == eInventorySlot.Invalid ||
+                AutonomousBotEconomy.GetMoney(bot.DatabaseID) - CoinCost(bot, recipe) < AutonomousWorldBotController.ShoppingReserve(bot.Level) ||
                 !PayMaterials(bot, recipe))
-                return false;
+                return null;
+            combined = true;
             Gain(bot, record, recipe.Level - skill);
             if (Util.Chance(Math.Clamp((recipe.Level - skill) * 2, 0, 40)))
-                return true;   // failed: the materials are spent
+                return null;   // failed: the materials are spent
             DbItemTemplate template = GameServer.Database.FindObjectByKey<DbItemTemplate>(recipe.ProductId);
             if (template == null)
-                return true;
-            // Gear is a unique copy, as a player's crafted gear is (AbstractCraftingSkill.BuildCraftedItem): its quality and any
-            // enchant are saved with it and stay on the Realm Exchange and with the buyer (setting the quality on the shared
-            // template changed every copy of that item).
+                return null;
+            return new Made(MakeProduct(bot, template), template, recipe);
+        }
+
+        /// <summary>
+        /// A crafted product as a player's (AbstractCraftingSkill.BuildCraftedItem): gear is a unique copy whose quality and
+        /// any enchant are saved with it and stay on the Realm Exchange and with the buyer (setting the quality on the
+        /// shared template changed every copy of that item); 94-99% quality, 2% a masterpiece.
+        /// </summary>
+        private static DbInventoryItem MakeProduct(GameBot bot, DbItemTemplate template)
+        {
             DbInventoryItem product = template.IsStackable ? GameInventoryItem.Create(template) : GameInventoryItem.Create(new DbItemUnique(template));
             product.IsCrafted = true;
             product.Creator = bot.Name;
             if (!template.IsStackable)
                 product.Quality = Util.Chance(2) ? 100 : 94 + Util.Random(5);
-            // the realm's spellcrafter / alchemist bots may enchant it first, paid by this crafter (owner 2026-11-08)
-            BotEnchant165.Result enchant = BotEnchant165.TryEnchant(bot, product);
-            eInventorySlot slot = bot.Inventory.FindFirstEmptySlot(eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack);
-            if (slot == eInventorySlot.Invalid || !bot.Inventory.AddItem(slot, product))
-                return true;
-            AutonomousBotEconomy.MarkInventoryChanged(bot);
-            // 2026-11-11 exchange plan: the product is listed only when worth a slot - its two crafted-only slots, a free
-            // general one, or replacing the weakest listing it may replace by 1.5 x its gain - at a fair ask (at least
-            // 1.1 x its materials) that undercuts the copies already listed; otherwise a merchant buys it, as before
-            long materials = recipe.MaterialCost + (enchant.Done ? enchant.Cost : 0);
-            AutonomousBotEconomy.ListingCandidate plan = AutonomousBotEconomy.PlanCraftedListing(bot, product, materials, ItemValue165.RollMood());
-            // (an enchanted piece's materials include the enchant: gems, tincture and fees are not given away)
-            int price = plan?.PriceCopper ?? 0;
-            bool busy = false;
-            bool listed = plan != null && AutonomousBotEconomy.TryListPlanned(bot, plan, price, out busy);
-            // a busy exchange (its locks are only tried) leaves the product in the bag for the bot's next exchange errand
-            // (review 2026-11-11: under the one-second save flush a share of the crafted stock went to merchants)
-            if (!listed && !busy)
+            return product;
+        }
+
+        /// <summary>
+        /// The end of a session (veteran-bots review 2026-11-11, economy G2): the best product goes on the Realm Exchange
+        /// (enchanted first when the realm's enchanter bots can), the rest are salvaged or sold, whichever pays
+        /// (DisposalValue) - 93% of products already went to a merchant because a bot has 3 listings, and listing the
+        /// first ones made instead of the best put the same middling pieces up again and again.
+        /// </summary>
+        private static void FinishSession(GameBot bot, OfflineWorldBotRecord record, eCraftingSkill craft, List<Made> products)
+        {
+            int best = BestProductIndex(products.Select(m => (m.Template.IsStackable, m.Item.Quality)).ToList());
+            for (int i = 0; i < products.Count; i++)
             {
                 Made made = products[i];
                 DbInventoryItem product = made.Item;
                 int price = 0;
-                bool listed = false;
+                bool listed = false, busy = false;
                 BotEnchant165.Result enchant = new();
                 if (i == best)
                 {
@@ -171,16 +234,21 @@ namespace DOL.GS
                     if (slot != eInventorySlot.Invalid && bot.Inventory.AddItem(slot, product))
                     {
                         AutonomousBotEconomy.MarkInventoryChanged(bot);
-                        price = Math.Max(1, AutonomousBotEconomy.RecommendListingPrice(product, Util.Random(30) / 100.0));
-                        // an enchanted piece asks at least what the enchant cost on top (gems, tincture and fees are not given away)
-                        if (enchant.Done)
-                            price = (int)Math.Min(int.MaxValue, price + enchant.Cost);
-                        listed = AutonomousBotEconomy.TryList(bot, product, price);
-                        if (!listed)
+                        // 2026-11-11 exchange plan: listed only when worth a slot - its two crafted-only slots, a free general
+                        // one, or replacing the weakest listing it may replace by 1.5 x its gain - at a fair ask (at least
+                        // 1.1 x its materials; an enchanted piece's include the enchant) that undercuts the copies listed
+                        long materials = made.Recipe.MaterialCost + (enchant.Done ? enchant.Cost : 0);
+                        AutonomousBotEconomy.ListingCandidate plan =
+                            AutonomousBotEconomy.PlanCraftedListing(bot, product, materials, ItemValue165.RollMood());
+                        price = plan?.PriceCopper ?? 0;
+                        listed = plan != null && AutonomousBotEconomy.TryListPlanned(bot, plan, price, out busy);
+                        // a busy exchange (its locks are only tried) leaves the product in the bag for the bot's next
+                        // exchange errand instead of selling it to a merchant
+                        if (!listed && !busy)
                             bot.Inventory.RemoveItem(product);
                     }
                 }
-                if (!listed)
+                if (!listed && !busy)
                 {
                     // no exchange space, or not the session's best: salvaged or sold for what it fetches (at least half the
                     // materials back - half-materials-only made crafting a money sink, owner 2026-11-05 audit)
@@ -189,13 +257,20 @@ namespace DOL.GS
                     AutonomousBotEconomy.AddMoney(bot.DatabaseID, value, BotMoneyLedger165.Kind.CraftSale);
                 }
                 Log.Info($"BOT_CRAFTED_165 bot={bot.Name} id={bot.DatabaseID} craft={craft} skill={record.CraftLevel} " +
-                         $"item=\"{made.Template.Name}\" recipe={made.Recipe.Level} listed={listed} price={price} enchanted={enchant.Done}");
+                         $"item=\"{made.Template.Name}\" recipe={made.Recipe.Level} listed={listed} busy={busy} price={price} enchanted={enchant.Done}");
             }
-            Log.Info($"BOT_CRAFTED_165 bot={bot.Name} id={bot.DatabaseID} craft={craft} skill={record.CraftLevel} " +
-                     $"item=\"{template.Name}\" recipe={recipe.Level} listed={listed} busy={busy} price={price} enchanted={enchant.Done}");
             bot.MarkAutonomousStateDirty();
             AutonomousBotStatusPersistence.Queue(bot, true);
-            return true;
+        }
+
+        /// <summary>The coin a recipe's materials cost this bot now: the ingredients in its bag are used first.</summary>
+        private static long CoinCost(GameBot bot, Recipe recipe)
+        {
+            long cost = recipe.MaterialCost;
+            foreach (Part part in recipe.Parts ?? [])
+                cost -= part.Price * Math.Min(part.Count,
+                    bot.Inventory.CountItemTemplate(part.Id, eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack));
+            return Math.Max(0, cost);
         }
 
         /// <summary>
@@ -207,7 +282,7 @@ namespace DOL.GS
         {
             long cost = recipe.MaterialCost;
             List<(Part Part, int Count)> owned = null;
-            foreach (Part part in recipe.Parts)
+            foreach (Part part in recipe.Parts ?? [])
             {
                 int have = bot.Inventory.CountItemTemplate(part.Id, eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack);
                 int use = Math.Min(have, part.Count);
@@ -217,7 +292,7 @@ namespace DOL.GS
                 cost -= part.Price * use;
             }
             cost = Math.Max(0, cost);
-            if (cost > 0 && !AutonomousBotEconomy.TrySpend(bot.DatabaseID, cost))
+            if (cost > 0 && !AutonomousBotEconomy.TrySpend(bot.DatabaseID, cost, BotMoneyLedger165.Kind.CraftMaterials))
                 return false;
             if (owned == null)
                 return true;
@@ -228,7 +303,7 @@ namespace DOL.GS
                     if (!bot.Inventory.RemoveTemplate(part.Id, count, eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack))
                         refund += part.Price * count;   // not there after all: paid in coin instead
             }
-            if (refund > 0 && !AutonomousBotEconomy.TrySpend(bot.DatabaseID, refund))
+            if (refund > 0 && !AutonomousBotEconomy.TrySpend(bot.DatabaseID, refund, BotMoneyLedger165.Kind.CraftMaterials))
                 return false;
             AutonomousBotEconomy.MarkInventoryChanged(bot);
             return true;
@@ -398,6 +473,21 @@ namespace DOL.GS
             }
         }
 
+        /// <summary>
+        /// The hardest recipe a crafter of this skill can just make: the materials it keeps and buys are worked out from it
+        /// (WantedMaterials); the combine itself draws a recipe from the band around it (PickRecipe).
+        /// A new crafter starts on the line's easiest recipes: weapon, armour and tailoring begin at 15, beyond skill 1 + 10,
+        /// so those crafters never crafted and never gained (run 6, 2026-10-30).
+        /// </summary>
+        private static Recipe Pick(Recipe[] all, int skill)
+        {
+            Recipe best = null;
+            foreach (Recipe recipe in all)
+                if (recipe.Level <= skill + 10 && (best == null || recipe.Level > best.Level))
+                    best = recipe;
+            return best ?? (all.Length > 0 ? all[0] : null);
+        }
+
         // ---- the recipe book: every craft's recipes, read in one pass (review 2026-11-11: each craft's ingredients were
         // loaded on a bot tick the first time a crafter of it sold or bought, with a full CraftedXItem table read each time)
 
@@ -419,7 +509,8 @@ namespace DOL.GS
         private sealed record Wanted(Dictionary<string, int> Counts);
         private static readonly ConcurrentDictionary<(eCraftingSkill, eRealm, int), Wanted> WantedBySkill = new();
 
-        private static Recipe[] RecipesOf(eCraftingSkill craft, eRealm realm) =>
+        /// <summary>The recipes of a craft for a realm, easiest first (CraftOrders165 reads them too).</summary>
+        public static Recipe[] RecipesOf(eCraftingSkill craft, eRealm realm) =>
             Book().Recipes.TryGetValue((craft, realm), out Recipe[] recipes) ? recipes : Array.Empty<Recipe>();
 
         /// <summary>Reads the recipe book once (startup warms it on a background thread). A failed read is not kept, so it
@@ -500,7 +591,8 @@ namespace DOL.GS
                 }
                 if (cost <= 0)
                     continue;
-                var recipe = new Recipe(crafted.Id_nb, crafted.CraftingLevel, cost, recipeParts.ToArray());
+                var recipe = new Recipe(crafted.Id_nb, crafted.CraftingLevel, cost, product.Object_Type, product.Item_Type,
+                    product.Level, recipeParts.ToArray());
                 foreach (eRealm realm in new[] { eRealm.Albion, eRealm.Midgard, eRealm.Hibernia })
                 {
                     if (product.Realm != 0 && product.Realm != (int)realm)
@@ -541,7 +633,7 @@ namespace DOL.GS
                     Recipe recipe = Pick(all, key.Item3 + step);
                     if (recipe == null || !seen.Add(recipe))
                         continue;
-                    foreach (Part part in recipe.Parts)
+                    foreach (Part part in recipe.Parts ?? [])
                         counts[part.Id] = Math.Max(counts.GetValueOrDefault(part.Id), part.Count * MaterialCombinesKept);
                 }
                 return new Wanted(counts);

@@ -620,8 +620,11 @@ namespace DOL.GS;
     }
 
         [DOL.GS.ServerProperties.ServerProperty("bots", "bot_weighted_gear_ranking",
-            "Owner 2026-11-11 (Realm Exchange plan): gamebots rank gear bonuses weighted by type (skills 5, resists and power 2, stats/focus/AF 1, hits 0.25, no Bonus% field) instead of counting every point the same. Ranking only, no combat number.", true)]
-        public static bool WeightedGearRanking = true;
+            "Owner 2026-11-11 (Realm Exchange plan): gamebots rank gear bonuses weighted by type (skills 5, resists and power 2, stats/focus/AF 1, hits 0.25, no Bonus% field) instead of counting every point the same. Off by default: gamebots already weigh gear for their own class and caps. Ranking only, no combat number.", false)]
+        // Off by default (merge of the 0.7 work, 2026-11-11): FitValue now weighs each bonus for the bot's own class and
+        // only up to its cap (BotGearValue165), on top of the flat count here. With this on as well, a bonus point would be
+        // re-weighed twice. Exchange prices keep their own type weights (ItemValue165.Utility) either way.
+        public static bool WeightedGearRanking = false;
 
         public static bool IsPlayerListing(string ownerId) =>
             !string.IsNullOrWhiteSpace(ownerId) && !TryParseOwnerId(ownerId, out _);
@@ -789,9 +792,22 @@ namespace DOL.GS;
                 : 0;
 
         /// <summary>EquipmentValue plus, for a melee weapon, what the bot's training in its line is worth in that hand, less
-        /// the focus bonuses for spell lines the bot does not have (they do nothing for it).</summary>
-        public static int FitValue(GameBot bot, DbInventoryItem item, eInventorySlot slot) =>
-            item == null ? 0 : EquipmentValue(item) + WeaponSpecBonus(bot, item.Object_Type, slot) - 3 * WastedFocus(bot, item);
+        /// the focus bonuses for spell lines the bot does not have (they do nothing for it), with each bonus weighed for the
+        /// bot's class and counted only up to its cap, and level and DPS/AF only up to what the bot can use
+        /// (BotGearValue165, veteran-bots review 2026-11-11).</summary>
+        public static int FitValue(GameBot bot, DbInventoryItem item, eInventorySlot slot)
+        {
+            if (item == null)
+                return 0;
+            (int Type, int Value)[] bonuses = BotGearValue165.Bonuses(item);
+            int equipment = EquipmentValue(item);
+            int value = equipment + WeaponSpecBonus(bot, item.Object_Type, slot) - 3 * WastedFocus(bot, bonuses);
+            // EquipmentValue is 0 for a melee weapon without working stats: nothing to adjust
+            if (equipment == 0 || bot?.Inventory == null)
+                return value;
+            DbInventoryItem current = slot == eInventorySlot.Invalid ? null : bot.Inventory.GetItem(slot);
+            return value + BotGearValue165.Adjustment(bot, item.Level, item.DPS_AF, item.Object_Type, bonuses, current);
+        }
 
         /// <summary>As <see cref="WastedFocus(GameBot, (int Type, int Value)[])"/> for an item, without allocating (it runs
         /// in every appraisal).</summary>
@@ -1747,14 +1763,7 @@ namespace DOL.GS;
             if (bot?.Inventory == null)
                 return null;
 
-            // Q35 (veteran review 2026-11-11): SerializedCraftingSkills is never written for gamebots - a gamebot's craft is
-            // CrafterBots165 (CraftSkill/CraftLevel on the record) - so trainedCrafter is always false here and stackables
-            // are sold as usual. Do not "fix" it to read the real craft flag without also changing
-            // TryClearBlockedBackpackAtMerchant: protecting every stack of a crafter leaves nothing to sell at a full bag,
-            // and that last-resort cleanup then deletes the crafter's material stacks.
-            bool trainedCrafter = !string.IsNullOrWhiteSpace(bot.PersistentRecord?.SerializedCraftingSkills);
-            bool canList = KeepsForExchange(bot);
-            HashSet<DbInventoryItem> operationalLoadout = FindOperationalLoadoutItems(bot);
+            (HashSet<DbInventoryItem> operationalLoadout, HashSet<DbInventoryItem> kept) = VendorSetsOf(bot);
             return bot.Inventory.AllItems
                 .Where(item => item != null && item.IsDropable && item.OwnerLot == 0 &&
                                item.SlotPosition >= (int)eInventorySlot.FirstBackpack &&
@@ -1889,10 +1898,8 @@ namespace DOL.GS;
                 !merchant.IsWithinRadius(bot, GS.ServerProperties.Properties.WORLD_PICKUP_DISTANCE))
                 return false;
 
-            // Q35: always false for gamebots - see FindVendorTrashCandidate before changing it
-            bool trainedCrafter = !string.IsNullOrWhiteSpace(bot.PersistentRecord?.SerializedCraftingSkills);
-            if (IsProtectedFromVendor(bot, item, trainedCrafter, KeepsForExchange(bot),
-                    FindOperationalLoadoutItems(bot)))
+            (HashSet<DbInventoryItem> operationalLoadout, HashSet<DbInventoryItem> kept) = VendorSetsOf(bot);
+            if (IsProtectedFromVendor(bot, item, kept, operationalLoadout))
                 return false;
             bool failedListing = Exchange165.RelistOf(item) != null;
 
