@@ -69,6 +69,30 @@ namespace DOL.UnitTests
         public void AWipeIsTheBossBackOutOfCombatAfterAFight(bool sawCombat, long outSince, long now, bool wiped) =>
             Assert.That(RealmRaidDungeonRoute.WipeConfirmed(sawCombat, outSince, now), Is.EqualTo(wiped));
 
+        // Every named encounter gets a muster, not only the final one.
+        [TestCase(true, false, false, true)]
+        [TestCase(false, true, false, true)]    // a scripted boss in an epic dungeon
+        [TestCase(false, false, true, true)]    // a Darkness Falls lord or a summoner
+        [TestCase(false, false, false, false)]  // trash and adds are fought as they come
+        public void EveryNamedEncounterIsMustered(bool final, bool boss, bool objective, bool muster) =>
+            Assert.That(RealmRaidDungeonRoute.NeedsMuster(final, boss, objective), Is.EqualTo(muster));
+
+        // A lesser encounter waits for a quarter of the roster (8-60), an eighth after 5 minutes, nobody after 15.
+        [TestCase(300, 0, 60)]
+        [TestCase(200, 0, 50)]
+        [TestCase(20, 0, 8)]
+        [TestCase(200, 5 * 60_000, 25)]
+        [TestCase(300, 15 * 60_000, 0)]
+        public void LesserEncounterMusterIsSmaller(int roster, long mustering, int needed) =>
+            Assert.That(RealmRaidDungeonRoute.EncounterMusterNeeded(roster, mustering), Is.EqualTo(needed));
+
+        // A lesser encounter wiped on three times is set aside; a final one never is.
+        [TestCase(false, 2, false)]
+        [TestCase(false, 3, true)]
+        [TestCase(true, 9, false)]
+        public void LesserEncounterIsSetAsideAfterThreeWipes(bool final, int wipes, bool setAside) =>
+            Assert.That(RealmRaidDungeonRoute.WipedOut(final, wipes), Is.EqualTo(setAside));
+
         [Test]
         public void MusterPostsNeverLandInsideTheKeepOutCircle()
         {

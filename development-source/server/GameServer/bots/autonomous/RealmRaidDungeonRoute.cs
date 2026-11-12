@@ -74,7 +74,7 @@ namespace DOL.GS
         // Lowest health points seen (not percent: a percent of Galladoria's 125,000-health Corrupt Primal of Fire is 1,250
         // points, and a few raiders wearing him down counted as no damage and he was skipped, run 23).
         private int _targetLowestHealth;
-        // Final encounter muster (see MusterForFinal).
+        // Encounter muster (see MusterForTarget).
         private GameNPC _musterTarget;
         private Vector3 _musterPoint;
         private long _musterSince, _nextMusterLog, _musterEngagedTick;
@@ -84,6 +84,42 @@ namespace DOL.GS
         private bool _musterSawCombat;
         private long _musterOutOfCombatSince;
         private int _musterWipes;
+        // Where the raid came from when the target was chosen: the last chain waypoint before the encounter, or the
+        // position the target was proven from. The muster point lies on the way back toward it.
+        private Vector3 _approachFrom;
+        private bool _hasApproachFrom;
+
+        /// <summary>
+        /// While the raid musters for an encounter (the first time, or again after a wipe): the place to gather, on the
+        /// way the raid came, outside the encounter's reach. Null otherwise. Late and released raiders regroup here.
+        /// </summary>
+        public Vector3? RegroupPoint { get; private set; }
+
+        /// <summary>
+        /// Every named encounter is pulled by the gathered raid, not by the first 8 to reach it: the final encounters,
+        /// every scripted boss (GameEpicBoss) and, in a neutral dungeon, every objective (Darkness Falls' lords and
+        /// princes, the three summoners were pulled piecemeal while the raid was strung out).
+        /// </summary>
+        public static bool NeedsMuster(bool final, bool scriptedBoss, bool objective) => final || scriptedBoss || objective;
+
+        /// <summary>
+        /// Raiders a lesser encounter waits for: a quarter of the roster, at least <see cref="MinimumRaidersAtTarget"/>
+        /// and at most 60; an eighth after 5 minutes; after 15 minutes the muster gives up and those there go in.
+        /// </summary>
+        public static int EncounterMusterNeeded(int raiders, long musterMilliseconds) =>
+            musterMilliseconds >= EncounterMusterGiveUpMilliseconds ? 0 :
+            Math.Max(MinimumRaidersAtTarget, Math.Min(EncounterMusterMaximum,
+                (int)(raiders * (musterMilliseconds >= EncounterMusterPatienceMilliseconds ? 0.125 : 0.25))));
+        public const int EncounterMusterMaximum = 60;
+        public const long EncounterMusterPatienceMilliseconds = 5 * 60_000;
+        public const long EncounterMusterGiveUpMilliseconds = 15 * 60_000;
+
+        /// <summary>
+        /// A lesser encounter the raid has wiped on this many times is set aside like an undamaged one (the no-damage
+        /// clock never runs out on a boss that is damaged on every attempt and resets after every wipe).
+        /// </summary>
+        public const int EncounterWipeLimit = 3;
+        public static bool WipedOut(bool final, int wipes) => !final && wipes >= EncounterWipeLimit;
 
         /// <summary>
         /// Fights with a final encounter that ended with the boss back out of combat: wiped (or broken-off) attempts on the
@@ -235,6 +271,8 @@ namespace DOL.GS
             Front = Destination = _chain[_chainIndex];
             if (_chainIndex == _chain.Length - 1)
             {
+                // The muster for the encounter gathers on the way back to the last waypoint before it.
+                _approachFrom = _chain.Length > 1 ? _chain[^2] : _chain[0]; _hasApproachFrom = true;
                 _target = _chainTarget; _chain = null; _chainTarget = null;
                 // A fresh start: the chain's target kept the previous target's start, so Prince Ba'alorien
                 // inherited Prince Abdin's absence allowance and was skipped at 100% with the raid arriving (2026-10-14).
@@ -385,7 +423,7 @@ namespace DOL.GS
         /// wipe the boss leaves combat and the raid musters again at once: arrivals are held at the muster point instead
         /// of walking one by one into a boss at full health (the old two-minute grace held nobody). True while holding.
         /// </summary>
-        private bool MusterForFinal(GameLiving[] participants, long now)
+        private bool MusterForTarget(GameLiving[] participants, long now)
         {
             if (_musterTarget != _target)
             {
@@ -435,7 +473,9 @@ namespace DOL.GS
                 _musterSince = now;
             }
             int living = participants.Count(p => p.IsAlive);
-            int needed = FinalMusterNeeded(participants.Length, now - _musterSince);
+            bool final = _finalTypes.Contains(_target.GetType().Name);
+            int needed = final ? FinalMusterNeeded(participants.Length, now - _musterSince)
+                : EncounterMusterNeeded(participants.Length, now - _musterSince);
             var point = new Point3D((int)_musterPoint.X, (int)_musterPoint.Y, (int)_musterPoint.Z);
             // Only raiders at the muster point count, never those standing by the boss: anyone within 2,000 of it counted
             // before, so the first arrivals inside its reach filled the muster themselves.
@@ -446,11 +486,12 @@ namespace DOL.GS
                 _musterEngaged = true;
                 _musterEngagedTick = now;
                 Destination = Front;
-                log.Info($"REALM_EXPEDITION_FINAL_ENGAGE region={_region} target=\"{_target.Name}\" mustered={mustered} needed={needed} " +
+                log.Info($"REALM_EXPEDITION_{(final ? "FINAL_" : "")}ENGAGE region={_region} target=\"{_target.Name}\" mustered={mustered} needed={needed} " +
                          $"living={living} minutes={(now - _musterSince) / 60_000.0:0.0}");
                 return false;
             }
             Destination = _musterPoint;
+            RegroupPoint = _musterPoint;
             Hold = true;
             Status = $"Mustering for {_target.Name} ({mustered}/{needed})";
             // Waiting for the raid is not a stalled fight.
@@ -458,7 +499,7 @@ namespace DOL.GS
             if (now >= _nextMusterLog)
             {
                 _nextMusterLog = now + 2 * 60_000;
-                log.Info($"REALM_EXPEDITION_FINAL_MUSTER region={_region} target=\"{_target.Name}\" mustered={mustered} needed={needed} " +
+                log.Info($"REALM_EXPEDITION_{(final ? "FINAL_" : "")}MUSTER region={_region} target=\"{_target.Name}\" mustered={mustered} needed={needed} " +
                          $"living={living} at={(int)_musterPoint.X},{(int)_musterPoint.Y},{(int)_musterPoint.Z} minutes={(now - _musterSince) / 60_000.0:0.0}");
             }
             return true;
@@ -481,6 +522,8 @@ namespace DOL.GS
             if (zone == null || !nav.IsAvailable || !nav.HasNavmesh(zone))
                 return best;
             var toward = new List<Vector3>(2);
+            // The way the raid came first (returning raiders come the same way), then the main body.
+            if (_hasApproachFrom) toward.Add(_approachFrom);
             if (TryRegroupFront(inside, out Vector3 body)) toward.Add(body);
             Span<WrappedPathfindingNode> nodes = stackalloc WrappedPathfindingNode[256];
             foreach (Vector3 goal in toward)
@@ -733,6 +776,7 @@ namespace DOL.GS
         {
             if (Complete) return;
             if (_routeStartTick == 0) _routeStartTick = now;
+            RegroupPoint = null;
             GameNPC[] live = WorldMgr.GetRegion(_region)?.Objects.OfType<GameNPC>().ToArray() ?? [];
             foreach (GameNPC stale in _routeRetry.Keys.Where(n => !n.IsAlive || n.ObjectState != GameObject.eObjectState.Active).ToArray())
                 _routeRetry.Remove(stale);
@@ -778,15 +822,19 @@ namespace DOL.GS
                 }
                 // Never switch a live grind objective because another party has not
                 // arrived, but never hold the whole expedition on a target nobody damages.
-                if (_finalTypes.Contains(_target.GetType().Name) && MusterForFinal(participants, now))
+                bool final = _finalTypes.Contains(_target.GetType().Name);
+                if (NeedsMuster(final, _target is GameEpicBoss, RealmRaidNeutralEvents.IsObjective(_objectives, _target.Name)) &&
+                    MusterForTarget(participants, now))
                     return;
-                if (!ShouldSkipTarget(_finalTypes.Contains(_target.GetType().Name), now - _targetProgressTick))
+                bool wipedOut = _musterTarget == _target && WipedOut(final, _musterWipes);
+                if (!wipedOut && !ShouldSkipTarget(final, now - _targetProgressTick))
                 {
                     CallTarget(participants, now);
                     Hold = false; Status = $"Clearing {_target.Name} ({_target.HealthPercent}%)"; return;
                 }
                 log.Warn($"REALM_EXPEDITION_TARGET_SKIPPED region={_region} target=\"{_target.Name}\" at={_target.X},{_target.Y},{_target.Z} " +
-                         $"health={_target.HealthPercent} front={(int)Front.X},{(int)Front.Y},{(int)Front.Z} near={near} reason=\"no damage for five minutes\"");
+                         $"health={_target.HealthPercent} front={(int)Front.X},{(int)Front.Y},{(int)Front.Z} near={near} " +
+                         $"reason=\"{(wipedOut ? $"wiped {_musterWipes} times" : "no damage for five minutes")}\"");
                 _routeRetry[_target] = now + BlockedTargetRetryMilliseconds;
             }
             _target = null;
@@ -866,13 +914,13 @@ namespace DOL.GS
                 if ((npc.Flags & GameNPC.eFlags.FLYING) != 0 &&
                     nav.GetClosestPoint(zone, raw, 128, 128, RangedFlyerReach, nav.DefaultFilters) is Vector3 below && raw.Z - below.Z > 256)
                     raw = below;
-                Vector3 approach = default;
+                Vector3 approach = default, provenFrom = Front;
                 bool reachable = false;
                 foreach (Vector3 anchor in anchors)
                 {
                     Zone anchorZone = WorldMgr.GetRegion(_region)?.GetZone((int)anchor.X, (int)anchor.Y) ?? zone;
                     if (nav.HasNavmesh(anchorZone) && AutonomousZonePointApproach.TryResolve(nav, anchorZone, anchor, raw, 220, out approach))
-                    { reachable = true; break; }
+                    { reachable = true; provenFrom = anchor; break; }
                 }
                 if (!reachable && _region == AutonomousDarknessFallsPolicy.RegionId && _objectives != null &&
                     TryDarknessFallsChain(nav, zone, raw, out Vector3[] chain))
@@ -896,6 +944,7 @@ namespace DOL.GS
                 // fights; skipped, it never died, and Olcasgean wakes only when all four primals are dead).
                 if (IsOutOfRangedReach(npc.Flags, npc.Z, (int)approach.Z))
                 { _routeRetry[npc] = now + BlockedTargetRetryMilliseconds; continue; }
+                _approachFrom = provenFrom; _hasApproachFrom = true;
                 _target = npc; Front = Destination = approach; TargetName = npc.Name; TargetLevel = npc.Level;
                 _targetProgressTick = _targetStartTick = now; _targetLowestHealth = npc.Health;
                 _targetClosest = float.MaxValue; _targetApproachTick = now; _targetPresentTick = 0;
