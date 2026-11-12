@@ -2894,6 +2894,10 @@ namespace DOL.GS.Quests
 		{
 			if (QuestNames.Same(TargetName, living.Name) && (TargetRegion == living.CurrentRegionID || TargetRegion == 0))
 			{
+				// a step that counts only the quest's own event monster (classic-quests.json OwnSpawnOnly)
+				if (!ClassicQuests.KillCounts(ID, Step, living))
+					return;
+
 				switch (StepType)
 				{
 					case eStepType.Kill:

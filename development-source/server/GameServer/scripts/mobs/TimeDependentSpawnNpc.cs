@@ -84,7 +84,9 @@ namespace DOL.GS
                 ["Lord Lauur"] = (0, 8),
             };
 
-        public static bool TryGet(string name, out (int Start, int End) window) => ByName.TryGetValue(name ?? string.Empty, out window);
+        /// <summary>The hours from classic-quests.json (HourWindows) when it names the NPC, else the built-in ones.</summary>
+        public static bool TryGet(string name, out (int Start, int End) window) =>
+            DOL.GS.Quests.ClassicQuests.TryHourWindow(name, out window) || ByName.TryGetValue(name ?? string.Empty, out window);
 
         /// <summary>Is the hour (0-23) inside [start, end)? A window that wraps past midnight (start above end) works too.</summary>
         public static bool Contains(int hour, int start, int end) =>
@@ -137,14 +139,16 @@ namespace DOL.AI.Brain
     public class HourWindowSpawnBrain : TimeDependentSpawnBrain
     {
         private (int Start, int End)? _window;
-        private bool _looked;
+        private int _lookedAt = -1;
 
         protected override bool ShouldBeVisible()
         {
-            if (!_looked)
+            // looked up again when the quest file is (re)loaded: its hours can come from there
+            int version = DOL.GS.Quests.ClassicQuests.ConfigVersion;
+            if (_lookedAt != version)
             {
                 _window = HourWindows.TryGet(Body.Name, out var window) ? window : null;
-                _looked = true;
+                _lookedAt = version;
             }
             if (_window is not { } hours)
                 return true;

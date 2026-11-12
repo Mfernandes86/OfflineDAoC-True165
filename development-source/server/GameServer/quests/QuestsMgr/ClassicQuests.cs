@@ -26,7 +26,7 @@ namespace DOL.GS.Quests
     /// </list>
     /// Quest givers keep the normal yellow quest indicator over their heads. Without the file nothing happens.
     /// </summary>
-    public static class ClassicQuests
+    public static partial class ClassicQuests
     {
         public const uint MarkerId = 0xFFFE0004;
         public const string EventSpawnProperty = "ClassicQuestEventFor";
@@ -69,6 +69,10 @@ namespace DOL.GS.Quests
             /// <summary>Others that appear together with it and leave with it (Protecting the Healer: Golga and four
             /// svartalf chanters, walkthrough 138; quest audit 2026-11-11, P04-E3). Optional.</summary>
             public List<EscortSpawn> Escort { get; set; }
+            /// <summary>A Path (PathID) it walks with its escort (owner 2026-11-11): it appears at this spawn's point, the
+            /// path's first point, instead of beside the player, and is not sent at the player - it fights whoever comes
+            /// into its reach, like a monster on patrol. Empty: as before.</summary>
+            public string PathId { get; set; }
         }
 
         /// <summary>One kind of NPC that comes with an <see cref="EventSpawn"/>.</summary>
@@ -113,6 +117,7 @@ namespace DOL.GS.Quests
             public List<StepDrop> Drops { get; set; }
             /// <summary>say: the words of power spoken aloud (/say) on the step's point. NightOnly: the walkthrough has the
             /// step work only at night (say and use_item steps).</summary>
+            /// whisper: any of the "|"-separated Words whispered (or clicked) to Target completes the step.
             public string Words { get; set; }
             public bool NightOnly { get; set; }
         }
@@ -140,6 +145,13 @@ namespace DOL.GS.Quests
             /// <summary>What this step's NPC says when the player comes to it during the step, before handing anything in
             /// (Merle the Old: "Did you get me the mud?"); a recorded line of the period walkthrough.</summary>
             public string Greet { get; set; }
+            /// <summary>Items (Id_nb) the player must be wearing for this step to advance or finish, whatever its type
+            /// ("wearing the four relics, search the room"). The player's class version of an item counts.</summary>
+            public List<string> Wearing { get; set; }
+            /// <summary>A kill step that only counts the quest's own event monster (<see cref="Spawn"/>), not a permanent
+            /// monster of the same name elsewhere in the world; the event monster then also appears when a permanent one
+            /// stands near.</summary>
+            public bool OwnSpawnOnly { get; set; }
         }
 
         public sealed class QuestInfo
@@ -167,6 +179,8 @@ namespace DOL.GS.Quests
             /// <summary>A kill task (Collection quest) whose turn-in paid a random reward per item; null: the row's fixed
             /// RewardXP.</summary>
             public CollectRewards CollectRewards { get; set; }
+            /// <summary>Optional hand-ins while the quest runs (see <see cref="SideTurnIn"/>).</summary>
+            public List<SideTurnIn> SideTurnIns { get; set; }
         }
 
         /// <summary>
@@ -374,6 +388,8 @@ namespace DOL.GS.Quests
             /// <summary>Fellows of a quest monster: fellow Mob_ID -> the leader's name (Fjall's friends; they walk and
             /// fight with him, QuestFellowBrain).</summary>
             public Dictionary<string, string> Fellows { get; set; } = new(StringComparer.Ordinal);
+            /// <summary>The game hours of HourWindowSpawn NPCs by name (Commander Slor'vid: midnight to 3 AM).</summary>
+            public Dictionary<string, HourWindow> HourWindows { get; set; } = new(StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>The version of a quest reward made for the player's class (ClassRewards), or the reward itself.</summary>
@@ -390,6 +406,7 @@ namespace DOL.GS.Quests
         public static void OnServerStarted(DOLEvent e, object sender, EventArgs args)
         {
             Reload();
+            LoadMemory();
             _timer?.Dispose();
             _timer = new Timer(Refresh, null, RefreshMilliseconds, RefreshMilliseconds);
             GameEventMgr.AddHandler(GamePlayerEvent.InteractWith, new DOLEventHandler(OnInteract));
@@ -413,6 +430,7 @@ namespace DOL.GS.Quests
                 if (sender is not GamePlayer player || args is not WhisperEventArgs whisper || whisper.Target is not GameNPC npc) return;
                 string key = (whisper.Text ?? string.Empty).Trim().TrimEnd('.', '!', '?');
                 if (TryChooseReward(player, npc, key)) return;
+                if (TryWhisperStep(player, npc, key)) return;
                 if (!_config.Chat.TryGetValue(npc.Name, out var lines)) return;
                 string reply = FindLine(lines, key) ?? SiblingReply(lines, key, npc);
                 if (!string.IsNullOrWhiteSpace(reply))
@@ -630,10 +648,16 @@ namespace DOL.GS.Quests
                 long now = GameLoop.GameLoopTime;
                 if (GiveCooldown.TryGetValue(key, out long until) && now < until) continue;
                 GiveCooldown[key] = now + 60_000;
-                DbItemTemplate template = GameServer.Database.FindObjectByKey<DbItemTemplate>(id);
-                if (template == null || !player.Inventory.AddTemplate(GameInventoryItem.Create(template), 1, eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack)) continue;
+                // the player's class version of the item (ClassRewards), as the final rewards are (quest audit P09-D7)
+                DbItemTemplate template = RewardFor(player, GameServer.Database.FindObjectByKey<DbItemTemplate>(id));
+                if (template == null ||
+                    !Same(template.Id_nb, id) && player.Inventory.GetFirstItemByID(template.Id_nb, eInventorySlot.Min_Inv, eInventorySlot.Max_Inv) != null ||
+                    !player.Inventory.AddTemplate(GameInventoryItem.Create(template), 1, eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack)) continue;
                 if (!IsReissuableQuestItem(template))
+                {
                     RealGrantsGiven[given] = 0;
+                    MarkMemoryDirty();   // kept across restarts (classic-quest-memory.json)
+                }
                 string from = string.IsNullOrEmpty(step.GrantFrom) ? "You receive" : step.GrantFrom + " gives you";
                 player.Out.SendMessage($"{from} {template.GetName(1, false)}.", PacketHandler.eChatType.CT_System, PacketHandler.eChatLoc.CL_SystemWindow);
             }
@@ -693,6 +717,7 @@ namespace DOL.GS.Quests
                 if (sender is GameNPC mob && args is DyingEventArgs slain)
                 {
                     DropForSteps(mob, slain);
+                    DropSideItems(mob, slain);
                     return;
                 }
                 if (sender is not GamePlayer player || args is not DyingEventArgs dying || dying.Killer == null) return;
@@ -758,6 +783,7 @@ namespace DOL.GS.Quests
             try
             {
                 if (args is not GiveItemEventArgs give || give.Source is not GamePlayer player || give.Target is not GameNPC npc || give.Item == null) return;
+                if (TrySideTurnIn(player, npc, give.Item)) return;
                 foreach (DataQuest quest in player.QuestList.Keys.OfType<DataQuest>().ToArray())
                 {
                     if (!_config.Quests.TryGetValue(quest.ID, out QuestInfo info) || quest.Step <= 0 || quest.Step >= info.Steps.Count) continue;
@@ -903,6 +929,7 @@ namespace DOL.GS.Quests
                 if (sender is not GamePlayer player || args is not InteractWithEventArgs interact || interact.Target is not GameNPC npc) return;
                 GreetOnHandInStep(player, npc);
                 OfferWhisperLinks(player, npc);
+                OfferWhisperChoice(player, npc);
                 foreach (DataQuest quest in player.QuestList.Keys.OfType<DataQuest>())
                 {
                     if (!_config.Quests.TryGetValue(quest.ID, out QuestInfo info) || quest.Step <= 0 || quest.Step >= info.Steps.Count) continue;
@@ -1027,6 +1054,7 @@ namespace DOL.GS.Quests
             GameEventMgr.RemoveHandler(GameLivingEvent.Dying, new DOLEventHandler(OnDying));
             GameEventMgr.RemoveHandler(GamePlayerEvent.GiveItem, new DOLEventHandler(OnGiveItem));
             Shown.Clear();
+            SaveMemoryIfDirty();
             foreach (GameNPC npc in EventSpawns.Values.SelectMany(list => list)) npc?.Delete();
             EventSpawns.Clear();
         }
@@ -1086,6 +1114,7 @@ namespace DOL.GS.Quests
                 config.QuestMonsterIds = new HashSet<string>(config.QuestMonsterIds ?? new(), StringComparer.Ordinal);
                 config.Fellows = new Dictionary<string, string>(config.Fellows ?? new(), StringComparer.Ordinal);
                 _talkTargets = TalkTargetsOf(config);
+                PrepareFeatures(config);
                 _config = config;
                 _loadedWrite = write;
                 if (Log.IsInfoEnabled)
@@ -1118,8 +1147,10 @@ namespace DOL.GS.Quests
                     {
                         string character = player.InternalID ?? player.Name;
                         foreach (var key in RealGrantsGiven.Keys.Where(k => k.Character == character && active.All(q => q.ID != k.Quest)).ToArray())
-                            RealGrantsGiven.TryRemove(key, out _);
+                            if (RealGrantsGiven.TryRemove(key, out _))
+                                MarkMemoryDirty();
                     }
+                    ForgetSideTurnIns(player, active);
                     // Every active classic quest shows its current step on the map, each with its own marker
                     // (owner 2026-10-07: one shared marker hid every quest behind the first one), and every active
                     // quest's step can spawn its monster.
@@ -1136,7 +1167,7 @@ namespace DOL.GS.Quests
                         ShowMarker(player, quest.ID, quest.Step, stepMarker);
                         // a target that walks a patrol shows its route on the map as a red line (owner 2026-11-11)
                         QuestPatrolRoutes.Show(player, quest, stepMarker);
-                        if (step?.Spawn != null) TrySpawnEvent(player, quest.ID, quest.Step, step.Spawn);
+                        if (step?.Spawn != null) TrySpawnEvent(player, quest.ID, quest.Step, step.Spawn, step.OwnSpawnOnly);
                         if (step?.Grant != null) GrantItems(player, quest, step);
                         if (!string.IsNullOrEmpty(step?.NeedsItem)) ReissueWithoutIssuer(player, quest, step);
                         GiveDeliveryItem(player, quest);
@@ -1155,6 +1186,7 @@ namespace DOL.GS.Quests
                     Shown.TryRemove(gone, out _);
                     QuestPatrolRoutes.Forget(gone);
                 }
+                SaveMemoryIfDirty();
             }
             catch (Exception ex)
             {
@@ -1289,8 +1321,11 @@ namespace DOL.GS.Quests
         /// ground (owner 2026-10-07: spawning on top of the player looked wrong); a summoned NPC stands at the step's
         /// point, of the player's realm and peaceful.</summary>
         private static GameNPC SpawnOne(GamePlayer player, EventSpawn spawn, string name, int templateId, byte level, ushort model,
-            bool peaceful, int index, out bool noModel)
+            bool peaceful, int index, out bool noModel, GameNPC leader = null)
         {
+            // an event that walks a path (EventSpawn.PathId): everyone appears at the spawn's point; the first one walks
+            // the path and the others (leader != null) follow it and share its fights, as a quest monster's fellows do
+            bool routed = !string.IsNullOrEmpty(spawn.PathId);
             noModel = false;
             var npc = new GameNPC();
             if (templateId > 0 && NpcTemplateMgr.GetTemplate(templateId) is INpcTemplate template)
@@ -1309,8 +1344,9 @@ namespace DOL.GS.Quests
                 npc.Model = look;
             }
             npc.Realm = peaceful ? player.Realm : eRealm.None;
-            var at = peaceful ? new System.Numerics.Vector3(spawn.X + 90 + 60 * index, spawn.Y, spawn.Z) : ApproachPoint(player, index);
-            npc.CurrentRegionID = peaceful ? spawn.Region : player.CurrentRegionID;
+            var at = peaceful ? new System.Numerics.Vector3(spawn.X + 90 + 60 * index, spawn.Y, spawn.Z)
+                : routed ? new System.Numerics.Vector3(spawn.X + 70 * index, spawn.Y, spawn.Z) : ApproachPoint(player, index);
+            npc.CurrentRegionID = peaceful || routed ? spawn.Region : player.CurrentRegionID;
             npc.X = (int)at.X; npc.Y = (int)at.Y; npc.Z = (int)at.Z;
             npc.Heading = npc.GetHeading(player);
             npc.RespawnInterval = -1; // never respawns: one encounter for this player's step
@@ -1322,14 +1358,40 @@ namespace DOL.GS.Quests
             }
             else // a fight: the template of a townsperson the quest turns on (Dark Bishop Burhoff, Gokstad) is peaceful
                 npc.Flags &= ~(GameNPC.eFlags.PEACE | GameNPC.eFlags.CANTTARGET);
+            if (routed)
+            {
+                if (leader == null)
+                    npc.PathID = spawn.PathId;
+                else
+                {
+                    var fellow = new QuestFellowBrain();
+                    if (npc.Brain is DOL.AI.Brain.StandardMobBrain own)
+                    {
+                        fellow.AggroLevel = own.AggroLevel;
+                        fellow.AggroRange = own.AggroRange;
+                    }
+                    npc.SetOwnBrain(fellow);
+                    fellow.SetLeader(leader);
+                }
+                // a fight that walks is not sent at the player: it attacks who comes into its reach, like a patrol
+                if (!peaceful && npc.Brain is DOL.AI.Brain.StandardMobBrain patrol && patrol.AggroLevel <= 0)
+                {
+                    patrol.AggroLevel = RoutedAggroLevel;
+                    patrol.AggroRange = Math.Max(patrol.AggroRange, RoutedAggroRange);
+                }
+            }
             if (!npc.AddToWorld()) return null;
-            if (!peaceful && npc.Brain is DOL.AI.Brain.StandardMobBrain brain) brain.AddToAggroList(player, 1);
+            if (!peaceful && !routed && npc.Brain is DOL.AI.Brain.StandardMobBrain brain) brain.AddToAggroList(player, 1);
             new ECSGameTimer(npc, _ => { if (npc.ObjectState == GameObject.eObjectState.Active) npc.Delete(); return 0; },
                 Math.Max(60, spawn.DespawnSeconds) * 1000);
             return npc;
         }
 
-        private static void TrySpawnEvent(GamePlayer player, int quest, int step, EventSpawn spawn)
+        /// <summary>An event monster on a path whose template gives it no aggression attacks within this reach (an event
+        /// monster not on a path is sent straight at the player).</summary>
+        public const int RoutedAggroLevel = 100, RoutedAggroRange = 500;
+
+        private static void TrySpawnEvent(GamePlayer player, int quest, int step, EventSpawn spawn, bool ownSpawnOnly = false)
         {
             var key = (player, quest, step);
             if (!player.IsAlive || EventCooldown.TryGetValue(key, out long until) && GameLoop.GameLoopTime < until) return;
@@ -1337,7 +1399,8 @@ namespace DOL.GS.Quests
                     e.Value.Any(n => n?.IsAlive == true && string.Equals(n.Name, spawn.Name, StringComparison.OrdinalIgnoreCase)))) return;
             if (spawn.TriggerRadius > 0 && (player.CurrentRegionID != spawn.Region ||
                 !player.IsWithinRadius(new Point3D(spawn.X, spawn.Y, spawn.Z), spawn.TriggerRadius))) return;
-            if (AlreadyThere(player, spawn)) return;
+            // an own-spawn-only step needs its own monster even when a permanent one of that name stands near
+            if (!ownSpawnOnly && AlreadyThere(player, spawn)) return;
             var spawned = new List<GameNPC>();
             for (int i = 0; i < Math.Max(1, spawn.Count); i++)
             {
@@ -1357,7 +1420,8 @@ namespace DOL.GS.Quests
                 if (string.IsNullOrWhiteSpace(escort?.Name)) continue;
                 for (int i = 0; i < Math.Max(1, escort.Count); i++, index++)
                 {
-                    GameNPC npc = SpawnOne(player, spawn, escort.Name, escort.TemplateId, escort.Level, escort.Model, escort.Peaceful, index, out bool noModel);
+                    GameNPC npc = SpawnOne(player, spawn, escort.Name, escort.TemplateId, escort.Level, escort.Model, escort.Peaceful, index, out bool noModel,
+                        string.IsNullOrEmpty(spawn.PathId) ? null : spawned[0]);
                     if (noModel)
                     {
                         Log.Warn($"CLASSIC_QUEST_SPAWN_NO_MODEL quest={quest} step={step} escort=\"{escort.Name}\": not spawned (give it a Model or TemplateId)");
@@ -1376,8 +1440,12 @@ namespace DOL.GS.Quests
     /// <summary>The ClassType hook named by classic data quests; markers and spawns live in <see cref="ClassicQuests"/>.</summary>
     public class ClassicQuestStep : IDataQuestStep
     {
-        public bool Execute(DataQuest dataQuest, GamePlayer player, int step, eStepCheckType stepCheckType) =>
-            stepCheckType != eStepCheckType.Qualification ||
-            ClassicQuests.RaceAllowed(dataQuest.ID, player) && ClassicQuests.BranchAllowed(dataQuest.ID, player);
+        public bool Execute(DataQuest dataQuest, GamePlayer player, int step, eStepCheckType stepCheckType) => stepCheckType switch
+        {
+            eStepCheckType.Qualification => ClassicQuests.RaceAllowed(dataQuest.ID, player) && ClassicQuests.BranchAllowed(dataQuest.ID, player),
+            // a step that asks for worn items does not advance or finish without them
+            eStepCheckType.Step or eStepCheckType.Finish => ClassicQuests.StepAllowed(dataQuest, player),
+            _ => true,
+        };
     }
 }

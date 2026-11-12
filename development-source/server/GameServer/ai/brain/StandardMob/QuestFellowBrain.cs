@@ -50,6 +50,9 @@ namespace DOL.AI.Brain
         /// </summary>
         public static bool CanLead(bool isSelf, bool isFellow) => !isSelf && !isFellow;
 
+        /// <summary>The leader of an event monster's escort (it has no Mob_ID to look a leader up by).</summary>
+        public void SetLeader(GameNPC leader) => _leader = leader;
+
         private GameNPC FindLeader()
         {
             string name = ClassicQuests.FellowLeaderName(Body.InternalID);
