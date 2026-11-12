@@ -213,8 +213,9 @@ public static class AutonomousBotChatCoordinator
                 return;
             LastAdviceAnswer[player.Realm] = GameLoop.GameLoopTime;
         }
-        GameBot advisor = SampleResponders(AutonomousBotRegistry.Snapshot(),
-                bot => Eligible(bot) && bot.Realm == player.Realm && bot.Level >= AdviceAnswerLevel, message, out _)
+        // the reply sample (veteran review Q30): about 64 of the realm's eligible bots, never the whole realm
+        GameBot advisor = RankReplyCandidates(AutonomousBotRegistry.Snapshot()
+                .Where(bot => Eligible(bot) && bot.Realm == player.Realm && bot.Level >= AdviceAnswerLevel), message, Random.Shared)
             .OrderByDescending(bot => bot.Level).FirstOrDefault();
         if (advisor == null)
             return;
