@@ -24258,7 +24258,7 @@
     {
      "Item": "qf07_part05_lieutenant_yalris_head",
      "Target": "Kimmy Glaze",
-     "Reward": "qf07_part05_yalris_mind_jewel",
+     "Reward": "qf07_part05_zudds_thug_bracer",
      "FromStep": 2,
      "ToStep": 0,
      "DropFrom": "Lieutenant Yal'ris",
@@ -24267,7 +24267,7 @@
     {
      "Item": "qf07_part05_lieutenant_zudd_head",
      "Target": "Kimmy Glaze",
-     "Reward": "qf07_part05_zudds_thug_bracer",
+     "Reward": "qf07_part05_yalris_mind_jewel",
      "FromStep": 2,
      "ToStep": 0,
      "DropFrom": "Lieutenant Zudd",
@@ -24323,7 +24323,7 @@
     {
      "Item": "qf07_part05_lieutenant_yalris_head",
      "Target": "Kimmy Glaze",
-     "Reward": "qf07_part05_yalris_mind_jewel",
+     "Reward": "qf07_part05_zudds_thug_bracer",
      "FromStep": 2,
      "ToStep": 0,
      "DropFrom": "Lieutenant Yal'ris",
@@ -24332,7 +24332,7 @@
     {
      "Item": "qf07_part05_lieutenant_zudd_head",
      "Target": "Kimmy Glaze",
-     "Reward": "qf07_part05_zudds_thug_bracer",
+     "Reward": "qf07_part05_yalris_mind_jewel",
      "FromStep": 2,
      "ToStep": 0,
      "DropFrom": "Lieutenant Zudd",
@@ -24388,7 +24388,7 @@
     {
      "Item": "qf07_part05_lieutenant_yalris_head",
      "Target": "Kimmy Glaze",
-     "Reward": "qf07_part05_yalris_mind_jewel",
+     "Reward": "qf07_part05_zudds_thug_bracer",
      "FromStep": 2,
      "ToStep": 0,
      "DropFrom": "Lieutenant Yal'ris",
@@ -24397,7 +24397,7 @@
     {
      "Item": "qf07_part05_lieutenant_zudd_head",
      "Target": "Kimmy Glaze",
-     "Reward": "qf07_part05_zudds_thug_bracer",
+     "Reward": "qf07_part05_yalris_mind_jewel",
      "FromStep": 2,
      "ToStep": 0,
      "DropFrom": "Lieutenant Zudd",
@@ -24453,7 +24453,7 @@
     {
      "Item": "qf07_part05_lieutenant_yalris_head",
      "Target": "Kimmy Glaze",
-     "Reward": "qf07_part05_yalris_mind_jewel",
+     "Reward": "qf07_part05_zudds_thug_bracer",
      "FromStep": 2,
      "ToStep": 0,
      "DropFrom": "Lieutenant Yal'ris",
@@ -24462,7 +24462,7 @@
     {
      "Item": "qf07_part05_lieutenant_zudd_head",
      "Target": "Kimmy Glaze",
-     "Reward": "qf07_part05_zudds_thug_bracer",
+     "Reward": "qf07_part05_yalris_mind_jewel",
      "FromStep": 2,
      "ToStep": 0,
      "DropFrom": "Lieutenant Zudd",
@@ -90778,7 +90778,8 @@
   "e590062c-9e12-4f69-9c22-bad5c8aa14d7",
   "a52afa24-c342-40f7-8c44-c97d45cdb3f6",
   "9c5f5b69-ccf1-52b6-a8eb-943397f994cc",
-  "1c2bb894-4c58-52f6-ad9c-26cb6522914e"
+  "1c2bb894-4c58-52f6-ad9c-26cb6522914e",
+  "28a63f87-3e68-550e-b3c0-1631cff581e6"
  ],
  "Chat": {
   "Master Vismer": {

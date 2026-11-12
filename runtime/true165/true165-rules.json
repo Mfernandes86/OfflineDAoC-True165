@@ -49337,6 +49337,22 @@
    "reason": "True 1.65 period 1.64 navmesh: Grallarhorn Faste relic keep postern 06 112179306 onto its 1.64 nrelickeep-s.nif door group centre (was 677714,711280, outside the door polygon, so the server never registered it)"
   },
   {
+   "sql": "UPDATE Door SET X = 620347, Y = 369610, Z = 6202, Heading = 2050 WHERE InternalID = 14078402 AND X = 621244 AND Y = 370646",
+   "reason": "True 1.65 period 1.64 models (GitHub issue #52): Caer Erasleigh inner gate door 14078402 to the 1.64 bfrontkeep1.nif door02, the gatehouse's inner door the client draws (621244,370646 was the later 'New Frontier Keep' model's keep door 02, 1371 units off, so melee at the drawn door was out of range; floor Z and heading axis from door 01)"
+  },
+  {
+   "sql": "UPDATE Door SET X = 624197, Y = 407478, Z = 6586, Heading = 4010 WHERE InternalID = 14078502 AND X = 623299 AND Y = 406432",
+   "reason": "True 1.65 period 1.64 models (GitHub issue #52): Caer Boldiam inner gate door 14078502 to the 1.64 bfrontkeep1.nif door02, the gatehouse's inner door the client draws (623299,406432 was the later 'New Frontier Keep' model's keep door 02, 1379 units off, so melee at the drawn door was out of range; floor Z and heading axis from door 01)"
+  },
+  {
+   "sql": "UPDATE Door SET X = 582724, Y = 366609, Z = 5914, Heading = 4095 WHERE InternalID = 14078602 AND X = 582022 AND Y = 365431",
+   "reason": "True 1.65 period 1.64 models (GitHub issue #52): Caer Sursbrooke inner gate door 14078602 to the 1.64 bfrontkeep1.nif door02, the gatehouse's inner door the client draws (582022,365431 was the later 'New Frontier Keep' model's keep door 02, 1371 units off, so melee at the drawn door was out of range; floor Z and heading axis from door 01)"
+  },
+  {
+   "sql": "UPDATE Door SET X = 584252, Y = 389615, Z = 5914, Heading = 2244 WHERE InternalID = 14078702 AND X = 584954 AND Y = 390790",
+   "reason": "True 1.65 period 1.64 models (GitHub issue #52): Caer Berkstead inner gate door 14078702 to the 1.64 bfrontkeep1.nif door02, the gatehouse's inner door the client draws (584954,390790 was the later 'New Frontier Keep' model's keep door 02, 1368 units off, so melee at the drawn door was out of range; floor Z and heading axis from door 01)"
+  },
+  {
    "sql": "UPDATE Mob SET \"ClassType\" = 'DOL.GS.GameGuard', \"TranslationId\" = '', \"Name\" = 'elite guard', \"Suffix\" = '', \"Guild\" = '', \"ExamineArticle\" = '', \"MessageArticle\" = '', \"Speed\" = 191, \"Model\" = 716, \"Size\" = 50, \"Strength\" = 85, \"Constitution\" = 85, \"Dexterity\" = 99, \"Quickness\" = 99, \"Intelligence\" = 99, \"Piety\" = 99, \"Empathy\" = 99, \"Charisma\" = 99, \"Level\" = 65, \"Realm\" = 1, \"EquipmentTemplateID\" = 'PortalKeepFighterAlb', \"ItemsListTemplateID\" = NULL, \"NPCTemplateID\" = -1, \"Race\" = 0, \"Flags\" = 0, \"AggroLevel\" = 200, \"AggroRange\" = 500, \"MeleeDamageType\" = 3, \"RespawnInterval\" = 1380, \"FactionID\" = 0, \"BodyType\" = 0, \"Brain\" = '', \"IsCloakHoodUp\" = 0, \"Gender\" = 0, \"VisibleWeaponSlots\" = 240 WHERE Mob_ID = '25b15552-9c7e-41a4-a0ed-aa9651880e59' AND Name = 'Knight Commander'",
    "reason": "True 1.65 keep guards: Albion portal keep, Odin's Gate: our Knight Commander 25b15552-9c7e-41a4-a0ed-aa9651880e59 stands 65 from a CapnBry radar \"elite guard\" spot: it becomes that 1.65 guard (Albion portal keep fighter look, template 60157485 (no period appearance)), position and heading kept"
   },
@@ -51331,6 +51347,14 @@
   {
    "sql": "UPDATE \"DataQuest\" SET \"StepType\" = '4|4|0|2|4|4|4|4|4|0|4|0|4|8|5' WHERE \"ID\" = 20660",
    "reason": "True 1.65 0.7 questfix07 INT-6 [integrator]: Secret Orders step 14: the Arawn Commander's riddle. The journal says to answer [knowledge] or [power], but the step was an Interact and ended on a right-click (verifier P05-B3). It is now a custom whisper step (StepType 8, completed by the engine)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 0 WHERE Id_nb = 'Goblin_Rapier' AND ProcSpellID = 534634",
+   "reason": "True 1.65 0.7 questfix07 INT-7 [integrator]: the Goblin Rapier pointed at proc spell 534634, which does not exist, so the proc never fired and every swing of a gamebot carrying one wrote an error line (221 an hour in the 2026-11-12 runs)"
+  },
+  {
+   "sql": "UPDATE Mob SET Realm = 0, Flags = Flags & ~16, RespawnInterval = 720 WHERE Mob_ID = '28a63f87-3e68-550e-b3c0-1631cff581e6' AND PackageID = 'ClassicQuest'",
+   "reason": "True 1.65 0.7 questfix07 INT-8 [integrator]: Freeing Osier: the peaceful quest Osier at the four standing stones and a hostile Osier 1,800 units away were two of one period monster. The quest's row is now that monster: no realm, attackable for his period drops, aggressive as his template says; the hostile duplicate leaves add-restoredspawns165.json (build_twins165.py PERIOD_TWINS). A player on the hand-in step is not attacked (QuestTalkTruce)"
   }
  ]
 }

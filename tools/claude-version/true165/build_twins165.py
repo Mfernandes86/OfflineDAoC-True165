@@ -14,6 +14,10 @@ name; each pair becomes one.
    row its add-file no longer lists).
    Fressen is also the kill target of Visions of Darkness: the step's own event spawn brings him (classic-quests.json;
    ClassicQuests.AlreadyThere no longer counts an NPC the player cannot fight).
+   Gokstad (issue #50, 2026-11-12): the old skald of Jewel Hunt stands on his period CapnBry spot in the Vale of Mularn
+   and walks the Muspelheim pass; a hostile restored Gokstad stood 3,500 units off inside Muspelheim. Period sources
+   have one neutral Gokstad (Uthgard: neutral, drops only a bag of coins); he turns on the player only in the Hunter quest The
+   Wanestone Jewel, and that step's own event spawn brings the hostile one (classic-quests.json Quests/21467).
 
 3. Aessa, Macnol and Tradande have period drops (Tradande: Spear of the Elements, Bark Edged Boots), so a peaceful
    NPC alone would take those out of the game. Owner 2026-11-09: "One neutral monster" - one character that talks for
@@ -24,6 +28,18 @@ name; each pair becomes one.
    add-restoredspawns165.json. Its drops come by name, as before. Gamebots leave the three alone (QuestMonsterIds),
    so the quest's talker is not hunted. Talking and hand-ins to a monster with no realm are what DataQuest and
    QuestTalkTruce already do for some 60 other quest monsters.
+
+   Osier, Cleddyf Difwych, Mad Sprite (owner 2026-11-12: "fix these"): each stood twice.
+     Mad Sprite (Strange Matters Indeed) - the quest's sprite walks the dead oak on its period spot; a second one with
+       no realm stood 20,000 units off. The second goes.
+     Cleddyf Difwych (Bandit Camp) - the quest's Cleddyf stands on his period sighting and takes the note; the kill
+       step brings its own Cleddyf at midnight. A second one with no realm stood 6,300 units off and could be killed
+       at any hour for the head. The second goes.
+     Osier (Freeing Osier) - the period has one Osier, aggressive, with drops, at the standing stones, and the quest
+       hands him the bladder ("do not fight him"). The quest's peaceful row at the stones becomes that monster (no
+       realm, its template's own aggression, respawn 720 s as the monster had; questfix07 integrator/int8-osier.json
+       writes that update and the gamebot protection); the second hostile row 1,800 units off goes. A player on the
+       hand-in step is not attacked (QuestTalkTruce).
 
 Left alone: the quest's fenrir prophet at the Fenrir fort is one of Fjall's fellows (classic-quests.json Fellows) and
 walks with him.
@@ -53,6 +69,10 @@ PERIOD_TWINS = {   # hostile true165-restored rows whose place the quest's chara
     '8ee1d1e5-0c6f-41a8-a557-ceedb6ff0314': 'Fressen',
     '6e4e18db-d676-4139-a595-ce5bbc559d4d': 'dverge smith',
     '366644d7-18f3-42d4-8a62-4c128a6cb599': 'elder tidal sheerie',
+    '3c70ced1-881e-47f3-92ec-526070caef53': 'Gokstad',
+    'ef49997d-8ee3-4875-b692-578cd8961b03': 'Osier',
+    '74539606-4aaf-4f1e-8dea-63fb18199e82': 'Cleddyf Difwych',
+    'e0837217-7245-4d22-9407-d8d71b2f8f93': 'Mad Sprite',
 }
 NEUTRAL = {        # quest rows that become the one neutral monster: Mob_ID -> (name, its NPC template)
     '1f3d36b9-b842-5a00-9e05-ad0e704414a8': ('Aessa', 60157597),

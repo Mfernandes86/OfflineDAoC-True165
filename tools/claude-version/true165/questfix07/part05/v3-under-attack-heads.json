@@ -543,7 +543,7 @@
     {
      "Item": "qf07_part05_lieutenant_yalris_head",
      "Target": "Kimmy Glaze",
-     "Reward": "qf07_part05_yalris_mind_jewel",
+     "Reward": "qf07_part05_zudds_thug_bracer",
      "FromStep": 2,
      "ToStep": 0,
      "DropFrom": "Lieutenant Yal'ris",
@@ -552,7 +552,7 @@
     {
      "Item": "qf07_part05_lieutenant_zudd_head",
      "Target": "Kimmy Glaze",
-     "Reward": "qf07_part05_zudds_thug_bracer",
+     "Reward": "qf07_part05_yalris_mind_jewel",
      "FromStep": 2,
      "ToStep": 0,
      "DropFrom": "Lieutenant Zudd",
@@ -568,8 +568,8 @@
      "DropChance": 100
     }
    ],
-   "source": "Allakhazam quest 704 'Under Attack' (wayback 2004-10-14): 'if you get the Lieutenants heads, you get a bonus. Take the Lieutenants heads to Kimmy Glaze in Anniogel'; patch of Feb 4 2003: one head each; Warcry quest 985: 'you can only turn in one of each head', each head gives its magic item; comment 2003-12-02: 'a head of each lieutenant I hit that eventually died' (100%)",
-   "why": "lieutenant heads go to Kimmy Glaze for Yal'ris' Mind Jewel, Zudd's Thug Bracer and Grrar's Cloak of Evasion, once each, from the kill step to the end (heads drop only then); each item goes with the head of the lieutenant it is named after; no recorded Kimmy line, so no Thanks"
+   "source": "Allakhazam quest 704 'Under Attack' (wayback 2004-10-14): 'if you get the Lieutenants heads, you get a bonus. Take the Lieutenants heads to Kimmy Glaze in Anniogel'; patch of Feb 4 2003: one head each; Warcry quest 985: 'you can only turn in one of each head', each head gives its magic item; comment 2003-12-02: 'a head of each lieutenant I hit that eventually died' (100%); the same walkthrough: \"Zudd's Head: ... Yal'ris Mind Jewel\", \"Yal'ris Head: ... Zudd's Thug Bracer\"",
+   "why": "lieutenant heads go to Kimmy Glaze for a magic item, once each, from the kill step to the end (heads drop only then). Paired as the period walkthrough lists them (owner 2026-11-12): Zudd's Head gives Yal'ris' Mind Jewel, Yal'ris' Head gives Zudd's Thug Bracer, Grrar's Head gives Grrar's Cloak of Evasion; no recorded Kimmy line, so no Thanks"
   },
   {
    "finding": "P05-D5",
@@ -584,7 +584,7 @@
     {
      "Item": "qf07_part05_lieutenant_yalris_head",
      "Target": "Kimmy Glaze",
-     "Reward": "qf07_part05_yalris_mind_jewel",
+     "Reward": "qf07_part05_zudds_thug_bracer",
      "FromStep": 2,
      "ToStep": 0,
      "DropFrom": "Lieutenant Yal'ris",
@@ -593,7 +593,7 @@
     {
      "Item": "qf07_part05_lieutenant_zudd_head",
      "Target": "Kimmy Glaze",
-     "Reward": "qf07_part05_zudds_thug_bracer",
+     "Reward": "qf07_part05_yalris_mind_jewel",
      "FromStep": 2,
      "ToStep": 0,
      "DropFrom": "Lieutenant Zudd",
@@ -609,8 +609,8 @@
      "DropChance": 100
     }
    ],
-   "source": "Allakhazam quest 704 'Under Attack' (wayback 2004-10-14): 'if you get the Lieutenants heads, you get a bonus. Take the Lieutenants heads to Kimmy Glaze in Anniogel'; patch of Feb 4 2003: one head each; Warcry quest 985: 'you can only turn in one of each head', each head gives its magic item; comment 2003-12-02: 'a head of each lieutenant I hit that eventually died' (100%)",
-   "why": "lieutenant heads go to Kimmy Glaze for Yal'ris' Mind Jewel, Zudd's Thug Bracer and Grrar's Cloak of Evasion, once each, from the kill step to the end (heads drop only then); each item goes with the head of the lieutenant it is named after; no recorded Kimmy line, so no Thanks"
+   "source": "Allakhazam quest 704 'Under Attack' (wayback 2004-10-14): 'if you get the Lieutenants heads, you get a bonus. Take the Lieutenants heads to Kimmy Glaze in Anniogel'; patch of Feb 4 2003: one head each; Warcry quest 985: 'you can only turn in one of each head', each head gives its magic item; comment 2003-12-02: 'a head of each lieutenant I hit that eventually died' (100%); the same walkthrough: \"Zudd's Head: ... Yal'ris Mind Jewel\", \"Yal'ris Head: ... Zudd's Thug Bracer\"",
+   "why": "lieutenant heads go to Kimmy Glaze for a magic item, once each, from the kill step to the end (heads drop only then). Paired as the period walkthrough lists them (owner 2026-11-12): Zudd's Head gives Yal'ris' Mind Jewel, Yal'ris' Head gives Zudd's Thug Bracer, Grrar's Head gives Grrar's Cloak of Evasion; no recorded Kimmy line, so no Thanks"
   },
   {
    "finding": "P05-D5",
@@ -625,7 +625,7 @@
     {
      "Item": "qf07_part05_lieutenant_yalris_head",
      "Target": "Kimmy Glaze",
-     "Reward": "qf07_part05_yalris_mind_jewel",
+     "Reward": "qf07_part05_zudds_thug_bracer",
      "FromStep": 2,
      "ToStep": 0,
      "DropFrom": "Lieutenant Yal'ris",
@@ -634,7 +634,7 @@
     {
      "Item": "qf07_part05_lieutenant_zudd_head",
      "Target": "Kimmy Glaze",
-     "Reward": "qf07_part05_zudds_thug_bracer",
+     "Reward": "qf07_part05_yalris_mind_jewel",
      "FromStep": 2,
      "ToStep": 0,
      "DropFrom": "Lieutenant Zudd",
@@ -650,8 +650,8 @@
      "DropChance": 100
     }
    ],
-   "source": "Allakhazam quest 704 'Under Attack' (wayback 2004-10-14): 'if you get the Lieutenants heads, you get a bonus. Take the Lieutenants heads to Kimmy Glaze in Anniogel'; patch of Feb 4 2003: one head each; Warcry quest 985: 'you can only turn in one of each head', each head gives its magic item; comment 2003-12-02: 'a head of each lieutenant I hit that eventually died' (100%)",
-   "why": "lieutenant heads go to Kimmy Glaze for Yal'ris' Mind Jewel, Zudd's Thug Bracer and Grrar's Cloak of Evasion, once each, from the kill step to the end (heads drop only then); each item goes with the head of the lieutenant it is named after; no recorded Kimmy line, so no Thanks"
+   "source": "Allakhazam quest 704 'Under Attack' (wayback 2004-10-14): 'if you get the Lieutenants heads, you get a bonus. Take the Lieutenants heads to Kimmy Glaze in Anniogel'; patch of Feb 4 2003: one head each; Warcry quest 985: 'you can only turn in one of each head', each head gives its magic item; comment 2003-12-02: 'a head of each lieutenant I hit that eventually died' (100%); the same walkthrough: \"Zudd's Head: ... Yal'ris Mind Jewel\", \"Yal'ris Head: ... Zudd's Thug Bracer\"",
+   "why": "lieutenant heads go to Kimmy Glaze for a magic item, once each, from the kill step to the end (heads drop only then). Paired as the period walkthrough lists them (owner 2026-11-12): Zudd's Head gives Yal'ris' Mind Jewel, Yal'ris' Head gives Zudd's Thug Bracer, Grrar's Head gives Grrar's Cloak of Evasion; no recorded Kimmy line, so no Thanks"
   },
   {
    "finding": "P05-D5",
@@ -666,7 +666,7 @@
     {
      "Item": "qf07_part05_lieutenant_yalris_head",
      "Target": "Kimmy Glaze",
-     "Reward": "qf07_part05_yalris_mind_jewel",
+     "Reward": "qf07_part05_zudds_thug_bracer",
      "FromStep": 2,
      "ToStep": 0,
      "DropFrom": "Lieutenant Yal'ris",
@@ -675,7 +675,7 @@
     {
      "Item": "qf07_part05_lieutenant_zudd_head",
      "Target": "Kimmy Glaze",
-     "Reward": "qf07_part05_zudds_thug_bracer",
+     "Reward": "qf07_part05_yalris_mind_jewel",
      "FromStep": 2,
      "ToStep": 0,
      "DropFrom": "Lieutenant Zudd",
@@ -691,8 +691,8 @@
      "DropChance": 100
     }
    ],
-   "source": "Allakhazam quest 704 'Under Attack' (wayback 2004-10-14): 'if you get the Lieutenants heads, you get a bonus. Take the Lieutenants heads to Kimmy Glaze in Anniogel'; patch of Feb 4 2003: one head each; Warcry quest 985: 'you can only turn in one of each head', each head gives its magic item; comment 2003-12-02: 'a head of each lieutenant I hit that eventually died' (100%)",
-   "why": "lieutenant heads go to Kimmy Glaze for Yal'ris' Mind Jewel, Zudd's Thug Bracer and Grrar's Cloak of Evasion, once each, from the kill step to the end (heads drop only then); each item goes with the head of the lieutenant it is named after; no recorded Kimmy line, so no Thanks"
+   "source": "Allakhazam quest 704 'Under Attack' (wayback 2004-10-14): 'if you get the Lieutenants heads, you get a bonus. Take the Lieutenants heads to Kimmy Glaze in Anniogel'; patch of Feb 4 2003: one head each; Warcry quest 985: 'you can only turn in one of each head', each head gives its magic item; comment 2003-12-02: 'a head of each lieutenant I hit that eventually died' (100%); the same walkthrough: \"Zudd's Head: ... Yal'ris Mind Jewel\", \"Yal'ris Head: ... Zudd's Thug Bracer\"",
+   "why": "lieutenant heads go to Kimmy Glaze for a magic item, once each, from the kill step to the end (heads drop only then). Paired as the period walkthrough lists them (owner 2026-11-12): Zudd's Head gives Yal'ris' Mind Jewel, Yal'ris' Head gives Zudd's Thug Bracer, Grrar's Head gives Grrar's Cloak of Evasion; no recorded Kimmy line, so no Thanks"
   }
  ]
 }

@@ -1,0 +1,23 @@
+{
+ "fixer": "integrator",
+ "about": "Osier stood twice (owner 2026-11-12): the quest's row becomes the one period Osier",
+ "entries": [
+  {
+   "finding": "INT-8",
+   "kind": "update",
+   "sql": "UPDATE Mob SET Realm = 0, Flags = Flags & ~16, RespawnInterval = 720 WHERE Mob_ID = '28a63f87-3e68-550e-b3c0-1631cff581e6' AND PackageID = 'ClassicQuest'",
+   "why": "Freeing Osier: the peaceful quest Osier at the four standing stones and a hostile Osier 1,800 units away were two of one period monster. The quest's row is now that monster: no realm, attackable for his period drops, aggressive as his template says; the hostile duplicate leaves add-restoredspawns165.json (build_twins165.py PERIOD_TWINS). A player on the hand-in step is not attacked (QuestTalkTruce)",
+   "source": "Uthgard bestiary: Osier, Shannon Estuary, aggressive, with drops; Freeing Osier walkthrough: seek him at the standing stones and give him the bladder, do not fight him"
+  },
+  {
+   "finding": "INT-8",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "28a63f87-3e68-550e-b3c0-1631cff581e6",
+   "why": "gamebots leave the quest's Osier alone, as they do the other quest monsters a player must talk to"
+  }
+ ]
+}

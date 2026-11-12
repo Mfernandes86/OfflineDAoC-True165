@@ -1,0 +1,13 @@
+{
+ "fixer": "integrator",
+ "about": "Item data found in the 0.7 test runs (2026-11-12)",
+ "entries": [
+  {
+   "finding": "INT-7",
+   "kind": "update",
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 0 WHERE Id_nb = 'Goblin_Rapier' AND ProcSpellID = 534634",
+   "why": "the Goblin Rapier pointed at proc spell 534634, which does not exist, so the proc never fired and every swing of a gamebot carrying one wrote an error line (221 an hour in the 2026-11-12 runs)",
+   "source": "Prima Revised and Expanded guide, weapons table: Goblin Rapier +10%, Thrust +1, Dex +4 - no proc"
+  }
+ ]
+}

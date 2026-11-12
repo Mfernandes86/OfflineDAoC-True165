@@ -1,7 +1,7 @@
 {
  "_about": "questfix07 ledger: edits build_questfix07_165.py made to files it does not own, so a rerun can take them back out first. Do not edit by hand.",
  "tag": "True 1.65 0.7 questfix07",
- "written": "2026-11-11 23:50:48",
+ "written": "2026-11-12 11:10:53",
  "own_files": [
   "add-questfix07-dataquest.json",
   "add-questfix07-itemtemplate.json",
@@ -6763,7 +6763,7 @@
      {
       "Item": "qf07_part05_lieutenant_yalris_head",
       "Target": "Kimmy Glaze",
-      "Reward": "qf07_part05_yalris_mind_jewel",
+      "Reward": "qf07_part05_zudds_thug_bracer",
       "FromStep": 2,
       "ToStep": 0,
       "DropFrom": "Lieutenant Yal'ris",
@@ -6772,7 +6772,7 @@
      {
       "Item": "qf07_part05_lieutenant_zudd_head",
       "Target": "Kimmy Glaze",
-      "Reward": "qf07_part05_zudds_thug_bracer",
+      "Reward": "qf07_part05_yalris_mind_jewel",
       "FromStep": 2,
       "ToStep": 0,
       "DropFrom": "Lieutenant Zudd",
@@ -6803,7 +6803,7 @@
      {
       "Item": "qf07_part05_lieutenant_yalris_head",
       "Target": "Kimmy Glaze",
-      "Reward": "qf07_part05_yalris_mind_jewel",
+      "Reward": "qf07_part05_zudds_thug_bracer",
       "FromStep": 2,
       "ToStep": 0,
       "DropFrom": "Lieutenant Yal'ris",
@@ -6812,7 +6812,7 @@
      {
       "Item": "qf07_part05_lieutenant_zudd_head",
       "Target": "Kimmy Glaze",
-      "Reward": "qf07_part05_zudds_thug_bracer",
+      "Reward": "qf07_part05_yalris_mind_jewel",
       "FromStep": 2,
       "ToStep": 0,
       "DropFrom": "Lieutenant Zudd",
@@ -6843,7 +6843,7 @@
      {
       "Item": "qf07_part05_lieutenant_yalris_head",
       "Target": "Kimmy Glaze",
-      "Reward": "qf07_part05_yalris_mind_jewel",
+      "Reward": "qf07_part05_zudds_thug_bracer",
       "FromStep": 2,
       "ToStep": 0,
       "DropFrom": "Lieutenant Yal'ris",
@@ -6852,7 +6852,7 @@
      {
       "Item": "qf07_part05_lieutenant_zudd_head",
       "Target": "Kimmy Glaze",
-      "Reward": "qf07_part05_zudds_thug_bracer",
+      "Reward": "qf07_part05_yalris_mind_jewel",
       "FromStep": 2,
       "ToStep": 0,
       "DropFrom": "Lieutenant Zudd",
@@ -6883,7 +6883,7 @@
      {
       "Item": "qf07_part05_lieutenant_yalris_head",
       "Target": "Kimmy Glaze",
-      "Reward": "qf07_part05_yalris_mind_jewel",
+      "Reward": "qf07_part05_zudds_thug_bracer",
       "FromStep": 2,
       "ToStep": 0,
       "DropFrom": "Lieutenant Yal'ris",
@@ -6892,7 +6892,7 @@
      {
       "Item": "qf07_part05_lieutenant_zudd_head",
       "Target": "Kimmy Glaze",
-      "Reward": "qf07_part05_zudds_thug_bracer",
+      "Reward": "qf07_part05_yalris_mind_jewel",
       "FromStep": 2,
       "ToStep": 0,
       "DropFrom": "Lieutenant Zudd",
@@ -22922,6 +22922,15 @@
      "$missing": true
     },
     "after": true
+   },
+   {
+    "op": "q_add_unique",
+    "path": [
+     "QuestMonsterIds"
+    ],
+    "value": "28a63f87-3e68-550e-b3c0-1631cff581e6",
+    "was_present": false,
+    "created": false
    }
   ],
   "server:classic-quest-guides.json": [

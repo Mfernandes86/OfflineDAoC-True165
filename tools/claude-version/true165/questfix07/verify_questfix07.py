@@ -71,6 +71,8 @@ def main():
     ap.add_argument('--quick', action='store_true')
     ap.add_argument('--world', default=SCRATCH_WORLD)
     ap.add_argument('--base')
+    ap.add_argument('--db', help='world the fragments are validated against (default: the live dev world; once the live '
+                                 'world holds the fixes, pass a world from before them)')
     ap.add_argument('--fragments', default=HERE)
     ap.add_argument('--quick-check', action='store_true')
     a = ap.parse_args()
@@ -82,7 +84,7 @@ def main():
     base = a.base or (Q.LIVE_DB if a.quick else Q.V06_DB)
 
     print(f'1. merging the fragments into a fresh copy of the content: {out}')
-    rep, good, summary = B.run(out=out, reseed=True, fragments=os.path.abspath(a.fragments), db=Q.LIVE_DB if os.path.exists(Q.LIVE_DB) else Q.V06_DB)
+    rep, good, summary = B.run(out=out, reseed=True, fragments=os.path.abspath(a.fragments), db=a.db or (Q.LIVE_DB if os.path.exists(Q.LIVE_DB) else Q.V06_DB))
     if rep.errors:
         B.print_summary(rep, summary, False)
         sys.exit('validation errors: no scratch world built')
