@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using DOL.AI.Brain;
+using DOL.GS;
 using NUnit.Framework;
 
 namespace DOL.UnitTests
@@ -7,7 +10,7 @@ namespace DOL.UnitTests
     /// Veteran review 2026-11-11, M5: one shared fight board per group, rebuilt at most once a second, with one area
     /// search per group at most every 2 s, instead of every member's own area searches.
     /// </summary>
-    [TestFixture]
+    [TestFixture, NonParallelizable]
     public class UT_VeteranFightBoard
     {
         [Test]
@@ -29,6 +32,37 @@ namespace DOL.UnitTests
             Assert.That(GroupFightBoard.ScanIntervalMilliseconds, Is.EqualTo(1_000));
             Assert.That(GroupFightBoard.ScanIntervalMilliseconds, Is.GreaterThanOrEqualTo(GroupFightBoard.RebuildMilliseconds));
         });
+
+        private sealed class Npc : GameNPC
+        {
+            public bool Alive = true;
+            public GameObject Target;
+            public override bool IsAlive => Alive;
+            public override GameObject TargetObject { get => Target; set => Target = value; }
+        }
+
+        [Test]
+        public void AnNpcThatAggroesAfterTheAreaSearchIsOnTheNextBoard()
+        {
+            using var scope = new EpicTestServerScope();
+            var monster = (Npc)RuntimeHelpers.GetUninitializedObject(typeof(Npc));
+            monster.Alive = true;
+            var member = (Npc)RuntimeHelpers.GetUninitializedObject(typeof(Npc));
+            var members = new HashSet<GameLiving> { member };
+            var pets = new HashSet<GameLiving>();
+            Assert.Multiple(() =>
+            {
+                // at search time it has no target yet: it is still stored ...
+                Assert.That(BotBrain.KeepInScan(monster), Is.True, "stored even before it targets anyone");
+                Assert.That(BotBrain.ScannedNpcOnGroup(monster, members, pets), Is.False);
+                // ... and the next board (built from the stored search) sees it once it runs at a member
+                monster.Target = member;
+                Assert.That(BotBrain.ScannedNpcOnGroup(monster, members, pets), Is.True);
+                monster.Alive = false;
+                Assert.That(BotBrain.KeepInScan(monster), Is.False, "the dead are not stored");
+                Assert.That(BotBrain.KeepInScan(null), Is.False);
+            });
+        }
 
         [Test]
         public void AnEmptyBoardHasNothingOnTheGroup()

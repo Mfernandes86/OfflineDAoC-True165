@@ -103,6 +103,17 @@ namespace DOL.AI.Brain
             }
         }
 
+        /// <summary>
+        /// The area search keeps every living NPC in range, not only ones that already have a target (combat review
+        /// 2026-11-11): a monster that aggroes just after the search and is still running at the group is then on the next
+        /// board (at most a second later) instead of only after its first blow or the next search.
+        /// </summary>
+        public static bool KeepInScan(GameNPC npc) => npc?.IsAlive == true;
+
+        /// <summary>A stored NPC from the area search is on the group now: it targets a member or a member's pet.</summary>
+        public static bool ScannedNpcOnGroup(GameNPC npc, HashSet<GameLiving> members, HashSet<GameLiving> pets) =>
+            npc?.TargetObject is GameLiving victim && (members.Contains(victim) || pets.Contains(victim));
+
         private static GroupFightBoard BuildFightBoard(GameLiving asker, long now, FightBoardHolder holder)
         {
             List<GameLiving> members = new(8);
@@ -168,15 +179,16 @@ namespace DOL.AI.Brain
             }
 
             // the one area search per group (at most every ScanIntervalMilliseconds; the board in between re-reads the
-            // NPCs that search found): monsters running at a member before their first blow, and pets with no owner link
-            // (Theurgist elementals, bombers) whose brain names a member as owner
+            // NPCs that search found, so one that aggroes after the search still shows): monsters running at a member
+            // before their first blow, and pets with no owner link (Theurgist elementals, bombers) whose brain names a
+            // member as owner
             IEnumerable<GameNPC> scanned = holder.LastScan;
             if (members.Count > 0 && (now - holder.LastScanTick >= GroupFightBoard.ScanIntervalMilliseconds ||
                                       holder.LastScanRegion != asker.CurrentRegionID))
             {
                 List<GameNPC> found = new();
                 foreach (GameNPC npc in asker.GetNPCsInRadius(GroupFightBoard.ScanRadius))
-                    if (npc?.IsAlive == true && (npc.Brain is IControlledBrain || npc.TargetObject is GameLiving))
+                    if (KeepInScan(npc))
                         found.Add(npc);
                 holder.LastScan = found.ToArray();
                 holder.LastScanTick = now;
@@ -194,7 +206,7 @@ namespace DOL.AI.Brain
                         petTargets.Add(elementalTarget);
                     continue;
                 }
-                if (npc.TargetObject is GameLiving victim && (memberSet.Contains(victim) || pets.Contains(victim)))
+                if (ScannedNpcOnGroup(npc, memberSet, pets))
                     candidates.Add(npc);
             }
 
