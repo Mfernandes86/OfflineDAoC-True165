@@ -43,7 +43,12 @@ public static class RealmExchangeSaleLedger
 
     // Callers retain their existing transaction/money/database locks and their
     // original item/coin rollback logic. No buying or selling decisions change.
-    public static bool CommitSale(IObjectDatabase database, Sale sale, params DataObject[] paymentRows)
+    public static bool CommitSale(IObjectDatabase database, Sale sale, params DataObject[] paymentRows) =>
+        CommitSale(database, sale, paymentRows, null);
+
+    /// <summary>As above; the sold item's bookkeeping rows (its relist and listing-hours rows) are deleted in the same
+    /// transaction, so a sale never leaves them behind (2026-11-11 exchange audit: 249 + 67 orphans).</summary>
+    public static bool CommitSale(IObjectDatabase database, Sale sale, DataObject[] paymentRows, DataObject[] deleteRows)
     {
         if (database == null || sale == null || sale.Realm is < 1 or > 3 || sale.PriceCopper <= 0 ||
             sale.Quantity <= 0 || string.IsNullOrWhiteSpace(sale.SellerId) ||
@@ -69,8 +74,12 @@ public static class RealmExchangeSaleLedger
                 };
                 DataObject[] rows = paymentRows.Append(next).ToArray();
                 bool saved = database is SqlObjectDatabase sql
-                    ? sql.SaveObjectsAtomically(rows) : database.SaveObject(rows);
+                    ? sql.SaveObjectsAtomically(rows, deleteRows) : database.SaveObject(rows);
                 if (!saved) return false;
+                // Non-SQL test stores have no shared transaction: they delete after the save.
+                if (database is not SqlObjectDatabase && deleteRows != null)
+                    foreach (DataObject row in deleteRows)
+                        if (row != null) database.DeleteObject(row);
                 // Replace the cached row only after commit. A failed write must
                 // neither erase the old sale nor consume a history position.
                 state.Rows[previous.SlotId - 1] = next;

@@ -40,7 +40,14 @@ namespace DOL.Database
         /// commit item ownership and both sides of its payment together. Relations
         /// are deliberately not traversed. Existing save paths are unchanged.
         /// </summary>
-        public bool SaveObjectsAtomically(IEnumerable<DataObject> objects)
+        public bool SaveObjectsAtomically(IEnumerable<DataObject> objects) => SaveObjectsAtomically(objects, null);
+
+        /// <summary>
+        /// As <see cref="SaveObjectsAtomically(IEnumerable{DataObject})"/>, and in the same transaction deletes the given
+        /// bookkeeping rows by primary key (a row that is already gone is fine). An exchange sale removes the sold item's
+        /// relist and listing-hours rows this way, so a sale can never leave them behind.
+        /// </summary>
+        public bool SaveObjectsAtomically(IEnumerable<DataObject> objects, IEnumerable<DataObject> deletes)
         {
             // DataObject equality compares ObjectId only, not its table. Wallet
             // row 2 and proceeds row 2 are different transaction participants.
@@ -50,10 +57,12 @@ namespace DOL.Database
             if (rows == null || rows.Length == 0 || rows.Any(row => row == null || !row.IsPersisted))
                 return false;
 
-            return SaveObjectsAtomicallyCore(rows);
+            DataObject[] removals = deletes?.Where(row => row != null).Distinct<DataObject>(ReferenceEqualityComparer.Instance).ToArray()
+                ?? Array.Empty<DataObject>();
+            return SaveObjectsAtomicallyCore(rows, removals);
         }
 
-        protected virtual bool SaveObjectsAtomicallyCore(DataObject[] rows)
+        protected virtual bool SaveObjectsAtomicallyCore(DataObject[] rows, DataObject[] deletes)
         {
             DbConnection connection = null;
             bool committed = false;
@@ -89,6 +98,21 @@ namespace DOL.Database
                     if (command.ExecuteNonQuery() != 1)
                         throw new DatabaseException("Atomic save: a participating row could not be updated.");
                 }
+                foreach (DataObject row in deletes ?? Array.Empty<DataObject>())
+                {
+                    DataTableHandler table = GetTableHandler(row.GetType());
+                    if (table == null)
+                        throw new DatabaseException("Atomic save: unregistered row type to delete.");
+                    var keys = table.FieldElementBindings.Where(binding => binding.PrimaryKey != null).ToArray();
+                    if (keys.Length == 0)
+                        throw new DatabaseException("Atomic save: missing primary key to delete.");
+                    using DbCommand command = connection.CreateCommand();
+                    command.Transaction = transaction;
+                    command.CommandText = $"DELETE FROM `{table.TableName}` WHERE " +
+                        string.Join(" AND ", keys.Select(key => $"`{key.ColumnName}` = @{key.ColumnName}"));
+                    FillSQLParameter(keys.Select(key => new QueryParameter($"@{key.ColumnName}", key.GetValue(row), key.ValueType)), command.Parameters);
+                    command.ExecuteNonQuery();
+                }
                 transaction.Commit();
                 committed = true;
                 foreach (DataObject row in rows)
@@ -98,6 +122,11 @@ namespace DOL.Database
                     DataTableHandler table = GetTableHandler(row.GetType());
                     if (table.UsesPreCaching && table.PrimaryKey != null)
                         table.SetPreCachedObject(table.PrimaryKey.GetValue(row), row);
+                }
+                foreach (DataObject row in deletes ?? Array.Empty<DataObject>())
+                {
+                    row.IsPersisted = false;
+                    row.IsDeleted = true;
                 }
                 return true;
             }

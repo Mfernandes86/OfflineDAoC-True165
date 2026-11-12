@@ -597,10 +597,10 @@ namespace DOL.Database.Handlers
                 return base.ExecuteNonQueryImpl(SQLCommand, parameters).ToArray();
         }
 
-        protected override bool SaveObjectsAtomicallyCore(DataObject[] rows)
+        protected override bool SaveObjectsAtomicallyCore(DataObject[] rows, DataObject[] deletes)
         {
             lock (WriteSerializationLock)
-                return base.SaveObjectsAtomicallyCore(rows);
+                return base.SaveObjectsAtomicallyCore(rows, deletes);
         }
 
         /// <summary>
