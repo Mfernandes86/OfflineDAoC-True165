@@ -126,6 +126,8 @@ in a live raid: a new world has no level 50 gamebots until they level up.
   frontier dungeons too, for you and your companions. It used to be 1x there whatever you chose (GitHub issue #51).
 - `/dfowner` is a GM command (the launcher's Make Me a GM could not run it) and takes `none`, `alb`, `mid` or `hib`
   as well as 0-3 (GitHub issue #50).
+- `/fly` (GM): flight carries across a region change. You used to arrive on foot, and typing `/fly` again sent you
+  back to where the flight began, in the zone you had just left (GitHub issue #53).
 
 ### New client
 
