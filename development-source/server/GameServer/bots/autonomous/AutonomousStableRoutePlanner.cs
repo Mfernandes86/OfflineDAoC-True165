@@ -461,6 +461,18 @@ public static class AutonomousStableRoutePlanner
                     : 0;
                 bool threat = LandingSafetyEnabled && LandingUnsafe(landingThreat, bot.Level,
                     Distance(candidate.End.X, candidate.End.Y, goal.X, goal.Y));
+                // veteran review M3: a landing where bots of this level band keep dying soon after arriving is skipped
+                // for now, unless the bot is going there rather than through it
+                bool deadly = !threat && LandingSafetyEnabled && AutonomousHuntingGround.Enabled &&
+                    Distance(candidate.End.X, candidate.End.Y, goal.X, goal.Y) > LandingGoalRadius &&
+                    AutonomousStableLandingWatch.IsDeadlyLanding(bot.CurrentRegionID, TicketDestination(candidate.Ticket),
+                        bot.Level, nowTick);
+                if (deadly)
+                {
+                    (unusable ??= []).Add(i);
+                    skipped = (skipped == null ? string.Empty : skipped + ",") + candidate.Ticket.Id_nb + "(landing deaths)";
+                }
+                else
                 if (threat || hotspots.Length > 0 &&
                     AutonomousRoadHotspots.LandingNearHotspot(bot.CurrentRegionID, candidate.End.X, candidate.End.Y, hotspots))
                 {
