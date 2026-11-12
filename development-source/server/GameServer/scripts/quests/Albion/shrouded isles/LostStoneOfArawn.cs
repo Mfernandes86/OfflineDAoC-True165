@@ -291,6 +291,12 @@ public class LostStoneofArawn : BaseQuest
 
         demonArea.UnRegisterPlayerEnter(PlayerEnterDemonArea);
         WorldMgr.GetRegion(demonLocation.RegionID).RemoveArea(demonArea);
+        lock (_hookedWorldCopies)
+        {
+            foreach (GameNPC hooked in _hookedWorldCopies)
+                GameEventMgr.RemoveHandler(hooked, GameLivingEvent.Dying, WorldNyaeghaDying);
+            _hookedWorldCopies.Clear();
+        }
 
         GameEventMgr.RemoveHandler(Honaytrt, GameObjectEvent.Interact, TalkToHonaytrt);
         GameEventMgr.RemoveHandler(Honaytrt, GameLivingEvent.WhisperReceive, TalkToHonaytrt);
@@ -372,6 +378,51 @@ public class LostStoneofArawn : BaseQuest
         quest.Step = 5;
     }
 
+    /// <summary>World Nyaegha spawns whose death is already hooked (the same object respawns, so once each).</summary>
+    private static readonly System.Collections.Generic.HashSet<GameNPC> _hookedWorldCopies = new();
+
+    /// <summary>A living Nyaegha that is not the script's copy, standing on or near the demonic patch, or null.</summary>
+    private static GameNPC WorldNyaegha()
+    {
+        foreach (GameNPC npc in WorldMgr.GetNPCsByNameFromRegion("Nyaegha", demonLocation.RegionID, eRealm.None))
+        {
+            if (npc != null && npc != Nyaegha && npc.IsAlive && npc.ObjectState == GameObject.eObjectState.Active &&
+                npc.IsWithinRadius(demonLocation, 3000))
+                return npc;
+        }
+        return null;
+    }
+
+    private static void HookWorldNyaegha(GameNPC npc)
+    {
+        lock (_hookedWorldCopies)
+        {
+            if (!_hookedWorldCopies.Add(npc))
+                return;
+        }
+        GameEventMgr.AddHandler(npc, GameLivingEvent.Dying, WorldNyaeghaDying);
+    }
+
+    /// <summary>A world Nyaegha slain: the killer (or a pet's owner) and their group get the stone on step 4. The world
+    /// spawn keeps its own respawn; nothing is deleted.</summary>
+    private static void WorldNyaeghaDying(DOLEvent e, object sender, EventArgs arguments)
+    {
+        if (arguments is not DyingEventArgs args)
+            return;
+        GamePlayer player = args.Killer as GamePlayer;
+        if (player == null && args.Killer is GameNPC pet && pet.Brain is IControlledBrain controlled)
+            player = controlled.GetPlayerOwner();
+        if (player == null)
+            return;
+        if (player.Group != null)
+        {
+            foreach (var gpl in player.Group.GetPlayersInTheGroup())
+                AdvanceAfterKill(gpl);
+        }
+        else
+            AdvanceAfterKill(player);
+    }
+
     private static void PlayerEnterDemonArea(DOLEvent e, object sender, EventArgs args)
     {
         var aargs = args as AreaEventArgs;
@@ -384,9 +435,18 @@ public class LostStoneofArawn : BaseQuest
 
         if (quest is not {Step: 4}) return;
 
-        var existingCopy = WorldMgr.GetNPCsByName("Nyaegha", eRealm.None);
+        // Quest audit 2026-11-11 (P01-A4): any NPC named Nyaegha anywhere used to stop the ambush, so a permanent world
+        // spawn of that name (which never gave the stone) kept step 4 from ever completing. Only the script's own living
+        // copy stops a second ambush now; a living world Nyaegha on the patch is used instead of spawning one, and its
+        // death counts for the step like the ambush copy's.
+        if (Nyaegha != null && Nyaegha.IsAlive && Nyaegha.ObjectState == GameObject.eObjectState.Active) return;
 
-        if (existingCopy.Length > 0) return;
+        GameNPC worldCopy = WorldNyaegha();
+        if (worldCopy != null)
+        {
+            HookWorldNyaegha(worldCopy);
+            return;
+        }
 
         //only try to spawn him once per trigger even if multiple people enter at the same time
         if (_spawnLock.TryEnter())
