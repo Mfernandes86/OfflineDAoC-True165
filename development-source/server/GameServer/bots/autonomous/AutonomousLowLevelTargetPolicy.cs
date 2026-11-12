@@ -17,6 +17,23 @@ namespace DOL.GS
             "Do level-1 solo bots hunt only blue monsters (camps and pulls), with 10 minutes of yellow only when no blue camp can be found but a yellow one can? Off: level-1 solo bots hunt up to yellow, as before.", true)]
         public static bool Level1BlueCeiling = true;
 
+        /// <summary>Owner decision O7 (2026-11-11): pet classes may hunt orange solo while their pet is up - behind this
+        /// switch, OFF by default. Prima: a Druid with Naturalist pets hunts yellow or orange, "most [Enchanters] hunt
+        /// orange", a Theurgist "often solo[s] orange and red".</summary>
+        [ServerProperty("bots", "bot_pet_class_orange",
+            "Do solo pet-class gamebots (Cabalist, Enchanter, Spiritmaster, Bonedancer, Necromancer, Druid) hunt up to orange monsters while their pet is up? Off: yellow, as every other solo bot.", false)]
+        public static bool PetClassOrange = false;
+
+        /// <summary>The pet classes O7 lets hunt orange: the ones that keep a pet that tanks.</summary>
+        public static bool IsOrangePetClass(int classId) => (eCharacterClass)classId is eCharacterClass.Cabalist or
+            eCharacterClass.Enchanter or eCharacterClass.Spiritmaster or eCharacterClass.Bonedancer or
+            eCharacterClass.Necromancer or eCharacterClass.Druid;
+
+        /// <summary>Pure (O7): a yellow solo ceiling becomes orange for a pet class whose pet is up, when the switch is on.
+        /// A blue ceiling (Forester, level 1) is never raised.</summary>
+        public static ConColor PetUpCeiling(ConColor ceiling, int classId, bool petUp, bool enabled) =>
+            enabled && petUp && ceiling == ConColor.YELLOW && IsOrangePetClass(classId) ? ConColor.ORANGE : ceiling;
+
         public const int BlueOnlyMaxLevel = 1;
         public const long YellowFallbackMilliseconds = 10 * 60_000;
         public const long SummaryMilliseconds = 10 * 60_000;

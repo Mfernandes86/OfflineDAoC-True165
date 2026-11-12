@@ -4788,7 +4788,12 @@ namespace DOL.GS
         /// <summary>owner 2026-11-10: level1 - a level-1 solo bot hunts blue only, yellow during its yellow fallback
         /// (AutonomousLowLevelTargetPolicy, switch bot_level1_blue_ceiling). Forester blue, everyone else yellow, as before.</summary>
         public static ConColor SoloCeiling(GameBot bot, bool level1YellowFallback) =>
-            AutonomousLowLevelTargetPolicy.SoloCeiling(bot?.CharacterClass?.ID ?? 0, bot?.Level ?? 50, level1YellowFallback);
+            AutonomousLowLevelTargetPolicy.PetUpCeiling(
+                AutonomousLowLevelTargetPolicy.SoloCeiling(bot?.CharacterClass?.ID ?? 0, bot?.Level ?? 50, level1YellowFallback),
+                bot?.CharacterClass?.ID ?? 0,
+                // O7 (switch bot_pet_class_orange, off by default): orange only while the pet is up
+                AutonomousLowLevelTargetPolicy.PetClassOrange && bot?.ControlledBrain?.Body is { IsAlive: true },
+                AutonomousLowLevelTargetPolicy.PetClassOrange);
 
         private ConColor MaximumTargetCon(int groupSize, GameBot bot = null) =>
             (ConColor)Math.Max(
