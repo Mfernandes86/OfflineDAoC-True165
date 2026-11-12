@@ -53,4 +53,14 @@ public class UT_KeepRaidFixes
         Assert.That(KeepRaidDoors.DoorsOnWalk(walk, [(2, new Vector3(800, 0, 0))]), Is.Null,
             "a walk that does not pass the outer gate proves nothing about the way in");
     }
+    [Test]
+    public void TheRepelClockWaitsForTheWalkBackFromTheReleasePoint() => Assert.Multiple(() =>
+    {
+        Assert.That(AutonomousRvrEventLayer.RepelWindowMilliseconds(0), Is.EqualTo(AutonomousRvrEventLayer.RepelMilliseconds));
+        // 85,000 units (Albion's portal outpost to Hlidskialf): 85,000 x 1.35 / 191 = about 10 minutes of walking
+        Assert.That(AutonomousRvrEventLayer.RepelWindowMilliseconds(85_000) / 60_000, Is.EqualTo(20));
+        Assert.That(AutonomousRvrEventLayer.RepelWindowMilliseconds(5_000_000),
+            Is.EqualTo(AutonomousRvrEventLayer.RepelMilliseconds + AutonomousRvrEventLayer.MaxWalkBackMilliseconds), "bounded");
+        Assert.That(AutonomousRvrEventLayer.RepelWindowMilliseconds(double.NaN), Is.EqualTo(AutonomousRvrEventLayer.RepelMilliseconds));
+    });
 }

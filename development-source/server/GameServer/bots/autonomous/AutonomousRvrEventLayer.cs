@@ -30,6 +30,28 @@ public static partial class AutonomousRvrEventLayer
     /// defenders on post for the rest of a four-hour timer). A player's own attack keeps its defense rules.
     /// </summary>
     public const long RepelMilliseconds = 10 * 60_000;
+
+    /// <summary>
+    /// Keeps audit 2026-11-11 (L4): a wiped army releases at its muster (the portal outpost, TrySiegeRelease) and needs
+    /// 5-19 minutes to walk back, more for a relic keep, so a flat ten minutes declared a siege defended before the dead
+    /// could return although the forces stay committed "through defeat and regrouping". The repel clock is ten minutes
+    /// plus the walk from the release point to the keep: straight line x RouteFactor at base run speed, at most
+    /// MaxWalkBackMilliseconds. Worked out once when the battle starts.
+    /// </summary>
+    public static long RepelWindowMilliseconds(double releaseToKeepDistance) =>
+        RepelMilliseconds + (long)Math.Min(MaxWalkBackMilliseconds,
+            Math.Max(0, double.IsFinite(releaseToKeepDistance) ? releaseToKeepDistance : 0) * RouteFactor / BaseRunSpeed * 1000);
+
+    /// <summary>The repel clock for an army of this realm at this keep (its release point is its muster for that region).</summary>
+    public static long RepelWindowMilliseconds(eRealm attacker, ushort targetRegion, int x, int y) =>
+        AutonomousRvrStaging.TryGetSiegeMuster(attacker, targetRegion, out AutonomousRvrStaging.BorderKeep muster) &&
+        muster.RegionId == targetRegion
+            ? RepelWindowMilliseconds(Vector2.Distance(new(muster.Position.X, muster.Position.Y), new(x, y)))
+            : RepelMilliseconds;
+
+    public const double RouteFactor = 1.35;
+    public const int BaseRunSpeed = 191;
+    public const long MaxWalkBackMilliseconds = 25 * 60_000;
     public static long StragglerTimeoutMilliseconds => Classic165Mode.TravelTime(8 * 60_000L);
     public const long TargetCooldownMilliseconds = 12 * 60_000;
     public const int OrdinaryAssaultCap = 128;
@@ -77,6 +99,8 @@ public static partial class AutonomousRvrEventLayer
         public int MarchedAttackers;
         /// <summary>Last time any attacker was present at the target after the battle began (RepelMilliseconds).</summary>
         public long AttackersLastSeenTick;
+        /// <summary>How long the attackers may be gone before the siege is defended (RepelWindowMilliseconds).</summary>
+        public long RepelAfterMilliseconds = RepelMilliseconds;
         public bool DefenseReaction;
         public DefenseScale DefenseScale;
         public long LastPressureTick;
@@ -1434,6 +1458,7 @@ public static partial class AutonomousRvrEventLayer
     {
         active.BattleStarted = true;
         active.BattleStartedTick = nowTick;
+        active.RepelAfterMilliseconds = RepelWindowMilliseconds(active.AttackerRealm, active.Target.RegionId, active.Target.X, active.Target.Y);
         active.ExpiresTick = nowTick + (active.Retake ? RetakeBattleMilliseconds : BattleLifetimeMilliseconds);
         RealmEventRecords.Progress(active.TargetId, "Battle", reason,
             active.Attackers.Values.Sum() + active.Defenders.Values.Sum() + active.ThirdRealm.Values.Sum(),
@@ -1534,8 +1559,8 @@ public static partial class AutonomousRvrEventLayer
             // Only an army that reached the keep and was then driven off: a battle can begin before its attackers
             // arrive (continuous assault, deadline start), and an army still on the road is not repelled.
             if (Attendance(active, active.AttackerRealm, nowTick) > 0) { active.AttackersLastSeenTick = nowTick; continue; }
-            if (active.AttackersLastSeenTick > 0 && nowTick - active.AttackersLastSeenTick >= RepelMilliseconds)
-                EndEvent(active, nowTick, $"Siege defended: no attacker reached the keep for {RepelMilliseconds / 60_000} minutes", active.DefenderRealm);
+            if (active.AttackersLastSeenTick > 0 && nowTick - active.AttackersLastSeenTick >= active.RepelAfterMilliseconds)
+                EndEvent(active, nowTick, $"Siege defended: no attacker reached the keep for {active.RepelAfterMilliseconds / 60_000} minutes", active.DefenderRealm);
         }
         foreach (var active in Events.Values.Where(entry => entry.ExpiresTick <= nowTick).ToArray())
         {

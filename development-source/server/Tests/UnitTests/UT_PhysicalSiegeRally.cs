@@ -69,7 +69,13 @@ public class UT_PhysicalSiegeRally
         Attend(target, forces, 108, ready);
         Assert.That(AutonomousRvrEventLayer.IsBattleForce(forces[0].GroupId, ready), Is.True);
         Assert.That(AutonomousRvrEventLayer.GetRallyOrder(forces[0].GroupId, eRealm.Albion, ready + 1), Is.Null);
-        long gone = ready + AutonomousRvrEventLayer.RepelMilliseconds + 30_000;
+        long window = AutonomousRvrEventLayer.RepelWindowMilliseconds(eRealm.Albion, target.RegionId, target.X, target.Y);
+        Assert.That(window, Is.GreaterThan(AutonomousRvrEventLayer.RepelMilliseconds), "the dead walk back from the portal outpost first");
+        long early = ready + AutonomousRvrEventLayer.RepelMilliseconds + 30_000;
+        AutonomousRvrEventLayer.GetRallyOrder(forces[0].GroupId, eRealm.Albion, early);
+        Assert.That(AutonomousRvrEventLayer.TryConsumeRelease(forces[0].GroupId, early, out _), Is.False,
+            "not defended before a wiped army can walk back (keeps L4)");
+        long gone = ready + window + 30_000;
         AutonomousRvrEventLayer.GetRallyOrder(forces[0].GroupId, eRealm.Albion, gone);
         Assert.That(AutonomousRvrEventLayer.TryConsumeRelease(forces[0].GroupId, gone, out string reason), Is.True);
         Assert.That(reason, Does.Contain("Siege defended").And.Contain("no attacker"));
