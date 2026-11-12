@@ -88,6 +88,16 @@ public static class AutonomousObjectiveAssignments
                expiresUtc.ToUniversalTime() > utcNow.ToUniversalTime();
     }
 
+    /// <summary>A PvE kill credited to the bot, with the monster it killed (veteran review M3: the hunting-ground
+    /// move-up window; O5: kill tasks).</summary>
+    public static void RecordPveKill(GameBot bot, GameNPC killed)
+    {
+        RecordPveKill(bot);
+        if (killed == null || bot?.PersistentRecord == null || Parse(bot.PersistentRecord.ObjectiveKind) == eAutonomousObjectiveKind.RvR)
+            return;
+        AutonomousHuntingGround.RecordKill(bot, killed);
+    }
+
     public static void RecordPveKill(GameBot bot)
     {
         OfflineWorldBotRecord record = bot?.PersistentRecord;

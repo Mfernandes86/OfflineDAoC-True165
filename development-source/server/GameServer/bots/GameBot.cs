@@ -1571,6 +1571,47 @@ namespace DOL.GS
                      $"to={newRegion}:{point.X},{point.Y} - died beside its bind {AutonomousBindDeaths.DeathsBeforeMove} times");
         }
 
+        /// <summary>
+        /// Veteran review M3: on a town or service visit it makes anyway, a solo gamebot binds at that town's stone when the
+        /// stone is much nearer its hunting ground than its current bind (AutonomousHuntingGround.ShouldRebind), with the
+        /// same safety filters as <see cref="MoveBindAwayFromDanger165"/>. Never a special trip. True 1.65 Mode only.
+        /// </summary>
+        public bool TryRebindNearHuntingGround165()
+        {
+            if (!Classic165Mode.IsOn || !AutonomousHuntingGround.Enabled || !IsAutonomousWorldBot || Group != null ||
+                IsTemporaryGroupHelper || HiredCompanions165.IsHired(this) || !IsAlive || PersistentRecord is not { } record)
+                return false;
+            var home = AutonomousHuntingGround.Home(DatabaseID);
+            if (home.Region == 0 || home.Region != CurrentRegionID)
+                return false;
+            ushort region = CurrentRegionID;
+            Region here = CurrentRegion;
+            long now = GameLoop.GameLoopTime;
+            Point3D? stone = here == null ? null : BotReleaseBindPoints.Nearest(region, X, Y, Realm, p =>
+                !_bindDeaths165.Avoids(region, p.X, p.Y) &&
+                here.GetZone(p.X, p.Y) is { } zone && AutonomousRealmBoundary.Allows(Realm, region, zone.ID) &&
+                !AutonomousRoadHotspots.Blocks(region, p.X, p.Y, Level, region, p.X, p.Y, now));
+            if (stone is not { } point)
+                return false;
+            static double Distance(double x1, double y1, double x2, double y2) => Math.Sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+            double bindToGround = record.BindRegionId == region
+                ? Distance(record.BindX, record.BindY, home.X, home.Y)
+                : double.PositiveInfinity;
+            double stoneToGround = Distance(point.X, point.Y, home.X, home.Y);
+            if (!AutonomousHuntingGround.ShouldRebind(Distance(X, Y, point.X, point.Y), stoneToGround, bindToGround))
+                return false;
+            int oldRegion = record.BindRegionId, oldX = record.BindX, oldY = record.BindY;
+            record.BindRegionId = region;
+            record.BindX = point.X;
+            record.BindY = point.Y;
+            record.BindZ = point.Z;
+            MarkAutonomousStateDirty();
+            log.Info($"AUTONOMOUS_HUNT_REBIND_165 bot={Name} id={DatabaseID} level={Level} from={oldRegion}:{oldX},{oldY} " +
+                     $"to={region}:{point.X},{point.Y} ground={home.Region}:{home.X},{home.Y} " +
+                     $"distance={(double.IsInfinity(bindToGround) ? "other-region" : ((int)bindToGround).ToString())}->{(int)stoneToGround}");
+            return true;
+        }
+
         private Point3D? FindNearestBindPoint()
         {
             return BotReleaseBindPoints.Nearest(_deathRegionId, X, Y, IsAutonomousWorldBot ? Realm : eRealm.None);

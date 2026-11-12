@@ -1885,7 +1885,7 @@ namespace DOL.GS.ServerRules
             // to the persistent bot that legitimately earned the XP.
             if (recordKillCredit)
             {
-                AutonomousObjectiveAssignments.RecordPveKill(botToAward);
+                AutonomousObjectiveAssignments.RecordPveKill(botToAward, killedNpc);
                 AutonomousGoalDiagnostics.Reward(botToAward, killedNpc, botToAward.Experience - diagnosticXpBefore);
             }
 

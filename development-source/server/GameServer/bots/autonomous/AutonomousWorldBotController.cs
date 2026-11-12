@@ -1243,6 +1243,8 @@ namespace DOL.GS
                 Log.Info($"AUTONOMOUS_SERVICE_ARRIVED bot={bot.Name} id={bot.DatabaseID} class=\"{bot.ClassName}\" level={bot.Level} " +
                          $"kind={needed.Value} service=\"{_serviceNpc.Name}\" type={_serviceNpc.GetType().Name} " +
                          $"region={_serviceNpc.CurrentRegionID} at={_serviceNpc.X},{_serviceNpc.Y}");
+                // veteran review M3: bind at this town's stone when it is much nearer the hunting ground (no extra trip)
+                bot.TryRebindNearHuntingGround165();
             }
             // A shopping trip that stands at its merchant for 90 seconds without being served gives that merchant up and
             // moves on, instead of waiting for the 15-minute watchdog (2026-11-01 run 3: 850 bots stood "Ready to use").
@@ -2947,6 +2949,21 @@ namespace DOL.GS
                 return true;
             _nextTargetSearchTick = GameLoop.GameLoopTime + 900 + bot.ObjectID % 500;
 
+            // veteran review M3: most of the last kills here conned green - a solo bot moves up a spot, as a player did
+            if (bot.Group == null && _groupDirective?.IsDynamic != true && !_camp.IsDungeon &&
+                _camp.RegionId != AutonomousDarknessFallsPolicy.RegionId && !brain.HasAggro &&
+                AutonomousHuntingGround.TakeMoveUp(bot.DatabaseID))
+            {
+                Log.Info($"AUTONOMOUS_CAMP_MOVE_UP bot={bot.Name} id={bot.DatabaseID} level={bot.Level} " +
+                         $"class=\"{bot.ClassName}\" camp=\"{_camp.Id}\" target=\"{_camp.MonsterName}\" " +
+                         $"green={AutonomousHuntingGround.GreenKillsToMoveUp}/{AutonomousHuntingGround.KillWindow}");
+                if (!string.IsNullOrWhiteSpace(_camp.MonsterName))
+                    _recentFailedSoloTargets[_camp.MonsterName] = GameLoop.GameLoopTime + 30 * 60_000;
+                _moveUpNextPlan = true;
+                AbandonCamp(bot, $"Outleveled most {_camp.MonsterName}; moving up a spot");
+                return true;
+            }
+
             GameNPC target = FindCampTarget(bot);
             // owner 2026-11-10: a party claims its target only when a pull starts (too-far/waiting turns locked camps)
             bool deferCampClaim = AutonomousPartyPullCamp.DefersCampTargetClaim(bot.Group != null,
@@ -3402,7 +3419,19 @@ namespace DOL.GS
             // at most a few route checks per search, and none again soon for a target that failed (AutonomousCampTargetRouteChecks)
             AutonomousCampTargetRouteChecks routeChecks = default;
             _unreachableCampTargets.Prune(nowTick);
-            GameNPC FindWithin(ushort radius) => bot.GetNPCsInRadius(radius)
+            // veteran review M3 (AutonomousHuntingGround): a solo bot pulls the monster standing apart first, a support
+            // class or archer prefers blue to yellow, and with the camp's own monster gone it hunts the area around it
+            bool soloHunter = _groupDirective?.IsDynamic != true && bot.Group == null;
+            bool huntingRules = soloHunter && Classic165Mode.IsOn && AutonomousHuntingGround.Enabled;
+            ConColor preferredCon = huntingRules
+                ? AutonomousHuntingGround.PreferredSoloCon((eCharacterClass)bot.CharacterClass.ID) : ConColor.YELLOW;
+            bool areaHunting = AutonomousHuntingGround.AreaHuntingApplies(AutonomousHuntingGround.Enabled, Classic165Mode.IsOn,
+                soloHunter, bot.CurrentZone?.IsDungeon == true || _camp.IsDungeon,
+                _camp.RegionId == AutonomousDarknessFallsPolicy.RegionId);
+            GameNPC FindWithin(ushort radius, bool anyName = false)
+            {
+              List<GameNPC> nearby = bot.GetNPCsInRadius(radius);
+              IEnumerable<GameNPC> sorted = nearby
                 .Where(npc => IsExperienceMonster(npc) && npc.IsAlive && npc.CurrentRegionID == _camp.RegionId &&
                     !AutonomousAuditedCampPolicy.IsBotExcludedNpc(npc) &&
                     !AutonomousPveTargetPolicy.IsUnreachableFlyer(npc.Flags, npc.Z, bot.Z))
@@ -3413,8 +3442,13 @@ namespace DOL.GS
                         new(_camp.X, _camp.Y, _camp.Z), new(npc.X, npc.Y, npc.Z)))
                 // Planning owns level selection. Once assigned, neither solo
                 // nor group execution may reject that named monster by level.
-                .Where(npc => AutonomousPveTargetPolicy.IsAssignedTarget(
-                    _camp.MonsterName, npc.Name, npc.EffectiveLevel))
+                .Where(npc => anyName
+                    // the area around the camp: any monster that passes every other filter below, not one the bot
+                    // recently failed against
+                    ? npc.EffectiveLevel >= 0 && !string.IsNullOrWhiteSpace(npc.Name) &&
+                      AutonomousHuntingGround.WithinCampArea(_camp.X, _camp.Y, npc.X, npc.Y) &&
+                      !(_recentFailedSoloTargets.TryGetValue(npc.Name, out long failedUntil) && failedUntil > nowTick)
+                    : AutonomousPveTargetPolicy.IsAssignedTarget(_camp.MonsterName, npc.Name, npc.EffectiveLevel))
                 // Level 50 solo bots never pull below the solo camp floor (no waiting on a
                 // rare green among greys: with none left the empty-camp timeout moves on).
                 .Where(npc => _groupDirective?.IsDynamic == true ||
@@ -3472,7 +3506,11 @@ namespace DOL.GS
                 })
                 // a party pulls the monster standing apart first, then the highest level (AutonomousGroupPullOrder)
                 .OrderForPull(_groupDirective?.IsDynamic == true, Classic165Mode.IsOn)
-                .ThenBy(npc => bot.GetDistanceTo(npc) + Math.Abs((int)ConLevels.GetConColor(bot.GetConLevel(npc))) * 220)
+                .ThenBy(npc => bot.GetDistanceTo(npc) +
+                    AutonomousHuntingGround.ConSortPenalty(ConLevels.GetConColor(bot.GetConLevel(npc)), preferredCon));
+              if (huntingRules)
+                  sorted = AutonomousHuntingGround.PreferIsolated(sorted, nearby);
+              return sorted
                 // Run native checks only after cheap filters and sorting, and
                 // stop at the first reachable target. Self-defense is handled
                 // separately and must never be suppressed by this pull gate.
@@ -3531,10 +3569,26 @@ namespace DOL.GS
                     }
                     return reachable;
                 });
+            }
 
             // Preserve the old cheap local lookup for ordinary pulls. Only an
             // empty local ring pays for the requested 5,000-unit expansion.
             GameNPC found = FindWithin(ImmediateTargetSearchRadius) ?? FindWithin(TargetSearchRadius);
+            if (found == null && areaHunting)
+            {
+                // the camp's own monster is gone: the area around the anchor (the radius cache of the search above
+                // answers this scan). Only the camp's own monster decides "outleveled" and "hidden by level 1".
+                bool assignedGrey = sawGrey, assignedLevel1Hidden = sawLevel1Hidden;
+                found = FindWithin(TargetSearchRadius, anyName: true);
+                sawGrey = assignedGrey;
+                sawLevel1Hidden = assignedLevel1Hidden;
+                if (found != null && GameLoop.GameLoopTime >= _nextAreaHuntLogTick)
+                {
+                    _nextAreaHuntLogTick = GameLoop.GameLoopTime + 60_000;
+                    Log.Debug($"AUTONOMOUS_AREA_HUNT bot={bot.Name} id={bot.DatabaseID} level={bot.Level} camp={_camp.Id} " +
+                              $"assigned=\"{_camp.MonsterName}\" target=\"{found.Name}\" level_target={found.EffectiveLevel}");
+                }
+            }
             // only greys free for this bot: the camp is grey to it once that has lasted 3 minutes (a mixed camp's other
             // monsters may only be respawning or taken just now)
             if (found != null || !sawGrey || !string.Equals(_campOnlyGreyCampId, _camp?.Id, StringComparison.Ordinal))
@@ -3553,6 +3607,10 @@ namespace DOL.GS
 
         /// <summary>The wait between target searches at a camp that stayed empty (3-5 s, staggered per bot).</summary>
         public static int EmptyCampSearchBackoffMilliseconds(int objectId) => 3_000 + (int)((uint)objectId % 2_000);
+
+        private long _nextAreaHuntLogTick;
+        /// <summary>Veteran review M3: the next solo plan prefers a camp of blue or harder typical con.</summary>
+        private bool _moveUpNextPlan;
 
         /// <summary>The last camp target search found only monsters that con grey to this bot.</summary>
         private bool _campOnlyGrey;
@@ -3828,6 +3886,15 @@ namespace DOL.GS
             else
             {
                 legal = legal.Where(camp => camp.LowestCon >= minimumTargetCon && camp.TypicalCon <= maximumTargetCon);
+                // veteran review M3: most kills at the last camp conned green - move up a spot (blue or harder typical
+                // con) when one exists; the hunting-ground weights keep it in the same or a neighbouring zone
+                if (_moveUpNextPlan)
+                {
+                    _moveUpNextPlan = false;
+                    AutonomousBotDecisionEngine.Camp[] allowed = legal.ToArray();
+                    AutonomousBotDecisionEngine.Camp[] up = allowed.Where(camp => camp.TypicalCon >= ConColor.BLUE).ToArray();
+                    legal = up.Length > 0 ? up : allowed;
+                }
                 // A bot grinding while it waits for group matchmaking stays
                 // outdoors: recruitment needs it in an overworld region, and a
                 // dungeon camp would only be abandoned when the party forms.
@@ -3889,10 +3956,18 @@ namespace DOL.GS
                 Dictionary<string, int> campsPerMonster = legalCells
                     .GroupBy(camp => AutonomousCampCompetition.NormalizeName(camp.MonsterName))
                     .ToDictionary(group => group.Key, group => group.Count());
+                // veteran review M3: a solo bot keeps its hunting ground (same zone x8, neighbouring zone x3, rest of the
+                // region x1, another region x0.25; AutonomousHuntingGround)
+                var home = !sharedGroup && bot.Group == null && AutonomousHuntingGround.Enabled
+                    ? AutonomousHuntingGround.Home(bot.DatabaseID) : default;
+                Zone homeZone = home.Region != 0 ? WorldMgr.GetZone(home.Zone) : null;
+                if (homeZone == null)
+                    home = default;
                 legalCells = legalCells.Select(camp => camp with
                 {
                     SpreadWeight = SpreadWeight(bot, camp, destinations, ownCamp, party,
-                        campsPerMonster.GetValueOrDefault(AutonomousCampCompetition.NormalizeName(camp.MonsterName), 1))
+                        campsPerMonster.GetValueOrDefault(AutonomousCampCompetition.NormalizeName(camp.MonsterName), 1),
+                        home.Region, homeZone)
                 }).ToArray();
             }
             // This is the deployed selection point. Each distinct verified
@@ -3970,6 +4045,12 @@ namespace DOL.GS
             _pendingStableChoice = null;
             bot.PersistentRecord.CurrentCampId = selected.Id;
             AutonomousCampCompetition.NoteAssigned(selected.Id, sharedGroup ? groupSize : 1);
+            // veteran review M3: an outdoor solo camp makes its zone the bot's hunting ground (AutonomousHuntingGround)
+            if (!sharedGroup && bot.Group == null && !selected.IsDungeon &&
+                selected.RegionId != AutonomousDarknessFallsPolicy.RegionId &&
+                WorldMgr.GetRegion(selected.RegionId)?.GetZone(selected.X, selected.Y) is { } huntZone)
+                AutonomousHuntingGround.NoteSoloCamp(bot.DatabaseID, selected.Id, selected.RegionId, huntZone.ID,
+                    selected.X, selected.Y);
             // owner 2026-11-10: camps / level1 - one line per widened choice; the goal attempt records which rule chose it
             if (widened)
                 Log.Info($"AUTONOMOUS_CAMP_CROWD_WIDEN bot={bot.Name} id={bot.DatabaseID} realm={bot.Realm} level={bot.Level} " +
@@ -6594,7 +6675,7 @@ namespace DOL.GS
         /// within 25,000, 2 within 40,000, 1 beyond or elsewhere) x 4, divided by one plus the bots already there.
         /// </summary>
         private int SpreadWeight(GameBot bot, AutonomousBotDecisionEngine.Camp camp, Dictionary<string, CampDestination> destinations,
-            string own, int party, int campsOfThisMonster)
+            string own, int party, int campsOfThisMonster, ushort homeRegion = 0, Zone homeZone = null)
         {
             int bots = AutonomousCampCompetition.Occupancy(camp.Id);
             if (own != null && AutonomousCampCompetition.SameSpawns(camp.Id, own))
@@ -6604,8 +6685,14 @@ namespace DOL.GS
                 : Distance(bot.X, bot.Y, d.X, d.Y) switch { <= 15_000 => 4, <= 25_000 => 3, <= 40_000 => 2, _ => 1 };
             // owner 2026-11-08: a spot that keeps coming up empty draws less (AutonomousCampEmptyMemory)
             double empty = known ? AutonomousCampEmptyMemory.Factor(EmptyMemoryKey(camp.Id, d), GameLoop.GameLoopTime) : 1;
-            return AutonomousCampSpread.Weight(AutonomousBotDecisionEngine.OutdoorSpawnWeight(camp), near, bots,
+            int weight = AutonomousCampSpread.Weight(AutonomousBotDecisionEngine.OutdoorSpawnWeight(camp), near, bots,
                 campsOfThisMonster, empty);
+            if (homeRegion == 0 || !known)
+                return weight;
+            Zone campZone = WorldMgr.GetRegion(d.RegionId)?.GetZone(d.X, d.Y);
+            double factor = AutonomousHuntingGround.ZoneFactor(homeRegion, homeZone?.ID ?? 0, d.RegionId, campZone?.ID ?? 0,
+                AutonomousHuntingGround.AreNeighbours(homeZone, campZone));
+            return Math.Max(1, (int)Math.Round(weight * factor));
         }
 
         /// <summary>The empty-memory key of a camp: its published spot (stable while the id is known), else the destination.</summary>
