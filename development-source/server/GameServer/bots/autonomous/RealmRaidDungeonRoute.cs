@@ -544,6 +544,9 @@ namespace DOL.GS
                 _musterOutOfCombatSince = 0;
                 _musterEngaged = false;
                 _musterSince = now;
+                // A lesser encounter wiped on too often is not mustered for again: the caller sets it aside.
+                if (WipedOut(_finalTypes.Contains(_target.GetType().Name), _musterWipes))
+                    return false;
             }
             else if (_musterEngaged)
             {
@@ -970,6 +973,7 @@ namespace DOL.GS
                          $"health={_target.HealthPercent} front={(int)Front.X},{(int)Front.Y},{(int)Front.Z} near={near} " +
                          $"reason=\"{(wipedOut ? $"wiped {_musterWipes} times" : "no damage for five minutes")}\"");
                 _routeRetry[_target] = now + BlockedTargetRetryMilliseconds;
+                _musterTarget = null; // a fresh muster (and wipe count) when it is tried again
             }
             _target = null;
             GameLiving[] inside = participants.Where(p => p.IsAlive && p.CurrentRegionID == _region).ToArray();
