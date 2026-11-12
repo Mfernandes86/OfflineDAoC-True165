@@ -187,6 +187,8 @@ public static class AutonomousBotStatusPersistence
 
         try
         {
+            // Coalesced Realm Exchange reprices and relist rows first (RealmExchangeWriteQueue): one lock hold a second.
+            RealmExchangeWriteQueue.Flush();
             // One bounded batch per second. A second "catch-up" batch was tried
             // and doubled database lock time; with 6,000 bots the game loop
             // stalled for over a second at a time, so throughput stays as it was.
