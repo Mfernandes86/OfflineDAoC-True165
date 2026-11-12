@@ -204,6 +204,24 @@ namespace DOL.GS.Quests
             }
         }
 
+        /// <summary>Every item a choose step of this quest can give (and each one's class version): rewards, never leftovers.</summary>
+        public static IEnumerable<string> ChoiceRewardsOf(int questId)
+        {
+            if (!_config.Quests.TryGetValue(questId, out QuestInfo info) || info.Steps == null)
+                yield break;
+            foreach (StepInfo step in info.Steps)
+            {
+                if (step?.Custom?.Choices == null) continue;
+                foreach (string id in step.Custom.Choices.Values)
+                {
+                    yield return id;
+                    if (id != null && _config.ClassRewards != null && _config.ClassRewards.TryGetValue(id, out var byClass))
+                        foreach (string classVersion in byClass.Values)
+                            yield return classVersion;
+                }
+            }
+        }
+
         /// <summary>The random turn-in rewards of a Collection quest, or null.</summary>
         public static CollectRewards CollectRewardsFor(int questId) =>
             _config.Quests.TryGetValue(questId, out QuestInfo info) ? info.CollectRewards : null;

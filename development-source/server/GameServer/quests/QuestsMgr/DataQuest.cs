@@ -3007,6 +3007,43 @@ namespace DOL.GS.Quests
 		/// Classic quests (goal 10): a scripted trigger (an item used at a place, a place reached, an item obtained, another
 		/// quest finished) completes the current step: it advances, or finishes the quest on a finish step.
 		/// </summary>
+		/// <summary>The classic quest items this quest handed out or asked for, taken from the backpack once it is finished
+		/// (QuestLeftovers). Rewards, choose-step rewards, wearable items and items another quest also uses stay.</summary>
+		private void RemoveLeftoverQuestItems()
+		{
+			try
+			{
+				var rewards = new List<string>();
+				foreach (DbItemTemplate item in m_finalRewards.Concat(m_optionalRewards).Concat(m_optionalRewardChoice))
+				{
+					if (item == null)
+						continue;
+					rewards.Add(item.Id_nb);
+					rewards.Add(ClassicQuests.RewardFor(m_questPlayer, item)?.Id_nb);
+				}
+				rewards.AddRange(ClassicQuests.ChoiceRewardsOf(ID));
+				HashSet<string> leftovers = QuestLeftovers.LeftoverIds(
+					QuestLeftovers.ItemIds(m_dataQuest.StepItemTemplates).Concat(QuestLeftovers.ItemIds(m_dataQuest.CollectItemTemplate)),
+					rewards, id => QuestLeftovers.SharedWithAnotherQuest(id, m_dataQuest));
+				foreach (string id in leftovers)
+				{
+					DbInventoryItem item;
+					int guard = 0;
+					while (guard++ < 40 && (item = m_questPlayer.Inventory.GetFirstItemByID(id, eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack)) != null)
+					{
+						// Only plain quest pieces: a cloak, bracer or robe a step handed over is the player's to keep.
+						if (item.Object_Type != (int)eObjectType.GenericItem || !m_questPlayer.Inventory.RemoveItem(item))
+							break;
+						InventoryLogging.LogInventoryAction(m_questPlayer, "(QUEST;" + Name + ")", eInventoryActionType.Quest, item.Template, item.Count);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				log.Error("DataQuest [" + ID + "] leftover quest item clean-up failed", ex);
+			}
+		}
+
 		public bool AdvanceByScript(GameObject source)
 		{
 			if (m_questPlayer == null || Step <= 0)
@@ -3217,6 +3254,8 @@ namespace DOL.GS.Quests
 			m_charQuest.Step = 0;
 			m_charQuest.Count++;
 			GameServer.Database.SaveObject(m_charQuest);
+
+			RemoveLeftoverQuestItems();
 
 			// Now that quest is finished do any post finished custom steps
 			ExecuteCustomQuestStep(QuestPlayer, Step, eStepCheckType.PostFinish);

@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Text.Json;
 using DOL.GS.Quests;
 using NUnit.Framework;
@@ -106,6 +107,15 @@ public class UT_QuestFix07
         Assert.That(rewards.TotalWeight, Is.EqualTo(10));
         Assert.That(rewards.Pick(5), Is.EqualTo(ClassicQuests.CollectRewards.Kind.Xp));
         Assert.That(new ClassicQuests.CollectRewards().TotalWeight, Is.Zero);
+    }
+
+    [Test]
+    public void LeftoverQuestItemsAreTheStepPiecesButNoRewardOrSharedItem()
+    {
+        var steps = QuestLeftovers.ItemIds("cq_lirele_s_scroll|cq_damp_bone;50||cq_ring_reward|cq_shared_staff|plain_item")
+            .Concat(QuestLeftovers.ItemIds("|cq_damp_bone"));
+        var left = QuestLeftovers.LeftoverIds(steps, new[] { "cq_ring_reward", null }, id => id == "cq_shared_staff");
+        Assert.That(left.OrderBy(x => x), Is.EqualTo(new[] { "cq_damp_bone", "cq_lirele_s_scroll" }));
     }
 
     [TestCase(0, false)]
