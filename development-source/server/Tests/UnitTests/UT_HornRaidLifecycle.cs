@@ -144,4 +144,13 @@ public class UT_HornRaidLifecycle
         Assert.That(AutonomousRealmRaid.RaidInsideRegions(248, 246), Is.EqualTo(new ushort[] { 248, 246 }), "Summoner's Hall via Dodens Gruva");
         Assert.That(AutonomousRealmRaid.RaidInsideRegions(160, 160), Is.EqualTo(new ushort[] { 160 }));
     }
+
+    [Test]
+    public void AFightingDragonRaidHoldsOnlyWhileTheDragonFlies()
+    {
+        Assert.That(AutonomousRealmRaid.BattleHold(false, false, false), Is.True, "before the battle: wait for the landing");
+        Assert.That(AutonomousRealmRaid.BattleHold(false, true, false), Is.False);
+        Assert.That(AutonomousRealmRaid.BattleHold(true, false, false), Is.False, "grounded beyond 2,000: keep fighting");
+        Assert.That(AutonomousRealmRaid.BattleHold(true, false, true), Is.True, "in the air: hold");
+    }
 }

@@ -1090,17 +1090,23 @@ namespace DOL.GS
                 return;
             }
             bool landed = DragonLanded(raid);
-            bool hold = !raid.Started || !landed;
+            // dragon-fight T5: after the battle began only a dragon in the air holds the raid; a grounded dragon beyond 2,000
+            // that nobody hit for a few seconds used to send every fighting party back to its staging post for a pulse
+            bool hold = BattleHold(raid.Started, landed, (raid.Boss.Flags & GameNPC.eFlags.FLYING) != 0);
             Vector3 point = hold ? party.Staging : new(raid.Boss.X, raid.Boss.Y, raid.Boss.Z);
             if (!hold && !TryBattlePost(raid, party, point, raid.Definition.Region, out point))
             { point = party.Anchor ?? party.Staging; hold = true; }
             string state = !raid.Started ? !landed
                 ? "Raid rally — dragon airborne" : "Raid rally"
-                : !landed ? "Waiting for dragon landing" : hold ? "RAID — waiting for a clear formation post" : "RAID — fighting";
+                : (raid.Boss.Flags & GameNPC.eFlags.FLYING) != 0 ? "Waiting for dragon landing" : hold ? "RAID — waiting for a clear formation post" : "RAID — fighting";
             party.DestinationView = new(raid.Definition.Id, state,
                 new($"realm-event-{raid.Definition.Id}", raid.Boss.Name, raid.Boss.CurrentZone?.Description ?? raid.Definition.Name,
                     raid.Definition.Region, (int)point.X, (int)point.Y, (int)point.Z, false, false, raid.Boss.Level), hold);
         }
+
+        /// <summary>A dragon raid holds at staging before its battle until the dragon has landed; once the battle began, only
+        /// while the dragon is flying.</summary>
+        public static bool BattleHold(bool started, bool landed, bool flying) => started ? flying : !landed;
 
         public const long FailedPostRetryMilliseconds = 30_000;
         public const float QueuedApproachDistance = 2_500f;
