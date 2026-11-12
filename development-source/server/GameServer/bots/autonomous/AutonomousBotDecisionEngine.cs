@@ -101,6 +101,12 @@ public static class AutonomousBotDecisionEngine
 
     public sealed record Decision(eAutonomousActivity Activity, string TargetId, string Reason);
 
+    /// <summary>
+    /// Not called by live bots (veteran review Q35): only unit tests use it. The live activity choices are made by
+    /// AutonomousObjectiveAssignments (solo/group/RvR tasks), AutonomousBotEconomy.GetNeededService (town services) and
+    /// AutonomousWorldBotController.SelectCamp (camps; it uses <see cref="SelectPveEnvironment"/> and
+    /// <see cref="SelectWithinEnvironment"/> from this class). Change those, not this, to change what bots do.
+    /// </summary>
     public static Decision Choose(
         State state,
         IReadOnlyCollection<Camp> camps,

@@ -81,7 +81,9 @@ namespace DOL.GS
 
                 case 5:
                 Is2H = true;
-                SpecType = eSpecType.TwoHandHybrid;
+                // the pure two-hander (no Shields): labelled TwoHanded, not TwoHandHybrid (veteran review Q35); the same
+                // weapons are equipped either way (GameBot.SetWeapons)
+                SpecType = eSpecType.TwoHanded;
                 Add(ObjToSpec(WeaponOneType), 50, 1.0f);
                 Add(ObjToSpec(WeaponTwoType), 50, 1.0f);
                 Add(Specs.Parry, 22, 0.2f);

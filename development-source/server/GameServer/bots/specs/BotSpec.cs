@@ -1,11 +1,28 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace DOL.GS
 {
     public class BotSpec
     {
-        public static string SpecName;
+        /// <summary>The spec class's name. Was a static field every constructor overwrote, so it named whichever spec was
+        /// built last, for every bot (veteran review Q35); now each spec keeps its own.</summary>
+        [JsonIgnore]   // not part of the saved lifetime plan (BotLifetimeBuild), whose format is unchanged
+        public string SpecName;
+
+        /// <summary>
+        /// The build by its two highest spec lines ("Critical Strike/Envenom", "Recurve Bow/Pathfinding"). SpecType only
+        /// says which weapons are equipped and gives one label to builds that play differently (Critical Strike and Dual
+        /// Wield Infiltrators, Critical Strike and Celtic Dual Nightshades, bow and melee Rangers; veteran review Q35).
+        /// </summary>
+        [JsonIgnore]
+        public string BuildLabel => BuildLabelOf(SpecLines);
+
+        public static string BuildLabelOf(IEnumerable<BotSpecLine> lines) => lines == null ? string.Empty :
+            string.Join("/", lines.Where(line => !string.IsNullOrEmpty(line.Spec))
+                .OrderByDescending(line => line.SpecCap).ThenByDescending(line => line.levelRatio)
+                .Take(2).Select(line => line.Spec));
         public eObjectType WeaponOneType;
         public eObjectType WeaponTwoType;
         public eWeaponDamageType DamageType = 0;
