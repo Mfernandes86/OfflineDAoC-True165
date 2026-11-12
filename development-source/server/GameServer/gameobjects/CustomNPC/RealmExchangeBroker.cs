@@ -107,10 +107,15 @@ public sealed partial class RealmExchangeBroker : GameNPC, IGameInventoryObject
                 return true;
             lock (TransactionLock)
             {
+                // the hours first, so the index reads the new expiry when the timestamp changes inside its update
                 RealmExchangeExpiry.SetPlayerListingHours(listed, hours);
                 if (listed.SellPrice > 0)
                 {
-                    listed.RealmExchangeListedUtc = DateTime.UtcNow.ToString("O");   // the time runs from now
+                    // the time runs from now; changed inside the index update so the expiry wheel holds the new expiry
+                    // (review 2026-11-11: a listing shortened to 12 h stayed hidden, not returned, until the hourly resync)
+                    string now = DateTime.UtcNow.ToString("O");
+                    if (!MarketCache.UpdateItem(listed, static (item, value) => item.RealmExchangeListedUtc = value, now))
+                        listed.RealmExchangeListedUtc = now;
                     GameServer.Database.SaveObject(listed);
                     player.Out.SendMessage($"{listed.Name} stays listed for {hours} hours.", eChatType.CT_Merchant, eChatLoc.CL_ChatWindow);
                 }

@@ -23,6 +23,8 @@ public static class RealmExchangeExpiry
     public static readonly int[] PlayerHours = [12, 24, 48];
     public const int DefaultPlayerHours = 48;
     private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, int> HoursCache = new();
+    // hours rows whose delete waits in the write queue (a take-back): setting the hours again cancels the delete
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, OfflineTrue165ListingHours> PendingHoursDeletes = new();
     private static Timer _timer;
     private static int _running;
 
@@ -42,6 +44,9 @@ public static class RealmExchangeExpiry
     public static void SetPlayerListingHours(DbInventoryItem item, int hours)
     {
         if (item?.ObjectId == null || !PlayerHours.Contains(hours)) return;
+        // a take-back in the same second queued this row's delete: it would wipe the hours set now (review 2026-11-11)
+        if (PendingHoursDeletes.TryRemove(item.ObjectId, out OfflineTrue165ListingHours pending))
+            RealmExchangeWriteQueue.Cancel(pending);
         var record = GameServer.Database.FindObjectByKey<OfflineTrue165ListingHours>(item.ObjectId);
         if (record == null)
             GameServer.Database.AddObject(new OfflineTrue165ListingHours { InventoryId = item.ObjectId, Hours = hours });
@@ -104,7 +109,11 @@ public static class RealmExchangeExpiry
         if (item?.ObjectId == null || AutonomousBotEconomy.TryParseOwnerId(item.OwnerID, out _))
             return;
         HoursCache.TryRemove(item.ObjectId, out _);
-        RealmExchangeWriteQueue.Delete(new OfflineTrue165ListingHours { InventoryId = item.ObjectId, IsPersisted = true });
+        var row = new OfflineTrue165ListingHours { InventoryId = item.ObjectId, IsPersisted = true };
+        if (PendingHoursDeletes.Count > 10_000)
+            PendingHoursDeletes.Clear();
+        PendingHoursDeletes[item.ObjectId] = row;
+        RealmExchangeWriteQueue.Delete(row);
     }
 
     internal static void Start()
