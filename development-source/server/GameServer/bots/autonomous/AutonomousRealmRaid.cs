@@ -47,6 +47,9 @@ namespace DOL.GS
             public RealmRaidMuster.Hub Hub;
             public bool HubDeparted;
             public long HubDepartedTick;
+            /// <summary>The most at the hub at once, and when that count last grew (a horn hub leaves once arrivals stop).</summary>
+            public int HubBest;
+            public long HubArrivalTick;
             /// <summary>The most staged at once, and when that count last grew (an arrival).</summary>
             public int StagingBest;
             public long StagingArrivalTick;
@@ -210,8 +213,24 @@ namespace DOL.GS
                     }
                     raid.Support = raid.Parties.Values.SelectMany(p => p.Members).Cast<GameLiving>().ToArray();
                     int presentAtHub = raid.Parties.Values.Sum(p => PresentAtHub(raid, p));
-                    bool departing = !raid.HubDeparted && RealmRaidRecruitmentPolicy.DepartHub(false, presentAtHub,
-                        raid.Forced && !raid.Horn ? 0 : GameLoop.GameLoopTime - raid.Created);
+                    if (presentAtHub > raid.HubBest)
+                    {
+                        raid.HubBest = presentAtHub;
+                        raid.HubArrivalTick = now;
+                    }
+                    // A horn hub waits while raiders still arrive and leaves with the numbers the assault accepts
+                    // (RealmRaidRecruitmentPolicy.HornDepartHub); launcher-forced raids leave at 200, automatic ones
+                    // also after 30 minutes with 120.
+                    bool departing = !raid.HubDeparted && (raid.Horn
+                        ? RealmRaidRecruitmentPolicy.HornDepartHub(presentAtHub, Coming(raid), now - raid.Created,
+                            raid.HubArrivalTick > 0 ? now - raid.HubArrivalTick : 0)
+                        : RealmRaidRecruitmentPolicy.DepartHub(false, presentAtHub, raid.Forced ? 0 : now - raid.Created));
+                    if (raid.Horn && RealmRaidRecruitmentPolicy.HornMusterFailed(raid.HubDeparted || departing, presentAtHub, now - raid.Created))
+                    {
+                        End(raid, now, $"Failed rally: only {presentAtHub} of the {RealmRaidRecruitmentPolicy.HornShortMinimum} needed reached {raid.Hub.Name} " +
+                                       $"in {RealmRaidRecruitmentPolicy.HornMusterLimitMilliseconds / 60_000} minutes.");
+                        continue;
+                    }
                     raid.HubDeparted |= departing;
                     if (departing) raid.HubDepartedTick = GameLoop.GameLoopTime;
                     if (departing) RealmEventNotices.Queue(raid.Definition.Id, raid.Definition.Realm,
@@ -249,8 +268,11 @@ namespace DOL.GS
                         }
                         if (raid.Horn && present >= RallyAnswerPolicy.MinimumToSound && raid.MinimumStagedTick == 0)
                             raid.MinimumStagedTick = now;
+                        bool hornDeadline = raid.Horn && raid.HubDeparted &&
+                            now >= RealmRaidRecruitmentPolicy.HornStagingDeadline(raid.HubDepartedTick, raid.StagingArrivalTick);
                         bool ready = raid.Horn
-                            ? RallyAnswerPolicy.HornReady(present, Coming(raid), raid.MinimumStagedTick, now, DragonLanded(raid))
+                            ? RealmRaidRecruitmentPolicy.HornAssaultReady(present, Coming(raid), raid.MinimumStagedTick, raid.StagingArrivalTick,
+                                hornDeadline, now, DragonLanded(raid))
                             : RealmRaidRecruitmentPolicy.Ready(raid.Forced, now - raid.Created, present, DragonLanded(raid));
                         if (ready)
                         {
@@ -260,6 +282,12 @@ namespace DOL.GS
                             RealmEventRecords.Progress(raid.Definition.Id, "Battle", "Expedition began advancing to the encounter.", raid.Support.Length, present);
                             RealmEventNotices.Queue(raid.Definition.Id, raid.Definition.Realm,
                                 $"The {raid.Definition.Name} expedition is advancing with {present} staged level-50 adventurers.");
+                        }
+                        else if (raid.Horn && RealmRaidRecruitmentPolicy.HornStagingFailed(present, hornDeadline))
+                        {
+                            End(raid, now, $"Failed rally: only {present} of the {RealmRaidRecruitmentPolicy.HornShortMinimum} needed were staged " +
+                                           "when the staging time ran out.");
+                            continue;
                         }
                         else if (RealmRaidRecruitmentPolicy.StagingExpired(raid.Forced, now, raid.Created, raid.HubDepartedTick, present, DragonLanded(raid),
                                      raid.StagingArrivalTick))
@@ -472,8 +500,8 @@ namespace DOL.GS
         }
 
         public static string HornStartCondition(bool isDungeon) => isDungeon
-            ? "The assault begins at 300 staged, or 3 minutes after 200 are."
-            : "The assault begins at 300 staged, or 3 minutes after 200 are, once the dragon lands.";
+            ? "The assault begins at 300 staged, or with 200 once arrivals stop."
+            : "The assault begins at 300 staged, or with 200 once arrivals stop, when the dragon has landed.";
 
         // Epic dungeons have no landing to wait for; only dragon rallies mention it.
         public static string ForcedStartCondition(bool isDungeon) => isDungeon
@@ -1165,7 +1193,7 @@ namespace DOL.GS
             bool stoppedByPlayer = reason.StartsWith(StoppedByPlayer);
             string outcome = stoppedByPlayer ? "Stopped by player" :
                 reason.StartsWith("Route blocked") ? "Route blocked" :
-                reason.StartsWith("Staging failed") ? "Failed rally" : reason.Contains("four-hour") ? "Timed out" :
+                reason.StartsWith("Staging failed") || reason.StartsWith("Failed rally") ? "Failed rally" : reason.Contains("four-hour") ? "Timed out" :
                 raid.Definition.IsDungeon ? raid.DungeonRoute?.Complete == true ? "Boss defeated" : "Ended (unconfirmed)" :
                 !raid.Boss.IsAlive ? "Boss defeated" : "Encounter unavailable";
             RealmEventRecords.Finish(raid.Definition.Id, outcome, reason, raid.Support.Length);
@@ -1236,14 +1264,18 @@ namespace DOL.GS
                 if (Raids.TryGetValue(d.Id, out var r)) return new Summary(d.Id, d.Name, GlobalConstants.RealmToName(d.Realm),
                     r.Started ? "RAID — " + (r.DungeonRoute?.Status ?? (DragonLanded(r) ? "underway" : "waiting for dragon landing")) :
                     $"Raid rally — {(r.Forced ? "forced" : "automatic")} — {(r.HubDeparted ? "travel/final staging" : r.Hub.Name)}" +
-                        (r.Forced ? (r.Horn ? " — starts at 300 staged, or 200 after 3 min" : " — starts when 200 are staged") + (!DragonLanded(r) ? " and the dragon lands" : "") :
+                        (r.Forced ? (r.Horn ? " — starts at 300 staged, or 200 once arrivals stop" : " — starts when 200 are staged") + (!DragonLanded(r) ? " and the dragon lands" : "") :
                         GameLoop.GameLoopTime >= r.Deadline ? !DragonLanded(r) ? " — waiting for dragon landing" : " — waiting for arrivals" : ""),
                     r.Support.Length + r.ForcedParties.Sum(p => p.Count(IsEligible)) + (r.Horn ? RallyGuests165.Pending(d.Id) : 0),
                     !r.HubDeparted ? r.Parties.Values.Sum(p => PresentAtHub(r,p)) : !r.Started ? PresentAtStaging(r) :
                     r.Parties.Values.Sum(p => p.Members.Count(b => b.IsAlive && b.CurrentRegionID == p.View.Camp.RegionId &&
                         b.IsWithinRadius(new Point3D(p.View.Camp.X, p.View.Camp.Y, p.View.Camp.Z), 1500))),
                     RealmRaidRecruitmentPolicy.AutonomousMinimumPresent,
-                    // Forced expeditions have no clock: -1 tells the launcher to show "No time limit".
+                    // Launcher-forced expeditions and started horn raids have no clock: -1 tells the launcher to show
+                    // "No time limit". A horn rally shows its muster or staging deadline.
+                    r.Horn && !r.Started ? Math.Max(0, (r.HubDeparted
+                        ? RealmRaidRecruitmentPolicy.HornStagingDeadline(r.HubDepartedTick, r.StagingArrivalTick)
+                        : r.Created + RealmRaidRecruitmentPolicy.HornMusterLimitMilliseconds) - GameLoop.GameLoopTime) :
                     r.Forced ? -1 : Math.Max(0, r.Deadline - GameLoop.GameLoopTime), r.Started ? "Battle" :
                         r.Forced ? !r.HubDeparted ? "Muster" : "Staging" :
                         GameLoop.GameLoopTime >= r.Deadline ? "Waiting" : !r.HubDeparted ? "Muster" : "Staging");

@@ -26,9 +26,9 @@ public static class RealmRaidRecruitmentPolicy
     public static bool CanOpenEvent(bool forced, bool sameRealmEvent, bool sameEncounterEvent) =>
         !sameEncounterEvent && (forced || !sameRealmEvent);
 
-    // Forced raids (started by the player) go in as soon as 200 are staged and, for a dragon,
-    // it has landed. They have no staging or battle time limit: they run until the encounter
-    // is defeated, the player presses Stop event, or the server stops.
+    // Launcher-forced raids go in as soon as 200 are staged and, for a dragon, it has landed. They have no staging or
+    // battle time limit: they run until the encounter is defeated, Stop event is pressed, or the server stops. Horn
+    // raids have their own clock (HornDepartHub ... HornBattleStalled below).
     public static bool Ready(bool forced, long elapsed, int present, bool landed) =>
         elapsed >= (forced ? 0 : AutonomousMinimumStagingMilliseconds) &&
         (present >= AutonomousMinimumPresent ||
@@ -80,4 +80,54 @@ public static class RealmRaidRecruitmentPolicy
 
     /// <summary>A raid party that lost members (but still exists) takes replacements up to its size when it joined.</summary>
     public static bool NeedsReplacement(int target, int members) => members > 0 && members < target;
+
+    // ---------- Horn raids (realm event audit, 2026-11-12) ----------
+    // A horn raid used to have no end of its own: no muster or staging deadline, no battle limit, so a raid short of 200
+    // (or one that wiped at its final boss) held up to 300 level-50 bots until a restart. The hub left with 120 after
+    // 30 minutes while the assault needed 200 staged. The numbers below agree with each other: the hub and the assault
+    // both go with 300; with 200+ once nobody new has arrived for a while; with 160+ (four fifths of the 200 the horn
+    // needs) when everyone still expected is there or the patience is spent. Below 160 at a deadline the rally fails.
+
+    /// <summary>The smallest horn raid that goes in: when nobody else is coming, or at a deadline.</summary>
+    public const int HornShortMinimum = 160;
+    /// <summary>A horn muster that has not left its hub this long after the sound fails.</summary>
+    public const long HornMusterLimitMilliseconds = 45 * 60_000L;
+    /// <summary>The hub leaves with 200+ once nobody new has stood at it for this long.</summary>
+    public const long HornHubQuietMilliseconds = 2 * 60_000L;
+    /// <summary>The assault begins with 200+ staged once nobody new has arrived for this long...</summary>
+    public const long HornStagingQuietMilliseconds = 3 * 60_000L;
+    /// <summary>...or this long after 200 were first staged, whatever is still on the road.</summary>
+    public const long HornStagingWaitCapMilliseconds = 15 * 60_000L;
+
+    /// <summary>A horn raid leaves its hub: 300 there; everyone expected there (at least 160); 200+ and nobody new for two
+    /// minutes; or after 30 minutes with 160+.</summary>
+    public static bool HornDepartHub(int present, int coming, long sinceSound, long sinceLastHubArrival) =>
+        present >= MaximumBots ||
+        present >= HornShortMinimum && present >= coming ||
+        present >= AutonomousMinimumPresent && sinceLastHubArrival >= HornHubQuietMilliseconds ||
+        present >= HornShortMinimum && sinceSound >= HubPatienceMilliseconds;
+
+    /// <summary>A horn muster still at its hub 45 minutes after the sound without 160 there is called off.</summary>
+    public static bool HornMusterFailed(bool departed, int present, long sinceSound) =>
+        !departed && sinceSound >= HornMusterLimitMilliseconds && present < HornShortMinimum;
+
+    /// <summary>A horn raid's staging deadline: 45 minutes after leaving the hub, 10 more for each late arrival, at most
+    /// 30 past it (the automatic rally's clock).</summary>
+    public static long HornStagingDeadline(long departedTick, long lastArrivalTick) =>
+        ExtendedStagingDeadline(departedTick + PostDepartureStagingMilliseconds, lastArrivalTick);
+
+    /// <summary>The horn assault begins (the dragon landed): 300 staged; everyone expected there (at least 160); 200+ once
+    /// nobody new arrived for 3 minutes or 15 minutes after 200 were first staged; or 160+ at the staging deadline.</summary>
+    public static bool HornAssaultReady(int present, int coming, long minimumReachedTick, long lastArrivalTick, bool deadlinePassed,
+        long now, bool landed) =>
+        landed && (present >= MaximumBots ||
+                   present >= HornShortMinimum && (present >= coming || deadlinePassed) ||
+                   present >= AutonomousMinimumPresent &&
+                   (lastArrivalTick > 0 && now - lastArrivalTick >= HornStagingQuietMilliseconds ||
+                    minimumReachedTick > 0 && now - minimumReachedTick >= HornStagingWaitCapMilliseconds));
+
+    /// <summary>At the staging deadline with fewer than 160 staged the rally fails (160+ waiting on a dragon's landing
+    /// keeps waiting: the flight is at most a quarter of an hour).</summary>
+    public static bool HornStagingFailed(int present, bool deadlinePassed) =>
+        deadlinePassed && present < HornShortMinimum;
 }

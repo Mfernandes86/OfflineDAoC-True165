@@ -69,14 +69,7 @@ namespace DOL.GS
         public const long FailedLoginSkipMilliseconds = 10 * 60_000L;
         public const int PoolLimit = 600;
 
-        public const long FullStartWaitMilliseconds = 3 * 60_000L;
-
-        /// <summary>A horn raid goes in with 300 staged, or with 200+ staged once 3 minutes have passed since 200 were
-        /// first staged, or with 200+ when everyone still assigned is already there (no reason to wait).</summary>
-        public static bool HornReady(int present, int coming, long minimumReachedTick, long now, bool landed) =>
-            landed && (present >= MaximumAnswerers ||
-                       present >= MinimumToSound &&
-                       (minimumReachedTick > 0 && now - minimumReachedTick >= FullStartWaitMilliseconds || present >= coming));
+        // When a horn raid goes in: RealmRaidRecruitmentPolicy.HornAssaultReady (it waits while raiders still arrive).
 
         /// <summary>Who answers, in the owner's order, capped at 300 answerers and the guest caps.</summary>
         public static RallyAnswer Plan(int idleLive, int archivedFree, int busyLive, int realmGuests, int totalGuests, bool archiveAllowed)

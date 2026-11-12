@@ -146,16 +146,22 @@ public class UT_RallyGuests165
     // ---------- partial start ----------
 
     [Test]
-    public void HornRaidStartsAt300OrAt200AfterThreeMinutes()
+    public void HornRaidStartsAt300OrAt200OnceArrivalsStop()
     {
         const long t200 = 100_000;
-        Assert.That(RallyAnswerPolicy.HornReady(300, 300, t200, t200, landed: true), Is.True, "300 staged: at once");
-        Assert.That(RallyAnswerPolicy.HornReady(250, 300, t200, t200 + 179_000, true), Is.False, "200+ waits for late arrivals");
-        Assert.That(RallyAnswerPolicy.HornReady(250, 300, t200, t200 + 180_000, true), Is.True, "200+ after 3 minutes");
-        Assert.That(RallyAnswerPolicy.HornReady(199, 300, t200, t200 + 3_600_000, true), Is.False, "never under 200");
-        Assert.That(RallyAnswerPolicy.HornReady(230, 230, t200, t200, true), Is.True, "everyone expected is there: no wait");
-        Assert.That(RallyAnswerPolicy.HornReady(300, 300, t200, t200, landed: false), Is.False, "a dragon must still land");
-        Assert.That(RallyAnswerPolicy.HornReady(250, 300, 0, 10_000_000, true), Is.False, "the wait starts when 200 are staged");
+        static bool Ready(int present, int coming, long reached, long arrival, long now, bool deadline = false, bool landed = true) =>
+            RealmRaidRecruitmentPolicy.HornAssaultReady(present, coming, reached, arrival, deadline, now, landed);
+        Assert.That(Ready(300, 300, t200, t200, t200), Is.True, "300 staged: at once");
+        Assert.That(Ready(250, 300, t200, t200 + 60_000, t200 + 200_000), Is.False, "200+ waits while raiders still arrive");
+        Assert.That(Ready(250, 300, t200, t200 + 60_000, t200 + 240_000), Is.True, "200+ once nobody new came for 3 minutes");
+        Assert.That(Ready(250, 300, t200, t200 + 890_000, t200 + 900_000), Is.True, "200+ at most 15 minutes after 200 were staged");
+        Assert.That(Ready(199, 300, t200, t200, t200 + 3_600_000), Is.False, "never under 200 while others are coming");
+        Assert.That(Ready(230, 230, t200, t200, t200), Is.True, "everyone expected is there: no wait");
+        Assert.That(Ready(170, 170, 0, t200, t200), Is.True, "160+ when nobody else is coming");
+        Assert.That(Ready(159, 159, 0, t200, t200), Is.False, "never under 160");
+        Assert.That(Ready(170, 250, 0, t200, t200, deadline: true), Is.True, "160+ at the staging deadline");
+        Assert.That(Ready(300, 300, t200, t200, t200, landed: false), Is.False, "a dragon must still land");
+        Assert.That(Ready(250, 300, 0, 0, 10_000_000), Is.False, "the waits start at an arrival and at 200 staged");
     }
 
     [Test]
