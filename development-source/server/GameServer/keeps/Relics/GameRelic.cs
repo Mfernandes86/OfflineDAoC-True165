@@ -40,7 +40,16 @@ namespace DOL.GS
         private static IGameInventory InventoryOf(GameLiving living) => (living as IGamePlayer)?.Inventory;
         private static IPacketLib OutputOf(GameLiving living) => (living as IGamePlayer)?.Out;
         public bool IsMounted => CurrentRelicPad != null;
-        public static int ReturnRelicInterval => Properties.RELIC_RETURN_TIME * 1000;
+        /// <summary>
+        /// How long a dropped relic lies before it goes back to a pad. Relic audit T2: it was the only travel-bound time limit of
+        /// the relic raid that True 1.65 did not scale (Classic165Mode.TravelTime, x1.5: no hasteners, slower travel), so an
+        /// escort released at its portal keep could not be back in time. The server property stays the base value.
+        /// </summary>
+        public static int ReturnRelicInterval => ScaledReturnInterval(Properties.RELIC_RETURN_TIME);
+
+        /// <summary>Rule (T2): the return time in milliseconds for a base value in seconds, scaled like every other travel time.</summary>
+        public static int ScaledReturnInterval(int baseSeconds) =>
+            (int)Math.Min(int.MaxValue, Classic165Mode.TravelTime(Math.Max(0, baseSeconds) * 1000L));
 
         public GameRelic() : base()
         {

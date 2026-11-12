@@ -172,4 +172,14 @@ public sealed class UT_RelicLaneFixes
             Assert.That(AutonomousWorldBotController.CarrierGivesUpPort(1_000, 1_000 + giveUp), Is.True);
         });
     }
+
+    [Test]
+    public void ADroppedRelicWaitsAsLongAsEveryOtherTravelBoundTimeIsScaled()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(GameRelic.ScaledReturnInterval(1200), Is.EqualTo((int)Classic165Mode.TravelTime(1_200_000L)));
+            Assert.That(GameRelic.ScaledReturnInterval(-5), Is.EqualTo(0));
+        });
+    }
 }
