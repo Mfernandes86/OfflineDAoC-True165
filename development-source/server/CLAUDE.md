@@ -58,12 +58,15 @@ Services run on `GameLoop` ticks. Use `GameLoop.GetListForTick<T>()` to get enti
 
 ### Bot System (`GameServer/bots/`)
 
-The bot system added by this fork:
-- **GameBot.cs** — Extends `GameNPC`. Owned by a `GamePlayer`, has a `BotRole` and role-specific AI
-- **BotManager.cs** — Static singleton. Creates, spawns, despawns, deletes bots. Max 15 bots per player. Uses `ConcurrentDictionary` for thread safety
-- **BotCommand.cs** — `/bot` command handler (create, spawn, despawn, follow, stay, hold, resume, invite, list, delete)
-- **BotAI.cs** — Abstract base; subclasses: `BotMeleeAI`, `BotTankAI`, `BotHealerAI`, `BotCasterAI`, `BotRangedAI`
-- **database/** — `BotProfile` (bot_profiles table) and `BotSettings` (bot_settings table) DataObjects, with `BotDatabase` helper
+Two kinds of bot share one actor and one brain: **autonomous gamebots** (the world population, thousands per realm) and **hired companions** (bots a player recruits into a group). Class AI improvements must reach both.
+- **GameBot.cs** — Extends `GameNPC` and implements `IGamePlayer`: real inventory (`BotInventory`), level, experience, specs, death and release, Constitution loss, stable routes. `PersistentRecord` (`OfflineWorldBotRecord`, table `offline_world_bots`) holds a gamebot's durable state.
+- **BotBrain.cs** (+ `BotBrain.*.cs` partials) — The one brain for every bot: an ordered list of early returns in `Think()` (companion upkeep, stuck watchdog, buffs, songs, pets, merchant/exchange), then `AutonomousWorldBotController.Tick` for gamebots, then the combat FSM. Spells `CheckSpells`, heals `CheckHeals`, melee styles `BotMeleeStylePolicy`.
+- **autonomous/** — The gamebot world: `AutonomousWorldBotController` (+ partials: camp choice `SelectCamp`, camp work `WorkCamp`/`FindCampTarget`, travel `IssuePath`, RvR, sieges, services), `AutonomousBotGroupCoordinator` (party sessions), `AutonomousRvrEventLayer` (sieges, defence rallies), `AutonomousObjectiveAssignments` (solo/group/RvR tasks), `AutonomousBotEconomy` (coin, vendors, Realm Exchange listing), `AutonomousCampPlanningPipeline` (the background camp catalog builder: snapshots only, never live actors). Rules are small static policy classes with pure functions and unit tests (`Tests/UnitTests/UT_*.cs`).
+- **Scale rules** — Target 1,000-2,000 bots per realm (6,000+). Cadence: `AutonomousAiBudget` / `AutonomousFidelityPolicy` (combat 250-500 ms, never slowed by population; non-combat slower far from players and at high population; a per-tick decision cap and route-plan budget for non-combat bots). No new per-think area scans or navmesh queries: use caches, attacker lists, the background builder, rate limits and event wake-ups.
+- **mode165/** — True 1.65 Mode rules for bots and players (`Classic165Mode.IsOn`): death penalties, wear and repairs, town errands, hired companions (`HiredCompanions165`, `CompanionOptions165`), crafter bots, kill tasks.
+- **specs/** — `BotSpec` per class: weapon types, `SpecType` (drives which weapons are equipped) and the spec-line plan; `BuildLabel` names the build by its two highest lines.
+- **BotManager.cs / BotCommand.cs** — The original fork's `/bot` companions (create, spawn, despawn, follow, ...). `database/` — `BotProfile` and `BotSettings` DataObjects.
+- Combat and difficulty numbers come from the period server and are never changed by bot work.
 
 ### AI / Brain System (`GameServer/ai/brain/`)
 
