@@ -107,5 +107,15 @@ namespace DOL.GS
         /// or /passive.</summary>
         public static CompanionStance EffectiveStance(int ownChoice, CompanionStance groupStance) =>
             OwnStance(ownChoice) ?? groupStance;
+
+        // ---- /camp (M7, G4)
+
+        /// <summary>How far the player may go from the camp, and for how long beyond that, before the camp is dropped.</summary>
+        public const int CampLeaveDistance = 2_500;
+        public const long CampLeaveMilliseconds = 10_000;
+
+        /// <summary>Pure: the camp still holds - same region, and the player within 2,500 of it or away less than 10 s.</summary>
+        public static bool CampHolds(bool sameRegion, int playerDistance, long awayMilliseconds) =>
+            sameRegion && (playerDistance <= CampLeaveDistance || awayMilliseconds < CampLeaveMilliseconds);
     }
 }

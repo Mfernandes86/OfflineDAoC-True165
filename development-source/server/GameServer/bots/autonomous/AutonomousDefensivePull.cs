@@ -325,17 +325,19 @@ namespace DOL.GS
                     Finish(state, false);
                     return false;
                 }
+                // /camp (M7): the pull comes back to the camp when the player has one, else to the player
+                Vector3 home = state.ReturnTo != null ? CompanionEngagementMode.ReturnPoint(state.ReturnTo) : state.Anchor;
                 if (state.ReturnTo != null
-                        ? PlayerLedArrived(state.Shot, state.Target.GetDistanceTo(state.ReturnTo),
-                            state.Shooter.GetDistanceTo(state.ReturnTo), CompanionEngagementMode.IsDefensive(state.ReturnTo))
+                        ? PlayerLedArrived(state.Shot, (int)Vector3.Distance(home, new(state.Target.X, state.Target.Y, state.Target.Z)),
+                            (int)Vector3.Distance(home, new(state.Shooter.X, state.Shooter.Y, state.Shooter.Z)),
+                            CompanionEngagementMode.IsDefensive(state.ReturnTo))
                         : state.Members.Any(member => member.IsWithinRadius(state.Target, ContactRadius)))
                 {
                     Finish(state, true);
                     return false;
                 }
                 if (bot != state.Shooter) return true;
-                Vector3 destination = !state.Shot ? state.FiringPoint
-                    : state.ReturnTo != null ? new(state.ReturnTo.X, state.ReturnTo.Y, state.ReturnTo.Z) : state.Anchor;
+                Vector3 destination = !state.Shot ? state.FiringPoint : home;
                 if (Vector3.DistanceSquared(new(bot.X, bot.Y, bot.Z), destination) > 45 * 45)
                 {
                     if (!bot.IsCasting && GameLoop.GameLoopTime >= state.NextMove)

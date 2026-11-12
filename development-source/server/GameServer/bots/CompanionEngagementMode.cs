@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using DOL.AI.Brain;
 using DOL.Logging;
@@ -12,7 +13,16 @@ namespace DOL.GS
     public static class CompanionEngagementMode
     {
         public const int DefensiveRadius = 350;
-        private sealed class Mode { public CompanionStance Stance; public GameLiving Pull; }
+        private sealed class Mode
+        {
+            public CompanionStance Stance;
+            public GameLiving Pull;
+            // /camp (M7): the hold point companions lay out around and the pull comes back to
+            public bool HasCamp;
+            public Vector3 Camp;
+            public ushort CampRegion, CampHeading;
+            public long CampAwaySince;
+        }
         private static readonly ConditionalWeakTable<GamePlayer, Mode> Modes = new();
         private static readonly Logger Log = LoggerManager.Create(typeof(CompanionEngagementMode));
 
@@ -27,6 +37,9 @@ namespace DOL.GS
             CompanionStance previous = mode.Stance;
             mode.Stance = stance;
             mode.Pull = null;
+            // /passive is for walking away: the camp goes with it
+            if (stance == CompanionStance.Passive)
+                mode.HasCamp = false;
             CompanionPvpEngagement.Reset(player);
             // The new client's group-window stance button shows it (op 30 of the DebugMode 'H' packet, byte [4]:
             // 0 aggressive, 1 defensive, 2 passive; owner 2026-10-30, passive 2026-11-11). The original client keeps
@@ -62,6 +75,66 @@ namespace DOL.GS
                 if (pet.Brain is IControlledBrain brain && brain.AggressionState == eAggressionState.Passive)
                     brain.SetAggressionState(eAggressionState.Defensive);
         }
+
+        /// <summary>
+        /// /camp (M7, veteran review; period groups: "only the designated puller pulls", the group waits at the camp and
+        /// the pull comes back to it): the player's spot and facing become the companions' hold point. They lay out their
+        /// formation around it instead of around the player, /defensive measures its 350 from it, and a /pull brings the
+        /// monster back to it. Dropped by /camp off, /passive, a region change, or the player staying more than 2,500
+        /// units away for 10 s.
+        /// </summary>
+        public static void SetCamp(GamePlayer player)
+        {
+            if (player == null) return;
+            Mode mode = Modes.GetOrCreateValue(player);
+            mode.HasCamp = true;
+            mode.Camp = new(player.X, player.Y, player.Z);
+            mode.CampRegion = player.CurrentRegionID;
+            mode.CampHeading = player.Heading;
+            mode.CampAwaySince = 0;
+            if (Log.IsInfoEnabled)
+                Log.Info($"COMPANION_CAMP player=\"{player.Name}\" region={player.CurrentRegionID} at={player.X},{player.Y},{player.Z}");
+        }
+
+        public static void ClearCamp(GamePlayer player)
+        {
+            if (player != null && Modes.TryGetValue(player, out Mode mode))
+                mode.HasCamp = false;
+        }
+
+        /// <summary>The player's camp, if one holds (checked lazily: region, and 2,500 units for 10 s).</summary>
+        public static bool CampOf(GamePlayer player, out Vector3 camp, out ushort heading)
+        {
+            camp = default;
+            heading = 0;
+            if (player == null || !Modes.TryGetValue(player, out Mode mode) || !mode.HasCamp)
+                return false;
+            long now = GameLoop.GameLoopTime;
+            int distance = (int)Vector3.Distance(mode.Camp, new(player.X, player.Y, player.Z));
+            if (distance <= CompanionControls165.CampLeaveDistance)
+                mode.CampAwaySince = 0;
+            else if (mode.CampAwaySince == 0)
+                mode.CampAwaySince = now;
+            if (!CompanionControls165.CampHolds(player.CurrentRegionID == mode.CampRegion, distance,
+                    mode.CampAwaySince == 0 ? 0 : now - mode.CampAwaySince))
+            {
+                mode.HasCamp = false;
+                return false;
+            }
+            camp = mode.Camp;
+            heading = mode.CampHeading;
+            return true;
+        }
+
+        /// <summary>Where a /pull brings its monster back to: the camp, else the player.</summary>
+        public static Vector3 ReturnPoint(GamePlayer player) =>
+            CampOf(player, out Vector3 camp, out _) ? camp : new(player.X, player.Y, player.Z);
+
+        /// <summary>/defensive's 350: from the camp when one holds, else from the player.</summary>
+        private static bool WithinDefensiveRadius(GamePlayer leader, GameLiving target) =>
+            CampOf(leader, out Vector3 camp, out _)
+                ? Vector3.DistanceSquared(camp, new(target.X, target.Y, target.Z)) <= (float)DefensiveRadius * DefensiveRadius
+                : leader.IsWithinRadius(target, DefensiveRadius);
 
         /// <summary>The op-30 payload byte for a stance: 0 aggressive, 1 defensive, 2 passive.</summary>
         public static byte StanceByte(CompanionStance stance) => (byte)stance;
@@ -111,7 +184,7 @@ namespace DOL.GS
             // mode has no leash and is unchanged).
             return leader == null || PlayerLedPullCoordinator.IsOrderedPuller(actor, target) ||
                 target != null && target.CurrentRegionID == leader.CurrentRegionID &&
-                (leader.IsWithinRadius(target, DefensiveRadius) || CompanionPvpEngagement.Defending(actor, target) ||
+                (WithinDefensiveRadius(leader, target) || CompanionPvpEngagement.Defending(actor, target) ||
                  CompanionPvpEngagement.FrontierRoamerInRange(leader, target, true) ||
                  DefendsTheGroup(actor, leader, target));
         }

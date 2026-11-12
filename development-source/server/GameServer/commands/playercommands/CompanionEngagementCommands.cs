@@ -26,6 +26,32 @@ namespace DOL.GS.Commands
         }
     }
     /// <summary>
+    /// M7 (veteran review 2026-11-11): /camp makes the player's spot the companions' hold point - they wait there in
+    /// formation while the player pulls, and a /pull brings the monster back to it. /camp off follows the player again.
+    /// </summary>
+    [CmdAttribute("&camp", ePrivLevel.Player, "Companions hold at this spot (the camp); /camp off to follow you again", "/camp [off]")]
+    public class CompanionCampCommand : AbstractCommandHandler, ICommandHandler
+    {
+        public void OnCommand(GameClient client, string[] args)
+        {
+            GamePlayer player = client.Player;
+            if (args.Length > 1 && (args[1].Equals("off", System.StringComparison.OrdinalIgnoreCase) ||
+                                    args[1].Equals("clear", System.StringComparison.OrdinalIgnoreCase)))
+            {
+                CompanionEngagementMode.ClearCamp(player);
+                DisplayMessage(client, "Companions: no camp. They follow you again.");
+                return;
+            }
+            if (CompanionEngagementMode.IsPassive(player))
+            {
+                DisplayMessage(client, "Companions are passive: use /aggressive or /defensive first, then /camp.");
+                return;
+            }
+            CompanionEngagementMode.SetCamp(player);
+            DisplayMessage(client, "Companions: CAMP here. They hold this spot while you pull, and /pull brings the monster back to it. Walking more than 2,500 units away for 10 seconds, /passive or /camp off ends it.");
+        }
+    }
+    /// <summary>
     /// Owner 2026-11-11: "for retreating or walking through areas without stopping to fight anything". Companions and
     /// their pets stop fighting, drop every target and follow; /aggressive or /defensive ends it.
     /// </summary>

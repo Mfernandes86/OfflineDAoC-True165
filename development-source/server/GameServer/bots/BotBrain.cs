@@ -1409,6 +1409,28 @@ namespace DOL.AI.Brain
             bool companionTravel = CompanionFollowPolicy.Applies(BotBody);
             // Do not run native owner-follow and formation orders concurrently.
             if (companionTravel) Body.StopFollowing();
+            // /camp (M7): the same slots, laid out around the camp and its facing instead of the player; a companion on its
+            // own passive stance follows its player
+            if (BotBody.IsPlayerCompanion && !CompanionRaid.IsMember(BotBody) &&
+                CompanionEngagementMode.PassiveLeader(BotBody) == null &&
+                CompanionEngagementMode.CampOf(leader, out Vector3 camp, out ushort campHeading))
+            {
+                _ambientWanderMovement = false;
+                AutonomousFormation.Offset campFormation = AutonomousFormation.For(BotBody.Name, tightInterior);
+                int campSlot = Math.Max(0, Body.GroupIndex - 1) % RearFormationDegrees.Length;
+                ushort campSlotHeading = (ushort)((campHeading + RearFormationDegrees[campSlot] * 4096 / 360 + 4096 * 2) & 0xFFF);
+                Point2D campSpot = new Point2D((int)camp.X, (int)camp.Y).GetPointFromHeading(campSlotHeading, campFormation.Distance);
+                Vector3 campPoint = new(campSpot.X, campSpot.Y, camp.Z);
+                if (companionTravel && leader.CurrentZone != null)
+                    campPoint = CompanionFollowPolicy.FormationDestination(BotBody, campPoint);
+                if (Vector3.DistanceSquared(new(Body.X, Body.Y, Body.Z), campPoint) > 20 * 20)
+                {
+                    if (companionTravel)
+                        CompanionFollowPolicy.BeginFormation(BotBody, campPoint);
+                    Body.PathTo(campPoint, Body.MaxSpeed);
+                }
+                return;
+            }
             if (CompanionRaid.IsMember(BotBody))
             {
                 // Stable, distinct slots for all 39 companions. Surface projection
