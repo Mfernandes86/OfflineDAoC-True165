@@ -64,6 +64,10 @@ hold). Its changelog has the history of everything this version inherits.
   go through your own backpack (GitHub issue #50).
 - A second hostile Gokstad stood inside Muspelheim beside the friendly skald at the pass; he is gone. Osier, Cleddyf
   Difwych and the Mad Sprite also stood twice and are one again (GitHub issue #50).
+- Companions: a healing Druid's pet no longer runs at a target and back to her over and over. On Attack my target
+  (and for a Nature Druid on Automatic) she sent it in and another part of her AI called it off in the same moment;
+  on Take adds it was pulled off an add as soon as the add turned on it. The pet now stays on the target she sent
+  it at, and keeps an add it took until the add is dead.
 
 ### Realm Exchange
 
