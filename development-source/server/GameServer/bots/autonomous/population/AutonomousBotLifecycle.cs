@@ -747,8 +747,19 @@ namespace DOL.GS
             long warmOffline = archive.WarmOfflineCount();
             int limit = warmOffline > 2L * live + 500 ? 16 : 8;
             DateTime before = warmOffline > 2L * live + 500 ? DateTime.UtcNow : DateTime.UtcNow - BotArchive.WarmIdleAge;
-            foreach (long botId in archive.IdleWarm(limit, before))
-                archive.ArchiveToCold(botId);
+            // 2026-11-11 exchange plan: a warm bot that still has live listings stays warm until they sell or expire, so
+            // the market keeps them (archiving took them off the exchange); under warm-row pressure it is archived anyway
+            bool pressure = warmOffline > 2L * live + 500;
+            int archived = 0;
+            foreach (long botId in archive.IdleWarm(pressure ? limit : limit * 2, before))
+            {
+                if (archived >= limit)
+                    break;
+                if (!pressure && MarketCache.ReadBook(book => book.OwnerCount(AutonomousBotEconomy.GetOwnerId(botId))) > 0)
+                    continue;
+                if (archive.ArchiveToCold(botId))
+                    archived++;
+            }
         }
     }
 
