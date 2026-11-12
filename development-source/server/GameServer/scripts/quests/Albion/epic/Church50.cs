@@ -51,6 +51,12 @@ namespace DOL.GS.Quests.Albion
 		protected const int maximumLevel = 50;
 
 		private static GameNPC Roben = null; // Start NPC
+
+		/// <summary>True 1.65 Mode: the period Passage to Eternity (level 50), Allakhazam quest 428: after the level 48 part
+		/// (which ends with Roben Fraomar) see Roben in Cornwall Station, slay Sister Blythe in the ancient temple of Arawn
+		/// in Lyonesse, and return to the trainer in Camelot for the armour.</summary>
+		private const string Line165 = "Passage to Eternity";
+		private static readonly string Title165 = Epics165.FinaleTitle(Line165);
 		private static SisterBlythe Blythe = null; // Mob to kill
 
 		private static DbItemTemplate statue_of_arawn = null; //sealed pouch
@@ -733,6 +739,12 @@ namespace DOL.GS.Quests.Albion
 
 			#endregion
 
+			if (Classic165Mode.IsOn)
+			{
+				Load165();
+				return;
+			}
+
 			GameEventMgr.AddHandler(GamePlayerEvent.AcceptQuest, new DOLEventHandler(SubscribeQuest));
 			GameEventMgr.AddHandler(GamePlayerEvent.DeclineQuest, new DOLEventHandler(SubscribeQuest));
 
@@ -752,6 +764,11 @@ namespace DOL.GS.Quests.Albion
 		{
 			if (!ServerProperties.Properties.LOAD_QUESTS)
 				return;
+			if (Classic165Mode.IsOn)
+			{
+				Unload165();
+				return;
+			}
 			//if not loaded, don't worry
 			if (Roben == null)
 				return;
@@ -765,6 +782,74 @@ namespace DOL.GS.Quests.Albion
 			/* Now we remove to Roben the possibility to give this quest to players */
 			Roben.RemoveQuestToGive(typeof (Church_50));
 		}
+
+		#region True 1.65 Mode: Passage to Eternity (level 50) with Roben Fraomar, ends at the trainer
+
+		private static void Load165()
+		{
+			if (Roben == null)
+			{
+				log.Warn("True 1.65 Mode: Roben Fraomar not found, \"" + Title165 + "\" not loaded");
+				return;
+			}
+			GameEventMgr.AddHandler(GamePlayerEvent.AcceptQuest, new DOLEventHandler(SubscribeQuest));
+			GameEventMgr.AddHandler(GamePlayerEvent.DeclineQuest, new DOLEventHandler(SubscribeQuest));
+			GameEventMgr.AddHandler(Roben, GameObjectEvent.Interact, new DOLEventHandler(TalkToRoben165));
+			Roben.AddQuestToGive(typeof(Church_50));
+			if (log.IsInfoEnabled)
+				log.Info("Quest \"" + Title165 + "\" initialized (True 1.65 Mode, starts with Roben Fraomar)");
+		}
+
+		private static void Unload165()
+		{
+			if (Roben == null)
+				return;
+			GameEventMgr.RemoveHandler(GamePlayerEvent.AcceptQuest, new DOLEventHandler(SubscribeQuest));
+			GameEventMgr.RemoveHandler(GamePlayerEvent.DeclineQuest, new DOLEventHandler(SubscribeQuest));
+			GameEventMgr.RemoveHandler(Roben, GameObjectEvent.Interact, new DOLEventHandler(TalkToRoben165));
+			Roben.RemoveQuestToGive(typeof(Church_50));
+		}
+
+		/// <summary>No recorded period speech for Roben's offer: the quest window itself makes the offer.</summary>
+		private static void TalkToRoben165(DOLEvent e, object sender, EventArgs args)
+		{
+			GamePlayer player = ((SourceEventArgs) args).Source as GamePlayer;
+			if (player == null || player.IsDoingQuest(typeof(Church_50)) != null || Roben.CanGiveQuest(typeof(Church_50), player) <= 0)
+				return;
+			player.Out.SendQuestSubscribeCommand(Roben, QuestMgr.GetIDForQuestType(typeof(Church_50)),
+				Title165 + ": slay Sister Blythe in the ancient temple of Arawn in Lyonesse.");
+		}
+
+		private static void Accept165(GamePlayer player, byte response)
+		{
+			if (response == 0x00 || Roben == null || player.IsDoingQuest(typeof(Church_50)) != null ||
+			    Roben.CanGiveQuest(typeof(Church_50), player) <= 0)
+				return;
+			Roben.GiveQuest(typeof(Church_50), player, 1);
+		}
+
+		private string Description165 => Step switch
+		{
+			1 => "Gather a group and go to the ancient temple of Arawn within Lyonesse, behind the pikemen house at 35k, 41k. " +
+			     "Slay Sister Blythe; the dark one's priests guard her.",
+			2 => "Return to your trainer in Camelot. Make sure you have 6 free slots in your inventory.",
+			_ => base.Description
+		};
+
+		private void Notify165(DOLEvent e, GamePlayer player, EventArgs args)
+		{
+			if (Step == 1 && e == GameLivingEvent.EnemyKilled && args is EnemyKilledEventArgs killed && killed.Target != null &&
+			    Blythe != null && killed.Target.Name == Blythe.Name)
+			{
+				Step = 2;
+				player.Out.SendMessage("Return to your trainer in Camelot.", eChatType.CT_System, eChatLoc.CL_SystemWindow);
+			}
+			else if (Step == 2 && e == GameObjectEvent.InteractWith && args is InteractWithEventArgs talk &&
+			         Epics165.IsOwnTrainer(player, talk.Target) && Epics165.HasRoomForArmour(player))
+				FinishQuest();
+		}
+
+		#endregion
 
 		protected static void TalkToRoben(DOLEvent e, object sender, EventArgs args)
 		{
@@ -885,6 +970,11 @@ namespace DOL.GS.Quests.Albion
 			if (player.Level < minimumLevel || player.Level > maximumLevel)
 				return false;
 
+			// True 1.65 Mode: the finale follows the line's level 48 part (quest audit 2026-11-11: it was open to any
+			// level 50 Paladin or Cleric).
+			if (Classic165Mode.IsOn && !Epics165.FinishedLastPart(player, Line165))
+				return false;
+
 			return true;
 		}
 
@@ -929,6 +1019,12 @@ namespace DOL.GS.Quests.Albion
 
 		private static void CheckPlayerAcceptQuest(GamePlayer player, byte response)
 		{
+			if (Classic165Mode.IsOn)
+			{
+				Accept165(player, response);
+				return;
+			}
+
 			if(Roben.CanGiveQuest(typeof (Church_50), player)  <= 0)
 				return;
 
@@ -952,7 +1048,7 @@ namespace DOL.GS.Quests.Albion
 		//Set quest name
 		public override string Name
 		{
-			get { return "Passage to Eternity (Level 50 Church Epic)"; }
+			get { return Classic165Mode.IsOn ? Title165 : "Passage to Eternity (Level 50 Church Epic)"; }
 		}
 
 		// Define Steps
@@ -960,6 +1056,8 @@ namespace DOL.GS.Quests.Albion
 		{
 			get
 			{
+				if (Classic165Mode.IsOn)
+					return Description165;
 				switch (Step)
 				{
 					case 1:
@@ -981,6 +1079,12 @@ namespace DOL.GS.Quests.Albion
 			if (sender != m_questPlayer)
 				return;
 			
+			if (Classic165Mode.IsOn)
+			{
+				Notify165(e, player, args);
+				return;
+			}
+
 			if (Step == 1 && e == GameLivingEvent.EnemyKilled)
 			{
 				EnemyKilledEventArgs gArgs = (EnemyKilledEventArgs) args;
@@ -1020,7 +1124,9 @@ namespace DOL.GS.Quests.Albion
 
 		public override void FinishQuest()
 		{
-			RemoveItem(m_questPlayer, statue_of_arawn, true);
+			// True 1.65 Mode: the trainer gives the armour and the experience; there is no statue to hand in.
+			if (!Classic165Mode.IsOn)
+				RemoveItem(m_questPlayer, statue_of_arawn, true);
 
 			base.FinishQuest(); //Defined in Quest, changes the state, stores in DB etc ...
 
