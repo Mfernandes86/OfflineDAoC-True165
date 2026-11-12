@@ -100,6 +100,50 @@ public static class AutonomousRelicShrine
         return false;
     }
 
+    /// <summary>Nearest and farthest ring of the defender posts around a shrine floor (L4).</summary>
+    public const float ShrinePostInnerRadius = 120, ShrinePostRingStep = 60;
+    public const int ShrinePostRings = 4;
+
+    /// <summary>Pure rule (L4): where defender slot <paramref name="slot"/> stands around the shrine floor, on its
+    /// <paramref name="turn"/>-th try: eight posts a ring, four rings 120-300 units out, later slots turned a little.</summary>
+    public static Vector3 ShrinePostOffset(int slot, int turn)
+    {
+        slot = Math.Max(0, slot);
+        double angle = (slot % 8 + turn) * Math.PI / 4 + slot / (8 * ShrinePostRings) * 0.2;
+        float radius = ShrinePostInnerRadius + slot / 8 % ShrinePostRings * ShrinePostRingStep;
+        return new((float)Math.Cos(angle) * radius, (float)Math.Sin(angle) * radius, 0);
+    }
+
+    /// <summary>
+    /// Relic audit L4: defender posts need a lord, or at a relic keep a commander (AutonomousRvrRally.TryDefenderPost).
+    /// Castle Excalibur, Dun Lamfhota and Dun Dagda have no guard rows today and the sentinels are not in keep.Guards, so
+    /// every defender there retried its route every 30 s and stood wherever it arrived. With no such anchor the defenders
+    /// now take posts around the shrine floor: the relic is what they defend. Same checks as the guard posts: a floor on the
+    /// mesh at the shrine's height, and a route from the defender's start (or a corridor from the shrine) to it.
+    /// </summary>
+    public static bool TryShrineDefenderPost(GameBot bot, AbstractGameKeep keep, int slot, IPathfindingMgr nav, Vector3? routeStart,
+        out Vector3 point)
+    {
+        point = default;
+        GameRelicPad pad = PadOf(keep);
+        if (bot == null || pad == null || nav == null || !nav.IsAvailable) return false;
+        Vector3? center = ShrineFloor(nav, pad);
+        if (!center.HasValue) return false;
+        Zone zone = pad.CurrentRegion?.GetZone((int)center.Value.X, (int)center.Value.Y);
+        if (zone == null || !nav.HasNavmesh(zone)) return false;
+        for (int turn = 0; turn < 8; turn++)
+        {
+            Vector3? floor = nav.GetClosestPoint(zone, center.Value + ShrinePostOffset(slot, turn), 24, 24, 64, nav.DefaultFilters);
+            if (!floor.HasValue || Math.Abs(floor.Value.Z - center.Value.Z) > 64) continue;
+            if (!(routeStart.HasValue
+                    ? AutonomousRvrRally.HasRoute(bot.CurrentRegion, nav, bot.Realm, routeStart.Value, floor.Value)
+                    : AutonomousZoneItinerary.HasCompleteCorridor(nav, zone, center.Value, floor.Value))) continue;
+            point = floor.Value;
+            return true;
+        }
+        return false;
+    }
+
     /// <summary>One relic as the raid planner sees it.</summary>
     public readonly record struct RelicFact(eRealm Holder, eRealm Original, eRelicType Type, bool Mounted);
 

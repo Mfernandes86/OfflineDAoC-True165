@@ -182,4 +182,17 @@ public sealed class UT_RelicLaneFixes
             Assert.That(GameRelic.ScaledReturnInterval(-5), Is.EqualTo(0));
         });
     }
+
+    [Test]
+    public void ShrineDefenderPostsSpreadAroundTheShrineFloor()
+    {
+        var posts = Enumerable.Range(0, 32).Select(slot => AutonomousRelicShrine.ShrinePostOffset(slot, 0)).ToArray();
+        Assert.Multiple(() =>
+        {
+            Assert.That(posts.Distinct().Count(), Is.EqualTo(32), "every slot its own spot");
+            Assert.That(posts.All(p => p.Length() >= 119 && p.Length() <= 301), Is.True, "120-300 around the pad");
+            Assert.That(AutonomousRelicShrine.ShrinePostOffset(3, 1), Is.Not.EqualTo(AutonomousRelicShrine.ShrinePostOffset(3, 0)), "a second try turns");
+            Assert.That(AutonomousRelicShrine.ShrinePostOffset(-1, 0), Is.EqualTo(AutonomousRelicShrine.ShrinePostOffset(0, 0)));
+        });
+    }
 }
