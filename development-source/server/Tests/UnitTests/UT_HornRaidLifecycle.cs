@@ -90,4 +90,11 @@ public class UT_HornRaidLifecycle
         foreach (string phase in new[] { "Muster", "Staging", "Battle", "" })
             Assert.That(HornWindow165.OwnHuntStatus(phase, 300).Length, Is.LessThanOrEqualTo(63), "fits the horn row");
     }
+
+    [Test]
+    public void TheHornListKeepsTheStartsRouteProofForMinutes()
+    {
+        Assert.That(AutonomousRealmRaid.RouteProofExpiry(true, 1_000), Is.EqualTo(1_000 + 5 * Minute), "a proven way is rechecked every 5 minutes");
+        Assert.That(AutonomousRealmRaid.RouteProofExpiry(false, 1_000), Is.EqualTo(1_000 + Minute), "a failed one every minute");
+    }
 }

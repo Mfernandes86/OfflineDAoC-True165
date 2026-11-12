@@ -417,7 +417,7 @@ namespace DOL.GS
         /// 2026-10-30: the window said "Ready - suggested 200 bots" and the sound was refused with 184/300).</summary>
         public static int ForcedRecruitsAvailable(string id, eRealm realm)
         {
-            RealmRaidMuster.Hub hub = RealmRaidMuster.Hubs.FirstOrDefault(h => h.Event == id);
+            RealmRaidMuster.Hub hub = ProvenHub(id, realm);
             return hub == null ? 0 : AutonomousBotGroupCoordinator.PlanForcedRaid(realm, hub.Region, hub.Center).Sum(p => p.Length);
         }
 
@@ -441,19 +441,21 @@ namespace DOL.GS
                 reason = "Darkness Falls is closed to your realm: it opens to the realm that holds the most keeps.";
                 return false;
             }
-            RealmRaidMuster.Hub rallyHub = RealmRaidMuster.Hubs.FirstOrDefault(h => h.Event == id);
-            // A forced dungeon raid proves its entrance before reserving 300 bots: a route that can never be built
-            // reports why at once instead of after the roster is gathered (forced Darkness Falls, 2026-10-11).
-            Definition preview = forced ? Definitions.FirstOrDefault(d => d.Id == id && d.Realm == realm) : null;
-            if (preview is { IsDungeon: true } && !RealmRaidMuster.Hubs.Where(h => h.Event == id).Any(h =>
-                    RealmRaidDungeonRoute.TryCreate(preview.Region, preview.Trigger, preview.FinalTypes, out _, realm,
-                        preview.IsNeutral ? h.Region : (ushort)0, preview.Objectives, h.Center)))
-            {
-                reason = $"The dungeon entrance/final approach could not be validated ({RealmRaidDungeonRoute.LastFailure}). No party was assigned.";
-                Log.Warn($"REALM_RAID_START_UNAVAILABLE event={id} reason=\"no validated entrance\" detail=\"{RealmRaidDungeonRoute.LastFailure}\"");
-                return false;
-            }
-            if (preview != null) SupersedeAutomatic(realm, id);
+            Definition planned = Definitions.FirstOrDefault(d => d.Id == id && d.Realm == realm);
+            lock (Sync)
+                if (planned == null || !Available(id))
+                { reason = "The encounter is not alive/available, or this event is on cooldown."; return false; }
+            // The way is proven before anything is reserved: the dungeon entrance and final approach, a staging post, a hub
+            // post and a complete hub-to-encounter route, at the first hub that has them (forced Darkness Falls, 2026-10-11:
+            // a route that can never be built reports why at once instead of after the roster is gathered). The horn window
+            // shows the same answer (RouteUnproven), so it never offers an event the start refuses.
+            Raid plan = PlanRoute(planned, realm, forced, GameLoop.GameLoopTime, out reason, log: true);
+            RememberRouteProof(id, plan, reason, GameLoop.GameLoopTime);
+            if (plan == null) return false;
+            if (forced) SupersedeAutomatic(realm, id);
+            // recruits are planned against the hub the raid will really use (Summoner's Hall Hibernia may fall back to its
+            // second hub)
+            RealmRaidMuster.Hub rallyHub = plan.Hub;
             GameBot[][] recruits;
             RallyAnswer answer = default;
             if (rally != null && rallyHub != null)
@@ -485,39 +487,10 @@ namespace DOL.GS
                 if (forced && recruits.SelectMany(p => p).Any(b => IsReserved(b) || GetView(b.Group) != null))
                 { reason = "A planned recruit joined another expedition. Nothing was reassigned; please retry."; return false; }
                 long now = GameLoop.GameLoopTime;
-                // An event may list several muster hubs; the first with a complete, connected
-                // hub-to-encounter route is used (far frontier entrances, e.g. Summoner's Hall).
-                Raid raid = null;
-                reason = "No muster hub is defined for this event.";
-                foreach (RealmRaidMuster.Hub hub in RealmRaidMuster.Hubs.Where(h => h.Event == id))
-                {
-                    var candidate = new Raid { Definition = definition, Boss = Bosses[id], Forced = forced, Created = now, Hub = hub,
-                        Deadline = forced ? long.MaxValue : now + RealmRaidRecruitmentPolicy.AutonomousStagingLimitMilliseconds };
-                    if (definition.IsDungeon)
-                    {
-                        if (!RealmRaidDungeonRoute.TryCreate(definition.Region, definition.Trigger, definition.FinalTypes, out var route,
-                                realm, definition.IsNeutral ? hub.Region : (ushort)0, definition.Objectives, hub.Center))
-                        {
-                            reason = "The dungeon entrance/final approach could not be validated. No party was assigned.";
-                            Log.Warn($"REALM_RAID_START_UNAVAILABLE event={id} hub=\"{hub.Name}\" reason=\"no validated entrance\" detail=\"{RealmRaidDungeonRoute.LastFailure}\"");
-                            continue;
-                        }
-                        candidate.DungeonRoute = route;
-                    }
-                    bool staged = TryStaging(candidate, 0, out var destination);
-                    bool posted = TryHubPost(candidate, 0, out var origin);
-                    if (!staged || !posted || !RealmRaidMuster.TryRoute(WorldMgr.GetRegion(hub.Region), PathfindingProvider.Instance, realm,
-                            origin, destination, out candidate.OutboundSeams, hub.Via))
-                    {
-                        reason = "No complete connected hub-to-encounter route was found. No party was assigned.";
-                        Log.Warn($"REALM_RAID_START_UNAVAILABLE event={id} hub=\"{hub.Name}\" staging={staged} hubPost={posted} " +
-                                 $"entrance={candidate.DungeonRoute?.Entrance?.Id} route=\"{(staged && posted ? RealmRaidMuster.LastRouteFailure : "not tried")}\"");
-                        continue;
-                    }
-                    raid = candidate;
-                    break;
-                }
-                if (raid == null) return false;
+                Raid raid = plan;
+                raid.Boss = Bosses[id];
+                raid.Created = now;
+                raid.Deadline = forced ? long.MaxValue : now + RealmRaidRecruitmentPolicy.AutonomousStagingLimitMilliseconds;
                 Raids[id] = raid;
                 raid.SounderKey = sounderKey;
                 RealmEventRecords.Begin(id, definition.Name, definition.IsNeutral ? "Neutral raid" : definition.IsDungeon ? "Epic dungeon" : "Dragon",
@@ -545,6 +518,79 @@ namespace DOL.GS
                     $"Recruiting up to 300 level-50 bots via {raid.Hub.Name}. At least 200 must arrive before assault; staging can last up to {RealmRaidRecruitmentPolicy.AutonomousStagingLimitMilliseconds / 60_000} minutes.";
                 return true;
             }
+        }
+
+        /// <summary>
+        /// The first muster hub of an event with a validated dungeon entrance and final approach, a staging post, a hub post
+        /// and a complete connected hub-to-encounter route, as a raid not yet registered (nothing is reserved); null with
+        /// the reason when none has. An event may list several hubs (far frontier entrances, e.g. Summoner's Hall).
+        /// </summary>
+        private static Raid PlanRoute(Definition definition, eRealm realm, bool forced, long now, out string reason, bool log)
+        {
+            string id = definition.Id;
+            reason = "No muster hub is defined for this event.";
+            foreach (RealmRaidMuster.Hub hub in RealmRaidMuster.Hubs.Where(h => h.Event == id))
+            {
+                var candidate = new Raid { Definition = definition, Forced = forced, Created = now, Hub = hub,
+                    Deadline = forced ? long.MaxValue : now + RealmRaidRecruitmentPolicy.AutonomousStagingLimitMilliseconds };
+                if (definition.IsDungeon)
+                {
+                    if (!RealmRaidDungeonRoute.TryCreate(definition.Region, definition.Trigger, definition.FinalTypes, out var route,
+                            realm, definition.IsNeutral ? hub.Region : (ushort)0, definition.Objectives, hub.Center))
+                    {
+                        reason = $"The dungeon entrance/final approach could not be validated ({RealmRaidDungeonRoute.LastFailure}). No party was assigned.";
+                        if (log)
+                            Log.Warn($"REALM_RAID_START_UNAVAILABLE event={id} hub=\"{hub.Name}\" reason=\"no validated entrance\" detail=\"{RealmRaidDungeonRoute.LastFailure}\"");
+                        continue;
+                    }
+                    candidate.DungeonRoute = route;
+                }
+                bool staged = TryStaging(candidate, 0, out var destination);
+                bool posted = TryHubPost(candidate, 0, out var origin);
+                if (!staged || !posted || !RealmRaidMuster.TryRoute(WorldMgr.GetRegion(hub.Region), PathfindingProvider.Instance, realm,
+                        origin, destination, out candidate.OutboundSeams, hub.Via))
+                {
+                    reason = "No complete connected hub-to-encounter route was found. No party was assigned.";
+                    if (log)
+                        Log.Warn($"REALM_RAID_START_UNAVAILABLE event={id} hub=\"{hub.Name}\" staging={staged} hubPost={posted} " +
+                                 $"entrance={candidate.DungeonRoute?.Entrance?.Id} route=\"{(staged && posted ? RealmRaidMuster.LastRouteFailure : "not tried")}\"");
+                    continue;
+                }
+                return candidate;
+            }
+            return null;
+        }
+
+        // The horn window's copy of the start's route proof (df-routes L1): one proof per event, kept 5 minutes when it held
+        // and 1 minute when it failed, so opening the window costs nothing most of the time and never shows "Ready" for an
+        // event the start would refuse for its route.
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, (long Until, string Failure, RealmRaidMuster.Hub Hub)>
+            RouteProofs = new();
+        public const long RouteProofKeepMilliseconds = 5 * 60_000L;
+        public const long RouteFailureKeepMilliseconds = 60_000L;
+
+        public static long RouteProofExpiry(bool proven, long now) =>
+            now + (proven ? RouteProofKeepMilliseconds : RouteFailureKeepMilliseconds);
+
+        private static void RememberRouteProof(string id, Raid plan, string reason, long now) =>
+            RouteProofs[id] = (RouteProofExpiry(plan != null, now), plan == null ? reason : null, plan?.Hub);
+
+        /// <summary>Null when the way to this event is proven (the same checks the start makes), else why not. Cached.</summary>
+        public static string RouteUnproven(string id, eRealm realm) => RouteProof(id, realm).Failure;
+
+        /// <summary>The muster hub the event would use (the first hub with a proven way), or its first hub.</summary>
+        public static RealmRaidMuster.Hub ProvenHub(string id, eRealm realm) =>
+            RouteProof(id, realm).Hub ?? RealmRaidMuster.Hubs.FirstOrDefault(h => h.Event == id);
+
+        private static (long Until, string Failure, RealmRaidMuster.Hub Hub) RouteProof(string id, eRealm realm)
+        {
+            long now = GameLoop.GameLoopTime;
+            if (RouteProofs.TryGetValue(id, out var cached) && now < cached.Until) return cached;
+            Definition definition = Definitions.FirstOrDefault(d => d.Id == id && d.Realm == realm);
+            if (definition == null) return (now, "Unknown event.", null);
+            Raid plan = PlanRoute(definition, realm, true, now, out string reason, log: false);
+            RememberRouteProof(id, plan, reason, now);
+            return RouteProofs[id];
         }
 
         public static string HornStartCondition(bool isDungeon) => isDungeon

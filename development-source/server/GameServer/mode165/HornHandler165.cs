@@ -176,6 +176,10 @@ namespace DOL.GS
                                 !DOL.GS.ServerRules.DFEnterJumpPoint.CanRealmEnter(player.Realm);
                 if (dfClosed && code is 0 or 4)
                     code = 4;
+                // the start's own route proof (cached; df-routes L1: the row said Ready and the sound was refused)
+                bool unproven = code == 0 && AutonomousRealmRaid.RouteUnproven(events[i].Id, events[i].Realm) != null;
+                if (unproven)
+                    code = 4;
                 uint seconds = code is 2 or 3 ? (uint)Math.Max(0, (s?.Remaining ?? 0) / 1000) : 0;
                 var row = new byte[122];
                 row[0] = (byte)i;
@@ -188,6 +192,7 @@ namespace DOL.GS
                 string status = code switch
                 {
                     4 when dfClosed => "Closed: Darkness Falls opens to the realm holding the most keeps",
+                    4 when unproven => "Not possible now: the way there is not proven",
                     0 or 4 when newRules => RallyAnswerPolicy.Status(answer, rests),
                     0 => $"Ready - {free} free champions (300 needed)",
                     4 when s?.State == "Available" => $"Not enough free champions: {free} of {RealmRaidRecruitmentPolicy.MaximumBots}",
@@ -207,7 +212,7 @@ namespace DOL.GS
         /// rests for this player (30 minutes after a sound that logged guests in).</summary>
         public static RallyAnswer Forecast(GamePlayer player, AutonomousRealmRaid.Definition definition)
         {
-            RealmRaidMuster.Hub hub = RealmRaidMuster.Hubs.FirstOrDefault(h => h.Event == definition.Id);
+            RealmRaidMuster.Hub hub = AutonomousRealmRaid.ProvenHub(definition.Id, definition.Realm);
             if (hub == null) return default;
             bool archive = RallyGuests165.MayCallArchived(player, GameLoop.GameLoopTime);
             return AutonomousBotGroupCoordinator.PlanHornRaid(definition.Realm, hub.Region, hub.Center,
