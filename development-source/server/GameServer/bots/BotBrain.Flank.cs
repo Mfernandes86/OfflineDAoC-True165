@@ -28,6 +28,11 @@ namespace DOL.AI.Brain
         private long _flankDoneAt;
         private ushort _flankDoneHeading;
         private Vector2 _flankDonePosition;
+        // One walk order per flank (owner 2026-11-11: bots re-ordered the walk on every think and crept into position).
+        public const int FlankRespotDistance = 40;
+        public const long FlankReissueMilliseconds = 750;
+        private Vector2 _flankSpot;
+        private long _flankMoveAt;
 
         /// <summary>A bot that knows a back or side style (the "Positioning" AI Option is offered then).</summary>
         public static bool KnowsFlankStyle(GameBot bot) => bot?.Styles?.Any(style => style != null &&
@@ -63,6 +68,14 @@ namespace DOL.AI.Brain
         /// <summary>Pure (Q13): the bot keeps attacking during a flank walk that starts and ends in melee reach.</summary>
         public static bool FlankKeepsSwinging(bool botInMeleeReach, int flankSpotDistanceFromTarget, int meleeRange) =>
             botInMeleeReach && flankSpotDistanceFromTarget <= meleeRange;
+
+        /// <summary>
+        /// Pure: whether the flank walk needs a (new) walk order. The spot behind a fighting monster shifts a few units on
+        /// every think as the monster turns; a new order each time restarted the route and the bot crept into place. One
+        /// order per try; another only when the spot really moved, or the bot stood still short of it for a while.
+        /// </summary>
+        public static bool FlankNeedsMoveOrder(bool newAttempt, float spotDrift, bool moving, long sinceOrder) =>
+            newAttempt || spotDrift > FlankRespotDistance || !moving && sinceOrder >= FlankReissueMilliseconds;
 
         /// <summary>The back style (preferred) or side style this bot could use on its target with the weapon in hand.</summary>
         private Style FlankStyle()
@@ -119,7 +132,8 @@ namespace DOL.AI.Brain
                 return Done();
 
             long now = GameLoop.GameLoopTime;
-            if (_flankTarget != target)
+            bool newAttempt = _flankTarget != target;
+            if (newAttempt)
             {
                 _flankTarget = target;
                 _flankSince = now;
@@ -139,7 +153,13 @@ namespace DOL.AI.Brain
             if (bot.attackComponent.AttackState &&
                 !FlankKeepsSwinging(bot.IsWithinRadius(target, bot.MeleeAttackRange), FlankStandOff, bot.MeleeAttackRange))
                 bot.StopAttack();
-            bot.PathTo(new Vector3(spot.X, spot.Y, target.Z), bot.MaxSpeed);
+            var spotNow = new Vector2(spot.X, spot.Y);
+            if (FlankNeedsMoveOrder(newAttempt, Vector2.Distance(_flankSpot, spotNow), bot.IsMoving, now - _flankMoveAt))
+            {
+                _flankSpot = spotNow;
+                _flankMoveAt = now;
+                bot.PathTo(new Vector3(spot.X, spot.Y, target.Z), bot.MaxSpeed);
+            }
             return true;
 
             bool Done()
