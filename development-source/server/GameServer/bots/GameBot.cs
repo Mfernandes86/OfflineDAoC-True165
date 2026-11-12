@@ -2541,10 +2541,14 @@ namespace DOL.GS
         /// </summary>
         internal BotBrain.OutclassedSpells OutclassedCache;
 
+        /// <summary>Q30: a Paladin's or Warden's best rank of each chant at its level (BotBrain.TryMaintainTankChant).</summary>
+        internal BotBrain.TankChantTable TankChants;
+
         public override void SortSpells()
         {
             _playbook = null;   // rebuilt on the next read, from the new list
             OutclassedCache = null;
+            TankChants = null;
             System.Threading.Volatile.Write(ref AddControlKnown, -1);
             InstantHarmfulSpells?.Clear();
             HarmfulSpells?.Clear();

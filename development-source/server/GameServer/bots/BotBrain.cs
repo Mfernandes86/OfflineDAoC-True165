@@ -3113,6 +3113,47 @@ namespace DOL.AI.Brain
                 .DefaultIfEmpty(0).Min();
         }
 
+        /// <summary>
+        /// Q30 (completeness review 2026-11-11): a tank's chants - the best rank of each chant type at its level - built
+        /// once per spell list and level instead of Concat/Where/GroupBy/Select every 750 ms per Paladin and Warden.
+        /// </summary>
+        public sealed class TankChantTable
+        {
+            public readonly int Level;
+            public readonly List<Spell> Misc, InstantMisc;
+            public readonly int MiscCount, InstantMiscCount;
+            public readonly Spell[] Chants;
+
+            public TankChantTable(List<Spell> misc, List<Spell> instantMisc, int level, Func<Spell, bool> managed)
+            {
+                Level = level;
+                Misc = misc;
+                InstantMisc = instantMisc;
+                MiscCount = misc?.Count ?? 0;
+                InstantMiscCount = instantMisc?.Count ?? 0;
+                Chants = BestRankPerType((misc ?? []).Concat(instantMisc ?? []), level, managed);
+            }
+
+            public bool Matches(List<Spell> misc, List<Spell> instantMisc, int level) =>
+                level == Level && ReferenceEquals(misc, Misc) && ReferenceEquals(instantMisc, InstantMisc) &&
+                (misc?.Count ?? 0) == MiscCount && (instantMisc?.Count ?? 0) == InstantMiscCount;
+        }
+
+        /// <summary>Pure: of the managed spells at or under the level, the highest rank of each spell type (first seen order).</summary>
+        public static Spell[] BestRankPerType(IEnumerable<Spell> spells, int level, Func<Spell, bool> managed) =>
+            spells.Where(spell => spell?.Level <= level && managed(spell))
+                .GroupBy(spell => spell.SpellType)
+                .Select(group => group.OrderByDescending(spell => spell.Level).First()).ToArray();
+
+        private List<Spell> TankChants(GameBot bot)
+        {
+            TankChantTable table = bot.TankChants;
+            if (table == null || !table.Matches(bot.MiscSpells, bot.InstantMiscSpells, bot.Level))
+                bot.TankChants = table = new TankChantTable(bot.MiscSpells, bot.InstantMiscSpells, bot.Level,
+                    spell => BotSongTwistPolicy.IsManagedSong(bot, spell));
+            return new List<Spell>(table.Chants);   // the Warden drops its speed chant from its copy
+        }
+
         private void TryMaintainTankChant()
         {
             GameBot bot = BotBody;
@@ -3135,10 +3176,7 @@ namespace DOL.AI.Brain
                     draining.End();
                 return;
             }
-            List<Spell> chants = (bot.MiscSpells ?? []).Concat(bot.InstantMiscSpells ?? [])
-                .Where(spell => spell?.Level <= bot.Level && BotSongTwistPolicy.IsManagedSong(bot, spell))
-                .GroupBy(spell => spell.SpellType)
-                .Select(group => group.OrderByDescending(spell => spell.Level).First()).ToList();
+            List<Spell> chants = TankChants(bot);
             if (chants.Count == 0) return;
             Spell active = bot.effectListComponent.GetPulseEffects()
                 .FirstOrDefault(effect => !effect.IsEnding && !effect.IsEnded &&

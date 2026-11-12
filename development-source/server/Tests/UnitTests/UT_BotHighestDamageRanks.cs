@@ -64,6 +64,25 @@ namespace DOL.UnitTests
         }
 
         [Test]
+        public void ATankKeepsTheBestRankOfEachChantAtItsLevel()
+        {
+            Spell heal1 = Make("HealOverTime", 5), heal2 = Make("HealOverTime", 15), heal3 = Make("HealOverTime", 40);
+            Spell damageAdd = Make("DamageAdd", 10), notAChant = Make("DirectDamage", 12);
+            var spells = new System.Collections.Generic.List<Spell> { heal1, damageAdd, heal2, heal3, notAChant };
+            Spell[] table = BotBrain.BestRankPerType(spells, 30, spell => spell.SpellType != eSpellType.DirectDamage);
+            Assert.That(table, Is.EqualTo(new[] { heal2, damageAdd }), "level 30: the level 15 heal chant, never the level 40 one");
+            var built = new BotBrain.TankChantTable(spells, null, 30, spell => spell.SpellType != eSpellType.DirectDamage);
+            Assert.Multiple(() =>
+            {
+                Assert.That(built.Chants, Is.EqualTo(table));
+                Assert.That(built.Matches(spells, null, 30), Is.True, "read again: no rebuild");
+                Assert.That(built.Matches(spells, null, 31), Is.False, "a level up rebuilds it");
+                spells.Add(Make("HealOverTime", 30));
+                Assert.That(built.Matches(spells, null, 30), Is.False, "a list changed in place rebuilds it");
+            });
+        }
+
+        [Test]
         public void ASecondLineAtAReasonableLevelStaysAndNonDamageIsUntouched()
         {
             Spell main = Make("DirectDamage", 50);
