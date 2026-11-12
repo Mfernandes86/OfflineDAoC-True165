@@ -714,7 +714,21 @@ namespace DOL.GS.Quests
                     if (drops == null) continue;
                     foreach (StepDrop drop in drops)
                     {
-                        if (!string.Equals(drop.Mob, mob.Name, StringComparison.OrdinalIgnoreCase) || !Util.Chance(drop.Chance)) continue;
+                        if (!string.Equals(drop.Mob, mob.Name, StringComparison.OrdinalIgnoreCase)) continue;
+                        // Quest audit 2026-11-11 (P07): on a kill step whose own item is this drop, another monster that
+                        // drops it counts like the step's target (Xaxnxi's Quest: arboreal remnants and foragers carry the
+                        // Bag of Eitn Ot Pyrk too). The step gives its item as it advances, with its own drop chance when
+                        // it has one; the target itself is left to DataQuest's kill handling.
+                        string stepItem = quest.CurrentStepItemTemplate ?? string.Empty;
+                        if (quest.StepType is DataQuest.eStepType.Kill or DataQuest.eStepType.KillFinish &&
+                            !QuestNames.Same(quest.TargetName, mob.Name) &&
+                            string.Equals(stepItem.Split(';')[0].Trim(), drop.Item, StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (stepItem.Contains(';') || Util.Chance(drop.Chance))
+                                quest.AdvanceByScript(mob);
+                            break;
+                        }
+                        if (!Util.Chance(drop.Chance)) continue;
                         DbItemTemplate template = GameServer.Database.FindObjectByKey<DbItemTemplate>(drop.Item);
                         if (template != null && player.Inventory.AddTemplate(GameInventoryItem.Create(template), 1, eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack))
                             player.Out.SendMessage($"You take the {template.Name} from {mob.GetName(0, false)}.", PacketHandler.eChatType.CT_Loot, PacketHandler.eChatLoc.CL_SystemWindow);
