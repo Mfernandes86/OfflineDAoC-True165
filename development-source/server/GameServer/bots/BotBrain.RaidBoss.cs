@@ -282,5 +282,48 @@ namespace DOL.AI.Brain
             }
             return best;
         }
+        private GameLiving _raidCall;
+        private long _raidCallUntil;
+
+        /// <summary>
+        /// sh-bosses L5 (Govannon's summoned sacrifice and demon, and any "kill first" add): the raid route calls a bot
+        /// onto a monster. Setting the bot's target was not enough: on its next think the party's kill target (the boss
+        /// the tank holds) took it straight back. A call taken here outranks the kill target until the monster dies, leaves
+        /// reach or <paramref name="holdMilliseconds"/> pass, then the bot goes back to its party's target. A tank holding
+        /// its target does not take the call. Returns whether the bot took it. For the route lane to call
+        /// (RealmRaidDungeonRoute.CallTarget).
+        /// </summary>
+        public bool TakeRaidCall(GameLiving target, long holdMilliseconds = RaidBossTraits.RaidCallHoldMilliseconds)
+        {
+            if (target?.IsAlive != true || !CanDefendAgainst(target) ||
+                !RaidBossTraits.TakesRaidCall(IsTankClass, Body.TargetObject is GameLiving held && held != target &&
+                    held.IsAlive && held.TargetObject == Body))
+                return false;
+            _raidCall = target;
+            _raidCallUntil = GameLoop.GameLoopTime + holdMilliseconds;
+            EnterOwnedPetCombatState(FSM);   // into the fight state without the exit that clears aggro
+            AddToAggroList(target, 1);
+            Body.TargetObject = target;
+            NextThinkTick = GameLoop.GameLoopTime;
+            return true;
+        }
+
+        /// <summary>The monster a raid call holds the bot on, or null (and the call is forgotten) once it no longer holds.</summary>
+        private GameLiving RaidCallTarget(GameLiving directAttacker)
+        {
+            GameLiving called = _raidCall;
+            if (called == null)
+                return null;
+            bool valid = called.IsAlive && CanDefendAgainst(called) && Body.IsWithinRadius(called, GROUP_DEFENSE_ASSIST_RADIUS);
+            if (RaidBossTraits.RaidCallHolds(valid, GameLoop.GameLoopTime, _raidCallUntil, Body.HealthPercent,
+                    directAttacker != null && directAttacker != called))
+            {
+                if (!AggroList.ContainsKey(called))
+                    AddToAggroList(called, 1);
+                return called;
+            }
+            _raidCall = null;
+            return null;
+        }
     }
 }

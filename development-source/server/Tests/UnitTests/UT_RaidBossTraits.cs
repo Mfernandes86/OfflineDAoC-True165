@@ -129,6 +129,23 @@ namespace DOL.UnitTests
         public void ABossThatTurnsUntargetableMidFightIsKeptByItsFighters(bool onList, bool boss, bool kept) =>
             Assert.That(RaidBossTraits.KeepsFoeThatTurnedUntargetable(onList, boss), Is.EqualTo(kept));
 
+        [TestCase(false, false, true)]
+        [TestCase(true, false, true)]    // an off-tank not holding anything goes
+        [TestCase(false, true, true)]    // a damage dealer the boss turned on still goes
+        [TestCase(true, true, false)]    // the tank holding the boss stays on it
+        public void ARaidCallTakesEveryoneButTheTankHoldingTheBoss(bool tank, bool holds, bool takes) =>
+            Assert.That(RaidBossTraits.TakesRaidCall(tank, holds), Is.EqualTo(takes));
+
+        [Test]
+        public void ARaidCallHoldsUntilTheAddDiesThenTheBotGoesBack()
+        {
+            Assert.That(RaidBossTraits.RaidCallHolds(true, 1_000, 31_000, 100, false), Is.True);
+            Assert.That(RaidBossTraits.RaidCallHolds(false, 1_000, 31_000, 100, false), Is.False);  // dead or out of reach
+            Assert.That(RaidBossTraits.RaidCallHolds(true, 31_000, 31_000, 100, false), Is.False);  // hold ran out
+            Assert.That(RaidBossTraits.RaidCallHolds(true, 1_000, 31_000, 40, true), Is.False);     // low and hit: fight back
+            Assert.That(RaidBossTraits.RaidCallHolds(true, 1_000, 31_000, 40, false), Is.True);
+        }
+
         private sealed class PlainBoss : IRaidBossTraits { }
     }
 }

@@ -4213,8 +4213,10 @@ namespace DOL.AI.Brain
             // previous pull and used to make archers/casters repeatedly switch
             // away from the fight their pet had already started.
             // A gamebot party's members follow its kill target (BotBrain.MainAssist); the tank sets it.
-            GameLiving assistTarget = protectionTarget == null ? MainAssistTarget(directAttacker) : null;
-            Body.TargetObject = protectionTarget ?? assistTarget ?? directAttacker ?? activePetTarget ?? CalculateNextAttackTarget();
+            // sh-bosses L5: a raid's call onto a "kill first" add outranks the party's kill target (BotBrain.RaidBoss)
+            GameLiving raidCall = protectionTarget == null ? RaidCallTarget(directAttacker) : null;
+            GameLiving assistTarget = protectionTarget == null && raidCall == null ? MainAssistTarget(directAttacker) : null;
+            Body.TargetObject = protectionTarget ?? raidCall ?? assistTarget ?? directAttacker ?? activePetTarget ?? CalculateNextAttackTarget();
             // M2: a tank peeling an add off a groupmate never moves the kill target onto that add (it may start one)
             OfferKillTarget(Body.TargetObject as GameLiving,
                 protectionTarget != null && Body.TargetObject == protectionTarget && protectionTarget.TargetObject != Body);

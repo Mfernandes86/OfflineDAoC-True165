@@ -153,5 +153,22 @@ namespace DOL.GS
             double reach = radius + margin;
             return ((int)Math.Round(cx + dx / length * reach), (int)Math.Round(cy + dy / length * reach));
         }
+        // ---- sh-bosses L5: a raid's call onto a "kill first" add
+
+        /// <summary>How long a raid call holds a bot on the called monster at most (it ends sooner when the monster dies).</summary>
+        public const long RaidCallHoldMilliseconds = 30_000;
+
+        /// <summary>
+        /// Pure: a bot takes a raid call unless it is a tank holding a boss (the boss would turn on the healers).
+        /// </summary>
+        public static bool TakesRaidCall(bool tankClass, bool holdsItsTarget) => !(tankClass && holdsItsTarget);
+
+        /// <summary>
+        /// Pure: a raid call still holds the bot on the called monster: the monster is alive and in reach, the hold has
+        /// not run out, and the bot is not under half health while being hit (then it fights back, as with the party's
+        /// kill target). When it ends the bot goes back to its party's kill target.
+        /// </summary>
+        public static bool RaidCallHolds(bool calledValid, long now, long until, int healthPercent, bool beingHit) =>
+            calledValid && now < until && !(healthPercent < 50 && beingHit);
     }
 }
