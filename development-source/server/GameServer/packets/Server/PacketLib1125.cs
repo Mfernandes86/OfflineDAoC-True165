@@ -31,6 +31,14 @@ namespace DOL.GS.PacketHandler
 			IsSluaghbinderOverview(classId, realm) ? "Sluaghbinder" : ((eCharacterClass)classId).ToString();
 
 		/// <summary>
+		/// The class a group window row names (GitHub #49). A player's class object knows its player and gives the
+		/// female title (Armswoman ...) itself; a gamebot's or companion's class object has no player, so the title
+		/// is chosen from the bot's own gender here, the same name a player of that class and gender shows.
+		/// </summary>
+		public static string GroupWindowClassName(string name, string femaleName, bool female) =>
+			female && !string.IsNullOrEmpty(femaleName) ? femaleName : name;
+
+		/// <summary>
 		/// Constructs a new PacketLib for Client Version 1.125
 		/// </summary>
 		/// <param name="client">the gameclient this lib is associated with</param>
@@ -423,7 +431,7 @@ namespace DOL.GS.PacketHandler
 						if (living == null) continue;
 						if (group.IsCompanionRaid && living.GroupIndex >= 8) continue;
 						pak.WritePascalString(living.Name);
-						pak.WritePascalString(living is GamePlayer gp ? gp.CharacterClass.Name : living is IGamePlayer igp ? igp.CharacterClass.Name : "NPC");
+						pak.WritePascalString(living is GamePlayer gp ? gp.CharacterClass.Name : living is IGamePlayer igp ? GroupWindowClassName(igp.CharacterClass.Name, igp.CharacterClass.FemaleName, living.Gender == eGender.Female) : "NPC");
 						pak.WriteShort((ushort)living.ObjectID); //or session id?
 						pak.WriteByte(living.Level);
 					}
