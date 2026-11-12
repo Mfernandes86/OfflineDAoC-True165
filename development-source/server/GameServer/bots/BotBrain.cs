@@ -4311,7 +4311,8 @@ namespace DOL.AI.Brain
                             (eCharacterClass)BotBody.CharacterClass.ID,
                             stance,
                             targetForcesMelee,
-                            hasRangedCombatWeapon);
+                            hasRangedCombatWeapon) &&
+                            (stance == eBotStance.Ranged || ArcherFightsWithBow());   // M7: the Weapon row / training
                         if (useRanged)
                         {
                             if (Body.ActiveWeaponSlot != eActiveWeaponSlot.Distance)
@@ -4786,6 +4787,37 @@ namespace DOL.AI.Brain
                 !BotBody.IsIncapacitated && !BotBody.IsOnStableMasterRoute &&
                 BotSongTwistPolicy.HasMobileSongCast(Body))
                 FollowFormation();
+        }
+
+        private bool _archerFightsWithBow = true;
+        private long _archerBowCheckedAt = long.MinValue;
+
+        /// <summary>
+        /// M7 / G6: whether this Scout, Hunter or Ranger fights with its bow - the companion's Weapon row, else by training
+        /// (archery line against the melee weapon's line). The training answer is worked out at most every 30 s.
+        /// </summary>
+        private bool ArcherFightsWithBow()
+        {
+            GameBot bot = BotBody;
+            if (bot?.CharacterClass == null ||
+                CompanionControls165.ArcheryLine((eCharacterClass)bot.CharacterClass.ID) is not string archeryLine)
+                return true;
+            int choice = CompanionOptions165.Choice(bot, "weapon");
+            if (choice != CompanionControls165.WeaponAutomatic)
+                return CompanionControls165.ArcherFightsWithBow(choice, 0, 0);
+            long now = GameLoop.GameLoopTime;
+            if (now - _archerBowCheckedAt < 30_000)
+                return _archerFightsWithBow;
+            _archerBowCheckedAt = now;
+            int melee = 0;
+            foreach (eInventorySlot slot in new[] { eInventorySlot.RightHandWeapon, eInventorySlot.TwoHandWeapon })
+                if (bot.Inventory?.GetItem(slot) is DbInventoryItem weapon)
+                    melee = Math.Max(melee, bot.TrainedWeaponSpec((eObjectType)weapon.Object_Type, weapon.SlotPosition));
+            // a Ranger's Celtic Dual is its melee line too (the no-bow dual-wield builds)
+            if (bot.CharacterClass.ID == (int)eCharacterClass.Ranger)
+                melee = Math.Max(melee, bot.GetBaseSpecLevel(Specs.Celtic_Dual));
+            _archerFightsWithBow = CompanionControls165.ArcherFightsWithBow(choice, bot.GetBaseSpecLevel(archeryLine), melee);
+            return _archerFightsWithBow;
         }
 
         private void TryCommandCompanionDruidPet(GameLiving target)

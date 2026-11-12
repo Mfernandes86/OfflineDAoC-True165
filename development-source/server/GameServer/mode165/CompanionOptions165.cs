@@ -35,7 +35,7 @@ namespace DOL.GS
             KindLifeTransfer = 16, KindAmnesia = 17, KindPerform = 18, KindSavePower = 26, KindPositioning = 27,
             KindDebuffLine = 28, KindSavePowerCaster = 29, KindAttackSpells = 30;
         /// <summary>Companion controls (veteran review M7 and the owner's twist option, 2026-11-11; CompanionControls165).</summary>
-        public const byte KindTwist = 40, KindStance = 41, KindCrowdControl = 42, KindPetJob = 43;
+        public const byte KindTwist = 40, KindStance = 41, KindCrowdControl = 42, KindPetJob = 43, KindWeapon = 44;
         /// <summary>The fourth Role choice of every healer's Role row (owner 2026-11-11; CompanionSpellOptions165).</summary>
         public const string MeleeHealChoice = "Melee and heal, no attack spells (melee interrupts casts)";
         public static readonly HashSet<string> Verbs = ["charm", "pet", "subpet", "song", "option"];
@@ -142,6 +142,10 @@ namespace DOL.GS
             // Spiritmaster's too)
             new(KindPetJob, "petjob", "Pet", ["Automatic", "Guard me (defend only)", "Take adds", "Attack my target"],
                 bot => CompanionControls165.PetRowClass((eCharacterClass)bot.CharacterClass.ID)),
+            // M7 / G6: Scouts, Hunters and Rangers - Automatic fights with the bow while archery is trained at least as high
+            // as the melee weapon, otherwise in melee (a spear Hunter, a no-bow Ranger) with the bow only to pull
+            new(KindWeapon, "weapon", "Weapon", ["Automatic (by training)", "Bow", "Melee (the bow only to pull)"],
+                bot => CompanionControls165.ArcheryLine((eCharacterClass)bot.CharacterClass.ID) != null),
         ];
 
         /// <summary>A generic AI option's stored key and choices (choice 0 Automatic), or null for an unknown kind.</summary>

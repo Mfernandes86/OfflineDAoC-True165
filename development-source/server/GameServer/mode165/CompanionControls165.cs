@@ -188,6 +188,33 @@ namespace DOL.GS
         public static bool PetTakesAdds(int job, bool automaticHoldsForAdds) =>
             job == PetTakeAdds || job == PetAutomatic && automaticHoldsForAdds;
 
+        // ---- Weapon row for archers (M7, G6)
+
+        /// <summary>The "Weapon" row for Scouts, Hunters and Rangers: 0 Automatic (by training), 1 bow, 2 melee.</summary>
+        public const int WeaponAutomatic = 0, WeaponBow = 1, WeaponMelee = 2;
+
+        /// <summary>
+        /// Pure (G6; period: about nine in ten Hunters fought with a spear, Scouts out of arrows meleed): does an archer
+        /// fight with its bow? Bow and Melee as chosen; Automatic by training - the bow while its archery line is trained
+        /// at least as high as its melee weapon's line, otherwise melee (the bow still pulls). An untrained archery line
+        /// (0) with no melee training either keeps the bow, as before.
+        /// </summary>
+        public static bool ArcherFightsWithBow(int choice, int archerySpec, int meleeSpec) => choice switch
+        {
+            WeaponBow => true,
+            WeaponMelee => false,
+            _ => archerySpec >= meleeSpec,
+        };
+
+        /// <summary>The archery line of a Scout (Longbows), Hunter (Composite Bow) or Ranger (Recurve Bow); null otherwise.</summary>
+        public static string ArcheryLine(eCharacterClass characterClass) => characterClass switch
+        {
+            eCharacterClass.Scout => Specs.Longbow,
+            eCharacterClass.Hunter => Specs.CompositeBow,
+            eCharacterClass.Ranger => Specs.RecurveBow,
+            _ => null,
+        };
+
         /// <summary>Whether this companion's add control runs now (its own choice, and no Main CC to leave it to).</summary>
         public static bool AddControlRuns(GameBot bot)
         {
