@@ -642,7 +642,7 @@ namespace DOL.GS.Keeps
 							guard.Inventory = ClothingMgr.Albion_Lord.CloneTemplate();
 						else if (guard is GuardMerchant)
 							guard.Inventory = ClothingMgr.Albion_Merchant.CloneTemplate();
-						else if (guard is GuardHealer)
+						else if (guard is GuardHealer || guard is GuardCorpseSummoner)   // a robed keep NPC: it had no outfit at all
 							guard.Inventory = ClothingMgr.Albion_Healer.CloneTemplate();
 						else if (guard is GuardArcher)
 						{
@@ -676,7 +676,7 @@ namespace DOL.GS.Keeps
 							guard.Inventory = ClothingMgr.Midgard_Lord.CloneTemplate();
 						else if (guard is GuardMerchant)
 							guard.Inventory = ClothingMgr.Midgard_Merchant.CloneTemplate();
-						else if (guard is GuardHealer)
+						else if (guard is GuardHealer || guard is GuardCorpseSummoner)   // a robed keep NPC: it had no outfit at all
 							guard.Inventory = ClothingMgr.Midgard_Healer.CloneTemplate();
 						else if (guard is GuardArcher)
 						{
@@ -710,7 +710,7 @@ namespace DOL.GS.Keeps
 							guard.Inventory = ClothingMgr.Hibernia_Lord.CloneTemplate();
 						else if (guard is GuardMerchant)
 							guard.Inventory = ClothingMgr.Hibernia_Merchant.CloneTemplate();
-						else if (guard is GuardHealer)
+						else if (guard is GuardHealer || guard is GuardCorpseSummoner)   // a robed keep NPC: it had no outfit at all
 							guard.Inventory = ClothingMgr.Hibernia_Healer.CloneTemplate();
 						else if (guard is GuardArcher)
 						{

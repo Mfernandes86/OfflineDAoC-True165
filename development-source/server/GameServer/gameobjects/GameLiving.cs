@@ -28,6 +28,7 @@ namespace DOL.GS
 	public abstract class GameLiving : GameObject, IPooledList<GameLiving>
 	{
 		private static readonly Logging.Logger log = Logging.LoggerManager.Create(MethodBase.GetCurrentMethod().DeclaringType);
+		private static readonly ConcurrentDictionary<(string Item, int Proc), byte> MissingProcsReported = new();
 		public static int IN_COMBAT_DURATION = 10000;
 
 		public ConcurrentDictionary<eSpellType, Spell> ActivePulseSpells { get; } = new();
@@ -794,13 +795,15 @@ namespace DOL.GS
                     procSpell = SkillBase.FindSpell(weapon.ProcSpellID, line);
                     procSpell1 = SkillBase.FindSpell(weapon.ProcSpellID1, line);
 
-                    if (procSpell == null && weapon.ProcSpellID != 0)
+                    // Reported once per item and proc: the inherited item table has templates whose proc spell does not
+                    // exist, and every swing of such a weapon wrote this line (221 an hour for one Goblin Rapier).
+                    if (procSpell == null && weapon.ProcSpellID != 0 && MissingProcsReported.TryAdd((weapon.Template.Id_nb, weapon.ProcSpellID), 0))
                     {
-                        log.ErrorFormat("- Proc ID {0} Not Found on item: {1} ", weapon.ProcSpellID, weapon.Template.Id_nb);
+                        log.ErrorFormat("- Proc ID {0} Not Found on item: {1} (reported once)", weapon.ProcSpellID, weapon.Template.Id_nb);
                     }
-                    if (procSpell1 == null && weapon.ProcSpellID1 != 0)
+                    if (procSpell1 == null && weapon.ProcSpellID1 != 0 && MissingProcsReported.TryAdd((weapon.Template.Id_nb, weapon.ProcSpellID1), 0))
                     {
-                        log.ErrorFormat("- Proc1 ID {0} Not Found on item: {1} ", weapon.ProcSpellID1, weapon.Template.Id_nb);
+                        log.ErrorFormat("- Proc1 ID {0} Not Found on item: {1} (reported once)", weapon.ProcSpellID1, weapon.Template.Id_nb);
                     }
                 }
             }
