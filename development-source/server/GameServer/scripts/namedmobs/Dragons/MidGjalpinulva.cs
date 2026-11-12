@@ -10,7 +10,7 @@ using DOL.GS.ServerProperties;
 
 namespace DOL.GS
 {
-	public class MidGjalpinulva : GameEpicBoss
+	public class MidGjalpinulva : GameEpicBoss, IRaidBossTraits
 	{
 		protected String[] m_deathAnnounce;
 		public MidGjalpinulva() : base() 
@@ -263,6 +263,9 @@ namespace DOL.GS
 		}
 
 		public override bool IsVisibleToPlayers => true;//this make dragon think all the time, no matter if player is around or not
+		// Raid-boss traits for the bots (bots\RaidBossTraits.cs): the lair circle of TakeDamage above.
+		public int RaidLairRadius => LairRadius;
+		public Point3D RaidLairCentre => SpawnPoint;
 	}
 }
 namespace DOL.AI.Brain

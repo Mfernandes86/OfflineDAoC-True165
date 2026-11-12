@@ -34,5 +34,30 @@ namespace DOL.UnitTests
         [Test]
         public void LegionStatesItsDamageRange() =>
             Assert.That(typeof(IRaidBossTraits).IsAssignableFrom(typeof(DOL.GS.Scripts.Legion)), Is.True);
+
+        [TestCase(true, true, RaidBossTraits.LairAction.Lead)]
+        [TestCase(true, false, RaidBossTraits.LairAction.Lead)]
+        [TestCase(false, true, RaidBossTraits.LairAction.Return)]
+        [TestCase(false, false, RaidBossTraits.LairAction.Hold)]
+        public void OutsideItsLairTheChasedBotLeadsTheOthersComeBackOrWait(bool chased, bool botOutside,
+            RaidBossTraits.LairAction expected) =>
+            Assert.That(RaidBossTraits.OutsideLairAction(chased, botOutside), Is.EqualTo(expected));
+
+        [Test]
+        public void ABotOutsideTheLairWalksBackJustInsideOnItsOwnSide()
+        {
+            (int x, int y) = RaidBossTraits.PointInsideCircle(1000, 1000, 1000 + 2400, 1000, 2000, RaidBossTraits.LairReturnMargin);
+            Assert.That((x, y), Is.EqualTo((1000 + 1700, 1000)));
+            (x, y) = RaidBossTraits.PointInsideCircle(0, 0, 0, -3000, 2000, 300);
+            Assert.That((x, y), Is.EqualTo((0, -1700)));
+            // already well inside: stays where it is
+            Assert.That(RaidBossTraits.PointInsideCircle(0, 0, 500, 500, 2000, 300), Is.EqualTo((500, 500)));
+        }
+
+        [TestCase(typeof(AlbGolestandt))]
+        [TestCase(typeof(MidGjalpinulva))]
+        [TestCase(typeof(HibCuuldurach))]
+        public void TheDragonsStateTheirLairCircle(System.Type dragon) =>
+            Assert.That(typeof(IRaidBossTraits).IsAssignableFrom(dragon), Is.True);
     }
 }

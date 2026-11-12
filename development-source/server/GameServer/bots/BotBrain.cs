@@ -4207,6 +4207,9 @@ namespace DOL.AI.Brain
             // A tethered boss outside its tether is immune: stop hitting it and lead it home (AutonomousTetherReset).
             if (Body.TargetObject is GameNPC tetheredBoss && AutonomousTetherReset.TryHandle(BotBody, tetheredBoss))
                 return;
+            // dragon-fight L1: ... and a boss outside the lair circle it takes damage in (BotBrain.RaidBoss)
+            if (Body.TargetObject is GameNPC lairBoss && TryHoldForBossOutsideLair(lairBoss))
+                return;
             // a shield tank concentrating on blocking (Engage) does not swing this turn
             if (MaintainEngage())
                 return;

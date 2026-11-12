@@ -42,5 +42,60 @@ namespace DOL.AI.Brain
             return traits != null && traits.RaidMaxDamageRange > 0 &&
                 RaidBossTraits.BeyondDamageRange(traits.RaidMaxDamageRange, Body.GetDistanceTo(target));
         }
+
+        private static long _nextLairLog;
+        private long _lairMoveAt;
+        private const long LairMoveReissueMilliseconds = 1_500;
+
+        /// <summary>
+        /// dragon-fight L1: a dragon takes no damage more than 2,000 from its lair, but the bots reacted only to its 2,500
+        /// tether (AutonomousTetherReset), so between the two the raid hit an immune dragon and its posts followed it out.
+        /// A boss with a lair circle (<see cref="IRaidBossTraits.RaidLairRadius"/>) that is outside it is treated as the
+        /// tether rule treats a boss outside its tether, at the lair's radius: the bot stops hitting it; the one it chases
+        /// walks home so it follows (as veterans led a dragon back); a bot standing outside the circle walks back inside;
+        /// the rest wait. No leash here: beyond the tether the tether rule still does that. True when the turn is used.
+        /// Cost: one distance check per think of a bot whose target has a lair circle; a walk order at most every 1.5 s.
+        /// </summary>
+        private bool TryHoldForBossOutsideLair(GameNPC boss)
+        {
+            GameBot bot = BotBody;
+            if (bot?.IsAutonomousWorldBot != true || bot.IsPlayerLedGroup || !boss.IsAlive)
+                return false;
+            IRaidBossTraits traits = RaidTraitsOf(boss);
+            if (traits == null || traits.RaidLairRadius <= 0 || traits.RaidLairCentre is not Point3D centre ||
+                boss.IsWithinRadius(centre, traits.RaidLairRadius))
+                return false;
+            if (bot.IsCasting && bot.castingComponent?.SpellHandler?.Spell?.IsHarmful == true)
+                bot.StopCurrentSpellcast();
+            bot.StopAttack();
+            if (bot.ControlledBrain?.Body?.TargetObject == boss)
+                bot.ControlledBrain.Disengage();
+            int radius = traits.RaidLairRadius;
+            RaidBossTraits.LairAction action = RaidBossTraits.OutsideLairAction(boss.TargetObject == bot,
+                !bot.IsWithinRadius(centre, radius));
+            long now = GameLoop.GameLoopTime;
+            if (action == RaidBossTraits.LairAction.Hold)
+                bot.StopFollowing();
+            else if (now - _lairMoveAt >= LairMoveReissueMilliseconds || !bot.IsMoving)
+            {
+                _lairMoveAt = now;
+                bot.StopFollowing();
+                if (action == RaidBossTraits.LairAction.Lead)
+                    bot.PathTo(new Point3D(centre.X, centre.Y, centre.Z), bot.MaxSpeed);
+                else
+                {
+                    (int x, int y) = RaidBossTraits.PointInsideCircle(centre.X, centre.Y, bot.X, bot.Y, radius,
+                        RaidBossTraits.LairReturnMargin);
+                    bot.PathTo(new Point3D(x, y, centre.Z), bot.MaxSpeed);
+                }
+            }
+            if (log.IsInfoEnabled && now >= _nextLairLog)
+            {
+                _nextLairLog = now + 10_000;
+                log.Info($"REALM_BOSS_OUTSIDE_LAIR boss=\"{boss.Name}\" region={boss.CurrentRegionID} bot={bot.Name} " +
+                         $"action={action} fromLair={(int)boss.GetDistanceTo(centre)} lair={radius}");
+            }
+            return true;
+        }
     }
 }
