@@ -52,10 +52,6 @@ namespace DOL.UnitTests
         }
 
         [Test]
-        public void TheSoloBailIsOffUnlessSwitchedOn() =>
-            Assert.That(BotGroupRetreat.SoloBailEnabled, Is.False, "92% of bail-outs ended in death in the 2026-11-12 run");
-
-        [Test]
         public void ASoloBotBailsOnlyWhenLosingBadlyWithNothingLeft() => Assert.Multiple(() =>
         {
             Assert.That(BotGroupRetreat.SoloShouldBail(25, 70, 1, false, false), Is.True);

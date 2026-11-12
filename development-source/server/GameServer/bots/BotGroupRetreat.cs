@@ -2,7 +2,6 @@ using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using DOL.GS.ServerProperties;
 
 namespace DOL.GS
 {
@@ -140,17 +139,6 @@ namespace DOL.GS
             Vector2 point = from + Vector2.Normalize(away) * distance;
             return new(point.X, point.Y, fight.Z);
         }
-
-        /// <summary>
-        /// The solo bail-out is OFF by default (2026-11-12). The first two-hour run with it on: 3,526 bail-outs, and 92%
-        /// of the bots were dead within a minute, most within 15 s - a monster keeps pace with a bot that runs, so the
-        /// run only stopped the bot hitting back. Solo deaths to green and blue monsters, fights the bot used to win
-        /// from under half health, rose from about 1,225 to 1,990 an hour against the build before. A party's RUN call
-        /// is not touched by this (party deaths halved in the same run).
-        /// </summary>
-        [ServerProperty("bots", "bot_solo_bail",
-            "Does a solo gamebot run from a fight it is losing badly (under 30% health with its monster over half, or two attackers and under half health)? Off: it fights on, as before 0.7.", false)]
-        public static bool SoloBailEnabled = false;
 
         /// <summary>
         /// Pure (solo bail): a solo bot leaves a fight it is losing badly - under 30% health while its monster is over
