@@ -5,7 +5,16 @@ The newest version is first.
 Offline DAoC True 1.65 grew out of [Offline DAoC](https://github.com/shadowofze/OfflineDAoC) (0.3 to 0.37c, now on
 hold). Its changelog has the history of everything this version inherits.
 
-## Coming in 0.7
+## Coming in the next update
+
+Nothing yet.
+
+## 0.7 (2026-11-12)
+
+An update to v0.1, v0.2, v0.3, v0.4, v0.4.1, v0.5 and v0.6: the downloader updates an installed game of any of them in
+place (about 3.0 GB instead of the full 36 GB), and keeps your account, characters, companions, bots and
+settings. The first START SERVER after the update brings your world up to date. New players get the complete game,
+as before.
 
 ### Gamebots and companions
 

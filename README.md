@@ -17,7 +17,7 @@
 > **This is an AI-made project.** All of its code was written by AI tools (Codex, then Claude). The project owner
 > has no game development or coding experience: they directed the work and play-tested it. Expect bugs.
 >
-> **v0.6 is out**, with an in-place update for players of any earlier version (v0.1 to v0.5). Large parts of the game haven't been played through by a person.
+> **v0.7 is out**, with an in-place update for players of any earlier version (v0.1 to v0.6). Large parts of the game haven't been played through by a person.
 > Expect bugs, and keep a backup of your save. Bug reports are welcome in [Issues](https://github.com/shadowofze/OfflineDAoC-True165/issues).
 
 **Releases are not on a regular schedule.** Expect potentially long gaps between releases.
@@ -36,11 +36,11 @@ project owner, who has no game development or coding experience, directed and pl
 
 ## Download and play
 
-**[Download v0.6](https://github.com/shadowofze/OfflineDAoC-True165/releases/latest)**, no Git or AI tools needed.
-**Already playing v0.1 to v0.5?** The same downloader updates your game in place with a much smaller download
+**[Download v0.7](https://github.com/shadowofze/OfflineDAoC-True165/releases/latest)**, no Git or AI tools needed.
+**Already playing v0.1 to v0.6?** The same downloader updates your game in place with a much smaller download
 (about 3.0 GB). Your account, characters, companions and bots stay as they are.
 
-1. On the release page, under **Assets**, download **`Download-OfflineDAoC-True165-v0.6.zip`** (just the
+1. On the release page, under **Assets**, download **`Download-OfflineDAoC-True165-v0.7.zip`** (just the
    downloader, a few KB).
 2. Put it in a folder with a short path, such as `C:\Games\OfflineDAoC`. Right-click it, choose **Extract All…**,
    and open the extracted folder.
