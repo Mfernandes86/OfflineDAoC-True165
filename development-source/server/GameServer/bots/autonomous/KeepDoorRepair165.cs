@@ -13,8 +13,10 @@ namespace DOL.GS
     /// that changes hands already gets its doors back whole from the server, AbstractGameKeep.Reset.)
     /// Every 20 seconds - a player's repair time - each damaged door of a held keep that is not under attack may be
     /// repaired by up to two gamebot crafters of the holding realm standing near it, out of combat and still, by the
-    /// player rules unchanged: a crafter (woodworking skill), 5% of the door a repair, the door level's wood for one repair
-    /// (the /repair table) paid at the merchant price of rowan boards. At most 8 doors a pulse.
+    /// player rules unchanged (RepairCommandHandler): woodworking skill 1 or more (a weaponcrafter, fletcher or
+    /// siegecrafter - the crafts that carry woodworking), the player's success roll skill / ((door level + 1) * 50), 5% of
+    /// the door a successful repair, the door level's wood for one repair (the /repair table) paid at the merchant price
+    /// of rowan boards only on success (a player loses no wood on a failed repair). At most 8 doors a pulse.
     /// Cost: a walk over the keeps every 20 s and a radius query only at a damaged door.
     /// </summary>
     public static class KeepDoorRepair165
@@ -31,6 +33,9 @@ namespace DOL.GS
         /// <summary>The coin for one repair of a door of this level: its wood units at this price per unit.</summary>
         public static long RepairCost(int doorLevel, long woodUnitCopper) =>
             (long)RepairCommandHandler.GetNeededWoodForOneTick(doorLevel) * Math.Max(1, woodUnitCopper);
+
+        /// <summary>A player needs woodworking skill 1 or more to repair (RepairCommandHandler.PreFireChecks).</summary>
+        public static bool CanRepair(int woodworkingSkill) => woodworkingSkill >= 1;
 
         /// <summary>Whether a door is worth a repair now: below full, part of a held keep that is not under attack.</summary>
         public static bool NeedsRepair(int healthPercent, eRealm keepRealm, bool keepInCombat, bool portalKeep) =>
@@ -88,14 +93,20 @@ namespace DOL.GS
             foreach (GameBot bot in door.GetNPCsInRadius(RepairerRadius).OfType<GameBot>()
                          .Where(b => b.Realm == keep.Realm && b.IsAlive && b.IsAutonomousWorldBot && !b.IsTemporaryGroupHelper &&
                                      !HiredCompanions165.IsHired(b) && !b.InCombat && !b.IsMoving && !b.IsCasting &&
-                                     CrafterBots165.CraftOf(b.PersistentRecord) != eCraftingSkill.NoCrafting))
+                                     CanRepair(ItemWear165.RepairSkill(b, eCraftingSkill.WoodWorking))))
             {
                 if (door.HealthPercent >= 100 || repaired >= RepairersPerDoor)
                     break;
+                // the repair takes the crafter's time whether or not it works, as a player's 20-second /repair does
+                repaired++;
+                if (!Util.Chance(RepairCommandHandler.RepairChance(ItemWear165.RepairSkill(bot, eCraftingSkill.WoodWorking), door.Level)))
+                {
+                    FeatureCounters165.Add("bot_door_repair_failed");
+                    continue;
+                }
                 if (!AutonomousBotEconomy.TrySpend(bot.DatabaseID, cost, BotMoneyLedger165.Kind.Siege))
                     continue;
                 door.Repair((int)(door.MaxHealth * RepairShare));
-                repaired++;
                 FeatureCounters165.Add("bot_door_repair");
             }
         }

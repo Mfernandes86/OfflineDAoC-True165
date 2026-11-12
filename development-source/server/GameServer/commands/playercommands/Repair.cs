@@ -281,11 +281,15 @@ namespace DOL.GS.Commands
 			if (player.Client.Account.PrivLevel > (int)ePrivLevel.Player)
 				return 100;
 
-			double skill = player.GetCraftingSkillValue(eCraftingSkill.WoodWorking);
-			int skillneeded = (obj.Level + 1) * 50;
-			double chance = skill / skillneeded;
-			return chance;
+			return RepairChance(player.GetCraftingSkillValue(eCraftingSkill.WoodWorking), obj.Level);
 		}
+
+		/// <summary>
+		/// The chance (0..1, for Util.Chance(double)) that one repair of a keep object of this level succeeds with this
+		/// woodworking skill: skill / ((level + 1) * 50). Also used by the gamebot door repair (KeepDoorRepair165).
+		/// </summary>
+		public static double RepairChance(double woodworkingSkill, int objectLevel) =>
+			woodworkingSkill / ((objectLevel + 1) * 50);
 
 		/// <summary>Wood units for one repair tick of a keep object of this level (also used by KeepDoorRepair165).</summary>
 		public static int GetNeededWoodForOneTick(int level)

@@ -17,6 +17,17 @@ public class UT_KeepDoorRepair165
     }
 
     [Test]
+    public void OnlyWoodworkersRepairAndTheyRollThePlayersChance() => Assert.Multiple(() =>
+    {
+        Assert.That(KeepDoorRepair165.CanRepair(0), Is.False, "an alchemist, spellcrafter, tailor or armourcrafter has no woodworking");
+        Assert.That(KeepDoorRepair165.CanRepair(1), Is.True);
+        // skill / ((door level + 1) * 50), the player's own roll
+        Assert.That(RepairCommandHandler.RepairChance(250, 9), Is.EqualTo(0.5));
+        Assert.That(RepairCommandHandler.RepairChance(500, 9), Is.EqualTo(1.0));
+        Assert.That(RepairCommandHandler.RepairChance(100, 1), Is.EqualTo(1.0));
+    });
+
+    [Test]
     public void OnlyAHeldQuietKeepsDamagedDoorIsRepaired()
     {
         Assert.That(KeepDoorRepair165.NeedsRepair(60, eRealm.Albion, false, false), Is.True);
