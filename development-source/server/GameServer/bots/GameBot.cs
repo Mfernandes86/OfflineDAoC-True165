@@ -3637,8 +3637,9 @@ namespace DOL.GS
             // is on a teleport (GamePlayer.MoveTo). Across regions pets are released as for players. Gamebots unchanged.
             GameNPC carriedPet = IsPlayerCompanion && regionID == CurrentRegionID && ControlledBrain?.Body is { IsAlive: true } body &&
                 body.ObjectState == eObjectState.Active ? body : null;
+            ushort objectIdBefore = ObjectID;
             if (carriedPet == null)
-                return MoveToCore(regionID, x, y, z, heading);
+                return AfterGroupMemberMove(MoveToCore(regionID, x, y, z, heading), objectIdBefore);
             _keepPetThroughMove++;
             bool result;
             try { result = MoveToCore(regionID, x, y, z, heading); }
@@ -3649,8 +3650,21 @@ namespace DOL.GS
                 Point2D behind = GetPointFromHeading(Heading, 64);
                 carriedPet.MoveInRegion(CurrentRegionID, behind.X, behind.Y, Z + 10, (ushort)((Heading + 2048) % 4096), false);
             }
-            return result;
+            return AfterGroupMemberMove(result, objectIdBefore);
         }
+
+        /// <summary>A move takes the bot out of the world and back in under a new object id. The group window lists each
+        /// member by that id and was not sent again, so the player's client kept the old one: a click on the companion's
+        /// row, the group-target keys and /disband on it found nobody after a ride or a recall (GitHub #49).</summary>
+        private bool AfterGroupMemberMove(bool moved, ushort objectIdBefore)
+        {
+            if (GroupWindowNeedsResendAfterMove(moved, objectIdBefore, ObjectID, Group != null))
+                Group?.UpdateGroupWindow();
+            return moved;
+        }
+
+        public static bool GroupWindowNeedsResendAfterMove(bool moved, ushort objectIdBefore, ushort objectIdAfter, bool grouped) =>
+            moved && grouped && objectIdBefore != objectIdAfter;
 
         private int _keepPetThroughMove;
 
