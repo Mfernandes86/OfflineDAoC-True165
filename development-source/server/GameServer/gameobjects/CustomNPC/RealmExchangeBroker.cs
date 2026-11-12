@@ -458,6 +458,8 @@ public sealed partial class RealmExchangeBroker : GameNPC, IGameInventoryObject
         }
 
         int price = sellPrice > int.MaxValue ? int.MaxValue : (int)sellPrice;
+        // its hours are read before the index update (which reads memory only, under its write lock)
+        RealmExchangeExpiry.PlayerListingHours(item);
         // its listing time runs from now (RealmExchangeExpiry: 12/24/48 h, 48 unless chosen); unpriced, it never runs out.
         // Both change inside the update so the exchange index reads the new expiry.
         MarketCache.UpdateItem(item, static (listedItem, value) =>

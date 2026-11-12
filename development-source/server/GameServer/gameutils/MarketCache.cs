@@ -30,6 +30,8 @@ namespace DOL.GS
                     .Or(DB.Column("OwnerLot").IsEqualTo(RealmExchangeBroker.MidgardOwnerLot))
                     .Or(DB.Column("OwnerLot").IsEqualTo(RealmExchangeBroker.HiberniaOwnerLot));
                 IList<DbInventoryItem> list = DOLDB<DbInventoryItem>.SelectObjects(filterBySlot);
+                // player listing hours into memory first: the index reads expiries without the database
+                RealmExchangeExpiry.WarmHours(GameServer.Database);
 
                 foreach (DbInventoryItem item in list)
                     _searchEngine.AddItem(GameInventoryItem.Create(item));

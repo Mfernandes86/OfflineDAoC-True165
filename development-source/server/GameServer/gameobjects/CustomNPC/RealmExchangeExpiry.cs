@@ -30,12 +30,46 @@ public static class RealmExchangeExpiry
 
     private static bool IsBotListing(DbInventoryItem item) => AutonomousBotEconomy.TryParseOwnerId(item.OwnerID, out _);
 
+    private static volatile bool _hoursLoaded;
+
+    /// <summary>
+    /// Startup, before the market cache is built: every listing-hours row into memory, so the exchange index never reads
+    /// the database under its write lock (review 2026-11-11: a player pricing a fresh chest item did a SQLite read while
+    /// every bot's probe waited on the index). Once loaded, an item with no row has the default hours.
+    /// </summary>
+    public static int WarmHours(IObjectDatabase database)
+    {
+        if (database == null)
+            return 0;
+        try
+        {
+            int loaded = 0;
+            foreach (OfflineTrue165ListingHours row in database.SelectAllObjects<OfflineTrue165ListingHours>() ?? [])
+                if (!string.IsNullOrEmpty(row?.InventoryId) && PlayerHours.Contains(row.Hours))
+                {
+                    HoursCache[row.InventoryId] = row.Hours;
+                    loaded++;
+                }
+            _hoursLoaded = true;
+            return loaded;
+        }
+        catch (Exception error)
+        {
+            Note("Realm Exchange listing hours not preloaded; they are read one by one.", error);
+            return 0;
+        }
+    }
+
+    /// <summary>A player listing's hours from memory only (the default when none is known): for the exchange index.</summary>
+    public static int CachedPlayerListingHours(DbInventoryItem item) =>
+        item?.ObjectId != null && HoursCache.TryGetValue(item.ObjectId, out int hours) ? hours : DefaultPlayerHours;
+
     /// <summary>A player listing's time: the hours chosen for it, 48 if none was chosen.</summary>
     public static int PlayerListingHours(DbInventoryItem item)
     {
         if (item?.ObjectId == null) return DefaultPlayerHours;
         if (HoursCache.TryGetValue(item.ObjectId, out int hours)) return hours;
-        if (GameServer.Database == null) return DefaultPlayerHours;
+        if (_hoursLoaded || GameServer.Database == null) return DefaultPlayerHours;
         hours = GameServer.Database.FindObjectByKey<OfflineTrue165ListingHours>(item.ObjectId)?.Hours ?? DefaultPlayerHours;
         HoursCache[item.ObjectId] = hours;
         return hours;
@@ -62,14 +96,20 @@ public static class RealmExchangeExpiry
     /// When a listing ends: a bot's 24 h after it was listed; a player's 12, 24 or 48 h after it was priced (owner
     /// 2026-11-05: player listings never expired). A listing priced before then, or stored at no price, has none.
     /// </summary>
-    public static DateTime? ExpiresUtc(DbInventoryItem item)
+    public static DateTime? ExpiresUtc(DbInventoryItem item) => ExpiresUtc(item, false);
+
+    /// <summary>As <see cref="ExpiresUtc(DbInventoryItem)"/>; <paramref name="cachedOnly"/> never reads the database
+    /// (the exchange index calls it under its write lock).</summary>
+    public static DateTime? ExpiresUtc(DbInventoryItem item, bool cachedOnly)
     {
         if (item == null || !RealmExchangeBroker.IsExchangeOwnerLot(item.OwnerLot) ||
             !DateTime.TryParse(item.RealmExchangeListedUtc, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out DateTime listed))
             return null;
         if (IsBotListing(item))
             return listed.ToUniversalTime().Add(BotListingLifetime);
-        return item.SellPrice > 0 ? listed.ToUniversalTime().AddHours(PlayerListingHours(item)) : null;
+        if (item.SellPrice <= 0)
+            return null;
+        return listed.ToUniversalTime().AddHours(cachedOnly ? CachedPlayerListingHours(item) : PlayerListingHours(item));
     }
 
     public static bool IsExpired(DbInventoryItem item, DateTime utcNow) => ExpiresUtc(item) is DateTime expiry && expiry <= utcNow;
@@ -150,6 +190,9 @@ public static class RealmExchangeExpiry
             if (hours != null)
             {
                 DataObject[] orphans = hours.Where(row => row != null && !listedIds.Contains(row.InventoryId)).Cast<DataObject>().ToArray();
+                foreach (OfflineTrue165ListingHours orphan in orphans.Cast<OfflineTrue165ListingHours>())
+                    if (orphan.InventoryId != null)
+                        HoursCache.TryRemove(orphan.InventoryId, out _);
                 if (orphans.Length > 0)
                 {
                     lock (AutonomousBotStatusPersistence.DatabaseWriteLock)
@@ -214,7 +257,7 @@ public static class RealmExchangeExpiry
         {
             var found = new List<DbInventoryItem>();
             foreach (DbInventoryItem item in book.AllItems())
-                if (book.Find(item) is { } listing && listing.ExpiresTicks != (ExpiresUtc(item)?.Ticks ?? 0))
+                if (book.Find(item) is { } listing && listing.ExpiresTicks != (ExpiresUtc(item, true)?.Ticks ?? 0))
                     found.Add(item);
             return found;
         });

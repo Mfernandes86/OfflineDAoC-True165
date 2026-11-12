@@ -157,7 +157,8 @@ namespace DOL.GS
                 listing.ListedTicks = listed.ToUniversalTime().Ticks;
             try
             {
-                listing.ExpiresTicks = RealmExchangeExpiry.ExpiresUtc(item)?.Ticks ?? 0;
+                // memory only: this runs under the engine's write lock, never a database read here
+                listing.ExpiresTicks = RealmExchangeExpiry.ExpiresUtc(item, true)?.Ticks ?? 0;
             }
             catch (Exception)
             {
