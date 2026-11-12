@@ -7,7 +7,6 @@ namespace DOL.AI.Brain
 {
     public partial class BotBrain
     {
-        private const long BardPveMezRetryMilliseconds = 15_000;
         private readonly Dictionary<GameLiving, long> _bardPveMezRetryUntil = new();
         private long _nextBardPveMezLook;
 
@@ -126,7 +125,8 @@ namespace DOL.AI.Brain
                             .OrderBy(pair => pair.Value).First().Key;
                         _bardPveMezRetryUntil.Remove(oldest);
                     }
-                    _bardPveMezRetryUntil[add] = now + BardPveMezRetryMilliseconds;
+                    // Q20: a resisted mez is tried again once the cast has landed, not 15 s later
+                    _bardPveMezRetryUntil[add] = now + AddControlRetryMilliseconds(spell.CastTime);
                     GameObject previous = bard.TargetObject;
                     bard.TargetObject = add;
                     try
