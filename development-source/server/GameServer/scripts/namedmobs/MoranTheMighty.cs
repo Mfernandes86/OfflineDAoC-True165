@@ -113,6 +113,7 @@ namespace DOL.AI.Brain
                     {
                         foreach (GameNPC npc in Body.GetNPCsInRadius(1500))
                         {
+                            if (!EpicEncounterMechanics.IsOwnKind(Body, npc)) continue;
                             foreach (GamePlayer player in Body.GetPlayersInRadius(2250))
                             {
                                 npc.StartAttack(player);
@@ -177,7 +178,8 @@ namespace DOL.AI.Brain
                             portPlayer[ranPlayer].MoveTo(1, 401943, 753091, 222, 3499);
                             foreach (GameNPC npc in portPlayer[ranPlayer].GetNPCsInRadius(2000))
                             {
-                                npc.StartAttack(portPlayer[ranPlayer]);
+                                if (EpicEncounterMechanics.IsOwnKind(Body, npc))
+                                    npc.StartAttack(portPlayer[ranPlayer]);
                             }
                             portPlayer.Clear();
                             break;
@@ -187,7 +189,8 @@ namespace DOL.AI.Brain
                             portPlayer[ranPlayer].MoveTo(1, 406787, 749150, 213, 3926);
                             foreach (GameNPC npc in portPlayer[ranPlayer].GetNPCsInRadius(2000))
                             {
-                                npc.StartAttack(portPlayer[ranPlayer]);
+                                if (EpicEncounterMechanics.IsOwnKind(Body, npc))
+                                    npc.StartAttack(portPlayer[ranPlayer]);
                             }
                             portPlayer.Clear();
                             break;
@@ -197,7 +200,8 @@ namespace DOL.AI.Brain
                             portPlayer[ranPlayer].MoveTo(1, 401061, 755882, 469, 3050);
                             foreach (GameNPC npc in portPlayer[ranPlayer].GetNPCsInRadius(2000))
                             {
-                                npc.StartAttack(portPlayer[ranPlayer]);
+                                if (EpicEncounterMechanics.IsOwnKind(Body, npc))
+                                    npc.StartAttack(portPlayer[ranPlayer]);
                             }
                             portPlayer.Clear();
                             break;
