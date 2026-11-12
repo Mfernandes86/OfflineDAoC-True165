@@ -379,70 +379,92 @@ public static partial class AutonomousBotGroupCoordinator
     public static bool PlanMeetupNearCamp(GameBot leader, SharedCamp camp)
     {
         if (leader?.Group == null) return false;
+        // veteran review M4: the route-time estimates (one per member per candidate town, each a zone-crossing walk)
+        // and the town navmesh checks run outside the coordinator's global lock, so they no longer hold up every other
+        // grouped bot's pulse. Phase 1 checks and snapshots under the lock, phase 2 estimates without it, phase 3
+        // commits under the lock only if the session is still the one that was planned (otherwise it is retried on
+        // the leader's next 30 s planning check).
+        Session session;
+        GameBot[] members;
+        MeetupSnapshot snapshot;
         lock (Sync)
         {
-            if (!TryGetSession(leader.Group, out Session session) || session.MeetupPlanned ||
-                session.ObjectiveKind != eAutonomousObjectiveKind.GroupPve || session.Phase != "Leader staging" ||
-                AutonomousRealmRaid.GetView(session.Group) != null)
+            if (!TryGetMeetupSession(leader, out session, out members))
                 return false;
-            GameBot[] members = BotMembers(leader.Group);
-            if (members.Length < 2 || ChooseLeader(session, members) != leader) return false;
+            snapshot = SnapshotOf(session, members);
+        }
+
+        // owner 2026-11-10: move only to a town every member can reach in time (AutonomousMeetupPlanPolicy),
+        // and size the wait from the farthest member (15-20 min).
+        bool reachCheck = AutonomousMeetupPlanPolicy.ReachableTownEnabled;
+        bool sizeWindow = AutonomousMeetupPlanPolicy.TravelWindowEnabled;
+        var meetupCrossings = new Dictionary<(eRealm Realm, ushort From, ushort To), DbZonePoint>();
+        double[] toCurrent = reachCheck || sizeWindow
+            ? MeetupTravelMinutes(members, snapshot.Region, snapshot.Rendezvous, meetupCrossings) : Array.Empty<double>();
+        double farthestCurrent = AutonomousMeetupPlanPolicy.Farthest(toCurrent);
+        double farthestNew = -1, firstRefusedFarthest = -1;
+        int townsRefused = 0;
+        bool haveTown = false;
+        Vector3 townPoint = default;
+        string townName = string.Empty;
+        if (camp != null && WorldMgr.GetRegion(camp.RegionId) is Region campRegion)
+        {
+            Vector3 campPoint = new(camp.X, camp.Y, camp.Z);
+            float current = snapshot.Region == camp.RegionId ? Vector3.Distance(snapshot.Rendezvous, campPoint) : float.MaxValue;
+            Func<Vector3, bool> reachable = !reachCheck ? null : town =>
+            {
+                double[] toNew = MeetupTravelMinutes(members, camp.RegionId, town, meetupCrossings);
+                if (AutonomousMeetupPlanPolicy.ShouldMoveRendezvous(toNew, toCurrent))
+                {
+                    farthestNew = AutonomousMeetupPlanPolicy.Farthest(toNew);
+                    return true;
+                }
+                if (townsRefused++ == 0)
+                    firstRefusedFarthest = AutonomousMeetupPlanPolicy.Farthest(toNew);
+                return false;
+            };
+            if (TryChooseTownNear(leader, members, campRegion, campPoint, out Vector3 point, out string name, reachable) &&
+                Vector3.Distance(point, campPoint) + 5_000 < current)
+            {
+                haveTown = true;
+                townPoint = point;
+                townName = name;
+                if (sizeWindow && farthestNew < 0)
+                    farthestNew = AutonomousMeetupPlanPolicy.Farthest(
+                        MeetupTravelMinutes(members, camp.RegionId, point, meetupCrossings));
+            }
+        }
+
+        lock (Sync)
+        {
+            if (!TryGetMeetupSession(leader, out Session now, out GameBot[] nowMembers) || !ReferenceEquals(now, session) ||
+                !StillMatches(snapshot, now, nowMembers))
+                return false;
             session.MeetupPlanned = true;
             session.PlannedCamp = camp;
             string where = session.RendezvousName;
-            // owner 2026-11-10: move only to a town every member can reach in time (AutonomousMeetupPlanPolicy),
-            // and size the wait from the farthest member (15-20 min).
-            bool reachCheck = AutonomousMeetupPlanPolicy.ReachableTownEnabled;
-            bool sizeWindow = AutonomousMeetupPlanPolicy.TravelWindowEnabled;
-            var meetupCrossings = new Dictionary<(eRealm Realm, ushort From, ushort To), DbZonePoint>();
-            double[] toCurrent = reachCheck || sizeWindow
-                ? MeetupTravelMinutes(members, session.RendezvousRegion, session.Rendezvous, meetupCrossings) : Array.Empty<double>();
-            double farthestCurrent = AutonomousMeetupPlanPolicy.Farthest(toCurrent);
-            double farthestNew = -1, firstRefusedFarthest = -1;
-            int townsRefused = 0;
             bool moved = false;
-            if (camp != null && WorldMgr.GetRegion(camp.RegionId) is Region campRegion)
+            if (haveTown)
             {
-                Vector3 campPoint = new(camp.X, camp.Y, camp.Z);
-                float current = session.RendezvousRegion == camp.RegionId ? Vector3.Distance(session.Rendezvous, campPoint) : float.MaxValue;
-                Func<Vector3, bool> reachable = !reachCheck ? null : town =>
+                Vector3 previous = session.Rendezvous;
+                string previousName = session.RendezvousName;
+                ushort previousRegion = session.RendezvousRegion;
+                session.Rendezvous = townPoint;
+                session.RendezvousName = townName;
+                session.RendezvousRegion = camp.RegionId;
+                if (TryBuildRendezvousSlots(session, members))
                 {
-                    double[] toNew = MeetupTravelMinutes(members, camp.RegionId, town, meetupCrossings);
-                    if (AutonomousMeetupPlanPolicy.ShouldMoveRendezvous(toNew, toCurrent))
-                    {
-                        farthestNew = AutonomousMeetupPlanPolicy.Farthest(toNew);
-                        return true;
-                    }
-                    if (townsRefused++ == 0)
-                        firstRefusedFarthest = AutonomousMeetupPlanPolicy.Farthest(toNew);
-                    return false;
-                };
-                if (TryChooseTownNear(leader, members, campRegion, campPoint, out Vector3 point, out string name, reachable) &&
-                    Vector3.Distance(point, campPoint) + 5_000 < current)
+                    where = townName;
+                    moved = true;
+                }
+                else
                 {
-                    Vector3 previous = session.Rendezvous;
-                    string previousName = session.RendezvousName;
-                    ushort previousRegion = session.RendezvousRegion;
-                    session.Rendezvous = point;
-                    session.RendezvousName = name;
-                    session.RendezvousRegion = camp.RegionId;
-                    if (TryBuildRendezvousSlots(session, members))
-                    {
-                        where = name;
-                        moved = true;
-                    }
-                    else
-                    {
-                        session.Rendezvous = previous;
-                        session.RendezvousName = previousName;
-                        session.RendezvousRegion = previousRegion;
-                        TryBuildRendezvousSlots(session, members);
-                    }
+                    session.Rendezvous = previous;
+                    session.RendezvousName = previousName;
+                    session.RendezvousRegion = previousRegion;
+                    TryBuildRendezvousSlots(session, members);
                 }
             }
-            if (moved && sizeWindow && farthestNew < 0)
-                farthestNew = AutonomousMeetupPlanPolicy.Farthest(
-                    MeetupTravelMinutes(members, session.RendezvousRegion, session.Rendezvous, meetupCrossings));
             long windowMs = sizeWindow
                 ? AutonomousMeetupPlanPolicy.MeetupWindowMs(moved ? farthestNew : farthestCurrent)
                 : AutonomousRendezvousAttendance.TimeoutMilliseconds;
@@ -459,6 +481,36 @@ public static partial class AutonomousBotGroupCoordinator
             return true;
         }
     }
+
+    // Caller holds Sync. The party may plan its meetup: a GroupPve session still in leader staging, not yet planned,
+    // not a realm raid, with at least two members led by this leader.
+    private static bool TryGetMeetupSession(GameBot leader, out Session session, out GameBot[] members)
+    {
+        members = Array.Empty<GameBot>();
+        if (!TryGetSession(leader.Group, out session) || session.MeetupPlanned ||
+            session.ObjectiveKind != eAutonomousObjectiveKind.GroupPve || session.Phase != "Leader staging" ||
+            AutonomousRealmRaid.GetView(session.Group) != null)
+            return false;
+        members = BotMembers(leader.Group);
+        return members.Length >= 2 && ChooseLeader(session, members) == leader;
+    }
+
+    /// <summary>
+    /// Veteran review M4: what a meetup plan was worked out from (taken under the lock). The plan is committed only
+    /// when the session still has the same rendezvous, phase and members.
+    /// </summary>
+    public readonly record struct MeetupSnapshot(ushort Region, Vector3 Rendezvous, string Phase, long MemberKey)
+    {
+        /// <summary>Pure rule: the version check.</summary>
+        public bool Matches(ushort region, Vector3 rendezvous, string phase, long memberKey) =>
+            region == Region && rendezvous == Rendezvous && phase == Phase && memberKey == MemberKey;
+    }
+
+    private static MeetupSnapshot SnapshotOf(Session session, IReadOnlyList<GameBot> members) =>
+        new(session.RendezvousRegion, session.Rendezvous, session.Phase, PulseMemberKey(members));
+
+    private static bool StillMatches(MeetupSnapshot snapshot, Session session, IReadOnlyList<GameBot> members) =>
+        snapshot.Matches(session.RendezvousRegion, session.Rendezvous, session.Phase, PulseMemberKey(members));
 
     /// <summary>Per-member travel estimates (minutes) to a point; one crossings cache per target region.</summary>
     private static double[] MeetupTravelMinutes(GameBot[] members, ushort region, Vector3 point,
