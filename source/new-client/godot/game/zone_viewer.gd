@@ -372,6 +372,8 @@ func _place_arrival(loc: Dictionary, zone_id: int, start: Dictionary) -> void:
 
 
 func _ready_rest(loading: LoadingScreen) -> void:
+	if Server.active and Server.observer_flight and player:   # a GM in /fly arrives in the new region still flying
+		player.set_flying(true)                              # (GitHub #53)
 	Graphics.apply_viewport()                               # Options > VIDEO quality on the built world
 	Graphics.apply_scene(self)
 	hud = Label.new()

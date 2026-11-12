@@ -27,6 +27,7 @@ var allowed_realm := 0                   # the server's Realm reply: 0 any, else
 var selected := {}                       # the character being played
 var entry := {}                          # where the server put you: region, zone, pos (zone metres), face, oid ...
 var me_oid := 0                          # your object id in the region
+var observer_flight := false             # the server has this GM in /fly (kept across region changes)
 var playing := false                     # the zone is loaded and the server has you in the game
 var no_world := false                    # --no-world (tests only: the quest probe): in the game without loading any zone -
 										 # no zone viewer, the packets only (tests/quest_driver.gd reads them)
@@ -879,13 +880,20 @@ func _on_world_inner(kind: String, d: Dictionary) -> void:
 			on_spell_line(d)
 		"debug_mode":                                     # GM /fly: the old client flew you, invisible (model 666)
 			var v := viewer()
-			if v and v.player and int(d.get("fly", 0)) in [1, 2]:
-				v.player.set_flying(int(d.fly) == 1)
-				if int(d.fly) == 1:
-					PlayerData.message.emit("Flying: Space up, Ctrl down, Shift faster.", "system")
+			if int(d.get("fly", 0)) in [1, 2]:
+				# kept for the next region (GitHub #53): a region change builds a new game scene, whose player started
+				# on foot while the server still had the GM in /fly - the next /fly switched flight off and sent the
+				# GM back to where it began. The viewer takes it up when it is built (zone_viewer._ready_rest).
+				var was := observer_flight
+				observer_flight = int(d.fly) == 1
+				if v and v.player:
+					v.player.set_flying(observer_flight)
+					if observer_flight and not was:
+						PlayerData.message.emit("Flying: Space up, Ctrl down, Shift faster.", "system")
 			return
 		"quit":
 			playing = false
+			observer_flight = false                          # (the server forgets /fly when the character leaves)
 			if int(d.mode) == 1:
 				get_tree().quit()
 			elif _exit_after_quit:                        # (the ESC menu's QUIT / the window closed: out once saved)
