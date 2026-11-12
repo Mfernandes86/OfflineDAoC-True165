@@ -1612,9 +1612,11 @@ namespace DOL.GS.Quests
 					// A delivery step's item is handed over when the step begins and taken by its target; giving it again on
 					// completion (as the header documents, "except Delivery") handed players a second copy (classic quests,
 					// owner test 2026-10-07).
+					bool givesThisStepsItem = false;
 					if (!string.IsNullOrEmpty(StepItemTemplate) && StepType is not (eStepType.Deliver or eStepType.DeliverFinish))
 					{
 						stepTemplates.Add(StepItemTemplate);
+						givesThisStepsItem = true;
 					}
 
                     // If this is a kill or search step with a drop then check for chance to drop an item
@@ -1664,8 +1666,9 @@ namespace DOL.GS.Quests
 						{
 							if (QuestPlayer.Inventory.IsSlotsFree(stepTemplates.Count, eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack))
 							{
-								foreach (string template in stepTemplates)
+								for (int index = 0; index < stepTemplates.Count; index++)
 								{
+									string template = stepTemplates[index];
 									DbItemTemplate item = GameServer.Database.FindObjectByKey<DbItemTemplate>(template);
 									if (item == null)
 									{
@@ -1673,6 +1676,12 @@ namespace DOL.GS.Quests
 										QuestPlayer.Out.SendMessage(errorMsg, eChatType.CT_Staff, eChatLoc.CL_SystemWindow);
 										throw new Exception(errorMsg);
 									}
+
+									// The item a step itself gives (a kill's drop) can be made per class like the final rewards
+									// (ClassRewards; quest audit 2026-11-11, P05: Prelude to War's Frozen helm from Saffron). The
+									// next step's delivery item keeps its own id: its target takes exactly that one.
+									if (index == 0 && givesThisStepsItem)
+										item = ClassicQuests.RewardFor(m_questPlayer, item);
 
 									if (obj != null && obj is GameLiving)
 									{
