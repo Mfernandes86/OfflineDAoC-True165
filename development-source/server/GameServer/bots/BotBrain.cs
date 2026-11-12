@@ -1154,9 +1154,10 @@ namespace DOL.AI.Brain
 
         /// <summary>
         /// /passive (owner 2026-11-11: "for retreating or walking through areas without stopping to fight anything"): a
-        /// player's companion stops attacking and casting (heals too), drops every target and any ordered pull, puts its
-        /// pets (a Bonedancer's minions too) on passive, stands up and follows. False when its player is not passive.
-        /// A Minstrel's charm renewal is not interrupted, so a charmed pet does not turn.
+        /// player's companion stops attacking and casting, drops every target and any ordered pull, puts its pets (a
+        /// Bonedancer's minions too) on passive, stands up and follows. False when its player is not passive.
+        /// A Minstrel's charm renewal is not interrupted, so a charmed pet does not turn; O2 (owner 2026-11-11): neither is
+        /// a heal, a cure mez or the speed song (see <see cref="TryPassiveLifesavers"/>).
         /// </summary>
         public bool HoldCompanionPassive()
         {
@@ -1168,7 +1169,11 @@ namespace DOL.AI.Brain
             if (_orderedPullTarget != null) { CancelOrderedPull(_orderedPullTarget); _orderedPullTarget = null; acted = true; }
             if (HasAggro) { ClearAggroList(); acted = true; }
             if (Body.IsAttacking) { Body.StopAttack(); acted = true; }
-            if (Body.IsCasting && Body.castingComponent?.SpellHandler?.Spell?.SpellType != eSpellType.Charm)
+            // O2 (owner 2026-11-11): a charm, the speed song or chant, a cure mez or a heal it may cast is left to finish
+            if (Body.IsCasting && Body.castingComponent?.SpellHandler?.Spell is Spell casting &&
+                !CompanionControls165.PassiveKeepsCast(casting.SpellType == eSpellType.Charm,
+                    casting.SpellType == eSpellType.SpeedEnhancement && casting.IsPulsing, casting.SpellType == eSpellType.CureMezz,
+                    casting.IsHealing, casting.IsInstantCast, leader.IsMoving))
             {
                 Body.StopCurrentSpellcast();
                 acted = true;
@@ -1204,6 +1209,62 @@ namespace DOL.AI.Brain
                 log.Info($"COMPANION_PASSIVE_HOLD bot=\"{bot.Name}\" player=\"{leader.Name}\" region={Body.CurrentRegionID}");
             }
             return true;
+        }
+
+        /// <summary>How the heal check is limited this turn (O2: a /passive companion's lifesaver heals).</summary>
+        private CompanionControls165.PassiveHealing _passiveHealing;
+
+        /// <summary>
+        /// O2 (owner 2026-11-11): what a passive companion still does while it follows and fights nothing - one path for
+        /// /passive and the old /bot stance passive. Escape and rescue realm abilities (Vanish, Speed of Sound, Purge,
+        /// Ignore Pain, Second Wind); instant heals and cure mez while its player moves, its normal heals once the player
+        /// stops (never a resurrection, never a walk to reach someone); the speed song or chant.
+        /// </summary>
+        internal void TryPassiveLifesavers()
+        {
+            GameBot bot = BotBody;
+            if (bot == null || !bot.IsAlive)
+                return;
+            AutonomousBotRealmAbilities.UseActives(bot, retreating: true);
+            GamePlayer leader = AssistedPlayer ?? CompanionEngagementMode.PassiveLeader(bot) ?? bot.Owner;
+            bool leaderMoving = leader?.IsMoving == true;
+            _passiveHealing = leaderMoving ? CompanionControls165.PassiveHealing.WhileMoving : CompanionControls165.PassiveHealing.Stopped;
+            try { CheckHeals(); }
+            finally { _passiveHealing = CompanionControls165.PassiveHealing.None; }
+            TryPassiveSpeedSong(bot, leaderMoving);
+        }
+
+        /// <summary>O2: a passive performer (or Warden) keeps its speed song or chant up; a cast-time chant only while the
+        /// player stands still, and never over a faster speed already in the group.</summary>
+        private void TryPassiveSpeedSong(GameBot bot, bool leaderMoving)
+        {
+            long now = GameLoop.GameLoopTime;
+            bool performer = IsClassicSongClass(bot);
+            if (!performer && bot.CharacterClass?.ID != (int)eCharacterClass.Warden || now < _nextSongTwistTick ||
+                bot.IsCasting || bot.castingComponent?.HasPendingSkillRequests == true || bot.IsIncapacitated || bot.IsSilenced)
+                return;
+            _nextSongTwistTick = now + 1_000;
+            Spell speed = (bot.MiscSpells ?? []).Concat(bot.InstantMiscSpells ?? [])
+                .Where(spell => spell != null && spell.SpellType == eSpellType.SpeedEnhancement && spell.IsPulsing &&
+                                !spell.IsHarmful && spell.Level <= bot.Level &&
+                                (performer ? IsMaintainableClassBuff(spell) : BotSongTwistPolicy.IsManagedSong(bot, spell)))
+                .OrderByDescending(spell => spell.Level).FirstOrDefault();
+            if (speed == null || bot.Mana < bot.PowerCost(speed) || bot.GetSkillDisabledDuration(speed) > 0 ||
+                leaderMoving && !BotSongTwistPolicy.IsMobileSong(bot, speed) ||
+                bot.effectListComponent.GetPulseEffects().Any(effect => !effect.IsEnding && !effect.IsEnded &&
+                    effect.SpellHandler?.Spell?.SpellType == eSpellType.SpeedEnhancement) ||
+                GroupmateHasStrongerSpeed(speed))
+                return;
+            if (speed.NeedInstrument && !TryEquipRealInstrument(bot, speed.InstrumentRequirement))
+                return;
+            GameObject previousTarget = bot.TargetObject;
+            bot.TargetObject = FindMissingMaintenanceTarget(speed) ?? bot;
+            try
+            {
+                if (bot.CastSpell(speed, m_mobSpellLine, false) && performer)
+                    _activeTwistedSongId = speed.ID;
+            }
+            finally { bot.TargetObject = previousTarget; }
         }
 
         private bool TryMaintainTemporaryCompanionRest()
@@ -1544,9 +1605,12 @@ namespace DOL.AI.Brain
             if (TemporaryGroupStableTravel.SyncStowWithLeaderRide(BotBody) || Body.StowedForRide)
                 return;
 
-            // /passive: fight nothing, follow the player (no buffs, heals, songs, rest or pet upkeep; regeneration ticks)
+            // /passive: fight nothing, follow the player (no buffs, rest or pet upkeep; regeneration ticks). O2 (owner
+            // 2026-11-11): the lifesavers stay - escapes, instant heals and cure mez on the move, heals when the player
+            // stops, the speed song or chant
             if (BotBody?.IsOnStableMasterRoute == false && HoldCompanionPassive())
             {
+                TryPassiveLifesavers();
                 if (HiredCompanions165.KeepWithOwner(BotBody) || HiredCompanions165.TryRecallToOwner(BotBody) ||
                     HiredCompanions165.TryUnstick(BotBody) ||
                     BotBody.IsTemporaryGroupHelper && BotBody.TryReturnTemporaryCompanionToLeader())
@@ -3882,10 +3946,10 @@ namespace DOL.AI.Brain
                     }
                 }
 
-                // Passive stance: heals only, no attacking
+                // Passive stance: no attacking; the same lifesavers as /passive (O2: escapes, heals, the speed song)
                 if (_brain.BotBody.Stance == eBotStance.Passive)
                 {
-                    _brain.CheckHeals();
+                    _brain.TryPassiveLifesavers();
                     return;
                 }
 
@@ -6557,9 +6621,11 @@ namespace DOL.AI.Brain
             if (emergenciesOnly)
                 needAt = healerNeedAt = 40;
 
-            if (TryResurrectGroupMember())
+            // O2: a passive companion never stops to resurrect
+            bool passiveHealing = _passiveHealing != CompanionControls165.PassiveHealing.None;
+            if (!passiveHealing && TryResurrectGroupMember())
                 return true;
-            if (TryResurrectSiegeComrade())
+            if (!passiveHealing && TryResurrectSiegeComrade())
                 return true;
 
             if (!Body.CanCastHealSpells) return false;
@@ -6948,12 +7014,24 @@ namespace DOL.AI.Brain
                 spellToCast = CheckHealSpell(BotBody.HealBig) ? BotBody.HealBig :
                     CheckHealSpell(BotBody.HealEfficient) ? BotBody.HealEfficient :
                     CheckHealSpell(BotBody.HealInstant) ? BotBody.HealInstant : null;
+            // O2: a passive companion casts only an instant heal or a cure mez while its player moves (a needed instant
+            // heal replaces a cast-time one), its normal heals once the player stops
+            if (passiveHealing && spellToCast != null &&
+                !CompanionControls165.PassiveAllowsHeal(_passiveHealing, spellToCast.IsInstantCast, spellToCast == BotBody.CureMezz))
+                spellToCast = spellTarget != null && spellTarget.HealthPercent < needAt && CheckHealSpell(BotBody.HealInstant)
+                    ? BotBody.HealInstant : null;
             if (spellToCast != null && spellTarget != null)
             {
                 spellTarget = BotGroupSupport.ReserveHeal(BotBody, spellToCast, spellTarget);
                 if (spellTarget == null) return isCastingHeal;
                 if (!BotBody.IsWithinRadius(spellTarget, BotBody.castingComponent.CalculateSpellRange(spellToCast)))
                 {
+                    // O2: no walk to reach someone while passive (it follows its player)
+                    if (passiveHealing)
+                    {
+                        BotGroupSupport.CancelHeal(BotBody);
+                        return isCastingHeal;
+                    }
                     // Walk into range; give up on a member it cannot get closer to.
                     return ApproachSupportTarget(spellTarget) || isCastingHeal;
                 }

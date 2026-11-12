@@ -326,8 +326,25 @@ public static class AutonomousBotRealmAbilities
         States.GetOrCreateValue(bot).Actives = UsableActivesFor(Classic165Mode.IsOn).Select(key => bot.GetAbility(key) as TimedRealmAbility).Where(a => a != null).ToArray();
     }
 
-    /// <summary>Uses a bought active when the situation calls for it. Checked at most once a second.</summary>
-    public static void UseActives(GameBot bot)
+    /// <summary>The actives a /passive companion still uses (owner decision O2: escapes and rescues while retreating).</summary>
+    public static readonly string[] RetreatActives = { Vanish, SpeedOfSound, Purge, PurgeReduced, IgnorePainTank, IgnorePain, SecondWind };
+
+    /// <summary>
+    /// Pure (O2): while a /passive companion retreats, Vanish once it is hit and under half health, Speed of Sound once
+    /// anyone near in the group is being hit, Purge when it is mezzed or stunned in a fight; Ignore Pain and Second Wind
+    /// keep their usual rules. Never a fight active (Bunker, Ameliorating Melodies, Mastery of Concentration...).
+    /// </summary>
+    public static bool WantsWhileRetreating(string key, bool inCombat, int health, bool controlled, bool groupFighting) => key switch
+    {
+        Vanish => !controlled && inCombat && health < 50,
+        SpeedOfSound => !controlled && groupFighting,
+        Purge or PurgeReduced => controlled && inCombat,
+        _ => false,
+    };
+
+    /// <summary>Uses a bought active when the situation calls for it. Checked at most once a second. Retreating (a
+    /// /passive companion), only the escape and rescue actives (<see cref="RetreatActives"/>).</summary>
+    public static void UseActives(GameBot bot, bool retreating = false)
     {
         if (bot == null || !bot.IsAlive || !States.TryGetValue(bot, out State state) || state.Actives.Length == 0) return;
         long now = GameLoop.GameLoopTime;
@@ -338,7 +355,21 @@ public static class AutonomousBotRealmAbilities
         foreach (TimedRealmAbility ability in state.Actives)
         {
             if (bot.GetSkillDisabledDuration(ability) > 0) continue;
-            if (ClassicActives.Contains(ability.KeyName))
+            if (retreating)
+            {
+                if (!RetreatActives.Contains(ability.KeyName)) continue;
+                if (ability.KeyName is IgnorePain or IgnorePainTank or SecondWind)
+                {
+                    if (!Wanted(bot, ability.KeyName)) continue;
+                }
+                else
+                {
+                    situation ??= SituationOf(bot, out deadMember);
+                    if (!WantsWhileRetreating(ability.KeyName, situation.Value.InCombat, situation.Value.Health,
+                            situation.Value.Controlled, situation.Value.GroupFighting)) continue;
+                }
+            }
+            else if (ClassicActives.Contains(ability.KeyName))
             {
                 situation ??= SituationOf(bot, out deadMember);
                 if (!Wants(ability.KeyName, situation.Value)) continue;

@@ -67,5 +67,26 @@ namespace DOL.GS
         /// <summary>Pure: a song switch is silent (a twisting companion going from one song to the next); the first song
         /// of a set plays its sound as always.</summary>
         public static bool QuietSwitch(bool twisting, bool anotherSongPlaying) => twisting && anotherSongPlaying;
+
+        // ---- /passive keeps the lifesavers (owner decision O2, 2026-11-11)
+
+        /// <summary>How a /passive companion may heal this turn: not at all (not passive), instant heals and cure mez only
+        /// (its player is moving), or its normal heals (its player has stopped).</summary>
+        public enum PassiveHealing : byte { None = 0, WhileMoving = 1, Stopped = 2 }
+
+        /// <summary>
+        /// Pure (O2): a heal a /passive companion may cast - an instant heal or a cure mez any time, a cast-time heal only
+        /// while its player stands still (it never stops and falls behind a moving player).
+        /// </summary>
+        public static bool PassiveAllowsHeal(PassiveHealing healing, bool instant, bool cureMez) =>
+            healing == PassiveHealing.Stopped || healing == PassiveHealing.WhileMoving && (instant || cureMez);
+
+        /// <summary>
+        /// Pure (O2): a cast /passive lets finish - a charm (a charmed pet must not turn), the speed song or chant, a cure
+        /// mez, an instant heal, or a cast-time heal while the player stands still. Everything else stops (no fighting, no
+        /// long casts).
+        /// </summary>
+        public static bool PassiveKeepsCast(bool charm, bool speedSong, bool cureMez, bool heal, bool instant, bool leaderMoving) =>
+            charm || speedSong || cureMez || heal && (instant || !leaderMoving);
     }
 }
