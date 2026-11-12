@@ -22,12 +22,19 @@ namespace DOL.GS
         public static bool IsCasterClass(eCharacterClass characterClass) => characterClass is
             eCharacterClass.Runemaster or eCharacterClass.Wizard or eCharacterClass.Sorcerer or eCharacterClass.Eldritch or
             eCharacterClass.Spiritmaster or eCharacterClass.Enchanter or eCharacterClass.Theurgist or
-            eCharacterClass.Cabalist or eCharacterClass.Animist or eCharacterClass.Bonedancer;
+            eCharacterClass.Cabalist or eCharacterClass.Animist or eCharacterClass.Bonedancer or
+            // Q8 (veteran review 2026-11-11): the Mentalist is a caster too (it was left without these rows)
+            eCharacterClass.Mentalist;
 
-        /// <summary>The healers with a Role row (Cleric, Druid, Healer, Shaman, Friar).</summary>
+        /// <summary>The healers with a Role row (Cleric, Druid, Healer, Shaman, Friar, and - Q8 - the Mentalist, which
+        /// reuses the Cleric/Druid/Healer row).</summary>
         public static bool HasRoleRow(eCharacterClass characterClass) => characterClass is
             eCharacterClass.Cleric or eCharacterClass.Druid or eCharacterClass.Healer or eCharacterClass.Shaman or
-            eCharacterClass.Friar;
+            eCharacterClass.Friar or eCharacterClass.Mentalist;
+
+        /// <summary>Q8: the classes on the healer Role row ("Heal first", "Attack, heal only emergencies", ...).</summary>
+        public static bool UsesHealerRoleRow(eCharacterClass characterClass) => characterClass is
+            eCharacterClass.Cleric or eCharacterClass.Druid or eCharacterClass.Healer or eCharacterClass.Mentalist;
 
         /// <summary>Pure: a healer whose player chose "Melee and heal, no attack spells".</summary>
         public static bool MeleeHealRole(eCharacterClass characterClass, int roleChoice) =>

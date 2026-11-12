@@ -137,10 +137,12 @@ namespace DOL.UnitTests
             foreach (eCharacterClass caster in new[] { eCharacterClass.Runemaster, eCharacterClass.Wizard,
                          eCharacterClass.Sorcerer, eCharacterClass.Eldritch, eCharacterClass.Spiritmaster,
                          eCharacterClass.Enchanter, eCharacterClass.Theurgist, eCharacterClass.Cabalist,
-                         eCharacterClass.Animist, eCharacterClass.Bonedancer })
+                         eCharacterClass.Animist, eCharacterClass.Bonedancer,
+                         // veteran review 2026-11-11 (Q8): the Mentalist gets the caster rows too
+                         eCharacterClass.Mentalist })
                 Assert.That(IsCasterClass(caster), Is.True, caster.ToString());
             foreach (eCharacterClass other in new[] { eCharacterClass.Shaman, eCharacterClass.Thane,
-                         eCharacterClass.Necromancer, eCharacterClass.Mentalist, eCharacterClass.Cleric })
+                         eCharacterClass.Necromancer, eCharacterClass.Cleric })
                 Assert.That(IsCasterClass(other), Is.False, other.ToString());
         });
 

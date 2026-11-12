@@ -4819,8 +4819,8 @@ namespace DOL.AI.Brain
                 return false;
             if (bot.IsPlayerCompanion)
             {
-                bool attackingHealer = RoleChoice == 2 && bot.CharacterClass?.ID is (int)eCharacterClass.Cleric or
-                    (int)eCharacterClass.Druid or (int)eCharacterClass.Healer;
+                bool attackingHealer = RoleChoice == 2 && bot.CharacterClass != null &&
+                    CompanionSpellOptions165.UsesHealerRoleRow((eCharacterClass)bot.CharacterClass.ID);
                 if (!BotCasterPriority.CompanionSavesPower(savePower, attackingHealer))
                     return false;
             }
@@ -6345,8 +6345,8 @@ namespace DOL.AI.Brain
             int healerNeedAt = BotHealTriage165.HealerNeedAt(healAt, classic165);
             // Role (AI Options): an attacking healer, or an off-healer Friar in a fight, heals emergencies only
             bool emergenciesOnly = healAt == 0 &&
-                (RoleChoice == 2 && BotBody.CharacterClass?.ID is (int)eCharacterClass.Cleric or (int)eCharacterClass.Druid or
-                     (int)eCharacterClass.Healer ||
+                (RoleChoice == 2 && BotBody.CharacterClass != null &&
+                     CompanionSpellOptions165.UsesHealerRoleRow((eCharacterClass)BotBody.CharacterClass.ID) ||
                  RoleChoice == 1 && BotBody.CharacterClass?.ID == (int)eCharacterClass.Friar && Body.InCombat);
             if (emergenciesOnly)
                 needAt = healerNeedAt = 40;

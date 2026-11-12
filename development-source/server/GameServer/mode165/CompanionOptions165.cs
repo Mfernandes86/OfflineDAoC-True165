@@ -67,8 +67,7 @@ namespace DOL.GS
             // does crowd control or heals; a Shaman buffs, heals and rezzes from the back; a Friar is the off-healer.
             new(KindHealerRole, "role", "Role", ["Automatic (heal and buff)", "Heal first, attack when nobody is hurt",
                     "Attack, heal only emergencies", MeleeHealChoice],
-                bot => (eCharacterClass)bot.CharacterClass.ID is eCharacterClass.Cleric or eCharacterClass.Druid or
-                    eCharacterClass.Healer),
+                bot => CompanionSpellOptions165.UsesHealerRoleRow((eCharacterClass)bot.CharacterClass.ID)),
             new(KindShamanRole, "role", "Role", ["Automatic (melee and cast)", "Stay back and heal", "Caster, no melee",
                     MeleeHealChoice],
                 bot => (eCharacterClass)bot.CharacterClass.ID == eCharacterClass.Shaman),
