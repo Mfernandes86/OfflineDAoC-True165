@@ -166,6 +166,14 @@ namespace DOL.UnitTests
         });
 
         [Test]
+        public void TheRoleSheetIsPublishedOnlyWhenItChanged() => Assert.Multiple(() =>
+        {
+            Assert.That(AutonomousBotGroupCoordinator.RoleSheetChanged(null, 42), Is.True, "no sheet yet");
+            Assert.That(AutonomousBotGroupCoordinator.RoleSheetChanged(42, 42), Is.False, "same members and puller: no rebuild, no log");
+            Assert.That(AutonomousBotGroupCoordinator.RoleSheetChanged(41, 42), Is.True);
+        });
+
+        [Test]
         public void PeelReservationsAreShort() => Assert.Multiple(() =>
         {
             Assert.That(BotPeelReservations.HoldMilliseconds, Is.EqualTo(3_000));

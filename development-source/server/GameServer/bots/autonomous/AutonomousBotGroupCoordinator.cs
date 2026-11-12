@@ -3206,9 +3206,16 @@ public static partial class AutonomousBotGroupCoordinator
     private static GameBot ChooseLockedPvePuller(Session session, GameBot[] members)
     {
         GameBot puller = ChooseLockedPvePullerCore(session, members);
-        PublishRoleSheet(session, members, puller);
+        // only when the members or the puller changed (world/performance review 2026-11-11): ChoosePuller re-runs this on
+        // every call while the locked puller lies dead, and rebuilt and logged the same sheet each time
+        if (Classic165Mode.IsOn && session?.Group != null &&
+            RoleSheetChanged(BotGroupRoles.Get(session.Group)?.Signature, RoleSheetSignature(members, puller)))
+            PublishRoleSheet(session, members, puller);
         return puller;
     }
+
+    /// <summary>Pure: the role sheet is (re)published only when none is out yet or its signature differs.</summary>
+    public static bool RoleSheetChanged(long? publishedSignature, long signature) => publishedSignature != signature;
 
     private static GameBot ChooseLockedPvePullerCore(Session session, GameBot[] members)
     {
