@@ -213,7 +213,9 @@ public sealed partial class AutonomousWorldBotController
             ScoutReports165.Observe(bot, visibleTargets);
         GameLiving enemy = stalker
             ? AutonomousRvrAssist.Pick(visibleTargets, operatorThreats.Contains, GameRelic.IsPlayerCarryingRelic,
-                target => AutonomousRvrStealthers.Vulnerability(target) * 5 + AutonomousRvrAssist.KillOrderRank(AutonomousRvrAssist.ClassOf(target)),
+                // ... leaning one rank toward the player who last killed it (BotMemory165)
+                target => AutonomousRvrStealthers.Vulnerability(target) * 5 + AutonomousRvrAssist.KillOrderRank(AutonomousRvrAssist.ClassOf(target)) -
+                          (BotMemory165.IsKiller(bot, target) ? 1 : 0),
                 target => bot.GetDistanceTo(target))
             : callsTargets
             ? AutonomousRvrAssist.Pick(AutonomousRvrAssist.CallableCandidates(visibleTargets), operatorThreats.Contains, GameRelic.IsPlayerCarryingRelic,

@@ -1203,6 +1203,7 @@ namespace DOL.GS
         public override void ProcessDeath(GameObject killer)
         {
             SetSeatedForClients(false);
+            BotMemory165.NoteDeath(this, killer);   // the enemy player who killed it is remembered (BotMemory165)
             AutonomousPetSupport.CancelPendingCharm(this);
             _deathTick = GameLoop.GameLoopTime;
             LastDeathTick165 = _deathTick;
@@ -3751,6 +3752,7 @@ namespace DOL.GS
                 controlledBrain.OnOwnerAttacked(ad);
 
             BotBrain.NotifyNearbyGroupBots(this, ad);
+            BotMemory165.OnAttacked(this, ad?.Attacker);   // its last killer is back (BotMemory165)
             base.OnAttackedByEnemy(ad);
         }
 

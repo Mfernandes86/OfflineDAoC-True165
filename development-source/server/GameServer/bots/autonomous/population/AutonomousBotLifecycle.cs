@@ -828,6 +828,7 @@ namespace DOL.GS
             AutonomousBotEconomy.ForgetCachedDecision(botId);
             AutonomousBotDyes.Forget(botId);
             CraftOrders165.Forget(botId);
+            BotMemory165.Forget(botId);
             if (!string.IsNullOrWhiteSpace(name))
                 BotNameService.ReleaseBotName(name);
             // The guild list and its social-window entry live on the game loop.

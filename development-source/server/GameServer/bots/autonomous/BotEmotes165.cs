@@ -89,7 +89,8 @@ namespace DOL.GS
             if (bot?.IsAutonomousWorldBot != true || bot.IsTemporaryGroupHelper || enemy == null ||
                 enemy.Realm == bot.Realm || enemy.Realm == eRealm.None || enemy is not (GamePlayer or GameBot))
                 return;
-            eEmote? emote = KillEmote(MannerOf(bot.DatabaseID), Random.Shared.Next(2));
+            // its remembered killer: a /laugh, and the grudge is settled (BotMemory165)
+            eEmote? emote = BotMemory165.SettleOnKill(bot, enemy) ? eEmote.Laugh : KillEmote(MannerOf(bot.DatabaseID), Random.Shared.Next(2));
             if (emote == null || !Ready(bot, KillCooldownMilliseconds) || !bot.GetPlayersInRadius(WorldMgr.VISIBILITY_DISTANCE).Any())
                 return;
             Later(bot, emote.Value, 800 + Random.Shared.Next(1_200));
