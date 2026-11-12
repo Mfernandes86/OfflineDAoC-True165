@@ -34,7 +34,35 @@ namespace DOL.GS.Quests
             public string Realm { get; set; }
             public string Source { get; set; }
             public string Updated { get; set; }
+            /// <summary>The Allakhazam quest level (a number, or a string of one); null when unknown or unreadable.</summary>
+            [System.Text.Json.Serialization.JsonConverter(typeof(LenientLevelConverter))]
+            public int? Level { get; set; }
             public List<string> Lines { get; set; } = new();
+        }
+
+        /// <summary>Reads a level written as a number or a string; anything else is null, never an error that would switch
+        /// every guide off.</summary>
+        public sealed class LenientLevelConverter : System.Text.Json.Serialization.JsonConverter<int?>
+        {
+            public override int? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                switch (reader.TokenType)
+                {
+                    case JsonTokenType.Number:
+                        return reader.TryGetInt32(out int number) ? number : null;
+                    case JsonTokenType.String:
+                        return int.TryParse(reader.GetString(), out int parsed) ? parsed : null;
+                    default:
+                        reader.Skip();
+                        return null;
+                }
+            }
+
+            public override void Write(Utf8JsonWriter writer, int? value, JsonSerializerOptions options)
+            {
+                if (value.HasValue) writer.WriteNumberValue(value.Value);
+                else writer.WriteNullValue();
+            }
         }
 
         private sealed class GuideFile
@@ -120,10 +148,44 @@ namespace DOL.GS.Quests
             player.Out.SendCustomTextWindow("Quest Guide", lines);
         }
 
+        /// <summary>
+        /// The guide of one data quest row, when the guide file has one for it: "#ID" first, then "realm|name|MinLevel".
+        /// Quest audit 2026-11-11 (P10-E1): guides were keyed "realm|name" only, so the later parts of a chain whose parts
+        /// share a name (Last Heir 45/47, Legend of the Lake 25, Lord of Deceit 48, Passage to Eternity 45/48, A War of
+        /// Old 20/30 ...) showed part 1's walkthrough. Without such a key the name lookup stays as before.
+        /// </summary>
+        public static Guide FindForRow(eRealm realm, int questId, string name, int minLevel)
+        {
+            Load();
+            foreach (string key in RowKeys(GlobalConstants.RealmToName(realm), questId, name, minLevel))
+                if (_guides.TryGetValue(key, out Guide guide))
+                    return guide;
+            return null;
+        }
+
+        /// <summary>Is a guide found by name the walkthrough of another part of a chain whose parts share the name? Its level
+        /// differs from this row's MinLevel and some row of that name has the guide's level.</summary>
+        public static bool IsAnotherPartsGuide(Guide guide, string name, int minLevel) =>
+            IsAnotherPartsGuide(guide?.Level, minLevel, QuestDependencyRule.RowsOf(name).Select(r => r.MinLevel));
+
+        public static bool IsAnotherPartsGuide(int? guideLevel, int minLevel, IEnumerable<int> levelsOfTheName) =>
+            guideLevel is int level && level != minLevel && levelsOfTheName.Contains(level);
+
+        /// <summary>The keys a guide of one data quest row may have, most exact first.</summary>
+        public static IEnumerable<string> RowKeys(string realmName, int questId, string name, int minLevel)
+        {
+            yield return "#" + questId;
+            yield return $"{realmName}|{name}|{minLevel}";
+        }
+
         private static List<List<string>> Pages(GamePlayer player, AbstractQuest quest)
         {
+            if (quest is DataQuest row && row.DBDataQuest != null &&
+                FindForRow(player.Realm, row.ID, row.DBDataQuest.Name, row.DBDataQuest.MinLevel) is { } exact)
+                return Paginate(GuideLines(quest.Name, exact));
             Guide guide = Find(player.Realm, quest.Name);
-            if (guide != null && string.Equals(guide.Name, quest.Name, StringComparison.OrdinalIgnoreCase))
+            if (guide != null && string.Equals(guide.Name, quest.Name, StringComparison.OrdinalIgnoreCase) &&
+                !(quest is DataQuest part && part.DBDataQuest != null && IsAnotherPartsGuide(guide, part.DBDataQuest.Name, part.DBDataQuest.MinLevel)))
                 return Paginate(GuideLines(quest.Name, guide));
             var lines = new List<string>
             {

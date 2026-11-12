@@ -118,6 +118,33 @@ public class UT_QuestFix07
         Assert.That(left.OrderBy(x => x), Is.EqualTo(new[] { "cq_damp_bone", "cq_lirele_s_scroll" }));
     }
 
+    [Test]
+    public void AGuideIsLookedUpByRowFirst()
+    {
+        Assert.That(QuestGuide.RowKeys("Hibernia", 21510, "Last Heir", 47), Is.EqualTo(new[] { "#21510", "Hibernia|Last Heir|47" }));
+    }
+
+    [Test]
+    public void ALaterPartDoesNotShowTheFirstPartsGuide()
+    {
+        // Last Heir rows at 43, 45 and 47; the guide by name is the level 43 walkthrough
+        int[] levels = { 43, 45, 47 };
+        Assert.That(QuestGuide.IsAnotherPartsGuide(43, 47, levels), Is.True);
+        Assert.That(QuestGuide.IsAnotherPartsGuide(43, 43, levels), Is.False);
+        Assert.That(QuestGuide.IsAnotherPartsGuide(null, 47, levels), Is.False, "no level: as before");
+        Assert.That(QuestGuide.IsAnotherPartsGuide(45, 30, new[] { 30 }), Is.False, "a level no row of the name has");
+    }
+
+    [TestCase("\"Level\": 7", 7)]
+    [TestCase("\"Level\": \"7\"", 7)]
+    [TestCase("\"Level\": \"15-20\"", null)]
+    [TestCase("\"Level\": null", null)]
+    public void AGuideLevelNeverBreaksTheFile(string level, int? expected)
+    {
+        var guide = JsonSerializer.Deserialize<QuestGuide.Guide>("{ \"Name\": \"x\", " + level + ", \"Lines\": [] }");
+        Assert.That(guide.Level, Is.EqualTo(expected));
+    }
+
     [TestCase(0, false)]
     [TestCase(3, true)]
     [TestCase(35, true)]
