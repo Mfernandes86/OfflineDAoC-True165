@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Threading;
 using DOL.Database;
 
 namespace DOL.GS
@@ -17,8 +18,11 @@ namespace DOL.GS
     /// - Buying (O13): a gamebot of level 20 or more with no heal draught buys one at a town errand from a potion merchant
     ///   near its merchant only when its coin is at least five times its reserve after paying; a second one when it is
     ///   twenty times. Hired companions don't shop: their player gives them potions.
-    /// Cost: one health comparison per hit taken (already computed), a 40-slot bag look only when a threshold is crossed
-    /// and the reuse timer is free; buying is errand-time only.
+    /// Cost: one health comparison per hit taken (already computed). The 40-slot bag look runs only when a threshold is
+    /// crossed, the drink's reuse timer is free and the bag was not just found to hold no potion of that kind: a bot with
+    /// no draught looks again only after its inventory changes (gamebots) or <see cref="NoPotionRecheckMilliseconds"/>
+    /// (combat review 2026-11-11: before, a potionless bot under 35% scanned its bag on every hit). Buying is
+    /// errand-time only.
     /// </summary>
     public static class BotPotions165
     {
@@ -34,8 +38,20 @@ namespace DOL.GS
 
         public enum Kind { None, Heal, Power, Endurance }
 
-        // bot id -> (timer group -> tick the next drink of that group is allowed)
-        private static readonly ConcurrentDictionary<long, ConcurrentDictionary<int, long>> NextDrink = new();
+        /// <summary>A bag found with no potion of a kind is not looked at again for this long (unless it changes).</summary>
+        public const long NoPotionRecheckMilliseconds = 30_000;
+
+        private sealed class DrinkState
+        {
+            // timer group -> tick the next drink of that group is allowed
+            public readonly ConcurrentDictionary<int, long> Timers = new();
+            // per kind: no bag look before this tick while the inventory revision is unchanged
+            public readonly long[] SkipUntil = new long[4];
+            public readonly int[] SkipRevision = new int[4];
+        }
+
+        // bot id -> its drink timers and "no potion" marks
+        private static readonly ConcurrentDictionary<long, DrinkState> NextDrink = new();
 
         /// <summary>Which drink a spell type is ("Heal", "PowerHeal", "EnduranceHeal"; anything else is not drunk).</summary>
         public static Kind KindOf(string spellType) => spellType switch
@@ -45,6 +61,22 @@ namespace DOL.GS
             "EnduranceHeal" => Kind.Endurance,
             _ => Kind.None,
         };
+
+        /// <summary>Which drink a spell type is, without a string per potion.</summary>
+        public static Kind KindOf(eSpellType spellType) => spellType switch
+        {
+            eSpellType.Heal => Kind.Heal,
+            eSpellType.PowerHeal => Kind.Power,
+            eSpellType.EnduranceHeal => Kind.Endurance,
+            _ => Kind.None,
+        };
+
+        /// <summary>
+        /// Pure: the bag is looked at for a drink of this kind. Not while a "no potion" or reuse mark is still running for
+        /// the same inventory revision; any inventory change (a gamebot's loot, a buy) clears it at once.
+        /// </summary>
+        public static bool ShouldLook(long now, long skipUntil, int skipRevision, int revision) =>
+            now >= skipUntil || revision != skipRevision;
 
         /// <summary>A drinkable potion: a backpack magical item with a spell and charges (GamePlayer.UseSlot's potion test).</summary>
         public static bool IsPotion(DbInventoryItem item) =>
@@ -113,7 +145,12 @@ namespace DOL.GS
             if (line == null)
                 return false;
             long now = GameLoop.GameLoopTime;
-            ConcurrentDictionary<int, long> timers = NextDrink.GetOrAdd(bot.DatabaseID, _ => new ConcurrentDictionary<int, long>());
+            DrinkState state = NextDrink.GetOrAdd(bot.DatabaseID, _ => new DrinkState());
+            int k = (int)kind;
+            int revision = AutonomousBotEconomy.InventoryRevision(bot.DatabaseID);
+            if (!ShouldLook(now, Volatile.Read(ref state.SkipUntil[k]), Volatile.Read(ref state.SkipRevision[k]), revision))
+                return false;
+            ConcurrentDictionary<int, long> timers = state.Timers;
             for (eInventorySlot slot = eInventorySlot.FirstBackpack; slot <= eInventorySlot.LastBackpack; slot++)
             {
                 DbInventoryItem item = bot.Inventory.GetItem(slot);
@@ -123,10 +160,14 @@ namespace DOL.GS
                 if (required > bot.Level)
                     continue;
                 Spell spell = SkillBase.FindSpell(item.SpellID, line);
-                if (spell == null || KindOf(spell.SpellType.ToString()) != kind)
+                if (spell == null || KindOf(spell.SpellType) != kind)
                     continue;
                 if (timers.TryGetValue(spell.SharedTimerGroup, out long next) && now < next)
-                    return false;   // the timer is shared: no other potion of this group either
+                {
+                    // the timer is shared: no other potion of this group either, and no bag look until it is free
+                    MarkSkip(state, k, next, revision);
+                    return false;
+                }
                 if (!bot.CastSpell(spell, line))
                     return false;
                 timers[spell.SharedTimerGroup] = now + Math.Max(1, item.CanUseEvery) * 1000L;
@@ -134,7 +175,14 @@ namespace DOL.GS
                 FeatureCounters165.Add($"bot_potion_{kind.ToString().ToLowerInvariant()}");
                 return true;
             }
+            MarkSkip(state, k, now + NoPotionRecheckMilliseconds, revision);
             return false;
+        }
+
+        private static void MarkSkip(DrinkState state, int kind, long until, int revision)
+        {
+            Volatile.Write(ref state.SkipRevision[kind], revision);
+            Volatile.Write(ref state.SkipUntil[kind], until);
         }
 
         /// <summary>A charge used, as a player's: a stack loses one, the last charge uses the item up.</summary>
@@ -172,7 +220,7 @@ namespace DOL.GS
             int owned = 0;
             for (eInventorySlot slot = eInventorySlot.FirstBackpack; slot <= eInventorySlot.LastBackpack; slot++)
                 if (bot.Inventory.GetItem(slot) is { } item && IsPotion(item) &&
-                    SkillBase.FindSpell(item.SpellID, line) is { } owns && KindOf(owns.SpellType.ToString()) == Kind.Heal)
+                    SkillBase.FindSpell(item.SpellID, line) is { } owns && KindOf(owns.SpellType) == Kind.Heal)
                     owned++;
             DbItemTemplate draught = new[] { at }.Concat(bot.GetNPCsInRadius(2500).OfType<GameMerchant>())
                 .Where(m => m != null && AutonomousBotEconomy.SellsForCoin(m) && m.TradeItems != null &&
@@ -180,7 +228,7 @@ namespace DOL.GS
                 .SelectMany(m => m.TradeItems.GetAllItems().Values.OfType<DbItemTemplate>())
                 .Where(t => t.Price > 0 && t.Object_Type == (int)eObjectType.Magical && t.Item_Type == (int)eInventorySlot.FirstBackpack &&
                             t.SpellID > 0 && t.MaxCharges > 0 && (t.LevelRequirement > 0 ? t.LevelRequirement : t.Level) <= bot.Level &&
-                            SkillBase.FindSpell(t.SpellID, line) is { } s && KindOf(s.SpellType.ToString()) == Kind.Heal)
+                            SkillBase.FindSpell(t.SpellID, line) is { } s && KindOf(s.SpellType) == Kind.Heal)
                 .OrderBy(t => t.Price)
                 .FirstOrDefault();
             if (draught == null)

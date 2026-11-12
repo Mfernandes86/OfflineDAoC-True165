@@ -9,6 +9,24 @@ namespace DOL.UnitTests.Gameserver;
 public class UT_BotPotions165
 {
     [Test]
+    public void ABagWithNoDraughtIsNotLookedAtOnEveryHit() => Assert.Multiple(() =>
+    {
+        // found no draught at 1,000: marked until 31,000 for inventory revision 4
+        long until = 1_000 + BotPotions165.NoPotionRecheckMilliseconds;
+        Assert.That(BotPotions165.ShouldLook(1_200, until, 4, 4), Is.False, "the next hit does not scan the bag again");
+        Assert.That(BotPotions165.ShouldLook(until, until, 4, 4), Is.True, "looks again after the recheck time");
+        Assert.That(BotPotions165.ShouldLook(1_200, until, 4, 5), Is.True, "the inventory changed (loot, a buy): looks at once");
+        Assert.That(BotPotions165.ShouldLook(0, 0, 0, 0), Is.True, "never marked");
+    });
+
+    [Test]
+    public void TheSpellTypeEnumMapsLikeItsName() => Assert.Multiple(() =>
+    {
+        foreach (eSpellType type in new[] { eSpellType.Heal, eSpellType.PowerHeal, eSpellType.EnduranceHeal, eSpellType.HealthRegenBuff })
+            Assert.That(BotPotions165.KindOf(type), Is.EqualTo(BotPotions165.KindOf(type.ToString())), type.ToString());
+    });
+
+    [Test]
     public void OnlyHealPowerAndEnduranceDraughtsAreDrunk()
     {
         Assert.That(BotPotions165.KindOf("Heal"), Is.EqualTo(BotPotions165.Kind.Heal));

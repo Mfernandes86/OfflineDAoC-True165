@@ -62,6 +62,10 @@ namespace DOL.GS;
         Interlocked.Increment(ref ServiceDecisions.GetOrAdd(bot.DatabaseID, _ => new ServiceDecisionState()).Revision);
     }
 
+    /// <summary>This gamebot's inventory revision (bumped by <see cref="MarkInventoryChanged"/>); 0 for any other bot.</summary>
+    public static int InventoryRevision(long botId) =>
+        ServiceDecisions.TryGetValue(botId, out ServiceDecisionState state) ? Volatile.Read(ref state.Revision) : 0;
+
     public static void MarkEconomyChanged(long botId)
     {
         if (botId <= 0)
