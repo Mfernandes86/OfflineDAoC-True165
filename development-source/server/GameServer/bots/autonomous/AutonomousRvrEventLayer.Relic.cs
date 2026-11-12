@@ -389,6 +389,14 @@ public static partial class AutonomousRvrEventLayer
         lock (Sync) return RelicAims.TryGetValue(realm, out RelicAim aim) ? aim.RelicId : null;
     }
 
+    /// <summary>
+    /// The end reason of a siege whose army never gathered by its deadline (relic audit T4: a relic army has a 3-hour march,
+    /// yet it ended with the keep wording "at the one-hour deadline"). Shown in the event record and the log.
+    /// </summary>
+    public static string RallyFailedReason(bool relicKeep) => relicKeep
+        ? "Rally failed: too few attackers reached the relic keep before the deadline"
+        : "Rally failed: insufficient physical attackers at the one-hour deadline";
+
     /// <summary>Whether a relic campaign for this relic keep is open (tests, dashboard).</summary>
     public static bool HasRelicCampaign(string relicKeepId)
     {

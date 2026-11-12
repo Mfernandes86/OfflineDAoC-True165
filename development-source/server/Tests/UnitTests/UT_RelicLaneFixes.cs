@@ -195,4 +195,14 @@ public sealed class UT_RelicLaneFixes
             Assert.That(AutonomousRelicShrine.ShrinePostOffset(-1, 0), Is.EqualTo(AutonomousRelicShrine.ShrinePostOffset(0, 0)));
         });
     }
+
+    [Test]
+    public void ARelicArmyThatNeverGatheredIsNotToldItMissedAOneHourDeadline()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(AutonomousRvrEventLayer.RallyFailedReason(true), Does.StartWith("Rally failed").And.Not.Contain("one-hour"));
+            Assert.That(AutonomousRvrEventLayer.RallyFailedReason(false), Is.EqualTo("Rally failed: insufficient physical attackers at the one-hour deadline"));
+        });
+    }
 }
