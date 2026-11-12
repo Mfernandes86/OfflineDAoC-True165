@@ -326,15 +326,17 @@ namespace DOL.AI.Brain
                 _stepBackUntil = 0;
             }
             if (!Classic165Mode.IsOn || bot == null || !bot.IsAutonomousWorldBot || bot.IsTemporaryGroupHelper ||
-                bot.Group != null || bot.IsCasting || bot.IsIncapacitated ||
+                bot.Group != null || bot.IsCasting || bot.IsIncapacitated || _rootKiteTarget != null ||
                 Body.TargetObject is not GameNPC target || target is GameBot || !target.IsAlive)
-                return false;
+                return false;   // a Shaman/Runemaster root-kite in progress makes its own one step (BotBrain.SoloRootKite)
             bool rootedOrSnared = IsBreakablyControlled(target) && !target.IsMezzed ||
                 target.effectListComponent?.ContainsEffectForEffectType(eEffect.MovementSpeedDebuff) == true;
             if (!BotGroupRetreat.CasterStepsBack(true, PrefersCurrentSpellRange(), rootedOrSnared,
                     (int)bot.GetDistanceTo(target), now - _lastStepBackTick))
                 return false;
             _lastStepBackTick = now;
+            // O3 allows ONE step back per 20 s, whichever rule takes it: the root-kite waits out the same window.
+            _rootKiteNextTick = Math.Max(_rootKiteNextTick, now + BotSoloRootKitePolicy.ReuseMilliseconds);
             int standOff = BotGroupRetreat.StepBackStandOff(SpellApproachRange());
             Vector2 away = new(bot.X - target.X, bot.Y - target.Y);
             if (away.LengthSquared() < 1)

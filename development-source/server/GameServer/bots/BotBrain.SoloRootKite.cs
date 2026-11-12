@@ -59,6 +59,8 @@ namespace DOL.AI.Brain
                 bot.StopMovingOnPath();
                 bot.WalkTo(new Point3D(x, y, bot.Z), bot.MaxSpeed);
                 _rootKiteStepUntil = now + BotSoloRootKitePolicy.StepHoldMilliseconds;
+                // O3: one step back per 20 s in all - the caster step-back (BotBrain.Retreat) waits out the same window.
+                _lastStepBackTick = now;
                 if (log.IsInfoEnabled)
                     log.Info($"BOT_ROOT_KITE bot=\"{bot.Name}\" class=\"{bot.ClassName}\" level={bot.Level} " +
                              $"target=\"{target.Name}\" hp={target.HealthPercent}% from={distance} step={_rootKiteStep}");
