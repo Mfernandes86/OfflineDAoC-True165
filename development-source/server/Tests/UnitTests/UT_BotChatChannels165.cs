@@ -29,6 +29,15 @@ public class UT_BotChatChannels165
     }
 
     [Test]
+    public void TrueModeHasNoLfgChannelGroupingTalkGoesToBroadcast() => Assert.Multiple(() =>
+    {
+        Assert.That(BotChatChannels165.GroupingChannel(classic165: true), Is.EqualTo(BotChatChannels165.Channel.General),
+            "/lfg is not a player command in True 1.65 Mode");
+        Assert.That(BotChatChannels165.GroupingChannel(classic165: false), Is.EqualTo(BotChatChannels165.Channel.Lfg));
+        Assert.That(BotChatChannels165.IsRegional(BotChatChannels165.GroupingChannel(true)), Is.True, "/broadcast in the region");
+    });
+
+    [Test]
     public void BusyZonesTalkMoreOftenQuietOnesKeepNinetySeconds()
     {
         Assert.That(AutonomousBotChatCoordinator.LocalIntervalMilliseconds(0), Is.EqualTo(90_000));

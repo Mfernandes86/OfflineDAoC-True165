@@ -144,7 +144,9 @@ public static class AutonomousBotChatCoordinator
     /// </summary>
     private static bool TryLfgLine(GameBot bot)
     {
-        if (!BotChatChannels165.PeriodChannels || !HasFactionAudience(bot.Realm))
+        // True 1.65 Mode has no /lfg channel (a GM-only command there); the /who LFG flag stands in for the 1.64 group
+        // window's "looking for group" checkbox (world review 2026-11-11)
+        if (Classic165Mode.IsOn || !BotChatChannels165.PeriodChannels || !HasFactionAudience(bot.Realm))
             return false;
         long now = GameLoop.GameLoopTime;
         LfgBox box = NextLfg.GetValue(bot, _ => new LfgBox { Next = now + Random.Shared.Next(60_000, 180_000) });

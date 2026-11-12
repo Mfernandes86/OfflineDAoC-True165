@@ -15,7 +15,9 @@ namespace DOL.GS
     /// - Trade (exchange adverts, trading talk) and other general talk: /broadcast to the players of the realm in the
     ///   speaker's region, "[Broadcast] Name: ...";
     /// - questions (where is, how do I get to): the advice channel, "[ADVICE ALB] Name: ...";
-    /// - LFG: "[LFG] Name (level, class): ...", the server's own /lfg format.
+    /// - LFG: "[LFG] Name (level, class): ...", the server's own /lfg format - normal mode only. True 1.65 Mode has no
+    ///   /lfg channel (Classic165Mode: the group window's "looking for group" checkbox stands in for it, the /who LFG
+    ///   flag here), so grouping talk goes to /broadcast in the speaker's region instead (world review 2026-11-11).
     /// The owner's /faction stays: a player's /faction line and the bots' answers to it keep that channel. Same lines,
     /// same rate limits, another packet type - no extra work. Switch off bot_chat_period_channels for the old
     /// all-on-&lt;Faction&gt; behaviour.
@@ -27,6 +29,10 @@ namespace DOL.GS
         public static bool PeriodChannels = true;
 
         public enum Channel { Faction, RvR, Trade, Advice, Lfg, General }
+
+        /// <summary>Where grouping talk goes: /lfg in normal mode; /broadcast (General) in True 1.65 Mode, where /lfg is
+        /// not a player command.</summary>
+        public static Channel GroupingChannel(bool classic165) => classic165 ? Channel.General : Channel.Lfg;
 
         /// <summary>The channel for a realm-wide bot line: banter situation first, then what the text is about.</summary>
         public static Channel Classify(string situation, string text, bool pvpContext)
@@ -41,14 +47,14 @@ namespace DOL.GS
             if (s.StartsWith("trad", StringComparison.OrdinalIgnoreCase) || s.Contains("exchange", StringComparison.OrdinalIgnoreCase))
                 return Channel.Trade;
             if (s.StartsWith("lfg", StringComparison.OrdinalIgnoreCase) || s.Contains("group_wanted", StringComparison.OrdinalIgnoreCase))
-                return Channel.Lfg;
+                return GroupingChannel(Classic165Mode.IsOn);
             eAutonomousChatIntent intent = AutonomousChatIntentModel.Predict(text ?? string.Empty);
             if (pvpContext || intent == eAutonomousChatIntent.RvR)
                 return Channel.RvR;
             if (intent == eAutonomousChatIntent.Trading)
                 return Channel.Trade;
             if (intent == eAutonomousChatIntent.Grouping)
-                return Channel.Lfg;
+                return GroupingChannel(Classic165Mode.IsOn);
             if (IsQuestion(text) && intent is eAutonomousChatIntent.Travel or eAutonomousChatIntent.Help or eAutonomousChatIntent.Dungeon)
                 return Channel.Advice;
             return Channel.General;
