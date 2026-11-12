@@ -56,7 +56,7 @@ func _play(clip: String) -> void:
 	if _anim:
 		for c in [clip, "walk", "idle"]:
 			if _anim.has_animation(c):
-				_anim.get_animation(c).loop_mode = Animation.LOOP_LINEAR
+				Fig3Figure.set_loop(_anim.get_animation(c), Animation.LOOP_LINEAR)
 				_anim.play(c, 0.2)
 				return
 

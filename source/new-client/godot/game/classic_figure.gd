@@ -180,7 +180,7 @@ func load_figure(prefix: String, texture_set := "x4plus") -> bool:
 	if players.size() > 0:
 		anim = players[0]
 		for clip in anim.get_animation_list():
-			anim.get_animation(clip).loop_mode = Animation.LOOP_LINEAR if loops(clip) else Animation.LOOP_NONE
+			Fig3Figure.set_loop(anim.get_animation(clip), Animation.LOOP_LINEAR if loops(clip) else Animation.LOOP_NONE)
 		add_rest_reset(anim)
 		if anim.has_animation("idle"):
 			anim.play("idle")

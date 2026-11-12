@@ -194,7 +194,7 @@ func load_figure(prefix: String, texture_set := "x4plus") -> bool:
 	if players.size() > 0:
 		anim = players[0]
 		for clip in anim.get_animation_list():
-			anim.get_animation(clip).loop_mode = Animation.LOOP_LINEAR if loops(clip) else Animation.LOOP_NONE
+			Fig3Figure.set_loop(anim.get_animation(clip), Animation.LOOP_LINEAR if loops(clip) else Animation.LOOP_NONE)
 		add_rest_reset(anim)
 		if anim.has_animation("idle"):
 			anim.play("idle")
@@ -588,6 +588,15 @@ static func item_armor(model: int, extension: int, female: bool) -> Dictionary:
 			p[0] = 1
 		out[k] = p
 	return out
+
+
+## A clip's loop mode, set only when it differs. Every copy of a figure or monster shares its scene's clips, and a
+## clip that is given its own value again still tells every AnimationPlayer using it that it changed: each of them
+## threw its track cache away and built it again on its next step. One new Briton in Camelot made every Briton in
+## view do that in the same frame (2026-11-12, the Camelot stutter: 170-200 ms frames whenever an NPC came into view).
+static func set_loop(clip: Animation, mode: Animation.LoopMode) -> void:
+	if clip and clip.loop_mode != mode:
+		clip.loop_mode = mode
 
 
 ## Every animated character (player, NPC, monster, bot) gets this: a "RESET" animation holding every bone at its

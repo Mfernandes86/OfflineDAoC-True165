@@ -154,7 +154,7 @@ func _show_horse() -> void:
 
 func _horse_play(clip: String) -> void:
 	if _horse_anim and _horse_anim.has_animation(clip) and _horse_anim.current_animation != clip:
-		_horse_anim.get_animation(clip).loop_mode = Animation.LOOP_LINEAR
+		Fig3Figure.set_loop(_horse_anim.get_animation(clip), Animation.LOOP_LINEAR)
 		_horse_anim.play(clip, 0.2)
 
 
@@ -390,5 +390,5 @@ func _seat_on(parts: Dictionary, h: Node3D) -> Vector3:
 func _play_on(parts: Dictionary, clip: String) -> void:
 	var a: AnimationPlayer = parts.get("anim")
 	if a and a.has_animation(clip) and a.current_animation != clip:
-		a.get_animation(clip).loop_mode = Animation.LOOP_LINEAR
+		Fig3Figure.set_loop(a.get_animation(clip), Animation.LOOP_LINEAR)
 		a.play(clip, 0.2)
