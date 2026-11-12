@@ -28,7 +28,18 @@ public sealed partial class AutonomousWorldBotController
     }
 
     /// <summary>Beyond this distance from the medallion merchant a bot enters the frontier on foot through its own border keep.</summary>
-    private const int FrontierMedallionReach = 20_000;
+    public const int FrontierMedallionReach = 20_000;
+
+    /// <summary>
+    /// Whether a bot goes to its realm's frontier teleporter for a medallion. A roamer staged at the realm's second border
+    /// keep (Snowdonia, Vindsaul, Druim Cain: no teleporter there) walks into its own frontier through that keep's gate.
+    /// A bot committed to a siege in ANOTHER realm's frontier cannot walk there (no zone point joins two frontier regions),
+    /// so it rides or walks to the first border keep's teleporter, as a player at Vindsaul did (keeps audit 2026-11-11,
+    /// L1: 166 of Midgard's 350 and 34 of Hibernia's 80 RvR stagings were at the second keep; those bots counted as
+    /// assigned but never reached the muster, so it could not reach its march threshold and marched with half an army).
+    /// </summary>
+    public static bool MayFetchFrontierMedallion(int distanceToMerchant, bool committedToSiegeAbroad) =>
+        committedToSiegeAbroad || distanceToMerchant <= FrontierMedallionReach;
 
     private bool TryFrontierTransport(GameBot bot, CampDestination destination)
     {
@@ -73,7 +84,9 @@ public sealed partial class AutonomousWorldBotController
             // Faste). A bot staged at the other border keep walks into the frontier through that keep's gate, as players
             // do, instead of crossing the realm for a medallion (run 24: Hibernians at Druim Cain stood still for 15
             // minutes "collecting a frontier medallion" 110,000 units from Araisa).
-            if (bot.GetDistanceTo(_medallionMerchant) > FrontierMedallionReach) return false;
+            int merchantDistance = bot.GetDistanceTo(_medallionMerchant);
+            if (merchantDistance > FrontierMedallionReach &&
+                !MayFetchFrontierMedallion(merchantDistance, AutonomousFrontierTransport.HasCommittedSiegePassage(bot, passage))) return false;
             // A ride (town teleporter or horse route) when clearly faster than walking to the merchant.
             if (TryBeginFasterStableRoute(bot, new(_medallionMerchant.X, _medallionMerchant.Y, _medallionMerchant.Z), _medallionMerchant.Name))
                 return true;

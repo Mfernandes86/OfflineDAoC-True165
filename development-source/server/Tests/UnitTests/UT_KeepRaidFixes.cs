@@ -98,4 +98,13 @@ public class UT_KeepRaidFixes
         Assert.That(AutonomousRvrEventLayer.DefenseMarchThreshold(64, 3), Is.EqualTo(3), "three defenders go in together");
         Assert.That(AutonomousRvrEventLayer.DefenseMarchThreshold(64, 6), Is.EqualTo(5));
     });
+    [Test]
+    public void ASiegeRecruitAtTheSecondBorderKeepGoesToTheTeleporter() => Assert.Multiple(() =>
+    {
+        Assert.That(AutonomousWorldBotController.MayFetchFrontierMedallion(5_000, false), Is.True);
+        Assert.That(AutonomousWorldBotController.MayFetchFrontierMedallion(92_500, false), Is.False,
+            "a roamer at Vindsaul walks into its own frontier through Vindsaul's gate");
+        Assert.That(AutonomousWorldBotController.MayFetchFrontierMedallion(92_500, true), Is.True,
+            "a siege recruit at Vindsaul rides or walks to Svasud's teleporter");
+    });
 }
