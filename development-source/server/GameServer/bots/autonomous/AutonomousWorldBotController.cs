@@ -1269,6 +1269,8 @@ namespace DOL.GS
                          $"region={_serviceNpc.CurrentRegionID} at={_serviceNpc.X},{_serviceNpc.Y}");
                 // veteran review M3: bind at this town's stone when it is much nearer the hunting ground (no extra trip)
                 bot.TryRebindNearHuntingGround165();
+                // owner decision O5: collect a finished kill task's reward here, or take a task from a named guard
+                TryKillTaskTownVisit(bot);
             }
             // A shopping trip that stands at its merchant for 90 seconds without being served gives that merchant up and
             // moves on, instead of waiting for the 15-minute watchdog (2026-11-01 run 3: 850 bots stood "Ready to use").
@@ -3993,12 +3995,16 @@ namespace DOL.GS
                 bool partyHasCrowdControl = knowledge && sharedGroup && bot.Group != null &&
                     bot.Group.GetMembersInTheGroup().Any(member => member is GameBot mate && AutonomousBotGroupCoordinator.HasMesmerize(mate));
                 eCharacterClass soloClass = (eCharacterClass)bot.CharacterClass.ID;
+                // owner decision O5: a solo bot's live kill task draws its monster's camps x10 (BotKillTasks165)
+                string taskMonster = !sharedGroup && bot.Group == null
+                    ? BotKillTasks165.HuntedMonster(bot.DatabaseID, GameLoop.GameLoopTime, bot.Level) : null;
                 Zone homeZone = home.Region != 0 ? WorldMgr.GetZone(home.Zone) : null;
                 if (homeZone == null)
                     home = default;
                 legalCells = legalCells.Select(camp => camp with
                 {
-                    SpreadWeight = KnowledgeWeight(SpreadWeight(bot, camp, destinations, ownCamp, party,
+                    SpreadWeight = (taskMonster != null && string.Equals(camp.MonsterName, taskMonster, StringComparison.Ordinal)
+                        ? KillTaskCampWeight : 1) * KnowledgeWeight(SpreadWeight(bot, camp, destinations, ownCamp, party,
                         campsPerMonster.GetValueOrDefault(AutonomousCampCompetition.NormalizeName(camp.MonsterName), 1),
                         home.Region, homeZone), knowledge, sharedGroup, partyHasCrowdControl, soloClass,
                         destinations.TryGetValue(camp.Id, out CampDestination known) ? known.Traits : default)

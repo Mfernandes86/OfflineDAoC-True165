@@ -96,6 +96,7 @@ public static class AutonomousObjectiveAssignments
         if (killed == null || bot?.PersistentRecord == null || Parse(bot.PersistentRecord.ObjectiveKind) == eAutonomousObjectiveKind.RvR)
             return;
         AutonomousHuntingGround.RecordKill(bot, killed);
+        BotKillTasks165.RecordKill(bot, killed);
     }
 
     public static void RecordPveKill(GameBot bot)
