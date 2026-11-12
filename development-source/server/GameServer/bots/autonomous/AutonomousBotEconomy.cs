@@ -1407,6 +1407,9 @@ namespace DOL.GS;
         SwapVisits[bot.DatabaseID] = VisitKey(bot);
     }
 
+    /// <summary>Candidates appraised beyond the bot's free listing room: one for a swap and one for its next visit.</summary>
+    public const int AppraisedBeyondRoom = 2;
+
     /// <summary>What the bot knows about its own listings and its bag when it decides what to list or keep.</summary>
     private sealed class SellContext
     {
@@ -1468,10 +1471,19 @@ namespace DOL.GS;
         context.Own = MarketCache.ReadBook(book => book.OwnerListings(context.Owner));
         context.Room = RoomOf(bot, context.Own);
         context.CeilingReached = MarketCache.ReadBook(book => book.BotListings(bot.Realm)) >= RealmSoftCeiling;
+        // the listable items by their cheap gain (no market read), then appraised against the market best first, only
+        // as many as the bot could list, swap or keep for its next visit (review 2026-11-11: every bag item was
+        // appraised, twice per merchant sale)
+        var listable = new List<(DbInventoryItem Item, long Gain)>();
         foreach (DbInventoryItem item in bot.Inventory.AllItems)
+            if (IsListable(bot, item, operationalLoadout))
+                listable.Add((item, ItemValue165.Gain(item)));
+        listable.Sort((a, b) => b.Gain.CompareTo(a.Gain));
+        int wanted = Math.Max(0, context.Room.Free) + AppraisedBeyondRoom;
+        foreach ((DbInventoryItem item, _) in listable)
         {
-            if (!IsListable(bot, item, operationalLoadout))
-                continue;
+            if (context.Ranked.Count >= wanted)
+                break;
             ListingCandidate candidate = Appraise(bot, item, context.Owner, 0, 0);
             if (candidate != null)
                 context.Ranked.Add(candidate);
@@ -1677,13 +1689,39 @@ namespace DOL.GS;
             return null;
         }
 
+        private sealed record VendorSets(int Revision, long Tick, HashSet<DbInventoryItem> Loadout, HashSet<DbInventoryItem> Kept);
+        private static readonly ConcurrentDictionary<long, VendorSets> VendorSetCache = new();
+        private const long VendorSetMilliseconds = 5_000;
+
+        /// <summary>
+        /// The bot's operational loadout and the items it keeps for the exchange, worked out once per inventory revision
+        /// (a few seconds at most): the vendor choice and the sale that follows use the same sets (review 2026-11-11: each
+        /// merchant sale built the whole sell context twice), and the sale's own inventory change starts a fresh one.
+        /// </summary>
+        private static (HashSet<DbInventoryItem> Loadout, HashSet<DbInventoryItem> Kept) VendorSetsOf(GameBot bot)
+        {
+            int revision = ServiceDecisions.TryGetValue(bot.DatabaseID, out ServiceDecisionState state) ? Volatile.Read(ref state.Revision) : 0;
+            long now = GameLoop.GameLoopTime;
+            if (bot.DatabaseID > 0 && VendorSetCache.TryGetValue(bot.DatabaseID, out VendorSets cached) &&
+                cached.Revision == revision && now >= cached.Tick && now - cached.Tick < VendorSetMilliseconds)
+                return (cached.Loadout, cached.Kept);
+            HashSet<DbInventoryItem> loadout = FindOperationalLoadoutItems(bot);
+            HashSet<DbInventoryItem> kept = KeepsForExchange(bot, loadout);
+            if (bot.DatabaseID > 0)
+            {
+                if (VendorSetCache.Count > 16_384)
+                    VendorSetCache.Clear();
+                VendorSetCache[bot.DatabaseID] = new VendorSets(revision, now, loadout, kept);
+            }
+            return (loadout, kept);
+        }
+
         public static DbInventoryItem FindVendorTrashCandidate(GameBot bot)
         {
             if (bot?.Inventory == null)
                 return null;
 
-            HashSet<DbInventoryItem> operationalLoadout = FindOperationalLoadoutItems(bot);
-            HashSet<DbInventoryItem> kept = KeepsForExchange(bot, operationalLoadout);
+            (HashSet<DbInventoryItem> operationalLoadout, HashSet<DbInventoryItem> kept) = VendorSetsOf(bot);
             return bot.Inventory.AllItems
                 .Where(item => item != null && item.IsDropable && item.OwnerLot == 0 &&
                                item.SlotPosition >= (int)eInventorySlot.FirstBackpack &&
@@ -1818,8 +1856,8 @@ namespace DOL.GS;
                 !merchant.IsWithinRadius(bot, GS.ServerProperties.Properties.WORLD_PICKUP_DISTANCE))
                 return false;
 
-            HashSet<DbInventoryItem> operationalLoadout = FindOperationalLoadoutItems(bot);
-            if (IsProtectedFromVendor(bot, item, KeepsForExchange(bot, operationalLoadout), operationalLoadout))
+            (HashSet<DbInventoryItem> operationalLoadout, HashSet<DbInventoryItem> kept) = VendorSetsOf(bot);
+            if (IsProtectedFromVendor(bot, item, kept, operationalLoadout))
                 return false;
             bool failedListing = Exchange165.RelistOf(item) != null;
 
