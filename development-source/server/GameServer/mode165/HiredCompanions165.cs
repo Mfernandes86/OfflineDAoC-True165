@@ -244,6 +244,9 @@ namespace DOL.GS
                 return "That companion's record is missing.";
             if (!record.IsAlive)
                 return $"{record.Name} is dead. Any healer of your realm brings them back, free.";
+            // GitHub #49: an earlier copy of this companion that is no longer in the world (a move that never finished)
+            // may still sit in the group; the new one would then show as a second row of the same companion.
+            RetireStaleCopies(player, hired.BotId);
             if (player.Group != null && player.Group.MemberCount >= 8)
                 return "Your group is full.";
             try
@@ -294,6 +297,45 @@ namespace DOL.GS
             }
         }
 
+        /// <summary>Pure (GitHub #49): a group member is a leftover copy of the companion being summoned - a gamebot with that
+        /// companion's id that is not the object now in the world.</summary>
+        public static bool IsStaleCopy(long memberBotId, bool memberIsLiveObject, long summonedBotId) =>
+            summonedBotId > 0 && memberBotId == summonedBotId && !memberIsLiveObject;
+
+        /// <summary>Takes every leftover copy of this companion out of its group (and out of the world): the copy the
+        /// roster still points at when it is not in the world, and any other object with its id in the player's group.
+        /// Runs only when a companion is summoned.</summary>
+        private static void RetireStaleCopies(GamePlayer player, long botId)
+        {
+            GameBot live = LiveBot(botId);
+            var stale = new List<GameBot>(2);
+            if (Live.TryGetValue(botId, out GameBot listed) && IsStaleCopy(listed.DatabaseID, ReferenceEquals(listed, live), botId))
+                stale.Add(listed);
+            if (player?.Group != null)
+                foreach (GameLiving member in player.Group.GetMembersInTheGroup())
+                    if (member is GameBot copy && IsStaleCopy(copy.DatabaseID, ReferenceEquals(copy, live), botId) && !stale.Contains(copy))
+                        stale.Add(copy);
+            if (stale.Count == 0)
+                return;
+            Dismissing[botId] = 0;   // leaving the group must not park the companion we are about to summon
+            try
+            {
+                foreach (GameBot copy in stale)
+                {
+                    Log.Warn($"COMPANION_STALE_COPY_165 bot=\"{copy.Name}\" id={botId} state={copy.ObjectState} grouped={copy.Group != null} " +
+                             $"player=\"{player?.Name}\": removed before the summon");
+                    copy.Group?.RemoveMember(copy);
+                    if (copy.ObjectState == GameObject.eObjectState.Active)
+                        copy.RemoveFromWorld();
+                    Live.TryRemove(new KeyValuePair<long, GameBot>(botId, copy));
+                }
+            }
+            finally
+            {
+                Dismissing.TryRemove(botId, out _);
+            }
+        }
+
         /// <summary>Sends a companion back to the inn (it keeps everything it carries). keepWithOwner: it comes back the
         /// next time the owner logs in (logout); otherwise it waits at the inn until summoned.</summary>
         public static string Dismiss(GamePlayer player, int row, bool keepWithOwner = false)
@@ -309,8 +351,17 @@ namespace DOL.GS
         {
             hired.WithOwner = keepWithOwner;
             Save(hired);
-            if (!Live.TryRemove(hired.BotId, out GameBot bot) || bot.ObjectState != GameObject.eObjectState.Active)
+            if (!Live.TryRemove(hired.BotId, out GameBot bot))
                 return;
+            if (bot.ObjectState != GameObject.eObjectState.Active)
+            {
+                // GitHub #49: a copy that is not in the world still leaves the group, or it stays there as a row nobody
+                // can see when the companion is summoned again
+                Dismissing[hired.BotId] = 0;
+                try { bot.Group?.RemoveMember(bot); }
+                finally { Dismissing.TryRemove(hired.BotId, out _); }
+                return;
+            }
             Dismissing[hired.BotId] = 0;
             try
             {
