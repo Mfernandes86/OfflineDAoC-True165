@@ -4,23 +4,26 @@ using System.Globalization;
 namespace OfflineDaoc.Launcher;
 
 /// <summary>
-/// The Player XP rate and Gamebot XP rate options (owner 2026-11-10: back from the old repo). They are server
-/// properties (xp_rate, bot_xp_rate) in the world database, like the launcher's other options, default 1x. The True
+/// The Player XP rate and Gamebot XP rate options (owner 2026-11-10: back from the old repo) and the Crafting skill
+/// rate (owner 2026-11-12: each crafting skill gain gives that many points). They are server properties (xp_rate,
+/// bot_xp_rate, crafting_skill_rate) in the world database, like the launcher's other options, default 1x. The True
 /// 1.65 content refresh does not write them, so the launcher's choice wins over true165-rules.json.
 /// </summary>
 internal static class XpRateSettings
 {
     public const string PlayerKey = "xp_rate";
     public const string BotKey = "bot_xp_rate";
+    public const string CraftKey = "crafting_skill_rate";
     public static readonly double[] Presets = [1, 2, 3, 5, 10];
 
     /// <summary>Server properties the launcher's Options own: the content refresh leaves their values alone.</summary>
     public static bool IsLauncherOwned(string key) =>
         string.Equals(key, PlayerKey, StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(key, BotKey, StringComparison.OrdinalIgnoreCase);
+        string.Equals(key, BotKey, StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(key, CraftKey, StringComparison.OrdinalIgnoreCase);
 
     public static bool IsValid(string key, double rate) =>
-        (key == PlayerKey || key == BotKey) && Presets.Any(preset => Math.Abs(preset - rate) < 0.001);
+        (key == PlayerKey || key == BotKey || key == CraftKey) && Presets.Any(preset => Math.Abs(preset - rate) < 0.001);
 
     public static string Label(double rate) => Math.Abs(rate - 1) < 0.001 ? "1×  Original" : $"{Format(rate)}×";
 
@@ -45,7 +48,7 @@ internal static class XpRateSettings
     public static void Write(SQLiteConnection connection, string key, double rate)
     {
         if (!IsValid(key, rate))
-            throw new InvalidOperationException("Unsupported experience-rate selection.");
+            throw new InvalidOperationException(key == CraftKey ? "Unsupported crafting-rate selection." : "Unsupported experience-rate selection.");
         string stored = Format(rate);
         string updated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
         using SQLiteTransaction transaction = connection.BeginTransaction();
@@ -57,11 +60,14 @@ internal static class XpRateSettings
         {
             using var insert = new SQLiteCommand(
                 "INSERT INTO ServerProperty (Category, `Key`, Description, DefaultValue, Value, LastTimeRowUpdated, ServerProperty_ID) " +
-                "VALUES ('rates', @key, @description, '1', @value, @updated, @id)", connection, transaction);
+                "VALUES (@category, @key, @description, '1', @value, @updated, @id)", connection, transaction);
+            insert.Parameters.AddWithValue("@category", key == CraftKey ? "craft" : "rates");
             insert.Parameters.AddWithValue("@key", key);
             insert.Parameters.AddWithValue("@description", key == PlayerKey
                 ? "Player experience rate selected in the Offline DAoC launcher (hired companions use it too)."
-                : "Autonomous gamebot experience rate selected in the Offline DAoC launcher.");
+                : key == CraftKey
+                    ? "Crafting skill rate selected in the Offline DAoC launcher: points per crafting skill gain."
+                    : "Autonomous gamebot experience rate selected in the Offline DAoC launcher.");
             insert.Parameters.AddWithValue("@value", stored);
             insert.Parameters.AddWithValue("@updated", updated);
             insert.Parameters.AddWithValue("@id", Guid.NewGuid().ToString());

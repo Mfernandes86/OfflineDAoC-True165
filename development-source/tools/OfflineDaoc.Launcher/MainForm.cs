@@ -77,6 +77,7 @@ internal sealed partial class MainForm : Form
     // XP rate options back from the old repo (owner 2026-11-10): player and gamebot rates, saved as server properties.
     private readonly ComboBox _playerXpRate = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 108 };
     private readonly ComboBox _botXpRate = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 108 };
+    private readonly ComboBox _craftRate = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 108 };
     private readonly Label _optionsStatus = new()
     {
         AutoSize = true,
@@ -542,13 +543,14 @@ internal sealed partial class MainForm : Form
         {
             Dock = DockStyle.Fill,
             ColumnCount = 3,
-            RowCount = 8,
+            RowCount = 9,
             BackColor = Color.Transparent,
         };
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 210));
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 135));
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
         layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48));
+        layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));
         layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));
         layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));
         layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));
@@ -594,10 +596,16 @@ internal sealed partial class MainForm : Form
         layout.Controls.Add(_botXpRate, 1, 5);
         layout.Controls.Add(OptionDescription("Experience from kills for the autonomous gamebots that live in the world. 1x is the original rate."), 2, 5);
         _botXpRate.SelectedIndexChanged += async (_, _) => await SaveXpRateAsync(XpRateSettings.BotKey, _botXpRate);
+        // Crafting skill rate (owner 2026-11-12), default 1x: each crafting skill gain gives that many points.
+        ConfigureXpRateSelector(_craftRate);
+        layout.Controls.Add(OptionLabel("CRAFTING SKILL RATE"), 0, 6);
+        layout.Controls.Add(_craftRate, 1, 6);
+        layout.Controls.Add(OptionDescription("Crafting skill points your characters get each time they gain a point. The crafting assistant plans with it. 1x is the original rate."), 2, 6);
+        _craftRate.SelectedIndexChanged += async (_, _) => await SaveXpRateAsync(XpRateSettings.CraftKey, _craftRate);
         Label about = OptionDescription(TrueMode.Summary);
-        layout.Controls.Add(about, 0, 6);
+        layout.Controls.Add(about, 0, 7);
         layout.SetColumnSpan(about, 3);
-        layout.Controls.Add(_optionsStatus, 0, 7);
+        layout.Controls.Add(_optionsStatus, 0, 8);
         layout.SetColumnSpan(_optionsStatus, 3);
         surface.Controls.Add(layout);
         return surface;
@@ -1474,7 +1482,8 @@ internal sealed partial class MainForm : Form
             _pveAnnouncements.Enabled = editable;
             SelectXpRate(_playerXpRate, snapshot.PlayerXpRate);
             SelectXpRate(_botXpRate, snapshot.BotXpRate);
-            _playerXpRate.Enabled = _botXpRate.Enabled = editable;
+            SelectXpRate(_craftRate, snapshot.CraftSkillRate);
+            _playerXpRate.Enabled = _botXpRate.Enabled = _craftRate.Enabled = editable;
             if (_savingOptions)
             {
                 _optionsStatus.ForeColor = DaocTheme.Success;
@@ -1505,13 +1514,15 @@ internal sealed partial class MainForm : Form
             selector.SelectedItem = match;
     }
 
-    // Player / gamebot XP rate (owner 2026-11-10): saved as a server property, used at the next server startup.
+    // Player / gamebot XP rate (owner 2026-11-10) and crafting skill rate (owner 2026-11-12): saved as a server
+    // property, used at the next server startup.
     private async Task SaveXpRateAsync(string key, ComboBox selector)
     {
         if (_loadingOptions || _savingOptions || selector.SelectedItem is not XpRateOption option) return;
+        bool craft = key == XpRateSettings.CraftKey;
         if (IsServerRunning() || FindExactServerProcess() is not null)
         {
-            MessageBox.Show(this, "Stop the server before changing experience rates.", "Server is running");
+            MessageBox.Show(this, craft ? "Stop the server before changing the crafting skill rate." : "Stop the server before changing experience rates.", "Server is running");
             await RefreshDashboardAsync();
             return;
         }
@@ -1521,12 +1532,12 @@ internal sealed partial class MainForm : Form
             return;
         }
         _savingOptions = true;
-        _playerXpRate.Enabled = _botXpRate.Enabled = _rvrAnnouncements.Enabled = _pveAnnouncements.Enabled = _makeMeGm.Enabled = _startButton.Enabled = false;
-        string what = key == XpRateSettings.PlayerKey ? "PLAYER XP RATE" : "GAMEBOT XP RATE";
+        _playerXpRate.Enabled = _botXpRate.Enabled = _craftRate.Enabled = _rvrAnnouncements.Enabled = _pveAnnouncements.Enabled = _makeMeGm.Enabled = _startButton.Enabled = false;
+        string what = craft ? "CRAFTING SKILL RATE" : key == XpRateSettings.PlayerKey ? "PLAYER XP RATE" : "GAMEBOT XP RATE";
         _optionsStatus.Text = $"APPLYING {what} {option.Label}…";
         _optionsStatus.ForeColor = DaocTheme.Success;
         try { await Task.Run(() => PersistXpRate(key, option.Multiplier)); }
-        catch (Exception ex) { MessageBox.Show(this, ex.Message, "Unable to save XP rate"); }
+        catch (Exception ex) { MessageBox.Show(this, ex.Message, craft ? "Unable to save crafting skill rate" : "Unable to save XP rate"); }
         finally { _savingOptions = false; await RefreshDashboardAsync(); }
     }
 
@@ -1856,6 +1867,7 @@ internal sealed partial class MainForm : Form
         bool pveAnnouncements = ReadSwitch(connection, "pve_realm_event_announcements");
         double playerXpRate = XpRateSettings.Read(connection, XpRateSettings.PlayerKey);
         double botXpRate = XpRateSettings.Read(connection, XpRateSettings.BotKey);
+        double craftSkillRate = XpRateSettings.Read(connection, XpRateSettings.CraftKey);
         // Saved bots per realm: one grouped count, only while the server is stopped (it reports its own counts) or
         // when the goals file has to be created.
         bool goalsMissing = !PopulationGoalSettings.Exists(StateDirectory);
@@ -1868,7 +1880,7 @@ internal sealed partial class MainForm : Form
             goalsNotice = $"Population goals created: Albion {first.Albion:N0}, Midgard {first.Midgard:N0}, Hibernia {first.Hibernia:N0}";
         }
         return new DashboardSnapshot(serverState, bots, groups, active, memoryMb, botAiDelay, makeMeGm, ReadRvrWorld(),
-            rvrAnnouncements, pveAnnouncements, savedCounts, goalsNotice, playerXpRate, botXpRate);
+            rvrAnnouncements, pveAnnouncements, savedCounts, goalsNotice, playerXpRate, botXpRate, craftSkillRate);
     }
 
     // Anything but an explicit "false" (including a missing row) reads as on.
@@ -3422,7 +3434,7 @@ internal sealed partial class MainForm : Form
     private sealed record DashboardSnapshot(string ServerState, List<BotRow> Bots, List<GroupRow> Groups,
         int Active, double ServerMemoryMb, BotAiDelayReport? BotAiDelay, bool MakeMeGm = false, RvrWorldSnapshot? RvrWorld = null,
         bool RvrAnnouncements = true, bool PveAnnouncements = true, int[]? SavedCounts = null, string GoalsNotice = "",
-        double PlayerXpRate = 1, double BotXpRate = 1);
+        double PlayerXpRate = 1, double BotXpRate = 1, double CraftSkillRate = 1);
 
     private sealed record LiveBotStatus(long BotId, int Level, string ZoneName, string Activity,
         string CurrentGoal, string TargetName, string TravelDestination, string ObjectiveProgress,

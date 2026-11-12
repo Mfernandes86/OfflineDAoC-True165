@@ -231,7 +231,7 @@ internal static class TrueMode
             using SQLiteTransaction tx = c.BeginTransaction();
             progress($"Updating the {Name} world content...");
             foreach ((string key, string value) in rules.Settings)
-                if (!XpRateSettings.IsLauncherOwned(key))   // the launcher's XP rate options win (owner 2026-11-10)
+                if (!XpRateSettings.IsLauncherOwned(key))   // the launcher's XP and crafting rate options win (owner 2026-11-10, 2026-11-12)
                     SetProperty(c, key, value);
             RemoveContent(c, rules.Remove);
             foreach (UpdateRule update in rules.Updates ?? [])
