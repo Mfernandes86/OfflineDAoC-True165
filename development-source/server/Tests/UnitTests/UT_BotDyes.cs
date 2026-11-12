@@ -174,6 +174,31 @@ public class UT_BotDyes
     }
 
     [Test]
+    public void ABotKeepsOneSignatureColour()
+    {
+        var palette = new[] { 12, 30, 43, 61 };
+        int first = AutonomousBotDyes.SignatureColour(77, palette, System.Array.Empty<int>());
+        Assert.That(palette, Does.Contain(first));
+        Assert.That(AutonomousBotDyes.SignatureColour(77, palette, System.Array.Empty<int>()), Is.EqualTo(first), "the same pick every visit");
+        Assert.That(AutonomousBotDyes.SignatureColour(77, palette, new[] { 43, 43, 12 }), Is.EqualTo(43), "the colour it wears most");
+        Assert.That(AutonomousBotDyes.SignatureColour(77, palette, new[] { 99 }), Is.Zero, "its colour isn't sold here: it waits");
+        Assert.That(AutonomousBotDyes.SignatureColour(77, System.Array.Empty<int>(), System.Array.Empty<int>()), Is.Zero);
+        var picks = new System.Collections.Generic.HashSet<int>();
+        for (long id = 1; id <= 200; id++)
+            picks.Add(AutonomousBotDyes.SignatureColour(id, palette, System.Array.Empty<int>()));
+        Assert.That(picks.Count, Is.EqualTo(palette.Length), "bots spread over the colours");
+    }
+
+    [TestCase(30, 27, false, eInventorySlot.TorsoArmor, true)]
+    [TestCase(30, 26, false, eInventorySlot.TorsoArmor, false)]   // vendor gear due for replacement
+    [TestCase(30, 15, true, eInventorySlot.TorsoArmor, true)]     // crafted
+    [TestCase(30, 5, false, eInventorySlot.Cloak, true)]           // a cloak is kept
+    public void OnlyKeptPiecesAreDyed(int botLevel, int itemLevel, bool crafted, eInventorySlot slot, bool expected)
+    {
+        Assert.That(AutonomousBotDyes.KeptLongEnoughToDye(botLevel, itemLevel, crafted, slot), Is.EqualTo(expected));
+    }
+
+    [Test]
     public void ForgetDropsTheBotsDyeRest()
     {
         var map = (ConcurrentDictionary<long, long>)typeof(AutonomousBotDyes)

@@ -15,6 +15,8 @@ namespace DOL.GS
     /// than a tenth of the coin above the shopping reserve. A cloak or shield that carries a guild emblem (its own, or
     /// the guild's on an invited gamebot) is never dyed: the player handler wipes the emblem when it dyes.
     /// Hired companions don't shop (their player gears them).
+    /// Veteran-bots review 2026-11-11 (M9): each bot dyes its kept pieces (crafted, its cloak, or at most three levels under
+    /// it) in one signature colour, every such piece in one visit, all within the spend cap.
     /// </summary>
     public static class AutonomousBotDyes
     {
@@ -191,7 +193,7 @@ namespace DOL.GS
 
             int guildEmblem = AutonomousBotGuilds.ShownGuild(bot)?.Emblem ?? 0;
             var pieces = new List<DbInventoryItem>();
-            var wornColours = new HashSet<int>();
+            var wornColours = new List<int>();
             foreach (eInventorySlot slot in DyeableSlots)
             {
                 DbInventoryItem item = bot.Inventory.GetItem(slot);
@@ -202,52 +204,86 @@ namespace DOL.GS
                 if (slot == eInventorySlot.LeftHandWeapon && item.Object_Type != (int)eObjectType.Shield)
                     continue;   // an off-hand weapon is no shield
                 if (SkipForEmblem(item.Emblem, IsEmblemSlot(slot, item.Object_Type), guildEmblem) ||
-                    DOL.GS.Quests.Hibernia.SluaghbinderEpicArmor.IsSetItem(item))
+                    DOL.GS.Quests.Hibernia.SluaghbinderEpicArmor.IsSetItem(item) ||
+                    !KeptLongEnoughToDye(bot.Level, item.Level, item.IsCrafted, slot))
                     continue;
                 pieces.Add(item);
             }
             if (pieces.Count == 0)
                 return false;
-            // an undyed piece first, then any
-            DbInventoryItem target = null;
-            DyeOffer choice = null;
-            foreach (DbInventoryItem piece in pieces.OrderBy(p => p.Color > 0 ? 1 : 0).ThenBy(_ => Random.Shared.Next()))
+
+            // one signature colour per bot (veteran-bots review 2026-11-11, M9 / economy G14): the colour it already wears
+            // most, else one picked from what is on offer by its id; a richer bot looks at the dear colours first
+            long ceiling = PriceCeiling(coin, reserve);
+            DyeOffer[] affordable = offers.Where(o => o.Price > 0 && o.Price <= ceiling &&
+                                                      pieces.Any(p => DyeFits(o.Template.Model, p.Object_Type, p.Item_Type))).ToArray();
+            if (affordable.Length == 0)
+                return false;
+            long floor = PreferredFloor(tier);
+            DyeOffer[] pool = affordable.Any(o => o.Price >= floor) ? affordable.Where(o => o.Price >= floor).ToArray() : affordable;
+            int signature = SignatureColour(bot.DatabaseID, pool.Select(o => o.Template.Color).Distinct().OrderBy(c => c).ToList(), wornColours);
+            if (signature <= 0)
+                return false;
+
+            // every piece not yet in that colour, one dye each, the cheapest dye of the colour that fits it, all within the
+            // spend cap (a tenth of the coin above the reserve)
+            long budget = SpendCap(coin, reserve);
+            int dyed = 0;
+            foreach (DbInventoryItem target in pieces.Where(p => p.Color != signature).OrderBy(p => p.Color > 0 ? 1 : 0))
             {
-                DyeOffer[] fits = offers.Where(o => DyeFits(o.Template.Model, piece.Object_Type, piece.Item_Type) &&
-                                                    o.Template.Color != piece.Color).ToArray();
-                if (fits.Length == 0)
+                DyeOffer choice = affordable.Where(o => o.Template.Color == signature &&
+                                                        DyeFits(o.Template.Model, target.Object_Type, target.Item_Type))
+                    .OrderBy(o => o.Price).FirstOrDefault();
+                if (choice == null || choice.Price > budget ||
+                    !AutonomousBotEconomy.TrySpend(bot.DatabaseID, choice.Price, BotMoneyLedger165.Kind.Dye))
                     continue;
-                // half the time a player matches a colour already worn, when it is in reach
-                DyeOffer[] matching = fits.Where(o => wornColours.Contains(o.Template.Color)).ToArray();
-                DyeOffer pick = matching.Length > 0 && Random.Shared.Next(2) == 0
-                    ? ChooseOffer(matching, o => o.Price, coin, reserve, Random.Shared)
-                    : null;
-                pick ??= ChooseOffer(fits, o => o.Price, coin, reserve, Random.Shared);
-                if (pick == null)
-                    continue;
-                target = piece;
-                choice = pick;
-                break;
+                budget -= choice.Price;
+                dyed++;
+                // as the player handler: the dye's colour, no emblem (none was there), the dye used up
+                int oldColour = target.Color;
+                target.Color = choice.Template.Color;
+                target.Emblem = 0;
+                target.Dirty = true;
+                Log.Info($"BOT_DYED_165 bot={bot.Name} id={bot.DatabaseID} level={bot.Level} tier={tier} coin={coin} " +
+                         $"item=\"{target.Name}\" colour={oldColour}->{target.Color} dye=\"{choice.Template.Name}\" " +
+                         $"copper={choice.Price} from=\"{choice.Merchant.Name}\"");
             }
-            if (target == null || !AutonomousBotEconomy.TrySpend(bot.DatabaseID, choice.Price, BotMoneyLedger165.Kind.Dye))
+            if (dyed == 0)
                 return false;
             NextDyeTick[bot.DatabaseID] = now + RestAfterVisit(true, tier);   // dyed: the tier's hours of rest
-
-            // as the player handler: the dye's colour, no emblem (none was there), the dye used up
-            int oldColour = target.Color;
-            target.Color = choice.Template.Color;
-            target.Emblem = 0;
-            target.Dirty = true;
             AutonomousBotEconomy.MarkInventoryChanged(bot);
             bot.MarkAutonomousStateDirty();
             AutonomousBotStatusPersistence.Queue(bot, true);
             if (bot.ObjectState == GameObject.eObjectState.Active)
-                bot.BroadcastLivingEquipmentUpdate();   // nearby clients see the new colour
-            Log.Info($"BOT_DYED_165 bot={bot.Name} id={bot.DatabaseID} level={bot.Level} tier={tier} coin={coin} " +
-                     $"item=\"{target.Name}\" colour={oldColour}->{target.Color} dye=\"{choice.Template.Name}\" " +
-                     $"copper={choice.Price} from=\"{choice.Merchant.Name}\"");
+                bot.BroadcastLivingEquipmentUpdate();   // nearby clients see the new colours
             return true;
         }
+
+        /// <summary>
+        /// A bot's signature colour (veteran-bots review 2026-11-11, economy G14: a veteran dyed his kept set one colour):
+        /// the colour it wears most, when that colour is on offer; else one of the offered colours picked by its id, so
+        /// it is the same one visit after visit at the same merchant. 0 when the colour it wears is not on offer here
+        /// (it waits for a merchant that has it) or nothing is offered.
+        /// </summary>
+        public static int SignatureColour(long botId, IReadOnlyList<int> palette, IReadOnlyCollection<int> wornColours)
+        {
+            if (palette == null || palette.Count == 0)
+                return 0;
+            if (wornColours != null && wornColours.Count > 0)
+            {
+                int worn = wornColours.GroupBy(c => c).OrderByDescending(g => g.Count()).ThenBy(g => g.Key).First().Key;
+                return palette.Contains(worn) ? worn : 0;
+            }
+            ulong mixed = (ulong)botId * 0x9E3779B97F4A7C15UL;
+            return palette[(int)((mixed >> 32) % (ulong)palette.Count)];
+        }
+
+        /// <summary>
+        /// A piece worth dyeing (veteran-bots review 2026-11-11, economy G14: nobody dyes vendor gear due for replacement):
+        /// crafted, a cloak (kept for years), or at most three levels under the bot.
+        /// </summary>
+        public static bool KeptLongEnoughToDye(int botLevel, int itemLevel, bool crafted, eInventorySlot slot) =>
+            crafted || slot == eInventorySlot.Cloak || itemLevel >= botLevel - 3;
 
         /// <summary>Colour dyes on sale at this merchant and coin merchants of the bot's realm close by.</summary>
         private static DyeOffer[] NearbyOffers(GameBot bot, GameMerchant at)
