@@ -179,6 +179,7 @@ public static partial class AutonomousBotGroupCoordinator
             AutonomousRealmRaid.Pulse(now);
             AutonomousRealmRaid.RecruitForcedParty(now);
             AutonomousRvrEventLayer.PulseDefense(now);
+            KeepDoorRepair165.Pulse(now);   // holders repair damaged keep doors (every 20 s)
             RealmWarbandSupport.Pulse(now);
             AutonomousObjectiveAssignments.ReconcileIfDue();
             lock (Sync)

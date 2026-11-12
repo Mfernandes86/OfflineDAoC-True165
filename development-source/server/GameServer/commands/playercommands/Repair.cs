@@ -287,7 +287,8 @@ namespace DOL.GS.Commands
 			return chance;
 		}
 
-		private static int GetNeededWoodForOneTick(int level)
+		/// <summary>Wood units for one repair tick of a keep object of this level (also used by KeepDoorRepair165).</summary>
+		public static int GetNeededWoodForOneTick(int level)
 		{
 			switch (level)
 			{
