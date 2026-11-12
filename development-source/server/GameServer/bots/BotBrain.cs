@@ -4003,6 +4003,9 @@ namespace DOL.AI.Brain
                 // an assassin hides and opens with Backstab / Perforate Artery (BotBrain.StealthOpener)
                 if (Body.TargetObject is GameLiving openerTarget && TryStealthOpener(openerTarget))
                     return;
+                // O3: a solo Shaman or Runemaster roots its monster and takes one step back (BotBrain.SoloRootKite)
+                if (Body.TargetObject is GameLiving kiteTarget && TrySoloRootKite(kiteTarget))
+                    return;
                 // a damage dealer steps behind (or beside) a monster the tank holds, for its back/side styles
                 if (Body.TargetObject is GameLiving flankTarget && TryFlank(flankTarget))
                     return;
