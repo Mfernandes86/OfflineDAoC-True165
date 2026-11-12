@@ -74,7 +74,8 @@ namespace DOL.GS
             /// <summary>When 200 were first staged (the 3-minute wait starts there).</summary>
             public long MinimumStagedTick;
             /// <summary>Horn battle watch: when the battle began, the last progress (a route target or named boss killed by
-            /// the raid, or a final encounter at a new low) and the wiped engagements of the final encounter.</summary>
+            /// the raid, or a final encounter at a new low) and the wiped engagements of a dragon (a dungeon route counts its
+            /// own: RealmRaidDungeonRoute.FinalWipes).</summary>
             public long BattleStartTick;
             public long LastProgressTick;
             public int FailedFinalEngagements;
@@ -418,7 +419,7 @@ namespace DOL.GS
                 {
                     raid.FailedFinalEngagements++;
                     raid.FinalLow.Remove(final);
-                    Log.Info($"REALM_RAID_FINAL_WIPE event={raid.Definition.Id} target=\"{final.Name}\" failed={raid.FailedFinalEngagements} " +
+                    if (raid.DungeonRoute == null) Log.Info($"REALM_RAID_FINAL_WIPE event={raid.Definition.Id} target=\"{final.Name}\" failed={raid.FailedFinalEngagements} " +
                              $"of={RealmRaidRecruitmentPolicy.HornFailedFinalEngagements}");
                 }
                 raid.FinalEngaged[final] = engaged;
@@ -428,8 +429,11 @@ namespace DOL.GS
                     raid.LastProgressTick = now;
                 }
             }
-            if (RealmRaidRecruitmentPolicy.HornBattleFailed(raid.FailedFinalEngagements))
-                return $"Failed: the raid was beaten back from the final encounter {raid.FailedFinalEngagements} times.";
+            // a dungeon route counts its own wiped final engagements (REALM_EXPEDITION_ENGAGE_WIPED); the watch above counts
+            // them for a dragon, and resets the progress mark after a wipe for both
+            int wipes = raid.DungeonRoute?.FinalWipes ?? raid.FailedFinalEngagements;
+            if (RealmRaidRecruitmentPolicy.HornBattleFailed(wipes))
+                return $"Failed: the raid was beaten back from the final encounter {wipes} times.";
             if (RealmRaidRecruitmentPolicy.HornBattleStalled(raid.BattleStartTick, raid.LastProgressTick, now))
                 return $"Timed out: no encounter was defeated for {RealmRaidRecruitmentPolicy.HornBattleStallMilliseconds / 60_000} minutes.";
             return null;
