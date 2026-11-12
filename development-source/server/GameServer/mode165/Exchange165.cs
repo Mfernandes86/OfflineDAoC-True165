@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using DOL.Database;
 using DOL.Database.Attributes;
 
@@ -375,25 +376,113 @@ namespace DOL.GS
                     MarketCache.AddItem(item);
                 }
             }
-            return Credit(item, botId, realm);
+            return Credit(item, botId, realm, originalPrice);
         }
 
-        /// <summary>The owner is paid what a merchant pays and the item row is deleted (the merchant has it).</summary>
-        private static bool Credit(DbInventoryItem item, long botId, eRealm realm)
+        private static int _credits;
+
+        /// <summary>Credits paid so far (the expiry sweep and the market pass stop after a few per run: each one writes to
+        /// the database while the exchange and money locks are held).</summary>
+        public static int CreditCount => Volatile.Read(ref _credits);
+
+        /// <summary>A listing that could not be taken off waits this long before the sweep tries it again.</summary>
+        public static readonly TimeSpan RetryDelay = TimeSpan.FromHours(1);
+
+        /// <summary>
+        /// The owner is paid what a merchant pays and the item row is deleted (the merchant has it). An item a merchant
+        /// pays nothing for is never deleted (review 2026-11-11): it goes back to an offline owner's stored backpack, marked
+        /// failed, or - no room, or a logged-in owner with a full bag - it stays listed and is tried again in an hour.
+        /// </summary>
+        private static bool Credit(DbInventoryItem item, long botId, eRealm realm, int originalPrice)
         {
             long copper = ItemValue165.Floor(item);
+            if (copper <= 0)
+                return ReturnToStoredBag(item, botId, realm, originalPrice) || Postpone(item);
+            bool ownerKnown = AutonomousBotEconomy.FindLiveOrStored(botId) != null;
             if (!GameServer.Database.DeleteObject(item))
                 return false;
+            Interlocked.Increment(ref _credits);
             // a reprice or relist of this row may still wait in the write queue: it must not insert the row again
             RealmExchangeWriteQueue.Cancel(item);
             MarketCache.RemoveItem(item);
             Forget(item);
-            if (copper > 0)
-                AutonomousBotEconomy.AddMoney(botId, copper);
-            else
-                AutonomousBotEconomy.MarkEconomyChanged(botId);
+            if (!ownerKnown || !AutonomousBotEconomy.AddMoney(botId, copper))
+                Warn($"EXCHANGE_CREDIT_UNPAID owner={botId} copper={copper}: the listing's owner could not be paid (no stored record)");
             RealmExchangeStats.Note(realm, RealmExchangeStats.Counter.Credited);
             return true;
+        }
+
+        /// <summary>A worthless pulled listing goes back to its offline owner's stored backpack (as before the overhaul),
+        /// marked failed so it is sold, never listed again. False when the owner is logged in or has no free slot.</summary>
+        private static bool ReturnToStoredBag(DbInventoryItem item, long botId, eRealm realm, int originalPrice)
+        {
+            if (AutonomousBotEconomy.TryGetLiveOrLeaving(botId, out _) || AutonomousBotEconomy.FindLiveOrStored(botId) == null)
+                return false;
+            string ownerId = AutonomousBotEconomy.GetOwnerId(botId);
+            int slot;
+            try
+            {
+                var used = new HashSet<int>();
+                foreach (DbInventoryItem owned in DOLDB<DbInventoryItem>.SelectObjects(DB.Column("OwnerID").IsEqualTo(ownerId)) ?? [])
+                    if (owned != null)
+                        used.Add(owned.SlotPosition);
+                slot = Enumerable.Range((int)eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack - eInventorySlot.FirstBackpack + 1)
+                    .FirstOrDefault(s => !used.Contains(s));
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            if (slot == 0)
+                return false;
+            ushort lot = item.OwnerLot;
+            int price = item.SellPrice, listingSlot = item.SlotPosition;
+            string listed = item.RealmExchangeListedUtc;
+            MarketCache.RemoveItem(item);
+            item.OwnerID = ownerId;
+            item.OwnerLot = 0;
+            item.SellPrice = 0;
+            item.SlotPosition = slot;
+            item.RealmExchangeListedUtc = string.Empty;
+            item.Dirty = true;
+            if (!GameServer.Database.SaveObject(item))
+            {
+                item.OwnerLot = lot;
+                item.SellPrice = price;
+                item.SlotPosition = listingSlot;
+                item.RealmExchangeListedUtc = listed;
+                MarketCache.AddItem(item);
+                return false;
+            }
+            // the stored bag owns this row now: no older queued save may move it back
+            RealmExchangeWriteQueue.Cancel(item);
+            MarkFailed(item, originalPrice);
+            AutonomousBotEconomy.BumpOfflineRevision(botId);
+            RealmExchangeStats.Note(realm, RealmExchangeStats.Counter.Returned);
+            return true;
+        }
+
+        /// <summary>A listing that could not leave the exchange: when it runs out within <see cref="RetryDelay"/>, its time
+        /// is moved so it runs out then (it stays listed and buyable; the sweep is not blocked by it). Always false.</summary>
+        private static bool Postpone(DbInventoryItem item)
+        {
+            DateTime now = DateTime.UtcNow;
+            if (!MarketCache.Contains(item) || RealmExchangeExpiry.ExpiresUtc(item) is not DateTime expiry || expiry > now + RetryDelay)
+                return false;
+            TimeSpan lifetime = AutonomousBotEconomy.TryParseOwnerId(item.OwnerID, out _)
+                ? RealmExchangeExpiry.BotListingLifetime
+                : TimeSpan.FromHours(RealmExchangeExpiry.PlayerListingHours(item));
+            string listed = now.Add(RetryDelay).Subtract(lifetime).ToString("O");
+            MarketCache.UpdateItem(item, static (i, value) => i.RealmExchangeListedUtc = value, listed);
+            item.Dirty = true;
+            RealmExchangeWriteQueue.Save(item);
+            return false;
+        }
+
+        private static void Warn(string message)
+        {
+            try { Logging.LoggerManager.Create(typeof(Exchange165)).Warn(message); }
+            catch { }
         }
     }
 }
