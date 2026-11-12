@@ -78,9 +78,9 @@ namespace DOL.GS
                 if (stack==null && item==null) return 0;
                 if (item!=null) item.Count=count;
                 long cost=checked(template.Price*count);
-                if (!AutonomousBotEconomy.TrySpend(bot.DatabaseID,cost)) return 0;
+                if (!AutonomousBotEconomy.TrySpend(bot.DatabaseID,cost, BotMoneyLedger165.Kind.Siege)) return 0;
                 bool added=stack!=null ? bot.Inventory.AddCountToStack(stack,count) : bot.Inventory.AddItem(slot,item);
-                if (!added) { AutonomousBotEconomy.AddMoney(bot.DatabaseID,cost); return 0; }
+                if (!added) { AutonomousBotEconomy.AddMoney(bot.DatabaseID,cost, BotMoneyLedger165.Kind.Siege); return 0; }
                 AutonomousBotEconomy.MarkInventoryChanged(bot); bot.MarkAutonomousStateDirty(); AutonomousBotStatusPersistence.Queue(bot,true);
                 return count;
             }

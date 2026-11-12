@@ -66,14 +66,14 @@ namespace DOL.GS
                 .Where(o => o.Template.Price <= budget && CanUseRangedTemplate(bot, o.Template))
                 .OrderByDescending(o => o.Template.Level).ThenBy(o => o.Template.Price)
                 .FirstOrDefault();
-            if (offer.Template == null || !AutonomousBotEconomy.TrySpend(bot.DatabaseID, offer.Template.Price))
+            if (offer.Template == null || !AutonomousBotEconomy.TrySpend(bot.DatabaseID, offer.Template.Price, BotMoneyLedger165.Kind.VendorGear))
                 return;
             DbInventoryItem weapon = GameInventoryItem.Create(offer.Template);
             if (weapon.PackSize > 1 && weapon.MaxCount >= weapon.PackSize)
                 weapon.Count = weapon.PackSize;
             if (!bot.Inventory.AddItem(eInventorySlot.DistanceWeapon, weapon))
             {
-                AutonomousBotEconomy.AddMoney(bot.DatabaseID, offer.Template.Price);
+                AutonomousBotEconomy.AddMoney(bot.DatabaseID, offer.Template.Price, BotMoneyLedger165.Kind.VendorGear);
                 return;
             }
             AutonomousBotEconomy.MarkInventoryChanged(bot);
@@ -130,14 +130,14 @@ namespace DOL.GS
             for (int i = 0; i < 20 && AmmoCount(bot, type) < KeepFor(bot); i++)
             {
                 eInventorySlot slot = bot.Inventory.FindFirstEmptySlot(eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack);
-                if (slot == eInventorySlot.Invalid || !AutonomousBotEconomy.TrySpend(bot.DatabaseID, template.Price))
+                if (slot == eInventorySlot.Invalid || !AutonomousBotEconomy.TrySpend(bot.DatabaseID, template.Price, BotMoneyLedger165.Kind.Ammo))
                     break;
                 DbInventoryItem stack = GameInventoryItem.Create(template);
                 if (stack.PackSize > 1 && stack.MaxCount >= stack.PackSize)
                     stack.Count = stack.PackSize;
                 if (!bot.Inventory.AddItem(slot, stack))
                 {
-                    AutonomousBotEconomy.AddMoney(bot.DatabaseID, template.Price);
+                    AutonomousBotEconomy.AddMoney(bot.DatabaseID, template.Price, BotMoneyLedger165.Kind.Ammo);
                     break;
                 }
             }
@@ -164,7 +164,7 @@ namespace DOL.GS
             int pack = System.Math.Max(1, template.PackSize);
             int cap = System.Math.Max(pack, System.Math.Min(KeepFor(bot), weapon.MaxCount));
             int start = weapon.Count;
-            while (weapon.Count + pack <= cap && AutonomousBotEconomy.TrySpend(bot.DatabaseID, template.Price))
+            while (weapon.Count + pack <= cap && AutonomousBotEconomy.TrySpend(bot.DatabaseID, template.Price, BotMoneyLedger165.Kind.Ammo))
                 weapon.Count += pack;
             if (weapon.Count == start)
                 return;
@@ -243,11 +243,11 @@ namespace DOL.GS
                 for (int i = have; best != null && i < PoisonKeep; i++)
                 {
                     eInventorySlot slot = bot.Inventory.FindFirstEmptySlot(eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack);
-                    if (slot == eInventorySlot.Invalid || !AutonomousBotEconomy.TrySpend(bot.DatabaseID, best.Price))
+                    if (slot == eInventorySlot.Invalid || !AutonomousBotEconomy.TrySpend(bot.DatabaseID, best.Price, BotMoneyLedger165.Kind.Poison))
                         break;
                     if (!bot.Inventory.AddItem(slot, GameInventoryItem.Create(best)))
                     {
-                        AutonomousBotEconomy.AddMoney(bot.DatabaseID, best.Price);
+                        AutonomousBotEconomy.AddMoney(bot.DatabaseID, best.Price, BotMoneyLedger165.Kind.Poison);
                         break;
                     }
                     bought = true;

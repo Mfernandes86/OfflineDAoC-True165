@@ -435,14 +435,14 @@ namespace DOL.GS
             long tinctureMaterials = tincture?.Cost ?? 0;
             long spellFee = Fee(gemMaterials), alchFee = Fee(tinctureMaterials);
             long total = gemMaterials + tinctureMaterials + spellFee + alchFee;
-            if (!AutonomousBotEconomy.TrySpend(crafter.DatabaseID, total))
+            if (!AutonomousBotEconomy.TrySpend(crafter.DatabaseID, total, BotMoneyLedger165.Kind.Enchant))
                 return result;
 
             int imbue = TotalImbue(item, gems.Select(g => (g.BonusType, g.BonusValue)));
             if (gems.Count > 0)
             {
                 ApplyGems(item, gems);
-                AutonomousBotEconomy.AddMoney(spellcrafter.DatabaseID, spellFee);
+                AutonomousBotEconomy.AddMoney(spellcrafter.DatabaseID, spellFee, BotMoneyLedger165.Kind.Enchant);
                 foreach (GemOption gem in gems)
                     CrafterBots165.Gain(spellcrafter.PersistentRecord, gem.Level - spellSkill);
                 spellcrafter.MarkAutonomousStateDirty();
@@ -450,7 +450,7 @@ namespace DOL.GS
             if (tincture != null)
             {
                 ApplyTincture(item, tincture);
-                AutonomousBotEconomy.AddMoney(alchemist.DatabaseID, alchFee);
+                AutonomousBotEconomy.AddMoney(alchemist.DatabaseID, alchFee, BotMoneyLedger165.Kind.Enchant);
                 CrafterBots165.Gain(alchemist.PersistentRecord, tincture.Level - alchSkill);
                 alchemist.MarkAutonomousStateDirty();
             }

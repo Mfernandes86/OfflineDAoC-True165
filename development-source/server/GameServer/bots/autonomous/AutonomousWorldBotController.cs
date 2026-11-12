@@ -5131,7 +5131,7 @@ namespace DOL.GS
                 bool valid = stable.Master.ObjectState == GameObject.eObjectState.Active &&
                     stable.Master.CurrentRegion == bot.CurrentRegion &&
                     bot.IsWithinRadius(stable.InteractionPoint, stable.Master.InteractDistance);
-                bool paid = valid && (price == 0 || AutonomousBotEconomy.TrySpend(bot.DatabaseID, price));
+                bool paid = valid && (price == 0 || AutonomousBotEconomy.TrySpend(bot.DatabaseID, price, BotMoneyLedger165.Kind.Travel));
                 bool boarded = false;
                 try
                 {
@@ -5141,7 +5141,7 @@ namespace DOL.GS
                 }
                 finally
                 {
-                    if (paid && !boarded && price > 0) AutonomousBotEconomy.AddMoney(bot.DatabaseID, price);
+                    if (paid && !boarded && price > 0) AutonomousBotEconomy.AddMoney(bot.DatabaseID, price, BotMoneyLedger165.Kind.Travel);
                     RealmRaidStableTravel.Boarded(bot, boarded, GameLoop.GameLoopTime);
                 }
                 if (!boarded)
@@ -5300,7 +5300,7 @@ namespace DOL.GS
             }
 
             long price = Math.Max(0, stable.Ticket.Price);
-            if (price > 0 && !AutonomousBotEconomy.TrySpend(bot.DatabaseID, price))
+            if (price > 0 && !AutonomousBotEconomy.TrySpend(bot.DatabaseID, price, BotMoneyLedger165.Kind.Travel))
             {
                 _pendingStableChoice = null;
                 _nextStableCheckTick = GameLoop.GameLoopTime + 20_000;
@@ -5312,7 +5312,7 @@ namespace DOL.GS
             if (!bot.BeginStableMasterRoute(stable.DestinationName, TimeSpan.FromSeconds(stable.RideSeconds), stable.Route, stable.Ticket))
             {
                 if (price > 0)
-                    AutonomousBotEconomy.AddMoney(bot.DatabaseID, price);
+                    AutonomousBotEconomy.AddMoney(bot.DatabaseID, price, BotMoneyLedger165.Kind.Travel);
                 _pendingStableChoice = null;
                 return false;
             }

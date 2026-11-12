@@ -84,11 +84,11 @@ namespace DOL.GS
                 bool useCrafter = crafter != null && (smith == null || bot.GetDistanceTo(crafter) < bot.GetDistanceTo(smith));
                 if (!useCrafter && smith == null)
                     continue;
-                if (!AutonomousBotEconomy.TrySpend(bot.DatabaseID, item.RepairCost))
+                if (!AutonomousBotEconomy.TrySpend(bot.DatabaseID, item.RepairCost, BotMoneyLedger165.Kind.Repair))
                     break;
                 if (useCrafter)
                 {
-                    AutonomousBotEconomy.AddMoney(crafter.DatabaseID, item.RepairCost);
+                    AutonomousBotEconomy.AddMoney(crafter.DatabaseID, item.RepairCost, BotMoneyLedger165.Kind.Repair);
                     paidTo.Add(crafter.Name);
                 }
                 else

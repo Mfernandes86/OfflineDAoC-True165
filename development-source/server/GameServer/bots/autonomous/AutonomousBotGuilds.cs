@@ -81,7 +81,7 @@ namespace DOL.GS
             Guild guild = GuildOf(botId);
             long dues = guild == null ? 0 : DuesOf(money, guild.IsGuildDuesOn(), guild.GetGuildDuesPercent());
             long kept = money - dues;
-            if (kept > 0 && !AutonomousBotEconomy.AddMoney(botId, kept))
+            if (kept > 0 && !AutonomousBotEconomy.AddMoney(botId, kept, BotMoneyLedger165.Kind.LootCoin))
                 return false;
             if (dues > 0)
             {
@@ -89,7 +89,7 @@ namespace DOL.GS
                 lock (guild)   // many guild gamebots loot at once, and the bank is read, added to and written back
                     banked = guild.AddToBank(dues, false);
                 if (!banked)
-                    AutonomousBotEconomy.AddMoney(botId, dues);   // the bank did not take them (it is full): the bot keeps them
+                    AutonomousBotEconomy.AddMoney(botId, dues, BotMoneyLedger165.Kind.LootCoin);   // the bank did not take them (it is full): the bot keeps them
                 else
                 {
                     FeatureCounters165.Add("guild_dues_credits");

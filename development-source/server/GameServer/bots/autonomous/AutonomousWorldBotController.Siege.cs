@@ -472,8 +472,8 @@ namespace DOL.GS
                 DbInventoryItem item=GameInventoryItem.Create(template);
                 if (item==null) { ReleaseSiegeJob(bot); _siegeNextAttempt=GameLoop.GameLoopTime+60_000; return false; }
                 item.Count=quantity;
-                if (!AutonomousBotEconomy.TrySpend(bot.DatabaseID,price)) return false;
-                if (!bot.Inventory.AddItem(slot,item)) { AutonomousBotEconomy.AddMoney(bot.DatabaseID,price); return false; }
+                if (!AutonomousBotEconomy.TrySpend(bot.DatabaseID,price, BotMoneyLedger165.Kind.Siege)) return false;
+                if (!bot.Inventory.AddItem(slot,item)) { AutonomousBotEconomy.AddMoney(bot.DatabaseID,price, BotMoneyLedger165.Kind.Siege); return false; }
                 AutonomousBotEconomy.MarkInventoryChanged(bot); bot.MarkAutonomousStateDirty(); AutonomousBotStatusPersistence.Queue(bot,true);
                 SiegeLog(bot,"purchase",null,$"item={id} count={quantity} copper={price}");
                 _siegeSupplyItem=null;

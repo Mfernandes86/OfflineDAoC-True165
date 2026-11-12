@@ -96,12 +96,12 @@ public sealed partial class AutonomousWorldBotController
                     "At the real merchant; preserving equipped items and protected upgrades");
                 return true;
             }
-            if (slot==eInventorySlot.Invalid || template.Price<0 || template.Price>0 && !AutonomousBotEconomy.TrySpend(bot.DatabaseID,template.Price))
+            if (slot==eInventorySlot.Invalid || template.Price<0 || template.Price>0 && !AutonomousBotEconomy.TrySpend(bot.DatabaseID,template.Price, BotMoneyLedger165.Kind.Travel))
                 return false; // Existing legal dungeon itinerary remains available.
             var ticket = GameInventoryItem.Create(template);
             if (ticket == null || !bot.Inventory.AddItem(slot,ticket))
             {
-                if(template.Price>0) AutonomousBotEconomy.AddMoney(bot.DatabaseID,template.Price);
+                if(template.Price>0) AutonomousBotEconomy.AddMoney(bot.DatabaseID,template.Price, BotMoneyLedger165.Kind.Travel);
                 return false;
             }
             AutonomousBotEconomy.MarkInventoryChanged(bot);

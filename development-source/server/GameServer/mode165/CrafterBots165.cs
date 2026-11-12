@@ -99,7 +99,7 @@ namespace DOL.GS
             // so those crafters never crafted and never gained (run 6, 2026-10-30)
             Recipe recipe = all.Where(r => r.Level <= skill + 10).OrderByDescending(r => r.Level).FirstOrDefault() ?? all.FirstOrDefault();
             if (recipe == null || bot.Inventory.FindFirstEmptySlot(eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack) == eInventorySlot.Invalid ||
-                !AutonomousBotEconomy.TrySpend(bot.DatabaseID, recipe.MaterialCost))
+                !AutonomousBotEconomy.TrySpend(bot.DatabaseID, recipe.MaterialCost, BotMoneyLedger165.Kind.CraftMaterials))
                 return;
             Gain(bot, record, recipe.Level - skill);
             if (Util.Chance(Math.Clamp((recipe.Level - skill) * 2, 0, 40)))
@@ -132,7 +132,7 @@ namespace DOL.GS
                 // half-materials-only made crafting a money sink: crafters averaged 1.8-7.7 gold (owner 2026-11-05 audit)
                 long vendor = AutonomousBotEconomy.CalculateStandardVendorSaleCopper(product);
                 bot.Inventory.RemoveItem(product);
-                AutonomousBotEconomy.AddMoney(bot.DatabaseID, Math.Max(recipe.MaterialCost / 2, vendor));
+                AutonomousBotEconomy.AddMoney(bot.DatabaseID, Math.Max(recipe.MaterialCost / 2, vendor), BotMoneyLedger165.Kind.CraftSale);
             }
             Log.Info($"BOT_CRAFTED_165 bot={bot.Name} id={bot.DatabaseID} craft={craft} skill={record.CraftLevel} " +
                      $"item=\"{template.Name}\" recipe={recipe.Level} listed={listed} price={price} enchanted={enchant.Done}");
@@ -154,7 +154,7 @@ namespace DOL.GS
                 DbItemTemplate template = GameServer.Database.FindObjectByKey<DbItemTemplate>(kitId);
                 long cost = template == null ? 0 : Math.Max(1, template.Price / 5);   // the wood, metal, leather and parts
                 eInventorySlot slot = bot.Inventory.FindFirstEmptySlot(eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack);
-                if (template == null || slot == eInventorySlot.Invalid || !AutonomousBotEconomy.TrySpend(bot.DatabaseID, cost))
+                if (template == null || slot == eInventorySlot.Invalid || !AutonomousBotEconomy.TrySpend(bot.DatabaseID, cost, BotMoneyLedger165.Kind.CraftMaterials))
                     return;
                 Gain(bot, record, need + 100 - skill);
                 DbInventoryItem kit = GameInventoryItem.Create(template);
@@ -162,7 +162,7 @@ namespace DOL.GS
                 kit.Creator = bot.Name;
                 if (!bot.Inventory.AddItem(slot, kit))
                 {
-                    AutonomousBotEconomy.AddMoney(bot.DatabaseID, cost);
+                    AutonomousBotEconomy.AddMoney(bot.DatabaseID, cost, BotMoneyLedger165.Kind.CraftMaterials);
                     return;
                 }
                 AutonomousBotEconomy.MarkInventoryChanged(bot);
@@ -176,7 +176,7 @@ namespace DOL.GS
             if (skill >= SiegeAmmo165.BasicRecipeSkill && CraftAmmoStock(bot, record, skill))
                 return;
             // nothing to build: practise on the cheapest kit's parts for skill (materials only)
-            if (skill < MaxSkill && AutonomousBotEconomy.TrySpend(bot.DatabaseID, 5_000))
+            if (skill < MaxSkill && AutonomousBotEconomy.TrySpend(bot.DatabaseID, 5_000, BotMoneyLedger165.Kind.CraftMaterials))
                 Gain(bot, record, 0);
         }
 
@@ -208,11 +208,11 @@ namespace DOL.GS
                 if (count <= 0)
                     continue;
                 long cost = checked(unit * count);
-                if (!AutonomousBotEconomy.TrySpend(bot.DatabaseID, cost))
+                if (!AutonomousBotEconomy.TrySpend(bot.DatabaseID, cost, BotMoneyLedger165.Kind.CraftMaterials))
                     return false;
                 if (!SiegeAmmo165.Give(bot, ammo, count))
                 {
-                    AutonomousBotEconomy.AddMoney(bot.DatabaseID, cost);
+                    AutonomousBotEconomy.AddMoney(bot.DatabaseID, cost, BotMoneyLedger165.Kind.CraftMaterials);
                     return false;
                 }
                 Gain(bot, record, SiegeAmmo165.BasicRecipeSkill - skill);
@@ -279,7 +279,7 @@ namespace DOL.GS
                     SiegeAmmo165.Give(crafter, ammo, count);
                     return 0;
                 }
-                AutonomousBotEconomy.AddMoney(crafter.DatabaseID, cost);
+                AutonomousBotEconomy.AddMoney(crafter.DatabaseID, cost, BotMoneyLedger165.Kind.Siege);
                 AutonomousBotEconomy.MarkInventoryChanged(crafter);
                 crafter.MarkAutonomousStateDirty();
                 AutonomousBotStatusPersistence.Queue(crafter, true);
@@ -364,13 +364,13 @@ namespace DOL.GS
                 if (kit == null)
                     continue;
                 long price = Math.Max(1, (GameServer.Database.FindObjectByKey<DbItemTemplate>(kitId)?.Price ?? 50_000) / 4);
-                if (!AutonomousBotEconomy.TrySpend(crew.DatabaseID, price))
+                if (!AutonomousBotEconomy.TrySpend(crew.DatabaseID, price, BotMoneyLedger165.Kind.Siege))
                     return false;
                 lock (crafter.Inventory.Lock)
                 {
                     if (!crafter.Inventory.RemoveItemWithoutDbDeletion(kit))
                     {
-                        AutonomousBotEconomy.AddMoney(crew.DatabaseID, price);
+                        AutonomousBotEconomy.AddMoney(crew.DatabaseID, price, BotMoneyLedger165.Kind.Siege);
                         continue;
                     }
                 }
@@ -378,10 +378,10 @@ namespace DOL.GS
                 if (!crew.Inventory.AddItem(slot, kit))
                 {
                     crafter.Inventory.AddItem(crafter.Inventory.FindFirstEmptySlot(eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack), kit);
-                    AutonomousBotEconomy.AddMoney(crew.DatabaseID, price);
+                    AutonomousBotEconomy.AddMoney(crew.DatabaseID, price, BotMoneyLedger165.Kind.Siege);
                     return false;
                 }
-                AutonomousBotEconomy.AddMoney(crafter.DatabaseID, price);
+                AutonomousBotEconomy.AddMoney(crafter.DatabaseID, price, BotMoneyLedger165.Kind.Siege);
                 AutonomousBotEconomy.MarkInventoryChanged(crafter);
                 AutonomousBotEconomy.MarkInventoryChanged(crew);
                 crafter.MarkAutonomousStateDirty();

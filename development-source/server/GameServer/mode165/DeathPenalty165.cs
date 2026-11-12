@@ -119,7 +119,7 @@ namespace DOL.GS
             }
             long cost = Math.Max(1, CostPerConPoint(bot.Level));
             int points = (int)Math.Min(bot.TotalConstitutionLostAtDeath, AutonomousBotEconomy.GetMoney(bot.DatabaseID) / cost);
-            if (points > 0 && AutonomousBotEconomy.TrySpend(bot.DatabaseID, points * cost))
+            if (points > 0 && AutonomousBotEconomy.TrySpend(bot.DatabaseID, points * cost, BotMoneyLedger165.Kind.Healer))
             {
                 bot.TotalConstitutionLostAtDeath -= points;
                 bot.MarkAutonomousStateDirty();

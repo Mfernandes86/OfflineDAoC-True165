@@ -189,8 +189,8 @@ namespace DOL.GS
         public sealed record Purse(Func<long, bool> Spend, Action<long> Refund, Func<long> Money);
 
         public static Purse BotPurse(GameBot bot) => new(
-            copper => AutonomousBotEconomy.TrySpend(bot.DatabaseID, copper),
-            copper => AutonomousBotEconomy.AddMoney(bot.DatabaseID, copper),
+            copper => AutonomousBotEconomy.TrySpend(bot.DatabaseID, copper, BotMoneyLedger165.Kind.Siege),
+            copper => AutonomousBotEconomy.AddMoney(bot.DatabaseID, copper, BotMoneyLedger165.Kind.Siege),
             () => AutonomousBotEconomy.GetMoney(bot.DatabaseID));
 
         /// <summary>A hired companion pays from its own coin; when it has too little, its player pays (and is told).</summary>
@@ -200,13 +200,13 @@ namespace DOL.GS
             return new(
                 copper =>
                 {
-                    if (AutonomousBotEconomy.TrySpend(bot.DatabaseID, copper)) return true;
+                    if (AutonomousBotEconomy.TrySpend(bot.DatabaseID, copper, BotMoneyLedger165.Kind.Siege)) return true;
                     if (owner == null || !owner.RemoveMoney(copper)) return false;
                     owner.Out.SendMessage($"{bot.Name} buys siege ammunition with your coin ({Money.GetString(copper)}).",
                         PacketHandler.eChatType.CT_Merchant, PacketHandler.eChatLoc.CL_SystemWindow);
                     return true;
                 },
-                copper => AutonomousBotEconomy.AddMoney(bot.DatabaseID, copper),
+                copper => AutonomousBotEconomy.AddMoney(bot.DatabaseID, copper, BotMoneyLedger165.Kind.Siege),
                 () => AutonomousBotEconomy.GetMoney(bot.DatabaseID) + (owner?.GetCurrentMoney() ?? 0));
         }
 

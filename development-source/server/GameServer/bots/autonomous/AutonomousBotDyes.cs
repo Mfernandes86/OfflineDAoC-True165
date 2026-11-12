@@ -229,7 +229,7 @@ namespace DOL.GS
                 choice = pick;
                 break;
             }
-            if (target == null || !AutonomousBotEconomy.TrySpend(bot.DatabaseID, choice.Price))
+            if (target == null || !AutonomousBotEconomy.TrySpend(bot.DatabaseID, choice.Price, BotMoneyLedger165.Kind.Dye))
                 return false;
             NextDyeTick[bot.DatabaseID] = now + RestAfterVisit(true, tier);   // dyed: the tier's hours of rest
 

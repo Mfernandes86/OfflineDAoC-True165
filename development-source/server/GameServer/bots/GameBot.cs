@@ -1766,7 +1766,7 @@ namespace DOL.GS
                 }
 
                 long price = Math.Max(0, _stableReturnPlan.Ticket.Price);
-                if (price > 0 && !AutonomousBotEconomy.TrySpend(DatabaseID, price))
+                if (price > 0 && !AutonomousBotEconomy.TrySpend(DatabaseID, price, BotMoneyLedger165.Kind.Travel))
                 {
                     _stableReturnPlan = null;
                     return true;
@@ -1775,7 +1775,7 @@ namespace DOL.GS
                         TimeSpan.FromSeconds(_stableReturnPlan.RideSeconds), _stableReturnPlan.Route, _stableReturnPlan.Ticket))
                 {
                     if (price > 0)
-                        AutonomousBotEconomy.AddMoney(DatabaseID, price);
+                        AutonomousBotEconomy.AddMoney(DatabaseID, price, BotMoneyLedger165.Kind.Travel);
                     _stableReturnPlan = null;
                     return true;
                 }

@@ -72,7 +72,7 @@ namespace DOL.GS;
 
     public static long GetMoney(long botId) => FindLiveOrStored(botId)?.MoneyCopper ?? 0;
 
-    public static bool TrySpend(long botId, long copper)
+    public static bool TrySpend(long botId, long copper, BotMoneyLedger165.Kind kind = BotMoneyLedger165.Kind.Other)
     {
         if (copper < 0)
             return false;
@@ -88,11 +88,12 @@ namespace DOL.GS;
             bot.LastUpdateUtc = DateTime.UtcNow.ToString("O");
             bot.Dirty = true;
             SaveMoneyChange(bot, isLive ? live : null);
+            BotMoneyLedger165.Debit(kind, copper);
             return true;
         }
     }
 
-    public static bool AddMoney(long botId, long copper)
+    public static bool AddMoney(long botId, long copper, BotMoneyLedger165.Kind kind = BotMoneyLedger165.Kind.Other)
     {
         if (copper < 0)
             return false;
@@ -108,6 +109,7 @@ namespace DOL.GS;
             bot.LastUpdateUtc = DateTime.UtcNow.ToString("O");
             bot.Dirty = true;
             SaveMoneyChange(bot, isLive ? live : null);
+            BotMoneyLedger165.Credit(kind, copper);
             return true;
         }
     }
@@ -1176,7 +1178,7 @@ namespace DOL.GS;
                 return false;
             }
 
-            if (!AddMoney(bot.DatabaseID, copper))
+            if (!AddMoney(bot.DatabaseID, copper, BotMoneyLedger165.Kind.VendorSale))
             {
                 // A failed durable credit must not destroy the item; restoring the exact slot
                 // preserves the finite inventory invariant and makes the sale retryable.
@@ -1268,11 +1270,11 @@ namespace DOL.GS;
             copper = template.Price;
             eInventorySlot backpackSlot = bot.Inventory.FindFirstEmptySlot(eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack);
             purchased = GameInventoryItem.Create(template);
-            bool spent = purchased != null && TrySpend(bot.DatabaseID, copper);
+            bool spent = purchased != null && TrySpend(bot.DatabaseID, copper, BotMoneyLedger165.Kind.VendorGear);
             if (!spent || !bot.Inventory.AddItem(backpackSlot, purchased))
             {
                 if (spent && bot.Inventory.GetItem(backpackSlot) != purchased)
-                    AddMoney(bot.DatabaseID, copper);
+                    AddMoney(bot.DatabaseID, copper, BotMoneyLedger165.Kind.VendorGear);
                 purchased = null;
                 copper = 0;
                 return false;
