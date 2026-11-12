@@ -63,4 +63,31 @@ public class UT_KeepRaidFixes
             Is.EqualTo(AutonomousRvrEventLayer.RepelMilliseconds + AutonomousRvrEventLayer.MaxWalkBackMilliseconds), "bounded");
         Assert.That(AutonomousRvrEventLayer.RepelWindowMilliseconds(double.NaN), Is.EqualTo(AutonomousRvrEventLayer.RepelMilliseconds));
     });
+    [Test]
+    public void OneWarbandDoesNotMarchBeforeTheRealmCouldGather() => Assert.Multiple(() =>
+    {
+        long window = 18 * 60_000;
+        Assert.That(AutonomousRvrEventLayer.MayMarchEarly(false, 60_000, window, 8, 8), Is.False, "eight at the outpost after a minute");
+        Assert.That(AutonomousRvrEventLayer.MayMarchEarly(false, window / 3, window, 8, 8), Is.True, "a third of the window has gone");
+        Assert.That(AutonomousRvrEventLayer.MayMarchEarly(false, window / 3, window, 30, 40), Is.False, "under 85% of those called");
+        Assert.That(AutonomousRvrEventLayer.MayMarchEarly(false, 60_000, window, 108, 120), Is.True, "a full army needs no wait");
+        Assert.That(AutonomousRvrEventLayer.MayMarchEarly(true, 60_000, window, 170, 200), Is.True);
+    });
+
+    [Test]
+    public void TheMusterWaitsForTheArmyThatWasCalledNotAFixedNumber() => Assert.Multiple(() =>
+    {
+        Assert.That(AutonomousRvrEventLayer.MusterTarget(false, 40), Is.EqualTo(20), "half of a 40-strong keep army");
+        Assert.That(AutonomousRvrEventLayer.MusterTarget(false, 128), Is.EqualTo(64), "never more than the old 64");
+        Assert.That(AutonomousRvrEventLayer.MusterTarget(true, 60), Is.EqualTo(51), "85% for a relic army");
+        Assert.That(AutonomousRvrEventLayer.MusterTarget(true, 240), Is.EqualTo(120), "never more than the old 120");
+        // a 40-strong keep army with 25 gathered marches at the deadline; with 15 it waits once
+        Assert.That(AutonomousRvrEventLayer.ShouldExtendMuster(false, 0, 25, 40, 0), Is.False);
+        Assert.That(AutonomousRvrEventLayer.ShouldExtendMuster(false, 0, 15, 40, 0), Is.True);
+        Assert.That(AutonomousRvrEventLayer.ShouldExtendMuster(false, 1, 15, 40, 10), Is.False, "a keep muster waits once");
+        // relic: waits while it still grows, up to six times
+        Assert.That(AutonomousRvrEventLayer.ShouldExtendMuster(true, 1, 45, 60, 40), Is.True, "45 of 60, still growing");
+        Assert.That(AutonomousRvrEventLayer.ShouldExtendMuster(true, 1, 45, 60, 45), Is.False, "nobody else is coming");
+        Assert.That(AutonomousRvrEventLayer.ShouldExtendMuster(true, AutonomousRvrEventLayer.RelicMusterExtensions, 46, 60, 45), Is.False);
+    });
 }

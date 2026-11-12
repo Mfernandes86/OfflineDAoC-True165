@@ -109,6 +109,10 @@ public static partial class AutonomousRvrEventLayer
         // march together once enough are there (or at the muster deadline).
         public bool Marching = true;
         public long MusterDeadlineTick;
+        /// <summary>When the muster began and how long its first window was (MayMarchEarly).</summary>
+        public long MusterStartTick, MusterWindowMilliseconds;
+        /// <summary>Attackers gathered at the last muster deadline (ShouldExtendMuster: extend only while still growing).</summary>
+        public int MusterGatheredAtDeadline;
         public bool MusterExtended;
         public int MusterExtensions;
         public readonly Dictionary<long, (string Force, long Tick, GameBot Bot, Vector3 Position)> Mustered = new();
@@ -780,6 +784,15 @@ public static partial class AutonomousRvrEventLayer
         : RealmEventPolicy.SiegeReady(active.RelicKeep, deadline, Attendance(active, active.AttackerRealm, nowTick),
             Attendance(active, active.DefenderRealm, nowTick));
 
+    /// <summary>
+    /// The march deadline of an army that mustered and marched (keeps audit T2, relics audit T1): the battle opens with the
+    /// arrival quorum of the army that marched (60%, at least 8) at the keep, not a fixed 64 / 120 present. Other events
+    /// keep the dynamic deadline rule.
+    /// </summary>
+    private static bool DeadlineReady(ActiveEvent active, long nowTick) => MarchedArmy(active)
+        ? Attendance(active, active.AttackerRealm, nowTick) >= ArrivalQuorum(active.MarchedAttackers)
+        : Ready(active, true, nowTick);
+
     private static Plan CommittedPlan(Force force, IReadOnlyCollection<LiveObjective> objectives)
     {
         foreach (ActiveEvent active in Events.Values)
@@ -870,6 +883,32 @@ public static partial class AutonomousRvrEventLayer
     public static int MarchThreshold(bool relic, int assigned) =>
         Math.Max(8, Math.Min(relic ? 170 : 108, assigned * 85 / 100));
 
+    /// <summary>
+    /// Keeps audit 2026-11-11 (T1): an early march order (before the muster deadline) needs the march threshold AND a third
+    /// of the muster window gone, unless the muster already holds a full army (the threshold of the whole cap). One warband
+    /// of eight that reached its outpost first met max(8, 85% of 8) and marched alone before the realm's other warbands,
+    /// which sign up on their 45-60 s plan reviews, could join; the window exists to gather the realm.
+    /// </summary>
+    public static bool MayMarchEarly(bool relic, long musterElapsed, long musterWindow, int mustered, int assigned) =>
+        mustered >= MarchThreshold(relic, assigned) &&
+        (musterElapsed >= musterWindow / 3 || mustered >= MarchThreshold(relic, RealmEventPolicy.AttackerCap(relic)));
+
+    /// <summary>
+    /// Keeps audit T2 / relics audit T1: what a muster waits for at its deadline, from the army that was called instead of
+    /// a fixed 64 (keep) or 120 (relic keep): half of the assigned attackers for a keep, 85% for a relic keep (it needs the
+    /// larger army, runs 9-15), never more than the old fixed numbers. A realm fielding under 64 used to wait out every
+    /// extension, every time.
+    /// </summary>
+    public static int MusterTarget(bool relic, int assigned) =>
+        Math.Min(RealmEventPolicy.DynamicStartThreshold(relic, true), Math.Max(0, relic ? assigned * 85 / 100 : assigned / 2));
+
+    /// <summary>Whether a muster at its deadline waits once more: extensions left, under its target, and (after the first
+    /// extension) still growing since the last deadline, so nobody waits for bots that are not coming.</summary>
+    public static bool ShouldExtendMuster(bool relic, int extensionsUsed, int gathered, int assigned, int gatheredAtLastDeadline) =>
+        extensionsUsed < (relic ? RelicMusterExtensions : 1) &&
+        (extensionsUsed == 0 || gathered > gatheredAtLastDeadline) &&
+        gathered < MusterTarget(relic, assigned);
+
     /// <summary>Attackers at their posts that open a marched siege without the leader: 60% of the army that marched, at least 8.</summary>
     public static int ArrivalQuorum(int marchedAttackers) => Math.Max(8, marchedAttackers * 6 / 10);
 
@@ -922,6 +961,8 @@ public static partial class AutonomousRvrEventLayer
         if (active.RelicKeep && !active.Retake && milliseconds == HomeMusterMilliseconds) milliseconds = RelicMusterMilliseconds;
         active.Marching = false;
         active.MusterDeadlineTick = nowTick + milliseconds;
+        active.MusterStartTick = nowTick;
+        active.MusterWindowMilliseconds = milliseconds;
         // The forward rally keeps its full hour after the march order.
         active.ExpiresTick = Math.Max(active.ExpiresTick, nowTick + Math.Max(milliseconds, HomeMusterMilliseconds) + RealmEventPolicy.RecruitmentMilliseconds(0));
     }
@@ -1118,7 +1159,9 @@ public static partial class AutonomousRvrEventLayer
             if (inPosition) active.Mustered[botId] = (forceId, nowTick, bot, position);
             else active.Mustered.Remove(botId);
             int assigned = active.Attackers.Values.Sum();
-            if (MusterAttendance(active, nowTick) >= (active.Retake ? DefenseWaveSize(assigned) : MarchThreshold(active.RelicKeep, assigned)))
+            int mustered = MusterAttendance(active, nowTick);
+            if (active.Retake ? mustered >= DefenseWaveSize(assigned)
+                : MayMarchEarly(active.RelicKeep, nowTick - active.MusterStartTick, active.MusterWindowMilliseconds, mustered, assigned))
                 GiveMarchOrder(active, nowTick, "enough attackers mustered at the border keep");
         }
     }
@@ -1520,17 +1563,20 @@ public static partial class AutonomousRvrEventLayer
             // Run 15: the 20-minute deadline sent 21 of 64 to Caer Erasleigh while the rest were still on the
             // road (medallions, frontier teleporter); too few to ever start the battle. A thin muster waits
             // once more, ten minutes, for the army that is genuinely on its way.
-            int gathered = active.Mustered.Count;
-            bool mayExtend = active.RelicKeep ? active.MusterExtensions < RelicMusterExtensions : !active.MusterExtended;
-            if (!active.Retake && mayExtend && gathered < RealmEventPolicy.DynamicStartThreshold(active.RelicKeep, true))
+            int gathered = MusterAttendance(active, nowTick);
+            int assigned = active.Attackers.Values.Sum();
+            bool extend = !active.Retake && ShouldExtendMuster(active.RelicKeep, active.MusterExtensions, gathered, assigned,
+                active.MusterGatheredAtDeadline);
+            active.MusterGatheredAtDeadline = gathered;
+            if (extend)
             {
                 active.MusterExtended = true;
                 active.MusterExtensions++;
                 active.MusterDeadlineTick = nowTick + (active.RelicKeep ? RelicMusterExtensionMilliseconds : MusterExtensionMilliseconds);
                 active.ExpiresTick = Math.Max(active.ExpiresTick, active.MusterDeadlineTick + RealmEventPolicy.RecruitmentMilliseconds(0));
                 var log = DOL.Logging.LoggerManager.Create(typeof(AutonomousRvrEventLayer));
-                if (log.IsInfoEnabled) log.Info($"RVR_MUSTER_EXTENDED target={active.TargetId} mustered={gathered} " +
-                    $"needed={RealmEventPolicy.DynamicStartThreshold(active.RelicKeep, true)} minutes={(active.RelicKeep ? RelicMusterExtensionMilliseconds : MusterExtensionMilliseconds) / 60_000}");
+                if (log.IsInfoEnabled) log.Info($"RVR_MUSTER_EXTENDED target={active.TargetId} mustered={gathered} assigned={assigned} " +
+                    $"needed={MusterTarget(active.RelicKeep, assigned)} minutes={(active.RelicKeep ? RelicMusterExtensionMilliseconds : MusterExtensionMilliseconds) / 60_000}");
                 continue;
             }
             GiveMarchOrder(active, nowTick, "muster deadline reached; marching with the attackers gathered");
@@ -1566,10 +1612,12 @@ public static partial class AutonomousRvrEventLayer
         {
             if (active.BattleStarted)
                 EndEvent(active, nowTick, active.DefenseReaction ? "Siege defended: four-hour defense response expired" : "Siege defended: four-hour battle timer expired");
-            else if (Ready(active, true, nowTick))
+            else if (DeadlineReady(active, nowTick))
                 StartBattle(active, nowTick, "preparation deadline reached with a viable attacking force");
             else
-                EndEvent(active, nowTick, "Rally failed: insufficient physical attackers at the one-hour deadline");
+                EndEvent(active, nowTick, MarchedArmy(active)
+                    ? $"Rally failed: too few of the {active.MarchedAttackers} who marched reached the keep by the march deadline"
+                    : "Rally failed: insufficient physical attackers at the one-hour deadline");
         }
         if (nowTick >= _nextStragglerSweep)
         {
