@@ -63,6 +63,7 @@ namespace DOL.UnitTests
                 Assert.That(walkerBoard.RegionId, Is.EqualTo(2));
                 Assert.That(BotBrain.GetFightBoard(camp), Is.SameAs(campBoard), "the walker's ask did not rebuild the camp's board");
                 Assert.That(BotBrain.GetFightBoard(walker), Is.SameAs(walkerBoard));
+                Assert.That(BotBrain.PeekFightBoard(camp), Is.SameAs(campBoard), "the peek reads the region's own board");
             });
         }
 
@@ -88,6 +89,14 @@ namespace DOL.UnitTests
                 Assert.That(BotBrain.KeepInScan(null), Is.False);
             });
         }
+
+        [Test]
+        public void ThePeekNeverRebuildsAndHandsOutBoardsUpToTwoSecondsOld() => Assert.Multiple(() =>
+        {
+            Assert.That(BotBrain.PeekFresh(3_000, 1_000), Is.True);
+            Assert.That(BotBrain.PeekFresh(3_001, 1_000), Is.False);
+            Assert.That(BotBrain.PeekFightBoard(null), Is.Null);
+        });
 
         [Test]
         public void AnEmptyBoardHasNothingOnTheGroup()

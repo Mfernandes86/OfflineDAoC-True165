@@ -33,7 +33,9 @@ public static partial class AutonomousBotGroupCoordinator
         if (!members.Any(member => member.IsAlive && (member.InCombat || member.IsAttacking)))
             return;
 
-        GroupFightBoard board = BotBrain.GetFightBoard(leader);
+        // read the members' board without rebuilding it under Sync (no area search inside the global lock); none fresh
+        // means nobody is fighting a board's worth, and the next check comes in 2 s
+        GroupFightBoard board = BotBrain.PeekFightBoard(leader);
         if (board == null || board.MonstersOnGroup == 0)
             return;
         int livingTanks = 0, livingHealers = 0, bestHealerPower = 0, lowestTank = 100;

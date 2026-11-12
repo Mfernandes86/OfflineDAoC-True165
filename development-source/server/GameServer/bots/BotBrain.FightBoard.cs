@@ -121,6 +121,28 @@ namespace DOL.AI.Brain
         public static bool ScannedNpcOnGroup(GameNPC npc, HashSet<GameLiving> members, HashSet<GameLiving> pets) =>
             npc?.TargetObject is GameLiving victim && (members.Contains(victim) || pets.Contains(victim));
 
+        /// <summary>How old a board <see cref="PeekFightBoard"/> still hands out (members rebuild it every second in a fight).</summary>
+        public const long PeekMaxAgeMilliseconds = 2_000;
+
+        /// <summary>
+        /// The group's current board for <paramref name="asker"/>'s region when it is at most
+        /// <see cref="PeekMaxAgeMilliseconds"/> old, else null - never rebuilt here (performance review 2026-11-11: the
+        /// group coordinator reads it under its global lock, where a rebuild could run the area search).
+        /// </summary>
+        public static GroupFightBoard PeekFightBoard(GameLiving asker)
+        {
+            if (asker == null)
+                return null;
+            object key = (object)asker.Group ?? asker;
+            if (!FightBoards.TryGetValue(key, out var regions) || !regions.TryGetValue(asker.CurrentRegionID, out FightBoardHolder holder))
+                return null;
+            GroupFightBoard board = holder.Board;
+            return board != null && PeekFresh(GameLoop.GameLoopTime, board.BuiltAt) ? board : null;
+        }
+
+        /// <summary>Pure: a board built at <paramref name="builtAt"/> may still be peeked at.</summary>
+        public static bool PeekFresh(long now, long builtAt) => now - builtAt <= PeekMaxAgeMilliseconds;
+
         private static GroupFightBoard BuildFightBoard(GameLiving asker, long now, FightBoardHolder holder)
         {
             List<GameLiving> members = new(8);
