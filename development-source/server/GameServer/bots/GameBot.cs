@@ -2535,9 +2535,16 @@ namespace DOL.GS
         /// </summary>
         internal int AddControlKnown = -1;
 
+        /// <summary>
+        /// Q30: the bot's outclassed damage spells for its spell list and level (BotBrain.IsOutclassedDamageSpell), built
+        /// once per list and level (cleared in SortSpells) instead of walking every known spell for each candidate.
+        /// </summary>
+        internal BotBrain.OutclassedSpells OutclassedCache;
+
         public override void SortSpells()
         {
             _playbook = null;   // rebuilt on the next read, from the new list
+            OutclassedCache = null;
             System.Threading.Volatile.Write(ref AddControlKnown, -1);
             InstantHarmfulSpells?.Clear();
             HarmfulSpells?.Clear();

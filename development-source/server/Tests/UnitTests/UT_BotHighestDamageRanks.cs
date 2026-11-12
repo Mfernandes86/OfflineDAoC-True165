@@ -42,6 +42,28 @@ namespace DOL.UnitTests
         }
 
         [Test]
+        public void TheCachedListGivesTheSameAnswersAsTheRule()
+        {
+            Spell top = Make("DirectDamage", 43);
+            Spell lower = Make("DirectDamage", 33);
+            Spell aoe = Make("DirectDamage", 30, radius: 350);
+            Spell drain = Make("Lifedrain", 4, cast: 0);
+            var known = new System.Collections.Generic.List<Spell> { top, lower, aoe, drain };
+            var cache = new BotBrain.OutclassedSpells(known, 50);
+            Spell outside = Make("DirectDamage", 20);
+            Assert.Multiple(() =>
+            {
+                foreach (Spell spell in known)
+                    Assert.That(cache.IsOutclassed(spell), Is.EqualTo(BotBrain.IsOutclassedDamageSpell(spell, known, 50)), spell.Level.ToString());
+                Assert.That(cache.IsOutclassed(outside), Is.EqualTo(BotBrain.IsOutclassedDamageSpell(outside, known, 50)),
+                    "a spell not in the list is worked out directly");
+                Assert.That(cache.IsOutclassed(null), Is.False);
+                Assert.That(cache.Level, Is.EqualTo(50));
+                Assert.That(cache.Count, Is.EqualTo(4), "a list trimmed in place is rebuilt");
+            });
+        }
+
+        [Test]
         public void ASecondLineAtAReasonableLevelStaysAndNonDamageIsUntouched()
         {
             Spell main = Make("DirectDamage", 50);

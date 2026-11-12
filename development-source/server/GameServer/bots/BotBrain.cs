@@ -4716,8 +4716,59 @@ namespace DOL.AI.Brain
             return best - spell.Level >= 5 && spell.Level * 2 < best;
         }
 
-        private bool IsOutclassedDamageSpell(Spell spell) =>
-            Body?.Spells != null && IsOutclassedDamageSpell(spell, Body.Spells, Body.Level);
+        /// <summary>
+        /// Q30 (completeness review 2026-11-11): a spell list's outclassed damage spells at one level, worked out once
+        /// (O(n^2) once per list and level, not per candidate on every combat think of a 40-70 spell caster).
+        /// </summary>
+        public sealed class OutclassedSpells
+        {
+            public readonly IReadOnlyList<Spell> List;
+            public readonly int Level;
+            /// <summary>The list's length when built: a list cleared or trimmed in place is worked out again.</summary>
+            public readonly int Count;
+            private readonly HashSet<Spell> _known = new(ReferenceEqualityComparer.Instance);
+            private readonly HashSet<Spell> _outclassed = new(ReferenceEqualityComparer.Instance);
+
+            public OutclassedSpells(IReadOnlyList<Spell> list, int level)
+            {
+                List = list;
+                Level = level;
+                Count = list.Count;
+                foreach (Spell spell in list)
+                {
+                    if (spell == null || !_known.Add(spell))
+                        continue;
+                    if (IsOutclassedDamageSpell(spell, list, level))
+                        _outclassed.Add(spell);
+                }
+            }
+
+            /// <summary>The same answer as the static rule; a spell not in the list is worked out directly.</summary>
+            public bool IsOutclassed(Spell spell) =>
+                spell != null && (_known.Contains(spell) ? _outclassed.Contains(spell) : IsOutclassedDamageSpell(spell, List, Level));
+        }
+
+        private bool IsOutclassedDamageSpell(Spell spell)
+        {
+            if (Body?.Spells is not { } spells)
+                return false;
+            if (BotBody is not { } bot)
+                return IsOutclassedDamageSpell(spell, spells, Body.Level);
+            OutclassedSpells cache = bot.OutclassedCache;
+            if (cache == null || cache.Level != Body.Level || !ReferenceEquals(cache.List, spells) || cache.Count != spells.Count)
+            {
+                try
+                {
+                    bot.OutclassedCache = cache = new OutclassedSpells(spells, Body.Level);
+                }
+                catch (InvalidOperationException)
+                {
+                    // the list changed while it was read (respec, SortSpells): the direct rule this once
+                    return IsOutclassedDamageSpell(spell, spells, Body.Level);
+                }
+            }
+            return cache.IsOutclassed(spell);
+        }
 
         /// <summary>
         /// A caster (pet classes included) with no power for any attack spell walks
