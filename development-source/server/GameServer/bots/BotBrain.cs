@@ -2810,13 +2810,38 @@ namespace DOL.AI.Brain
             Spell song = wanted is { } type ? songsByType[type] : null;
             if (managingCharm)
                 return TryTwistWithCharm(bot, song, charmHoldLeft);
+            // owner 2026-11-11, "Twist songs / chants" (a hired performer, default off): the held song is the anchor and
+            // the other songs that fit the situation are twisted in as their buff runs low, as before 2026-10-30
+            bool twisting = false;
+            if (song != null && CompanionControls165.TwistsSongs(bot))
+            {
+                var characterClass = (eCharacterClass)bot.CharacterClass.ID;
+                Spell anchor = song;
+                List<Spell> cycle = songsByType.Values.Where(candidate => candidate.ID == anchor.ID ||
+                        CompanionControls165.TwistPartner(characterClass, candidate.SpellType, anchor.SpellType, _songTraveling,
+                            bot.Mana >= bot.PowerCost(candidate)))
+                    .ToList();
+                if (cycle.Count > 1)
+                {
+                    twisting = true;
+                    int chosenId = BotSongTwistPolicy.Choose(anchor.ID, _activeTwistedSongId,
+                        cycle.Select(candidate => new BotSongTwistPolicy.Song(candidate.ID, candidate.CastTime,
+                            bot.GetSkillDisabledDuration(candidate), SongRemainingMilliseconds(candidate))).ToArray());
+                    song = cycle.FirstOrDefault(candidate => candidate.ID == chosenId);
+                    if (song == null)
+                    {
+                        _nextSongTwistTick = now + 750;
+                        return false;
+                    }
+                }
+            }
             if (song == null || song.ID == _activeTwistedSongId)
             {
                 _nextSongTwistTick = now + (song == null ? 4_000 : 1_000);
                 return false;
             }
             // a held song stays at least HoldMilliseconds; starting to travel may always switch to speed
-            if (activePulse != null && now < _songHoldUntil && song.SpellType != eSpellType.SpeedEnhancement)
+            if (!twisting && activePulse != null && now < _songHoldUntil && song.SpellType != eSpellType.SpeedEnhancement)
             {
                 _nextSongTwistTick = Math.Min(_songHoldUntil, now + 1_000);
                 return false;
@@ -2844,6 +2869,8 @@ namespace DOL.AI.Brain
             GameObject previousTarget = bot.TargetObject;
             GameLiving target = FindMissingMaintenanceTarget(song) ?? bot;
             bot.TargetObject = target;
+            if (CompanionControls165.QuietSwitch(twisting, activePulse != null))
+                bot.SongSoundQuietUntil = now + Math.Max(0, song.CastTime) + CompanionControls165.TwistQuietMarginMilliseconds;
             bool cast = bot.CastSpell(song, m_mobSpellLine, false);
             bot.TargetObject = previousTarget;
             if (cast)
@@ -3003,6 +3030,7 @@ namespace DOL.AI.Brain
                 .FirstOrDefault(effect => !effect.IsEnding && !effect.IsEnded &&
                     BotSongTwistPolicy.IsManagedSong(bot, effect.SpellHandler?.Spell))?.SpellHandler.Spell;
             Spell chosen;
+            bool paladinTwisting = false;
             if ((eCharacterClass)bot.CharacterClass.ID == eCharacterClass.Warden)
             {
                 bool combat = bot.InCombat || HasAggro || bot.IsAttacking ||
@@ -3036,6 +3064,28 @@ namespace DOL.AI.Brain
                     chants.Any(spell => spell.SpellType == chosenChant))
                     held = chosenChant;
                 chosen = chants.FirstOrDefault(spell => spell.SpellType == held);
+                // owner 2026-11-11, "Twist songs / chants" (a hired Paladin, default off): the held chant is the anchor and
+                // the other chants are twisted in as their buff runs low, as the Paladin did before 2026-10-30
+                if (chosen != null && CompanionControls165.TwistsSongs(bot))
+                {
+                    bool fighting = bot.InCombat || HasAggro || bot.IsAttacking;
+                    bool combatHealing = fighting && (bot.HealthPercent < 95 || bot.Group?.GetMembersInTheGroup().Any(member =>
+                        member.IsAlive && member.HealthPercent < 95 && member.CurrentRegionID == bot.CurrentRegionID &&
+                        bot.IsWithinRadius(member, GROUP_DEFENSE_ASSIST_RADIUS)) == true);
+                    Spell anchor = chosen;
+                    List<Spell> cycle = chants.Where(spell => spell.ID == anchor.ID ||
+                            CompanionControls165.PaladinTwistPartner(spell.SpellType, anchor.SpellType, combatHealing,
+                                bot.Mana >= bot.PowerCost(spell)))
+                        .ToList();
+                    if (cycle.Count > 1)
+                    {
+                        paladinTwisting = true;
+                        int id = BotSongTwistPolicy.Choose(anchor.ID, active?.ID ?? 0,
+                            cycle.Select(spell => new BotSongTwistPolicy.Song(spell.ID, spell.CastTime,
+                                bot.GetSkillDisabledDuration(spell), SongRemainingMilliseconds(spell))).ToArray());
+                        chosen = cycle.FirstOrDefault(spell => spell.ID == id);
+                    }
+                }
             }
 
             if (chosen == null || chosen.ID == active?.ID || bot.GetSkillDisabledDuration(chosen) > 0 ||
@@ -3053,6 +3103,9 @@ namespace DOL.AI.Brain
             try
             {
                 bot.TargetObject = bot;
+                if (CompanionControls165.QuietSwitch(paladinTwisting, active != null))
+                    bot.SongSoundQuietUntil = GameLoop.GameLoopTime + Math.Max(0, chosen.CastTime) +
+                                              CompanionControls165.TwistQuietMarginMilliseconds;
                 bot.CastSpell(chosen, m_mobSpellLine, false);
             }
             finally { bot.TargetObject = oldTarget; }

@@ -34,6 +34,8 @@ namespace DOL.GS
             KindHunterPet = 11, KindStealthOpen = 12, KindHealerRole = 13, KindShamanRole = 14, KindFriarRole = 15,
             KindLifeTransfer = 16, KindAmnesia = 17, KindPerform = 18, KindSavePower = 26, KindPositioning = 27,
             KindDebuffLine = 28, KindSavePowerCaster = 29, KindAttackSpells = 30;
+        /// <summary>Companion controls (veteran review M7 and the owner's twist option, 2026-11-11; CompanionControls165).</summary>
+        public const byte KindTwist = 40;
         /// <summary>The fourth Role choice of every healer's Role row (owner 2026-11-11; CompanionSpellOptions165).</summary>
         public const string MeleeHealChoice = "Melee and heal, no attack spells (melee interrupts casts)";
         public static readonly HashSet<string> Verbs = ["charm", "pet", "subpet", "song", "option"];
@@ -119,6 +121,10 @@ namespace DOL.GS
             // Flank behind any monster that is not on it; Stay in front never moves for a style (BotBrain.Flank)
             new(KindPositioning, "position", "Positioning", ["Automatic", "Flank (side/back styles)", "Stay in front"],
                 BotBrain.KnowsFlankStyle),
+            // owner 2026-11-11: Bards, Minstrels, Skalds and Paladins may cycle their songs or chants as players twisted
+            // them; off (Automatic) they hold one, as since 2026-10-30. Companions only; a switch plays without its sound.
+            new(KindTwist, "twist", "Twist songs / chants", ["Automatic (hold one)", "Twist (cycle them)"],
+                bot => CompanionControls165.OffersTwist((eCharacterClass)bot.CharacterClass.ID, CompanionControls165.SongKinds(bot))),
         ];
 
         /// <summary>A generic AI option's stored key and choices (choice 0 Automatic), or null for an unknown kind.</summary>

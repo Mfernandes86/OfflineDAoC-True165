@@ -31,8 +31,10 @@ namespace DOL.GS
             else
                 target = e.Owner;
 
+            // a twisting companion's switch to its next song shows the animation without replaying the sound
+            bool noSound = spell.IsPulsing && spellHandler.Caster is GameBot bot && GameLoop.GameLoopTime < bot.SongSoundQuietUntil;
             foreach (GamePlayer player in e.Owner.GetPlayersInRadius(WorldMgr.VISIBILITY_DISTANCE))
-                player.Out.SendSpellEffectAnimation(spellHandler.Caster, target, spell.ClientEffect, 0, false, 1);
+                player.Out.SendSpellEffectAnimation(spellHandler.Caster, target, spell.ClientEffect, 0, noSound, 1);
         }
 
         public static eEffect GetEffectFromSpell(Spell spell)

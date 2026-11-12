@@ -3271,6 +3271,10 @@ namespace DOL.GS
 
         /// <summary>The partner song of a Minstrel's charm twist while it is being requested (see CastSpell).</summary>
         internal Spell CharmTwistSong;
+        /// <summary>Until this tick a song or chant this companion starts plays without its sound: a twisting companion's
+        /// switch from one song to the next (owner 2026-11-11, "Twist songs / chants"; the sound on every switch is why
+        /// twisting was removed in 2026-10-30).</summary>
+        internal long SongSoundQuietUntil;
 
         // Wake only when an actual affordable spell is requested, not during
         // spell selection. Mobile song maintenance remains compatible with
