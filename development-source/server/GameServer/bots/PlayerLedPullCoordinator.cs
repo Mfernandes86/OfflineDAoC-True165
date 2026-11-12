@@ -297,15 +297,45 @@ namespace DOL.GS
             }
             // Field pets the player owns besides the main pet: a Theurgist's elementals, an Animist's turrets
             // (GitHub #13, 2026-11-03: a Theurgist rooted a mob and sent pets, and the companions never joined).
+            // Veteran review Q30: every companion asked this on several checks per think (7-79 radius-2000 scans per
+            // think round while the player is idle), so one answer per player is shared for 250 ms; a shared target is
+            // re-checked before it is used.
+            long now = GameLoop.GameLoopTime;
+            FieldPetMemo memo = FieldPetMemos.GetValue(player, _ => new FieldPetMemo());
+            if (FieldPetMemoFresh(memo.Tick, now))
+            {
+                GameLiving remembered = memo.Target;
+                return remembered != null && ValidEnemy(player, remembered) ? remembered : null;
+            }
+            GameLiving found = null;
             foreach (GameNPC npc in player.GetNPCsInRadius((ushort)BotBrain.GROUP_DEFENSE_ASSIST_RADIUS))
             {
                 if (npc.IsAlive && PlayerPetOwner(npc) == player && npc.Brain is ControlledMobBrain { IsMainPet: false } &&
                     (npc.IsAttacking || npc.InCombat) && npc.TargetObject is GameLiving fieldTarget &&
                     ValidEnemy(player, fieldTarget))
-                    return fieldTarget;
+                {
+                    found = fieldTarget;
+                    break;
+                }
             }
-            return null;
+            memo.Target = found;
+            memo.Tick = now;
+            return found;
         }
+
+        /// <summary>How long one player's field-pet target answer is shared by their companions.</summary>
+        public const int FieldPetMemoMilliseconds = 250;
+
+        public static bool FieldPetMemoFresh(long memoTick, long now) =>
+            memoTick > 0 && now >= memoTick && now - memoTick < FieldPetMemoMilliseconds;
+
+        private sealed class FieldPetMemo
+        {
+            public volatile GameLiving Target;
+            public long Tick;
+        }
+
+        private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<GamePlayer, FieldPetMemo> FieldPetMemos = new();
 
         /// <summary>
         /// The player whose pet this is: the main pet, or a field pet (Theurgist elementals, Animist turrets: the game
