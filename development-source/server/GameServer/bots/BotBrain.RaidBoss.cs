@@ -242,5 +242,45 @@ namespace DOL.AI.Brain
             }
             return false;
         }
+        /// <summary>
+        /// sh-bosses M2, df-bosses M5: a boss a summoned pet cannot hurt. Summoner Lossren takes 5 damage from any summoned
+        /// pet (his own TakeDamage), so the pet classes' pets did nothing on him while his souls ran free. (The bosses lane
+        /// may later state this as a raid-boss trait; it is the one such boss in the reports.)
+        /// </summary>
+        public static bool PetsDoNoDamageTo(GameLiving target) => target is SummonerLossren;
+
+        private long _petCallOffAt;
+
+        /// <summary>
+        /// The pet's target when the owner's is a boss pets cannot hurt: an add on the group from the fight board (the
+        /// board is only peeked at, never rebuilt here), one on the owner or the pet first; null when there is none, and
+        /// then a pet already on the boss is called back to its owner (at most once a second).
+        /// Cost: a walk over the board's few NPCs, only while the owner's target is such a boss.
+        /// </summary>
+        private GameLiving PetTargetInsteadOfBoss(GameLiving boss, ControlledMobBrain petBrain)
+        {
+            GameLiving best = null;
+            if (PeekFightBoard(Body) is { } board)
+                foreach (GameNPC npc in board.NpcsOnGroup)
+                {
+                    if (npc == boss || PetsDoNoDamageTo(npc) || !IsValidPetCombatTarget(petBrain.Body, npc))
+                        continue;
+                    if (npc.TargetObject == Body || npc.TargetObject == petBrain.Body)
+                    {
+                        best = npc;
+                        break;
+                    }
+                    best ??= npc;
+                }
+            bool callOff = best == null;
+            long now = GameLoop.GameLoopTime;
+            if (callOff && petBrain.Body?.TargetObject == boss && now >= _petCallOffAt)
+            {
+                _petCallOffAt = now + 1_000;
+                petBrain.Disengage();
+                petBrain.Follow(Body);
+            }
+            return best;
+        }
     }
 }

@@ -1015,6 +1015,9 @@ namespace DOL.AI.Brain
         {
             if (candidate == null || Body.ControlledBrain is not ControlledMobBrain petBrain)
                 return candidate;
+            // sh-bosses M2: never at a boss pets cannot hurt; an add instead, or back to its owner (BotBrain.RaidBoss)
+            if (PetsDoNoDamageTo(candidate) && (candidate = PetTargetInsteadOfBoss(candidate, petBrain)) == null)
+                return null;
 
             GameLiving current = petBrain.OrderedAttackTarget;
             if (current == null || current == candidate || candidate == ActiveOrderedPullTarget)
