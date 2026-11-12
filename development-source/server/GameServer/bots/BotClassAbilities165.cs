@@ -63,6 +63,16 @@ namespace DOL.GS
 
         public enum PaladinRole { Solo, MainTank, OffTank }
 
+        /// <summary>
+        /// Pure (O1 with M2): the Paladin's chant role. Solo when it has no party. In a gamebot party with a role sheet
+        /// (BotGroupRoles, the spec-ranked tanks) the sheet decides: its main tank is the main tank, any other Paladin
+        /// the off-tank. Without a sheet (a player's group, a party not yet formed) a Paladin with another tank beside
+        /// it is the off-tank, else the main tank.
+        /// </summary>
+        public static PaladinRole PaladinRoleFor(bool grouped, bool? sheetSaysMainTank, bool hasTankPartner) =>
+            !grouped ? PaladinRole.Solo :
+            (sheetSaysMainTank ?? !hasTankPartner) ? PaladinRole.MainTank : PaladinRole.OffTank;
+
         /// <summary>A Paladin keeps a chant it started for at least this long before it changes (O1).</summary>
         public const int PaladinChantHoldMilliseconds = 10_000;
 

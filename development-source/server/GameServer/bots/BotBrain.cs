@@ -3157,9 +3157,11 @@ namespace DOL.AI.Brain
                 // fight or when low and not tanking; a chant it started stays at least 10 s. Each recast replays the
                 // chant's sound.
                 bool fighting = bot.InCombat || HasAggro || bot.IsAttacking;
-                BotClassAbilities165.PaladinRole role = bot.Group?.MemberCount > 1
-                    ? BotMeleeStylePolicy.HasTankPartner(bot) ? BotClassAbilities165.PaladinRole.OffTank : BotClassAbilities165.PaladinRole.MainTank
-                    : BotClassAbilities165.PaladinRole.Solo;
+                bool groupedPaladin = bot.Group?.MemberCount > 1;
+                GameLiving sheetMainTank = groupedPaladin ? BotGroupRoles.MainTank(bot) : null;   // M2's role sheet, if any
+                BotClassAbilities165.PaladinRole role = BotClassAbilities165.PaladinRoleFor(groupedPaladin,
+                    sheetMainTank == null ? null : sheetMainTank == bot,
+                    groupedPaladin && sheetMainTank == null && BotMeleeStylePolicy.HasTankPartner(bot));
                 bool tanking = role == BotClassAbilities165.PaladinRole.MainTank ||
                     bot.TargetObject is GameLiving foe && foe.TargetObject == bot;
                 eSpellType held = BotClassAbilities165.PaladinChant(role, fighting, tanking, bot.HealthPercent, bot.EndurancePercent,

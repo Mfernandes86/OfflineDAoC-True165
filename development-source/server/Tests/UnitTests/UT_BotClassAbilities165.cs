@@ -76,6 +76,21 @@ namespace DOL.GS.Tests
         });
 
         [Test]
+        public void APaladinsChantRoleFollowsThePartyRoleSheet() => Assert.Multiple(() =>
+        {
+            // O1 with M2 (merge of the veteran-bots lanes): the spec-ranked role sheet decides who main-tanks
+            Assert.That(BotClassAbilities165.PaladinRoleFor(false, null, false), Is.EqualTo(BotClassAbilities165.PaladinRole.Solo));
+            Assert.That(BotClassAbilities165.PaladinRoleFor(true, true, true), Is.EqualTo(BotClassAbilities165.PaladinRole.MainTank),
+                "the sheet's main tank, even with a two-hander Armsman beside it");
+            Assert.That(BotClassAbilities165.PaladinRoleFor(true, false, false), Is.EqualTo(BotClassAbilities165.PaladinRole.OffTank),
+                "the sheet names another main tank");
+            Assert.That(BotClassAbilities165.PaladinRoleFor(true, null, true), Is.EqualTo(BotClassAbilities165.PaladinRole.OffTank),
+                "no sheet: another tank in the group");
+            Assert.That(BotClassAbilities165.PaladinRoleFor(true, null, false), Is.EqualTo(BotClassAbilities165.PaladinRole.MainTank),
+                "no sheet: the only tank");
+        });
+
+        [Test]
         public void APaladinHoldsAChantItStartedForTenSeconds() => Assert.Multiple(() =>
         {
             Assert.That(BotClassAbilities165.PaladinKeepsChant(true, 9_000), Is.True);
