@@ -33,6 +33,34 @@ public class UT_RealmEventRecords
     }
 
     [Test]
+    public void BattleStartDeathsAndEncountersReachTheRecordDetails()
+    {
+        RealmEventRecords.Begin("raid","Summoner's Hall","Neutral raid","Albion","Forced rally via Snowdonia Station");
+        string id=Field("Active")["raid"].Id;
+        RealmEventRecords.CountDeath("raid");
+        Assert.That(Field("Pending")[id].Details,Does.Not.Contain("Deaths"),"a death alone writes nothing");
+        RealmEventRecords.Progress("raid","Battle","Expedition began advancing to the encounter.",300,210);
+        Assert.That(Field("Pending")[id].Details,Does.Contain("Battle began").And.Contain("Deaths: 1"));
+        RealmEventRecords.Encounter("raid","Summoner Roesia","defeated");
+        RealmEventRecords.Encounter("raid","Summoner Lossren","skipped");
+        RealmEventRecords.CountDeath("raid");RealmEventRecords.CountDeath("unknown");
+        RealmEventRecords.Finish("raid","Boss defeated","The final dungeon encounter has been defeated.");
+        string details=Field("Pending")[id].Details;
+        Assert.That(details,Does.StartWith("The final dungeon encounter has been defeated. | Battle "));
+        Assert.That(details,Does.Contain("min)").And.Contain("Deaths: 2").And.Contain("Summoner Roesia defeated").And.Contain("Summoner Lossren skipped"));
+    }
+
+    [Test]
+    public void ComposedDetailsShowDurationAndCapTheEncounterList()
+    {
+        var start=new DateTime(2026,11,12,20,0,0,DateTimeKind.Utc);
+        Assert.That(RealmEventRecords.ComposeDetails("Ended",start,start.AddMinutes(34),true,7,new[]{"Golestandt defeated 20:34"},0),
+            Is.EqualTo("Ended | Battle 2026-11-12 20:00:00Z to 20:34:00Z (34 min) | Deaths: 7 | Encounters: Golestandt defeated 20:34"));
+        Assert.That(RealmEventRecords.ComposeDetails("Rally",null,start,false,0,Array.Empty<string>(),0),Is.EqualTo("Rally"));
+        Assert.That(RealmEventRecords.ComposeDetails("x",null,start,false,0,new[]{"a defeated 20:01"},3),Does.EndWith("(+3 more)"));
+    }
+
+    [Test]
     public void DeleteAllEmptiesOnlyTheRecordLedger()
     {
         string folder=System.IO.Path.Combine(System.IO.Path.GetTempPath(),"realm-records-"+Guid.NewGuid().ToString("N"));
