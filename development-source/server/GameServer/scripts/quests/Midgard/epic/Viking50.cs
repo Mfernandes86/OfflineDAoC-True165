@@ -2124,6 +2124,11 @@ namespace DOL.GS.Quests.Midgard
 			if (player.Level < minimumLevel || player.Level > maximumLevel)
 				return false;
 
+			// True 1.65 Mode: the finale follows the line's last data quest part (quest audit 2026-11-11, P02-E3: any
+			// level 50 of the class could take it without the level 43-48 chain).
+			if (Classic165Mode.IsOn && !Epics165.FinishedLastPart(player, questTitle))
+				return false;
+
 			return true;
 		}
 
@@ -2190,7 +2195,7 @@ namespace DOL.GS.Quests.Midgard
 		//Set quest name
 		public override string Name
 		{
-			get { return "An End to the Daggers (level 50 Viking epic)"; }
+			get { return Classic165Mode.IsOn ? Epics165.FinaleTitle(questTitle) : "An End to the Daggers (level 50 Viking epic)"; }
 		}
 
 		// Define Steps
