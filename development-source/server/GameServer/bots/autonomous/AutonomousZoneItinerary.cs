@@ -119,8 +119,9 @@ namespace DOL.GS
         private static Zone[] FindAreaRoute(Topology topology, Zone from, Zone to, Vector3 start, Vector3 goal, Func<Zone, bool> allowed)
         {
             if (!topology.Seams) return Array.Empty<Zone>();
-            int? startArea = AutonomousZoneRoads.AreaAt(from, start);
-            int? goalArea = AutonomousZoneRoads.AreaAt(to, goal) ?? AutonomousZoneSeams.MainArea(topology.RegionId, to.ID);
+            // owner 2026-11-12: ground with a listed crossing wins over a stacked floor piece without one (Tuscaran door).
+            int? startArea = AutonomousSeamChains.ConnectedAreaAt(topology.RegionId, from, start);
+            int? goalArea = AutonomousSeamChains.ConnectedAreaAt(topology.RegionId, to, goal) ?? AutonomousZoneSeams.MainArea(topology.RegionId, to.ID);
             if (startArea == null || goalArea == null) return Array.Empty<Zone>();
             var graph = AutonomousZoneSeams.AreaGraph(topology.RegionId);
             var zones = topology.Zones.ToDictionary(zone => zone.ID);

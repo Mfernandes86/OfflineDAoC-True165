@@ -75,6 +75,55 @@ namespace DOL.GS
             return area;
         }
 
+        /// <summary>How much farther than the nearest road anchor a connected one may be and still label the point.</summary>
+        public const float ConnectedAreaReach = 2_048f;
+
+        /// <summary>
+        /// owner 2026-11-12: the ground a point stands on for zone-chain planning. Its nearest road anchor's area, unless that
+        /// area has no listed zone crossing at all (inSeamGraph false) and another area within reach of it does: then the
+        /// nearest such area. Tuscaran Glacier's door (Delling Crater) stands on the main ground 69799, but the four nearest
+        /// anchors are a floor piece stacked beside the ledge (11388, no crossing), so the zone chain to the door was empty.
+        /// Ground without a crossing can never end or start a chain to another zone, so the switch only adds routes; every leg
+        /// is still proven. Null without anchors (callers keep their old fallback).
+        /// </summary>
+        public static int? ConnectedArea(IReadOnlyList<(float Distance, int Area)> nearestFirst, Func<int, bool> inSeamGraph,
+            float reach = ConnectedAreaReach)
+        {
+            if (nearestFirst == null || nearestFirst.Count == 0) return null;
+            (float distance, int nearest) = nearestFirst[0];
+            if (inSeamGraph == null || inSeamGraph(nearest)) return nearest;
+            for (int i = 1; i < nearestFirst.Count && nearestFirst[i].Distance <= distance + reach; i++)
+                if (inSeamGraph(nearestFirst[i].Area)) return nearestFirst[i].Area;
+            return nearest;
+        }
+
+        /// <summary>
+        /// Every (zone, area) that has a listed crossing, either way (built once per region from the seam file's area graph).
+        /// Empty without area data, so <see cref="ConnectedArea"/> then keeps the nearest anchor as before.
+        /// </summary>
+        public static HashSet<(ushort Zone, int Area)> SeamGraphNodes(ushort regionId) =>
+            GraphNodes.GetOrAdd(regionId, id =>
+            {
+                var nodes = new HashSet<(ushort Zone, int Area)>();
+                foreach (var pair in AutonomousZoneSeams.AreaGraph(id))
+                {
+                    nodes.Add(pair.Key);
+                    foreach (var next in pair.Value) nodes.Add(next);
+                }
+                return nodes;
+            });
+
+        /// <summary>The point's ground by <see cref="ConnectedArea"/> over the zone's road anchors (data lookups only).</summary>
+        public static int? ConnectedAreaAt(ushort regionId, Zone zone, Vector3 point)
+        {
+            if (zone == null) return null;
+            HashSet<(ushort Zone, int Area)> nodes = SeamGraphNodes(regionId);
+            ushort zoneId = zone.ID;
+            return ConnectedArea(AutonomousZoneRoads.AreasNear(zone, point, float.MaxValue), area => nodes.Contains((zoneId, area)));
+        }
+
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<ushort, HashSet<(ushort Zone, int Area)>> GraphNodes = new();
+
         /// <summary>The goal's ground when known for sure (switch on, region in the seam file, goal inside the zone).</summary>
         public static int? ConfidentTargetArea(ushort regionId, Zone zone, Vector3 goal)
         {
@@ -87,11 +136,24 @@ namespace DOL.GS
             var key = (regionId, zone.ID, (int)goal.X, (int)goal.Y, (int)goal.Z);
             if (TargetAreas.TryGetValue(key, out int known)) return known < 0 ? null : known;
             int? area = CoveredRegions.GetOrAdd(regionId, id => AutonomousZoneSeams.Covers(id))
-                ? ConfidentArea(AutonomousZoneRoads.AreasNear(zone, goal, ConfidentAnchorDistance + AmbiguityMargin))
+                ? ConfidentArea(Connected(AutonomousZoneRoads.AreasNear(zone, goal, ConfidentAnchorDistance + AmbiguityMargin),
+                    SeamGraphNodes(regionId), zone.ID))
                 : null;
             if (TargetAreas.Count > MaxRememberedTargets) TargetAreas.Clear();
             TargetAreas[key] = area ?? -1;
             return area;
+        }
+
+        /// <summary>
+        /// owner 2026-11-12: anchors of ground without any listed crossing cannot be the goal's ground for a zone chain, so
+        /// they neither label it nor make it ambiguous (the Tuscaran door's stacked floor piece). Unchanged without area data.
+        /// </summary>
+        public static List<(float Distance, int Area)> Connected(List<(float Distance, int Area)> nearestFirst,
+            HashSet<(ushort Zone, int Area)> nodes, ushort zoneId)
+        {
+            if (nearestFirst == null || nodes == null || nodes.Count == 0) return nearestFirst;
+            nearestFirst.RemoveAll(entry => !nodes.Contains((zoneId, entry.Area)));
+            return nearestFirst;
         }
 
         public const int MaxRememberedTargets = 50_000;
