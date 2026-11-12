@@ -159,6 +159,33 @@ public class UT_QuestFix07
         Assert.That(Parse("""{ "Quests": { "1": { "Steps": [ null, { "Spawn": { "Name": "x" } } ] } } }""").Quests[1].Steps[1].Spawn.Escort, Is.Null);
     }
 
+    [TestCase("The Moonstone Twin", true)]
+    [TestCase("the moonstone twin (level 47)", true)]
+    [TestCase("The Moonstone Twin (level 45)", true)]
+    [TestCase("The Moonstone Twin (Level 50 Path of Essence Epic)", false)]
+    [TestCase("The Moonstone Twins", false)]
+    [TestCase("Seek the Moonstone", false)]
+    public void APartOfAnEpicLineIsItsNameOrItsNameWithALevel(string rowName, bool part)
+    {
+        Assert.That(Epics165.IsPartOf(rowName, "The Moonstone Twin"), Is.EqualTo(part));
+    }
+
+    [Test]
+    public void AFinaleIsTitledWithLevel50()
+    {
+        Assert.That(Epics165.FinaleTitle("Saving the Clan"), Is.EqualTo("Saving the Clan (level 50)"));
+    }
+
+    [TestCase("gray wolf pup", true)]
+    [TestCase("Black Wolf Pup", true)]
+    [TestCase("werewolf", false)]
+    [TestCase("giant wolf", false)]
+    [TestCase(null, false)]
+    public void WolfPeltCloakCountsOnlyWolfPups(string name, bool counts)
+    {
+        Assert.That(DOL.GS.Quests.Albion.WolfPeltCloak.IsWolfPup(name), Is.EqualTo(counts));
+    }
+
     [TestCase(8, 8, 16, true)]
     [TestCase(15, 8, 16, true)]
     [TestCase(16, 8, 16, false)]
