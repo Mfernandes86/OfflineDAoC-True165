@@ -340,10 +340,32 @@ namespace DOL.GS
             return result;
         }
 
-        /// <summary>The templates listed in the realm, for a crafter matching them against its recipes.</summary>
-        public int TemplateCount(eRealm realm) => _realms[RealmIndex(realm)].ById.Count;
+        /// <summary>Priced listings of a few templates (a crafter's missing materials), at most <paramref name="limit"/>: one
+        /// dictionary lookup per template, never a category scan.</summary>
+        public List<Listing> OfTemplates(eRealm realm, IReadOnlyCollection<string> templateIds, long maxPrice, string excludeOwner, int limit)
+        {
+            var result = new List<Listing>();
+            if (templateIds == null || limit <= 0)
+                return result;
+            RealmBook book = _realms[RealmIndex(realm)];
+            foreach (string templateId in templateIds)
+            {
+                if (string.IsNullOrEmpty(templateId) || !book.ById.TryGetValue(templateId, out HashSet<Listing> set))
+                    continue;
+                foreach (Listing listing in set)
+                {
+                    if (listing.Price <= 0 || listing.Price > maxPrice || listing.Owner == excludeOwner)
+                        continue;
+                    result.Add(listing);
+                    if (result.Count >= limit)
+                        return result;
+                }
+            }
+            return result;
+        }
 
-        public List<string> Templates(eRealm realm) => new(_realms[RealmIndex(realm)].ById.Keys);
+        /// <summary>The number of templates listed in the realm.</summary>
+        public int TemplateCount(eRealm realm) => _realms[RealmIndex(realm)].ById.Count;
 
         /// <summary>The bot sellers of a realm (a snapshot, rebuilt only when a seller comes or goes).</summary>
         public string[] Sellers(eRealm realm)

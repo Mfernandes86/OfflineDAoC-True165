@@ -35,6 +35,8 @@ namespace DOL.GS
                     _searchEngine.AddItem(GameInventoryItem.Create(item));
 
                 RealmExchangeExpiry.Start();
+                // the crafter recipe book is read off the game loop now, not on the first crafter bot tick that needs it
+                CrafterBots165.Warm();
 
                 if (log.IsInfoEnabled)
                     log.Info($"Market Cache initialized with {_searchEngine.ItemCount} items.");

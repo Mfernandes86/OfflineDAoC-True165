@@ -351,18 +351,22 @@ namespace DOL.GS;
         return result;
     }
 
+    /// <summary>Most supply listings a broker check scores.</summary>
+    public const int SupplyListingsScored = 24;
+
     /// <summary>The bot's own supplies on the exchange: an archer's ammunition, an assassin's poisons, a crafter's
-    /// recipe materials (each only while it is short of them).</summary>
+    /// materials for its next recipes (each only while it is short of them). A crafter looks up only the templates it
+    /// is short of (MarketBook by template), never the whole materials category.</summary>
     private static List<DbInventoryItem> SupplyCandidates(GameBot bot, long budget, string ownerId, ushort lot, DateTime now)
     {
         var result = new List<DbInventoryItem>();
         bool ammo = WantsAmmo(bot), poison = WantsPoison(bot);
-        eCraftingSkill craft = CraftOf(bot);
-        if (!ammo && !poison && craft == eCraftingSkill.NoCrafting)
+        List<string> materials = ShortMaterials(bot);
+        if (!ammo && !poison && materials == null)
             return result;
         int bandHigh = MarketBook.BandOf(bot.Level + PurchaseLevelsAbove);
-        // only the categories it wants (MarketSearchEngine.GetClientSlot): ammunition, poisons, materials and gems
-        foreach (int bucket in SupplyBuckets(ammo, poison, craft != eCraftingSkill.NoCrafting))
+        // only the categories it wants (MarketSearchEngine.GetClientSlot): ammunition and poisons
+        foreach (int bucket in SupplyBuckets(ammo, poison))
         {
             List<MarketBook.Listing> listings = MarketCache.ReadBook(book => book.Probe(bot.Realm, bucket, 0, bandHigh, budget, ownerId));
             foreach (MarketBook.Listing listing in listings)
@@ -372,27 +376,43 @@ namespace DOL.GS;
                     continue;
                 eObjectType type = (eObjectType)item.Object_Type;
                 if (ammo && type is eObjectType.Arrow or eObjectType.Bolt && IsOwnSupply(bot, item) ||
-                    poison && type == eObjectType.Poison ||
-                    craft != eCraftingSkill.NoCrafting && CrafterBots165.UsesIngredient(craft, item.Id_nb))
+                    poison && type == eObjectType.Poison)
                     result.Add(item);
-                if (result.Count >= 24)
+                if (result.Count >= SupplyListingsScored)
                     return result;
+            }
+        }
+        if (materials != null)
+        {
+            int room = SupplyListingsScored - result.Count;
+            foreach (MarketBook.Listing listing in MarketCache.ReadBook(book => book.OfTemplates(bot.Realm, materials, budget, ownerId, room)))
+            {
+                DbInventoryItem item = listing.Item;
+                if (item.OwnerLot == lot && item.IsTradable && !RealmExchangeExpiry.IsExpired(item, now))
+                    result.Add(item);
             }
         }
         return result;
     }
 
-    private static IEnumerable<int> SupplyBuckets(bool ammo, bool poison, bool crafter)
+    private static IEnumerable<int> SupplyBuckets(bool ammo, bool poison)
     {
         if (ammo)
             yield return MarketSearchEngine.AmmunitionSlot;
         if (poison)
             yield return MarketSearchEngine.PoisonSlot;
-        if (crafter)
-        {
-            yield return MarketSearchEngine.OtherSlot;
-            yield return MarketSearchEngine.GemSlot;
-        }
+    }
+
+    /// <summary>The materials a crafter is short of for its next recipes (CrafterBots165.WantedMaterials), or null.</summary>
+    private static List<string> ShortMaterials(GameBot bot)
+    {
+        if (bot?.Inventory == null || CrafterBots165.WantedMaterials(bot.PersistentRecord, bot.Realm) is not { Count: > 0 } wanted)
+            return null;
+        List<string> missing = null;
+        foreach ((string id, int count) in wanted)
+            if (bot.Inventory.CountItemTemplate(id, eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack) < count)
+                (missing ??= new List<string>()).Add(id);
+        return missing;
     }
 
     private static eCraftingSkill CraftOf(GameBot bot) =>
@@ -479,9 +499,10 @@ namespace DOL.GS;
             return IsOwnSupply(bot, item) && WantsAmmo(bot) ? 400 : 0;
         if (type == eObjectType.Poison)
             return item.Level <= bot.Level && WantsPoison(bot) ? 350 : 0;
-        eCraftingSkill craft = CraftOf(bot);
-        if (craft != eCraftingSkill.NoCrafting && item.Count > 0 && CrafterBots165.UsesIngredient(craft, item.Id_nb) &&
-            bot.Inventory.CountItemTemplate(item.Id_nb, eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack) < 2 * Math.Max(1, item.MaxCount))
+        // a crafter's materials for its next recipes, only while it has fewer than it uses (CrafterBots165 crafts with them)
+        int wanted = CrafterBots165.WantedMaterial(bot.PersistentRecord, bot.Realm, item.Id_nb);
+        if (wanted > 0 && item.Count > 0 &&
+            bot.Inventory.CountItemTemplate(item.Id_nb, eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack) < wanted)
             return 300 + Math.Min(150, item.Count * 3);
         return 0;
     }
@@ -1306,11 +1327,29 @@ namespace DOL.GS;
         bot != null && (!Classic165Mode.IsOn || bot.Level >= 5) &&
         !AutonomousServiceFallback.IsExchangeUnreachable(bot.DatabaseID, GameLoop.GameLoopTime);
 
-    /// <summary>The crafter keeps the materials of its own recipes; they are never listed or sold.</summary>
+    /// <summary>
+    /// The crafter keeps the materials of its next recipes, as many as it uses (CrafterBots165.WantedMaterials): those
+    /// stacks, in bag order up to that count, are never listed or sold; a surplus stack may be (review 2026-11-11).
+    /// </summary>
     public static bool IsOwnCraftMaterial(GameBot bot, DbInventoryItem item)
     {
-        eCraftingSkill craft = CraftOf(bot);
-        return craft != eCraftingSkill.NoCrafting && item != null && CrafterBots165.UsesIngredient(craft, item.Id_nb);
+        if (bot?.Inventory == null || item?.Id_nb == null)
+            return false;
+        int wanted = CrafterBots165.WantedMaterial(bot.PersistentRecord, bot.Realm, item.Id_nb);
+        if (wanted <= 0)
+            return false;
+        int before = 0;
+        for (eInventorySlot slot = eInventorySlot.FirstBackpack; slot <= eInventorySlot.LastBackpack; slot++)
+        {
+            DbInventoryItem other = bot.Inventory.GetItem(slot);
+            if (other == null)
+                continue;
+            if (ReferenceEquals(other, item))
+                return before < wanted;
+            if (string.Equals(other.Id_nb, item.Id_nb, StringComparison.OrdinalIgnoreCase))
+                before += Math.Max(1, other.Count);
+        }
+        return before < wanted;
     }
 
     // a bot swaps at most one listing per exchange visit (its between-task errand)
