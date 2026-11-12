@@ -96,4 +96,15 @@ public sealed class UT_RelicLaneFixes
             Assert.That(AutonomousRvrEventLayer.RelicStepTaken(eRealm.Hibernia, eRealm.None), Is.False);
         });
     }
+
+    [Test]
+    public void ACampaignDoesNotGoBackToASentinelKeepItFailedToTake()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(AutonomousRvrEventLayer.SkipFailedStep(false, eRealm.Hibernia, eRealm.Hibernia), Is.True, "lost: skipped");
+            Assert.That(AutonomousRvrEventLayer.SkipFailedStep(false, eRealm.Hibernia, eRealm.Albion), Is.False, "taken");
+            Assert.That(AutonomousRvrEventLayer.SkipFailedStep(true, eRealm.Hibernia, eRealm.Hibernia), Is.False, "still under siege");
+        });
+    }
 }

@@ -269,6 +269,40 @@ public static partial class AutonomousRvrEventLayer
         aim.StepDefender = selected.OwningRealm;
     }
 
+    /// <summary>Sentinel keeps a launcher campaign tried without taking them (T3), kept with the campaign itself.</summary>
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<RelicCampaign, HashSet<string>> CampaignSkips = new();
+
+    /// <summary>Pure rule (T3): a campaign step that ended with the keep still in its defender's hands is not tried again by
+    /// that campaign; the 12-minute target cooldown used to send it back to the same lost siege every second step.</summary>
+    public static bool SkipFailedStep(bool stepEventRunning, eRealm defender, eRealm ownerNow) =>
+        !stepEventRunning && ownerNow != eRealm.None && ownerNow == defender;
+
+    /// <summary>
+    /// The next sentinel keep of a campaign (called under Sync from ForceStart): held by the relic keep's realm, not under
+    /// siege, not on cooldown, able to change hands (it has a lord: a lordless keep is a four-hour siege that cannot be won,
+    /// relic audit B1) and not already lost once by this campaign (T3); the nearest to the relic keep first.
+    /// </summary>
+    private static DOL.GS.Keeps.AbstractGameKeep NextRelicStep(LiveObjective relic, eRealm attacker, long now)
+    {
+        HashSet<string> skipped = null;
+        if (Campaigns.TryGetValue(relic.Id, out RelicCampaign campaign) && campaign.Attacker == attacker)
+        {
+            skipped = CampaignSkips.GetOrCreateValue(campaign);
+            if (campaign.StepId != null && KeepOfObjective(campaign.StepId) is { } last &&
+                SkipFailedStep(Events.ContainsKey(campaign.StepId), relic.OwningRealm, last.Realm) && skipped.Add(campaign.StepId))
+            {
+                var log = DOL.Logging.LoggerManager.Create(typeof(AutonomousRvrEventLayer));
+                if (log.IsInfoEnabled) log.Info($"RVR_RELIC_CAMPAIGN_STEP_SKIPPED relic={relic.Id} attacker={attacker} step={campaign.StepId} reason=\"ended without a capture\"");
+            }
+        }
+        return HeldSentinelKeeps(relic)
+            .Select(id => LiveKeeps?.GetKeepByID(id))
+            .Where(k => k != null && !Events.ContainsKey($"rvr-keep-{k.KeepID}") && !OnCooldown($"rvr-keep-{k.KeepID}", now) &&
+                        KeepCanChangeHands(k, now) && skipped?.Contains($"rvr-keep-{k.KeepID}") != true)
+            .OrderBy(k => (long)(k.X - relic.X) * (k.X - relic.X) + (long)(k.Y - relic.Y) * (k.Y - relic.Y))
+            .FirstOrDefault();
+    }
+
     /// <summary>The relic keep a realm's automatic plan is working toward, or null (tests, dashboard).</summary>
     public static string RelicAimOf(eRealm realm)
     {
