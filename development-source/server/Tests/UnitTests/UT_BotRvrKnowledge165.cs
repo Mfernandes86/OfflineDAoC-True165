@@ -54,5 +54,6 @@ public class UT_BotGuildGratz165
             Assert.That(line.ToLowerInvariant(), Does.StartWith("g"));
         }
         Assert.That(AutonomousBotGuilds.HelloChance, Is.EqualTo(0.3));
+        Assert.That(AutonomousBotChatCoordinator.AdviceAnswerLevel, Is.EqualTo(20));
     }
 }

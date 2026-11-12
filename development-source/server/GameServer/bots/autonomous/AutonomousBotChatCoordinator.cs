@@ -191,6 +191,36 @@ public static class AutonomousBotChatCoordinator
         };
     }
 
+    private static readonly Dictionary<eRealm, long> LastAdviceAnswer = new();
+
+    /// <summary>The lowest level of a gamebot that answers on /advice.</summary>
+    public const int AdviceAnswerLevel = 20;
+
+    /// <summary>
+    /// A player asked on /advice (veteran-bots review 2026-11-11, rvr-social G12): when the bots really know the answer
+    /// (a place, a stable master, a spell, the war - AutonomousChatKnowledge), the most seasoned of a sample of the realm's
+    /// gamebots of level 20 or more answers on /advice a moment later, as a 2003 advisor did. At most one answer per realm
+    /// per 12 seconds; nothing is said when nobody knows.
+    /// </summary>
+    public static void OnPlayerAdvice(GamePlayer player, string message)
+    {
+        if (player == null || string.IsNullOrWhiteSpace(message) || !BotChatChannels165.PeriodChannels ||
+            !AutonomousChatKnowledge.TryAnswer(player, message, out string answer) || string.IsNullOrWhiteSpace(answer))
+            return;
+        lock (Sync)
+        {
+            if (LastAdviceAnswer.TryGetValue(player.Realm, out long last) && GameLoop.GameLoopTime - last < 12_000)
+                return;
+            LastAdviceAnswer[player.Realm] = GameLoop.GameLoopTime;
+        }
+        GameBot advisor = SampleResponders(AutonomousBotRegistry.Snapshot(),
+                bot => Eligible(bot) && bot.Realm == player.Realm && bot.Level >= AdviceAnswerLevel, message, out _)
+            .OrderByDescending(bot => bot.Level).FirstOrDefault();
+        if (advisor == null)
+            return;
+        Schedule(advisor, 2_000 + Random.Shared.Next(2_000), () => BotChatChannels165.Send(BotChatChannels165.Channel.Advice, advisor, answer));
+    }
+
     public static void OnPlayerFactionChat(GamePlayer player, string message)
     {
         if (player == null || string.IsNullOrWhiteSpace(message))

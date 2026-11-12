@@ -94,6 +94,9 @@ namespace DOL.GS.Commands
                 ChatUtil.SendAdviceMessage(otherPlayer, "Social.SendAdvice.Msg.Channel", GetRealmString(client.Player.Realm), client.Player.Name, msg);
             }
 
+            // a seasoned gamebot of the realm may answer a question it really knows on /advice (AutonomousBotChatCoordinator)
+            AutonomousBotChatCoordinator.OnPlayerAdvice(client.Player, msg);
+
             if (Properties.DISCORD_ACTIVE)
                 WebhookMessage.LogChatMessage(client.Player, eChatType.CT_Advise, msg);
 
