@@ -276,6 +276,12 @@ namespace DOL.GS.Quests.Hibernia
 			// remove handlers
 			treantArea.UnRegisterPlayerEnter(PlayerEnterTreantArea);
 			WorldMgr.GetRegion(treantLocation.RegionID).RemoveArea(treantArea);
+			lock (_hookedWorldCopies)
+			{
+				foreach (GameNPC hooked in _hookedWorldCopies)
+					GameEventMgr.RemoveHandler(hooked, GameLivingEvent.Dying, WorldCopyDying);
+				_hookedWorldCopies.Clear();
+			}
 			
 			GameEventMgr.RemoveHandler(GamePlayerEvent.AcceptQuest, new DOLEventHandler(SubscribeQuest));
 			GameEventMgr.RemoveHandler(GamePlayerEvent.DeclineQuest, new DOLEventHandler(SubscribeQuest));
@@ -355,6 +361,52 @@ namespace DOL.GS.Quests.Hibernia
 			GameEventMgr.RemoveHandler(Feairna_Athar, GameLivingEvent.Dying, FaeiarnaAtharDying);
 			Feairna_Athar.Delete();
 		}
+		/// <summary>World Feairna-Athar spawns whose death is already hooked (the same object respawns, so once each).</summary>
+		private static readonly System.Collections.Generic.HashSet<GameNPC> _hookedWorldCopies = new();
+
+		/// <summary>A living Feairna-Athar (any letter case) that is not the script's copy, near the ambush point, or null.</summary>
+		private static GameNPC WorldFeairnaAthar()
+		{
+			foreach (GameNPC npc in WorldMgr.GetNPCsCloseToSpot(treantLocation.RegionID, treantLocation.X, treantLocation.Y, treantLocation.Z, 3000))
+			{
+				if (npc != null && npc != Feairna_Athar && npc.Realm == eRealm.None && npc.IsAlive &&
+				    npc.ObjectState == GameObject.eObjectState.Active &&
+				    string.Equals(npc.Name, "Feairna-Athar", StringComparison.OrdinalIgnoreCase))
+					return npc;
+			}
+			return null;
+		}
+
+		private static void HookWorldCopy(GameNPC npc)
+		{
+			lock (_hookedWorldCopies)
+			{
+				if (!_hookedWorldCopies.Add(npc))
+					return;
+			}
+			GameEventMgr.AddHandler(npc, GameLivingEvent.Dying, WorldCopyDying);
+		}
+
+		/// <summary>A world Feairna-Athar slain: the killer (or a pet's owner) and their group get the jewel on step 5. The
+		/// world spawn keeps its own respawn; nothing is deleted.</summary>
+		private static void WorldCopyDying(DOLEvent e, object sender, EventArgs arguments)
+		{
+			if (arguments is not DyingEventArgs args)
+				return;
+			GamePlayer player = args.Killer as GamePlayer;
+			if (player == null && args.Killer is GameNPC pet && pet.Brain is IControlledBrain controlled)
+				player = controlled.GetPlayerOwner();
+			if (player == null)
+				return;
+			if (player.Group != null)
+			{
+				foreach (var gpl in player.Group.GetPlayersInTheGroup())
+					AdvanceAfterKill(gpl);
+			}
+			else
+				AdvanceAfterKill(player);
+		}
+
 		private static void AdvanceAfterKill(GamePlayer player)
 		{
 			var quest = player.IsDoingQuest(typeof(TheLostSeed)) as TheLostSeed;
@@ -378,9 +430,18 @@ namespace DOL.GS.Quests.Hibernia
 
 			if (quest is not {Step: 5}) return;
 
-			var existingCopy = WorldMgr.GetNPCsByName("Feairna-Athar", eRealm.None);
+			// Quest audit 2026-11-11 (P03-E6): the check compared names case-sensitively, so the world spawn
+			// "Feairna-athar" standing 1.1k away never stopped the ambush and killing it did not count. Only the script's
+			// own living copy stops a second ambush now; a living world copy near the point (any letter case) is used
+			// instead, and its death counts for step 5 like the ambush copy's.
+			if (Feairna_Athar != null && Feairna_Athar.IsAlive && Feairna_Athar.ObjectState == GameObject.eObjectState.Active) return;
 
-			if (existingCopy.Length > 0) return;
+			GameNPC worldCopy = WorldFeairnaAthar();
+			if (worldCopy != null)
+			{
+				HookWorldCopy(worldCopy);
+				return;
+			}
 
 			//only try to spawn him once per trigger even if multiple people enter at the same time
 			if (_spawnLock.TryEnter())
