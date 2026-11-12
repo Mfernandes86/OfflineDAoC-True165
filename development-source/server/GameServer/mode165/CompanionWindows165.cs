@@ -24,8 +24,9 @@ namespace DOL.GS
     ///   op 10 stats:     [4] row, [5] level, [6..7] XP per mille, [8..23] STR..CHA, [24..31] health/max, [32..39] power/max,
     ///                    [40..43] endurance/max, [44..45] AF, [46] absorb %, [47..56] resists (crush slash thrust heat cold
     ///                    matter body spirit energy) %, [57..60] money copper, [61..62] realm points / 1000
-    /// Commands (each takes the row first): gear | equip &lt;bag slot&gt; | unequip &lt;slot&gt; | swap &lt;slot&gt; &lt;bag slot&gt; | stats |
-    /// repair | select | spec | train &lt;line&gt; | respec.
+    /// Commands (each takes the row first): gear | equip &lt;bag slot&gt; | unequip &lt;slot&gt; | swap &lt;slot&gt; &lt;bag slot&gt; |
+    /// move &lt;its slot&gt; &lt;its slot | wear | bag&gt; (inside the companion's own gear and bag) | stats | repair | select | spec |
+    /// train &lt;line&gt; | respec.
     /// </summary>
     public static class CompanionWindows165
     {
@@ -34,7 +35,7 @@ namespace DOL.GS
         // Every AI Options verb is routed here too, taken from CompanionOptions165 so the two lists cannot drift apart
         // (2026-11-05: the generic "option" verb was missing here, so every new AI Options row answered "Unknown hiring command").
         public static readonly HashSet<string> Verbs =
-            ["gear", "equip", "bag", "unequip", "swap", "stats", "repair", "select", "spec", "respec", "train", "ra", "buyra", "pick", "vault", "delve",
+            ["gear", "equip", "bag", "unequip", "swap", "move", "stats", "repair", "select", "spec", "respec", "train", "ra", "buyra", "pick", "vault", "delve",
              .. CompanionOptions165.Verbs];
 
         // ---- the original client's clean list windows (owner 2026-10-30: TRAIN / GEAR / REALM ABILITIES / STATS replace the
@@ -207,6 +208,7 @@ namespace DOL.GS
                 // onto a worn slot: Equip hands the piece worn there back into the backpack slot the new one leaves (it
                 // used to take the worn piece off first, which left it off when the new one went elsewhere or to the bag)
                 "swap" => Equip(player, bot, Arg(4), Arg(3)),
+                "move" => MoveOwn(player, bot, Arg(3), args.Length > 4 ? args[4] : null),
                 "stats" => null,
                 "repair" => AskRepair(player, [bot]),
                 "train" => Train(bot, Arg(3)),
@@ -411,13 +413,18 @@ namespace DOL.GS
             }
             Saved(player, bot, item, worn);
             ReadyWeapons(bot, slot);
-            // a shield worn but not in use: why (a companion trained in two-handed weapons keeps them, owner 2026-11-07)
+            ShieldNote(player, bot, item);
+            return null;
+        }
+
+        /// <summary>A shield worn but not in use: why (a companion trained in two-handed weapons keeps them, owner 2026-11-07).</summary>
+        private static void ShieldNote(GamePlayer player, GameBot bot, DbInventoryItem item)
+        {
             if (item.Object_Type == (int)eObjectType.Shield && bot.ActiveWeaponSlot != eActiveWeaponSlot.Standard)
                 player.Out.SendMessage(BotWeaponStats.CanUseMelee(bot, bot.Inventory.GetItem(eInventorySlot.RightHandWeapon))
                     ? $"{bot.Name} wears {item.Name} but keeps fighting with its two-handed weapon, the one it is trained in more."
                     : $"{bot.Name} wears {item.Name}, but needs a one-handed weapon to fight with a shield.",
                     eChatType.CT_System, eChatLoc.CL_SystemWindow);
-            return null;
         }
 
         /// <summary>From the player's backpack into the companion's 10-slot bag (a chosen empty bag slot, or the first).</summary>
@@ -475,6 +482,107 @@ namespace DOL.GS
             }
             Saved(player, bot, null, item);
             ReadyWeapons(bot, (eInventorySlot)slot);
+            return null;
+        }
+
+        // ---- inside the companion's own gear and bag (issue #50: "Companions can't equip items when dragged from their own
+        // bag to the rag doll", nor take them off into their bag - everything had to go through the player's backpack)
+
+        /// <summary>"move" targets that are not a slot: put it on where it belongs (a drop on the figure), or into the first
+        /// free bag slot (a drop on the bag panel).</summary>
+        public const int MoveToWear = -1, MoveToBag = -2;
+
+        /// <summary>A slot of the companion's paper doll (the weapons, armour and jewellery the window shows).</summary>
+        public static bool IsDollSlot(int slot) => slot is >= 10 and <= 13 or >= 21 and <= 29 or >= 32 and <= 36;
+
+        /// <summary>What a "move" does: the slot the item ends in (below 0 with no problem: nothing to do) and whether
+        /// the item there swaps into the slot it left; or the plain refusal.</summary>
+        public readonly record struct OwnMove(string Problem, int Target, bool Swap);
+
+        /// <summary>
+        /// The decision of a move inside a companion's own inventory, with the same wear rules as "equip": a bag item put
+        /// on needs <paramref name="canWear"/> (AutonomousBotEconomy.CanWear: class, level, weapon skill) and goes on the
+        /// dropped-on slot when <paramref name="fitsSlot"/> (FitsChosenSlot: hands, two-hander, shield, rings) allows it,
+        /// otherwise where it belongs (<paramref name="wearSlot"/>); what was worn there takes the bag slot it left. A worn
+        /// item put on another doll slot must fit it. An item displaced into a doll slot must fit that slot
+        /// (<paramref name="occupantFitsFrom"/>); one that doesn't, from a bag row, leaves the worn item to the first free
+        /// bag slot instead. <paramref name="occupied"/> tells which slots hold an item.
+        /// </summary>
+        public static OwnMove PlanOwnMove(int from, int to, bool alive, Func<int, bool> occupied, bool canWear, int wearSlot,
+            Func<int, bool> fitsSlot, Func<int, bool> occupantFitsFrom, string botName, string itemName)
+        {
+            static OwnMove No(string problem) => new(problem, -1, false);
+            if (!alive)
+                return No($"Revive {botName} first.");
+            bool fromBag = HiredCompanions165.IsBagSlot(from);
+            if (!fromBag && !IsDollSlot(from))
+                return No($"Drag one of {botName}'s items.");
+            if (!occupied(from))
+                return No("Nothing there.");
+            if (from == to || fromBag && to == MoveToBag || !fromBag && to == MoveToWear)
+                return No(null);   // where it already is
+            OwnMove IntoBag()
+            {
+                for (int s = (int)HiredCompanions165.FirstBagSlot; s <= (int)HiredCompanions165.LastBagSlot; s++)
+                    if (!occupied(s))
+                        return new(null, s, false);
+                return No($"{botName}'s bag is full ({HiredCompanions165.BagSlots} slots).");
+            }
+            if (HiredCompanions165.IsBagSlot(to))
+            {
+                if (fromBag || !occupied(to))
+                    return new(null, to, occupied(to));
+                // a worn item onto a bag row that holds something: they swap when that one can be worn here instead
+                return occupantFitsFrom(to) ? new(null, to, true) : IntoBag();
+            }
+            if (to == MoveToBag)
+                return IntoBag();
+            if (to != MoveToWear && !IsDollSlot(to))
+                return No($"Drop it on {botName}'s gear or bag.");
+            if (!canWear)
+                return No($"{botName} can't use {itemName}.");
+            if (fromBag)
+            {
+                // as "equip": the slot it was dropped on when it can go there, otherwise the slot it belongs in
+                int target = to != MoveToWear && fitsSlot(to) ? to : wearSlot;
+                if (!IsDollSlot(target))
+                    return No($"{botName} can't use {itemName}.");
+                return new(null, target, occupied(target));
+            }
+            if (!fitsSlot(to))
+                return No($"{itemName} doesn't go there.");
+            if (occupied(to) && !occupantFitsFrom(to))
+                return No("Those two can't trade places.");
+            return new(null, to, occupied(to));
+        }
+
+        /// <summary>"move": from one of the companion's slots to another of its own (bag to gear, gear to bag, bag row to
+        /// bag row, hand to hand), a swap when the target holds an item; only its hirer, while it is alive and with him.</summary>
+        internal static string MoveOwn(GamePlayer player, GameBot bot, int from, string to)
+        {
+            int toSlot = to?.ToLowerInvariant() switch
+            {
+                "wear" => MoveToWear,
+                "bag" => MoveToBag,
+                _ => int.TryParse(to, out int v) ? v : int.MinValue,
+            };
+            DbInventoryItem item = HiredCompanions165.IsBagSlot(from) || IsDollSlot(from) ? bot.Inventory.GetItem((eInventorySlot)from) : null;
+            eInventorySlot wearSlot = eInventorySlot.Invalid;
+            bool canWear = item != null && AutonomousBotEconomy.CanWear(bot, item, out wearSlot);
+            OwnMove plan = PlanOwnMove(from, toSlot, bot.IsAlive, s => bot.Inventory.GetItem((eInventorySlot)s) != null, canWear,
+                (int)wearSlot, s => AutonomousBotEconomy.FitsChosenSlot(bot, item, s),
+                s => bot.Inventory.GetItem((eInventorySlot)s) is { } other && AutonomousBotEconomy.CanWear(bot, other, out _) &&
+                     AutonomousBotEconomy.FitsChosenSlot(bot, other, from),
+                bot.Name, item?.Name);
+            if (plan.Problem != null || plan.Target < 0)
+                return plan.Problem;
+            if (!bot.Inventory.MoveItem((eInventorySlot)from, (eInventorySlot)plan.Target, item.Count))
+                return $"Could not move {item.Name}.";
+            Saved(player, bot, null, null);
+            ReadyWeapons(bot, (eInventorySlot)from);
+            ReadyWeapons(bot, (eInventorySlot)plan.Target);
+            if (IsDollSlot(plan.Target))
+                ShieldNote(player, bot, item);
             return null;
         }
 
