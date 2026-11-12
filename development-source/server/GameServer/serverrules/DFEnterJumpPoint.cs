@@ -71,23 +71,15 @@ namespace DOL.GS.ServerRules
 		
 		private static void CheckDFOwner()
 		{
-			int albcount = GameServer.KeepManager.GetKeepCountByRealm(eRealm.Albion);
-			int midcount = GameServer.KeepManager.GetKeepCountByRealm(eRealm.Midgard);
-			int hibcount = GameServer.KeepManager.GetKeepCountByRealm(eRealm.Hibernia);
-			
-			if (albcount > midcount && albcount > hibcount)
-			{
-				DarknessFallOwner = eRealm.Albion;
-			}
-			if (midcount > albcount && midcount > hibcount)
-			{
-				DarknessFallOwner = eRealm.Midgard;
-			}
-			if (hibcount > midcount && hibcount > albcount)
-			{
-				DarknessFallOwner = eRealm.Hibernia;
-			}
+			DarknessFallOwner = OwnerByKeepCount(DarknessFallOwner);
 		}
+
+		// The realm with the most keeps; a tie keeps a tied holder (AutonomousDarknessFallsPolicy.NextOwner).
+		private static eRealm OwnerByKeepCount(eRealm currentOwner) =>
+			AutonomousDarknessFallsPolicy.NextOwner(currentOwner,
+				GameServer.KeepManager.GetKeepCountByRealm(eRealm.Albion),
+				GameServer.KeepManager.GetKeepCountByRealm(eRealm.Midgard),
+				GameServer.KeepManager.GetKeepCountByRealm(eRealm.Hibernia));
 
 
 
@@ -99,32 +91,23 @@ namespace DOL.GS.ServerRules
 		/// <param name="arguments"></param>
 		public static void OnKeepTaken(DOLEvent e, object sender, EventArgs arguments)
 		{
-			KeepEventArgs args = arguments as KeepEventArgs;
-			eRealm realm = (eRealm) args.Keep.Realm ;
-			if (realm != DarknessFallOwner )
-			{
-				// TODO send message to chat and discord web hook
-				string oldDFOwner = GlobalConstants.RealmToName(DarknessFallOwner);
-				int currentDFOwnerTowerCount = GameServer.KeepManager.GetKeepCountByRealm(DarknessFallOwner);
-				int challengerOwnerTowerCount = GameServer.KeepManager.GetKeepCountByRealm(realm);
-				if (currentDFOwnerTowerCount < challengerOwnerTowerCount)
-                {
-					PreviousOwner = DarknessFallOwner;
-					LastRealmSwapTick = GameLoop.GameLoopTime;
-					DarknessFallOwner = realm;
-				}
-					
-				string realmName = string.Empty;
+			if (arguments is not KeepEventArgs)
+				return;
+			// Recount every realm, not only the one that took the keep: a capture by a third realm can
+			// take the lead from the holder, and a capture must never hand Darkness Falls to a realm
+			// that still has fewer keeps than another (with no holder, any capture used to).
+			eRealm oldOwner = DarknessFallOwner;
+			eRealm newOwner = OwnerByKeepCount(oldOwner);
+			if (newOwner == oldOwner)
+				return;
+			PreviousOwner = oldOwner;
+			LastRealmSwapTick = GameLoop.GameLoopTime;
+			DarknessFallOwner = newOwner;
 
-				string messageDFGetControl = string.Format("The forces of {0} have gained access to Darkness Falls!", GlobalConstants.RealmToName(realm));
-				string messageDFLostControl = string.Format("{0} will lose access to Darkness Falls in 15 minutes!", oldDFOwner);
-
-				if (oldDFOwner != GlobalConstants.RealmToName(DarknessFallOwner))
-				{ 
-					BroadcastMessage(messageDFLostControl, eRealm.None);
-					BroadcastMessage(messageDFGetControl, eRealm.None);
-				}
-			}
+			if (oldOwner != eRealm.None)
+				BroadcastMessage(string.Format("{0} will lose access to Darkness Falls in 15 minutes!", GlobalConstants.RealmToName(oldOwner)), eRealm.None);
+			if (newOwner != eRealm.None)
+				BroadcastMessage(string.Format("The forces of {0} have gained access to Darkness Falls!", GlobalConstants.RealmToName(newOwner)), eRealm.None);
 		}
 		
 		/// <summary>
