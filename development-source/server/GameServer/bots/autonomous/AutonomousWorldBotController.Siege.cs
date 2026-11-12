@@ -71,9 +71,29 @@ namespace DOL.GS
             return AutonomousSiegePolicy.CanSupplyRam(false,AutonomousBotEconomy.GetMoney(bot.DatabaseID),price,slot);
         }
 
+        private long _nextBattleAttendanceCheck;
+
+        /// <summary>
+        /// Keeps audit 2026-11-11 (L6): attendance at a running siege was reported only from the combat branch, and a ram
+        /// operator, a ram crew or a bot battering a door leaves before it, so a siege that was only ramming could be
+        /// called defended with its rams at work. Every attacker of a running battle within the fighting ring of the keep
+        /// now reports itself present (ReportSiegeCombatAttendance: within 9,500 of the keep, every 2 s at most). Before
+        /// the battle nothing changes: the rally posts still decide when it opens.
+        /// </summary>
+        private void ReportBattleAttendance(GameBot bot, long now)
+        {
+            if (!_rvrSharedEvent || _rvrDestination == null || now < _nextBattleAttendanceCheck ||
+                bot.CurrentRegionID != _rvrDestination.RegionId) return;
+            _nextBattleAttendanceCheck = now + 2_000 + bot.ObjectID % 500;
+            string forceId = bot.TempProperties.GetProperty<string>("RvrEventForce") ?? $"rvr-{bot.DatabaseID}";
+            if (AutonomousRvrEventLayer.IsBattleForce(forceId, now))
+                ReportSiegeCombatAttendance(bot, now);
+        }
+
         private bool TryRunSiegeJob(GameBot bot)
         {
             long now = GameLoop.GameLoopTime;
+            ReportBattleAttendance(bot, now);
             if (_rvrIntent is not (AutonomousRvrEventLayer.Intent.AssaultKeep or AutonomousRvrEventLayer.Intent.AssaultRelicKeep or AutonomousRvrEventLayer.Intent.DefendEvent))
             { if (_siegeJobKeep!=null) ReleaseSiegeJob(bot); return false; }
             if (_siegeSupplyItem != null)
