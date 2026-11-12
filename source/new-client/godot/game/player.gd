@@ -298,7 +298,8 @@ var _unmorphed := {}                     # your figure while morphed: model, ani
 const CLASS_FORMS := {
 	"Berserker": [3, 12],                    # BerserkECSEffect: Vendo Man, a dwarf's Mini Vendo Man (one glTF)
 	"Necromancer": [822],                    # GamePlayer.ShadeModel for the Disciple classes
-	"Hero": [4, 13],                         # StagECSEffect (no monsters.json row for them: your figure stays)
+	"Hero": [4, 13],                         # StagECSEffect: Stag Man, a lurikeen's Lurikeen Stag Man (one glTF, the
+	                                         # 1.64 client's Stag_man.NIF: pipeline/build_stag_164.py)
 }
 static var _forms := {}                      # gltf path -> PackedScene (null: it failed to load)
 static var _form_class := ""                 # the class whose forms _forms holds
@@ -461,8 +462,9 @@ func morph(info: Dictionary) -> void:
 	_apply_model_yaw()
 	_play("idle")
 	# a berserker's Vendo form holds the weapons on its own hand / belt / back bones (tester 0.3: "berserk removes
-	# weapon graphics" - they stayed on the hidden figure); a shade or other form shows none
-	if String(info.get("figure", "")) == "vendo_man":
+	# weapon graphics" - they stayed on the hidden figure); a hero's Stag form the same (its NIF has the same Held /
+	# Shield / Back / Belt bones; 2026-11-12); a shade or other form shows none
+	if String(info.get("figure", "")) in ["vendo_man", "stag_man"]:
 		refresh_gear()
 
 

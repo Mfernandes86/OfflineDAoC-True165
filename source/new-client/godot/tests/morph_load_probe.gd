@@ -9,6 +9,7 @@ extends SceneTree
 const FORMS := {
 	"vendo (berserk, models 3 / 12)": "res://content/monsters/vendo_man__vendo_man/model.gltf",
 	"necromancer shade (822)": "res://content/monsters/necroshade__shade/model.gltf",
+	"hero stag (4 / 13)": "res://content/monsters/stag_man__stag_man/model.gltf",
 }
 
 
