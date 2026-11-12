@@ -879,7 +879,19 @@ namespace DOL.AI.Brain
             // a grouped Shaman with a tank doesn't melee: "aggro then follows you when you heal" (period forums, Jun 2002)
             BotBody?.CharacterClass?.ID == (int)eCharacterClass.Shaman && RoleChoice == 0 && Classic165Mode.IsOn &&
                 BotMeleeStylePolicy.HasTankPartner(BotBody) ||
+            // Q3: a Smite Cleric fights from spell range (Prima: pulls with a spec Smite, then baseline Smite, a stun and
+            // more Smites "until the mob closes"), unless the player made it a melee healer
+            IsSmiteCleric && RoleChoice != 3 ||
             PerformerStaysBack) && !PerformerMelees;
+
+        /// <summary>Set by CheckSpells when a grouped support Cleric keeps its power for heals: no mace charge.</summary>
+        private bool _clericHoldsBack;
+
+        /// <summary>A Cleric built for Smite: its Smite spec template, or Smite trained (above 1) at least as high as
+        /// Rejuvenation.</summary>
+        private bool IsSmiteCleric => BotBody?.CharacterClass?.ID == (int)eCharacterClass.Cleric &&
+            (BotBody.BotSpec?.SpecType == eSpecType.SmiteCleric ||
+             BotCasterPriority.SmiteSpecced(BotBody.GetBaseSpecLevel(Specs.Smite), BotBody.GetBaseSpecLevel(Specs.Rejuvenation)));
 
         /// <summary>A hired Bard, Minstrel or Skald whose player chose "Support": songs and spells from the back, no melee.</summary>
         private bool PerformerStaysBack => IsClassicSongClass(BotBody) && CompanionOptions165.Choice(BotBody, "perform") == 1;
@@ -3999,6 +4011,16 @@ namespace DOL.AI.Brain
                 bool continueHybridMelee = !rangedCaster && MinstrelBotCombatPolicy.ContinueAfterInstantDamage(
                     true, spellAction, Body.IsCasting,
                     Body.castingComponent?.SpellHandler?.Spell, hasPendingSpell, pendingSpell);
+                // Q3: a grouped support Cleric keeping its power for heals stands back instead of charging in with its
+                // mace (Prima: "stick close to your group ... don't let the enemy close in"); a monster on it was
+                // already answered by TryEngageUnderMeleePressure above.
+                if (!spellAction && _clericHoldsBack && !rangedCaster && !Body.IsCasting)
+                {
+                    if (Body.IsAttacking)
+                        Body.StopAttack();
+                    Body.StopFollowing();
+                    return;
+                }
                 if (spellAction && !continueSavageMelee && !preserveRangedDraw && !continueMinstrelMelee && !continueHybridMelee)
                 {
                     Body.StopAttack();
@@ -4896,6 +4918,8 @@ namespace DOL.AI.Brain
 
         public virtual bool CheckSpells(eCheckSpellType type)
         {
+            if (type == eCheckSpellType.Offensive)
+                _clericHoldsBack = false;
             if (Body == null || Body.Spells == null || Body.Spells.Count <= 0)
                 return false;
 
@@ -4947,10 +4971,17 @@ namespace DOL.AI.Brain
                 if (TryShamanPveAddRoot()) return true;
                 if (TryShortCombatShield()) return true;
                 if (TryNoAttackSpellsBladeturn()) return true;
+                // Q3 (veteran review 2026-11-11): a fixed heal reserve instead of a random roll that sent the Cleric
+                // walking in with its mace whenever it failed. A support Cleric in a group that keeps its power stands
+                // back (AttackMostWanted reads _clericHoldsBack); a Smite Cleric nukes down to a smaller reserve.
                 if (BotBody.CharacterClass.ID == (int)eCharacterClass.Cleric && RoleChoice != 2)
                 {
-                    if (!Util.Chance(Math.Max(5, Body.ManaPercent - 50)))
+                    bool clericGrouped = Body.Group?.MemberCount > 1;
+                    if (!BotCasterPriority.ClericOffenceAllowed(IsSmiteCleric, clericGrouped, Body.ManaPercent))
+                    {
+                        _clericHoldsBack = clericGrouped && !IsSmiteCleric && RoleChoice != 3;   // 3: "Melee and heal"
                         return false;
+                    }
                 }
 
                 // Check instant spells

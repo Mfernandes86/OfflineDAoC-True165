@@ -58,6 +58,26 @@ namespace DOL.GS
         /// </summary>
         public static bool BoltWorthwhile(int othersMeleeingTarget) => othersMeleeingTarget <= 0;
 
+        /// <summary>Q3: Smite trained past its first point and at least as high as Rejuvenation.</summary>
+        public static bool SmiteSpecced(int smite, int rejuvenation) => smite > 1 && smite >= rejuvenation;
+
+        /// <summary>Power a grouped support Cleric keeps for heals before it smites (veteran review 2026-11-11, Q3).</summary>
+        public const int ClericGroupHealReservePercent = 60;
+        /// <summary>... a grouped Smite Cleric (it still heals in a pinch).</summary>
+        public const int SmiteClericGroupReservePercent = 35;
+        /// <summary>... a solo support Cleric (its own heals).</summary>
+        public const int ClericSoloReservePercent = 30;
+
+        /// <summary>
+        /// Q3: may a Cleric (not on the "Attack" role) cast an attack spell now? A fixed power reserve replaces the old
+        /// random roll (max(5, power - 50)%) that sent it into melee whenever it failed. A solo Smite Cleric nukes down
+        /// to the ordinary out-of-power wait.
+        /// </summary>
+        public static bool ClericOffenceAllowed(bool smiteCleric, bool grouped, int powerPercent) =>
+            powerPercent > (grouped
+                ? smiteCleric ? SmiteClericGroupReservePercent : ClericGroupHealReservePercent
+                : smiteCleric ? 0 : ClericSoloReservePercent);
+
         public const int SavePowerBelowPercent = 50;
         public const int FinishTargetBelowPercent = 30;
 
