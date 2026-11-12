@@ -544,24 +544,78 @@ public static partial class AutonomousBotGroupCoordinator
         foreach (GameNPC npc in towns)
         {
             Zone zone = region.GetZone(npc.X, npc.Y);
-            if (!AutonomousRendezvousNavigation.TryChoosePoint(nav, zone, new(npc.X, npc.Y, npc.Z), out Vector3 chosen)) continue;
-            if (accept != null && !accept(chosen)) continue;
-            bool tight = zone?.IsDungeon == true;
-            bool valid = true;
-            foreach (GameBot member in members)
+            // GitHub #48: meet beside the NPC, not on it. Only a town with no clear walkable spot keeps the old
+            // choice (the NPC's own floor). A town the reach check refuses is refused as a whole.
+            bool beside = TryChooseBesideService(nav, zone, npc, MeetSeed(leader), out Vector3 chosen);
+            if (beside)
             {
-                Vector3 desired = DesiredFormationPoint(member, chosen, tight);
-                if (!AutonomousRendezvousNavigation.TryResolveFormationSlot(nav, zone, chosen, desired, out Vector3 slot) ||
-                    member.CurrentRegion == region && !AutonomousRendezvousNavigation.CanReachFormationSlot(nav, region,
-                        member.CurrentZone, zone, new(member.X, member.Y, member.Z), slot))
-                { valid = false; break; }
+                if (accept != null && !accept(chosen)) continue;
+                if (FormationSlotsFit(nav, region, zone, chosen, members)) { point = chosen; name = TownName(npc); return true; }
             }
-            if (!valid) continue;
+            if (!AutonomousRendezvousNavigation.TryChoosePoint(nav, zone, new(npc.X, npc.Y, npc.Z), out chosen)) continue;
+            if (!beside && accept != null && !accept(chosen)) continue;
+            if (!FormationSlotsFit(nav, region, zone, chosen, members)) continue;
             point = chosen;
             name = TownName(npc);
             return true;
         }
         return false;
+    }
+
+    // Every member must get a formation slot on the same floor and, when already in the region, a connected way to
+    // it. Checked once while a party forms, never per tick.
+    private static bool FormationSlotsFit(IPathfindingMgr nav, Region region, Zone zone, Vector3 chosen, GameBot[] members)
+    {
+        bool tight = zone?.IsDungeon == true;
+        foreach (GameBot member in members)
+        {
+            Vector3 desired = DesiredFormationPoint(member, chosen, tight);
+            if (!AutonomousRendezvousNavigation.TryResolveFormationSlot(nav, zone, chosen, desired, out Vector3 slot) ||
+                member.CurrentRegion == region && !AutonomousRendezvousNavigation.CanReachFormationSlot(nav, region,
+                    member.CurrentZone, zone, new(member.X, member.Y, member.Z), slot))
+                return false;
+        }
+        return true;
+    }
+
+    private static int MeetSeed(GameBot leader) => leader == null ? 0 : unchecked((int)(leader.DatabaseID * 2654435761L >> 7));
+
+    /// <summary>
+    /// GitHub #48: a meetup centre 300-450 units from a merchant, trainer, stable master, healer or vault keeper,
+    /// and 300 from any other one close by (one radius query). Once per party formation.
+    /// </summary>
+    private static bool TryChooseBesideService(IPathfindingMgr nav, Zone zone, GameNPC npc, int seed, out Vector3 chosen)
+    {
+        chosen = default;
+        if (npc == null || zone == null)
+            return false;
+        List<Vector3> services = AutonomousServiceNpcClearance.ServicePositionsNear(npc,
+            (ushort)(AutonomousServiceNpcClearance.MeetOuterRadius + AutonomousServiceNpcClearance.MeetClearRadius));
+        // Stay inside the NPC's named town (when it has one): a spot outside it is the wilderness.
+        AbstractArea town = NamedTownArea(npc);
+        return AutonomousRendezvousNavigation.TryChooseClearPoint(nav, zone, new(npc.X, npc.Y, npc.Z), seed,
+            candidate => AutonomousServiceNpcClearance.IsClearOf(candidate, services, AutonomousServiceNpcClearance.MeetClearRadius) &&
+                (town == null || town.IsContaining((int)candidate.X, (int)candidate.Y, (int)candidate.Z, false)),
+            out chosen);
+    }
+
+    /// <summary>The nearest service NPC within <paramref name="radius"/> of <paramref name="near"/>, or null.</summary>
+    private static GameNPC NearestServiceNpc(GameObject near, ushort radius)
+    {
+        GameNPC best = null;
+        long bestDistance = long.MaxValue;
+        if (near?.CurrentRegion == null)
+            return null;
+        foreach (GameNPC npc in near.GetNPCsInRadius(radius))
+        {
+            if (npc.ObjectState != GameObject.eObjectState.Active || !AutonomousServiceNpcClearance.IsServiceNpc(npc))
+                continue;
+            long distance = (long)(npc.X - near.X) * (npc.X - near.X) + (long)(npc.Y - near.Y) * (npc.Y - near.Y);
+            if (distance >= bestDistance) continue;
+            bestDistance = distance;
+            best = npc;
+        }
+        return best;
     }
 
     public static void ReportNoAvailableCamp(GameBot bot)
@@ -2596,9 +2650,15 @@ public static partial class AutonomousBotGroupCoordinator
             return false;
         Vector3 current = new(leader.X, leader.Y, leader.Z);
         GameBot[] members = BotMembers(leader.Group);
-        bool TryPoint(Region targetRegion, Vector3 anchor, out Vector3 chosen, bool fixedCenter = false)
+        // keepClearOf (GitHub #48): a service NPC the meetup must stand beside, not on. A clear spot is tried first;
+        // the plain choice around the anchor only when none fits.
+        bool TryPoint(Region targetRegion, Vector3 anchor, out Vector3 chosen, bool fixedCenter = false, GameNPC keepClearOf = null)
         {
             var nav = PathfindingProvider.Instance;
+            if (keepClearOf != null && keepClearOf.CurrentRegion == targetRegion &&
+                TryChooseBesideService(nav, targetRegion.GetZone(keepClearOf.X, keepClearOf.Y), keepClearOf, MeetSeed(leader), out chosen) &&
+                FormationSlotsFit(nav, targetRegion, targetRegion.GetZone(keepClearOf.X, keepClearOf.Y), chosen, members))
+                return true;
             Zone zone = targetRegion?.GetZone((int)anchor.X, (int)anchor.Y);
             bool valid = fixedCenter
                 ? AutonomousRendezvousNavigation.TryChooseFixedPoint(nav, zone, anchor, out chosen)
@@ -2607,21 +2667,10 @@ public static partial class AutonomousBotGroupCoordinator
             // Local exits on two polygons do not imply a path between them.
             // Test once while forming the party, not every AI turn. A roof or
             // disconnected platform must not trap eight bots in an impossible meetup.
-            bool tight = zone?.IsDungeon == true;
-            foreach (GameBot member in members)
-            {
-                Vector3 desired = DesiredFormationPoint(member, chosen, tight);
-                if (!AutonomousRendezvousNavigation.TryResolveFormationSlot(nav, zone, chosen, desired, out Vector3 slot))
-                    return false;
-                // Cross-region members are validated by the authoritative
-                // zone-point graph while travelling. Members already in this
-                // region must prove a connected zone itinerary to their slot.
-                if (member.CurrentRegion == targetRegion &&
-                    !AutonomousRendezvousNavigation.CanReachFormationSlot(nav, targetRegion,
-                        member.CurrentZone, zone, new(member.X, member.Y, member.Z), slot))
-                    return false;
-            }
-            return true;
+            // Cross-region members are validated by the authoritative
+            // zone-point graph while travelling. Members already in this
+            // region must prove a connected zone itinerary to their slot.
+            return FormationSlotsFit(nav, targetRegion, zone, chosen, members);
         }
 
         if (objectiveKind == eAutonomousObjectiveKind.RvR &&
@@ -2650,7 +2699,10 @@ public static partial class AutonomousBotGroupCoordinator
             return true;
         }
 
-        if (IsTownArea(leader) && TryPoint(leader.CurrentRegion, current, out point))
+        // GitHub #48: "meet where the leader stands" moves beside the NPC when the leader stands at a merchant,
+        // trainer, stable master, healer or vault keeper (often: a leader who just landed by horse). One radius query.
+        if (IsTownArea(leader) && TryPoint(leader.CurrentRegion, current, out point,
+                keepClearOf: NearestServiceNpc(leader, (ushort)AutonomousServiceNpcClearance.MeetClearRadius)))
         {
             rendezvousName = TownName(leader);
             return true;
@@ -2665,7 +2717,7 @@ public static partial class AutonomousBotGroupCoordinator
             .Take(4).ToArray() ?? [];
         foreach (GameNPC npc in safeTownNpcs)
         {
-            if (!TryPoint(leader.CurrentRegion, new(npc.X, npc.Y, npc.Z), out point)) continue;
+            if (!TryPoint(leader.CurrentRegion, new(npc.X, npc.Y, npc.Z), out point, keepClearOf: npc)) continue;
             rendezvousName = TownName(npc);
             return true;
         }
@@ -2840,6 +2892,18 @@ public static partial class AutonomousBotGroupCoordinator
                 npc is not GameBot && (npc.Realm == realm || npc.Realm == eRealm.None) && IsSafeArea(npc))
             .OrderBy(npc => Vector3.DistanceSquared(original, new(npc.X, npc.Y, npc.Z)))
             .FirstOrDefault();
+        // GitHub #48: beside a service NPC first, then the old choice around the NPC.
+        if (town != null && AutonomousServiceNpcClearance.IsServiceNpc(town) &&
+            TryChooseBesideService(PathfindingProvider.Instance, town.CurrentZone, town,
+                MeetSeed(ChooseLeader(session, BotMembers(session.Group))), out Vector3 beside))
+        {
+            Vector3 previous = session.Rendezvous;
+            session.Rendezvous = beside;
+            if (TryBuildRendezvousSlots(session, BotMembers(session.Group)))
+                return;
+            session.Rendezvous = previous;
+            TryBuildRendezvousSlots(session, BotMembers(session.Group));
+        }
         if (town != null && AutonomousRendezvousNavigation.TryChoosePoint(PathfindingProvider.Instance,
                 town.CurrentZone, new(town.X, town.Y, town.Z), out Vector3 connected))
         {
