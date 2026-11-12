@@ -5114,6 +5114,9 @@ namespace DOL.AI.Brain
                             continue;
                         if (!meleeDebuffAllowed && BotCasterPriority.IsDebuff(spell))
                             continue;
+                        // M1: a resist debuff only for the bot's own damage types (unless the player picked it)
+                        if (!PlaybookDebuffFits(spell))
+                            continue;
                         if (holdDamage && BotCasterPriority.IsDamage(spell))
                             continue;
                         if (CheckInstantOffensiveSpells(spell))
@@ -5196,10 +5199,17 @@ namespace DOL.AI.Brain
                 // Q2 (veteran review 2026-11-11; Prima: "forget bolts in large battles, since they'll often be blocked"):
                 // under Automatic a bolt is the opener, or for a target nobody else is meleeing - never into a melee
                 // scrum. A caster with no other attack spell still bolts (below).
+                // M1 (veteran playbook): a Wizard or Theurgist bolts only as the opener, and no bolt goes into a monster that
+                // is meleeing the caster itself (a target engaged in melee blocks bolts). The bolts and the other attack
+                // spells are offered together; the playbook puts the bolt first while it is the opener.
                 bool boltsAllowed = BotBody.CanCastBolts && CompanionOptions165.Choice(BotBody, "bolts") != 1 && !holdDamage;
-                bool boltsHeldForMelee = boltsAllowed && spellsToCast.Count < 1 && Body.TargetObject is GameLiving boltTarget &&
-                    !BotCasterPriority.BoltWorthwhile(OthersMeleeing(boltTarget));
-                if (boltsAllowed && !boltsHeldForMelee && spellsToCast.Count < 1)
+                bool crowdControlQueued = spellsToCast.Count > 0;
+                bool boltsHeldForMelee = boltsAllowed && !crowdControlQueued && Body.TargetObject is GameLiving boltTarget &&
+                    (!BotCasterPriority.BoltWorthwhile(OthersMeleeing(boltTarget)) ||
+                     !BotPlaybook.BoltLands(0, boltTarget.TargetObject == Body &&
+                                               Body.IsWithinRadius(boltTarget, Body.MeleeAttackRange + 50)) ||
+                     !BoltAllowedByPlaybook(BotBody.Playbook.BoltOpenerOnly, PlaybookDamageCastsOn(boltTarget)));
+                if (boltsAllowed && !boltsHeldForMelee && !crowdControlQueued)
                 {
                     foreach (Spell spell in BotBody.BoltSpells)
                     {
@@ -5208,11 +5218,11 @@ namespace DOL.AI.Brain
                     }
                 }
 
-                if (debuffOpening && spellsToCast.Count > 0 && Body.CanCastHarmfulSpells)
+                if (debuffOpening && crowdControlQueued && Body.CanCastHarmfulSpells)
                     spellsToCast.AddRange(Body.HarmfulSpells.Where(spell => BotCasterPriority.IsDebuff(spell) &&
                                                                             CanCastOffensiveSpell(spell)));
 
-                if (spellsToCast.Count < 1)
+                if (!crowdControlQueued)
                 {
                     if (Body.CanCastHarmfulSpells)
                     {
@@ -5256,6 +5266,8 @@ namespace DOL.AI.Brain
                         bool playerLikeTarget = BotPvpCrowdControl.PlayerLike(Body.TargetObject as GameLiving);
                         spellsToCast.RemoveAll(spell => BotControlSpells.HoldDamageStrips(spell, playerLikeTarget));
                     }
+                    // M1: a resist debuff for a damage type the bot does not deal is no cast at all (Void Eldritch)
+                    spellsToCast.RemoveAll(spell => !PlaybookDebuffFits(spell));
                     if (spellsToCast.Count == 0) return Body.IsCasting;
                     PreferPlainNukeOverSnareNuke(spellsToCast, Body.TargetObject as GameLiving);
                     // a stun kept by ControlAllowedOnTarget interrupts a cast or peels: it goes first
@@ -5267,8 +5279,9 @@ namespace DOL.AI.Brain
                         spellsToCast.RemoveAll(spell => !BotCasterPriority.IsDamage(spell) &&
                                                         !(debuffOpening && BotCasterPriority.IsDebuff(spell)));
                     // Debuff first, then nuke (owner 2026-11-05 class audit: casters never cast a single debuff).
+                    // M1: the playbook's order - a resist debuff for the bot's own damage type first, then the others
                     Spell openingDebuff = urgentStun == null && debuffOpening && !Body.IsBeingInterrupted
-                        ? spellsToCast.Where(BotCasterPriority.IsDebuff).OrderByDescending(spell => spell.Level).FirstOrDefault()
+                        ? ChoosePlaybookOpeningDebuff(spellsToCast)
                         : null;
                     if (openingDebuff != null && CheckOffensiveSpells(openingDebuff))
                     {
@@ -5285,14 +5298,19 @@ namespace DOL.AI.Brain
                             .ThenByDescending(spell => spell.Level).First()
                         : BotBody.IsEndgameCompanion
                         ? TemporaryCompanionBalance.HighestSpell(spellsToCast)
-                        : spellsToCast[Util.Random(spellsToCast.Count - 1)]);
+                        // M1 (veteran review 2026-11-11): the playbook order, not a random pick (BotPlaybook.ChooseAttack)
+                        : ChoosePlaybookAttack(spellsToCast, Body.TargetObject as GameLiving));
 
                     if (spellToCast.Uninterruptible || !Body.IsBeingInterrupted)
+                    {
                         casted = CheckOffensiveSpells(spellToCast);
+                        NotePlaybookCast(spellToCast, casted);
+                    }
                     else if (Body.IsBeingInterruptedByOther && QuickCastWorthwhile(spellToCast) &&
                              BotBody.ArmQuickCast(spellToCast))
                     {
                         casted = CheckOffensiveSpells(spellToCast);
+                        NotePlaybookCast(spellToCast, casted);
                         BotBody.DisarmQuickCast();
                     }
                     else if (shamanHybrid && ShamanBotCombatPolicy.HoldMeleeForCast(true,

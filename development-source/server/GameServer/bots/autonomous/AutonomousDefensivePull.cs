@@ -66,9 +66,9 @@ namespace DOL.GS
             (BotCasterPriority.IsDebuff(spell) && spell.SpellType != eSpellType.Disease ||
              spell.SpellType == eSpellType.Nearsight);
 
-        private static Spell PullSpell(GameBot bot) => bot.Spells?.Where(spell => IsPullSpell(spell, bot.Level))
-            .OrderBy(spell => IsLowAggroPullSpell(spell) ? 0 : 1)
-            .ThenByDescending(spell => spell.Range).ThenByDescending(spell => spell.Level).FirstOrDefault();
+        // M1 (veteran review 2026-11-11): read from the bot's playbook, worked out once per spell-list or level change in
+        // the same order (low-aggro first, then range, then level) instead of a LINQ sort on every pull check.
+        private static Spell PullSpell(GameBot bot) => bot.Spells == null ? null : bot.Playbook.PullSpell;
 
         /// <summary>A bot whose only ranged pull is a damage spell: it pulls only when no tank or low-aggro puller can.</summary>
         public static bool PullsWithNuke(GameBot bot) =>

@@ -2434,8 +2434,27 @@ namespace DOL.GS
                 ? learned : supplied;
         }
 
+        private BotPlaybook _playbook;
+
+        /// <summary>
+        /// M1 (veteran review 2026-11-11): the bot's playbook - its attack spell order, damage types and pull spell - built
+        /// once after each spell-list change (SortSpells clears it) or level change, then read on every cast decision.
+        /// </summary>
+        public BotPlaybook Playbook
+        {
+            get
+            {
+                BotPlaybook playbook = _playbook;
+                if (playbook == null || playbook.Level != Level)
+                    _playbook = playbook = BotPlaybook.Build(Spells, Level, (eCharacterClass)(CharacterClass?.ID ?? 0),
+                        CharacterClass?.ID is (int)eCharacterClass.Scout or (int)eCharacterClass.Hunter or (int)eCharacterClass.Ranger);
+                return playbook;
+            }
+        }
+
         public override void SortSpells()
         {
+            _playbook = null;   // rebuilt on the next read, from the new list
             InstantHarmfulSpells?.Clear();
             HarmfulSpells?.Clear();
             InstantHealSpells?.Clear();
