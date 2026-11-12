@@ -97,6 +97,26 @@ public static partial class AutonomousRealmRaid
         }
     }
 
+    /// <summary>
+    /// A returning or late raider inside the raid's dungeon while the route musters for its current target: go to the
+    /// muster (RealmRaidDungeonRoute.RegroupPoint, outside the target's aggro range on the way back toward the last
+    /// waypoint), not to the party's old post beside the boss. False when no muster is running.
+    /// </summary>
+    public static bool TryReinforcementRegroup(GameBot bot, out Vector3 point)
+    {
+        point = default;
+        Group group = bot?.Group;
+        if (group == null || !bot.IsAlive) return false;
+        lock (Sync)
+        {
+            if (!Membership.TryGetValue(group, out Raid raid) || !raid.Started || raid.DungeonRoute?.RegroupPoint is not Vector3 regroup ||
+                bot.CurrentRegionID != raid.Definition.Region || !raid.Parties.TryGetValue(group, out Party party) ||
+                !party.CatchingUp.Contains(bot.DatabaseID)) return false;
+            point = regroup;
+            return true;
+        }
+    }
+
     private static string GatherName(int key) => key == HubGatherKey ? "hub" : key == DungeonStagingGatherKey ? "staging" : $"staging-{key}";
 
     private static Reinforcement DecideReinforcement(Raid raid, GameBot bot, int deaths)

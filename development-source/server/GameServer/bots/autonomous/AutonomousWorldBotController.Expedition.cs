@@ -48,6 +48,9 @@ public sealed partial class AutonomousWorldBotController
         Vector3 post = new(c.X,c.Y,c.Z);
         if (order.Crossing) post = CrossingPoint(bot, post);
         int arrival = order.Crossing ? 32 : 175;
+        // Returning raiders join the raid's muster for its current target, not their old post beside the boss.
+        bool regroup = AutonomousRealmRaid.TryReinforcementRegroup(bot, out Vector3 muster);
+        if (regroup) { post = muster; arrival = 300; }
         if (Vector3.DistanceSquared(new(bot.X,bot.Y,bot.Z),post) > arrival * arrival)
         {
             if (FollowDarknessFallsRaidChain(bot, post, c.MonsterName)) return true;
@@ -56,10 +59,11 @@ public sealed partial class AutonomousWorldBotController
             SetStatus(bot,order.State,c.MonsterName,"Traveling to the expedition; late members rejoin without town staging");
             return true;
         }
-        if (!order.Hold) return false;
+        if (!order.Hold && !regroup) return false;
         bot.StopMovingOnPath();
         bot.StopMoving();
-        SetStatus(bot,order.State,c.MonsterName,"Present at expedition staging; waiting for the expedition order");
+        SetStatus(bot,order.State,c.MonsterName,regroup ? "At the raid's muster; going in with the gathered raid"
+            : "Present at expedition staging; waiting for the expedition order");
         return true;
     }
 
