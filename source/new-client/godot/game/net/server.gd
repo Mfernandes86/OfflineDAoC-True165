@@ -628,6 +628,7 @@ func enter_world(c: Dictionary) -> void:
 	skills = []
 	spell_lines = []
 	quests = {}
+	map_routes = {}
 	map_markers = {}                                      # (a new login: the server sends every marker again - the
 	_entering = true                                      # last character's quest givers and bots are not this one's)
 	playing = false
@@ -752,9 +753,14 @@ func _on_world_inner(kind: String, d: Dictionary) -> void:
 							"ability": bool(e.get("ability_icon", false))}
 			PlayerData.effects_changed.emit()
 		"map_marker":
-			map_markers[int(d.id)] = Vector4(float(d.region), float(d.x), float(d.y), float(d.z))
+			var mid := int(d.id)
+			if mid >= ROUTE_MARKERS and mid < GIVER_MARKERS:   # (a patrol route's point: a line on the map, no mark)
+				map_routes[mid] = Vector4(float(d.region), float(d.x), float(d.y), float(d.z))
+			else:
+				map_markers[mid] = Vector4(float(d.region), float(d.x), float(d.y), float(d.z))
 		"map_marker_remove":
 			map_markers.erase(int(d.id))
+			map_routes.erase(int(d.id))
 		"money":
 			on_money(d)
 		"points":
@@ -1365,6 +1371,48 @@ const TURNIN_MARKERS := 0xFFFD0000
 const GIVER_MARKERS := 0xFFFC0000
 
 
+## The patrol route of a quest's target (server QuestPatrolRoutes, 0.7 - owner 2026-11-11: "for patrol routes you
+## should show a red line indicating the mob patrols that area on the map"): 0xFFFA0000 + quest slot x 64 + point index,
+## one marker a route point, sent with the step's own marker and removed with it. Kept apart from the other markers
+## (they are no bots, givers or marks) and joined into one line a quest by the map.
+const ROUTE_MARKERS := 0xFFFA0000
+const ROUTE_POINTS := 64
+var map_routes := {}                     # route point id -> Vector4(region, x, y, z)
+
+
+## The patrol routes inside a zone: an Array of PackedVector2Array, each a route's points in walking order in that
+## zone's metres (x, z). A route that leaves the zone is cut at its edge (the part outside is the next zone's).
+func quest_routes_in(zid: int) -> Array:
+	var out := []
+	if map_routes.is_empty():
+		return out
+	var box := zone_box(zid)
+	if box.is_empty():
+		return out
+	var by_quest := {}
+	for id in map_routes:
+		var slot := (int(id) - ROUTE_MARKERS) / ROUTE_POINTS
+		if not by_quest.has(slot):
+			by_quest[slot] = []
+		(by_quest[slot] as Array).append(int(id))
+	for slot in by_quest:
+		var ids: Array = by_quest[slot]
+		ids.sort()
+		var line := PackedVector2Array()
+		for id in ids:
+			var v: Vector4 = map_routes[id]
+			if in_box(box, v):
+				var p := to_local(zid, v.y, v.z, v.w)
+				line.append(Vector2(p.x, p.z))
+			else:
+				if line.size() >= 2:
+					out.append(line)
+				line = PackedVector2Array()
+		if line.size() >= 2:
+			out.append(line)
+	return out
+
+
 ## A quest marker's kind on the map: "step" (red), "?" (a turn-in, green), "!" (a quest for you, yellow).
 static func _marker_kind(id: int) -> String:
 	return "step" if id >= QUEST_MARKERS else ("?" if id >= TURNIN_MARKERS else "!")
@@ -1765,6 +1813,11 @@ var market_items: Array = []                      # the shown results page: runt
 var market_page := 0
 var market_pages := 0                             # the last page's number (the server's maxpage)
 var market_count := -1                            # "Realm Exchange returned N real listing(s)." (page 0), -1 unknown
+## The same line's "(D different item(s), K new in the last hour)" (2026-11-11 exchange overhaul): the search's rows
+## (one per item, its copies counted on it) and its listings put up (or relisted) in the last hour; -1 unknown (an
+## older server's line).
+var market_distinct := -1
+var market_new := -1
 var market_search := {}                           # the filters of the last search (MarketSearch), for the pages
 var listings := {}                                # chest slot -> runtime ItemDb id "srvc:<slot>"
 ## Each listing's time left (server S38 / reset day C16, 2026-11-05: the owner's 12, 24 and 48 hours): chest slot ->
@@ -1829,7 +1882,11 @@ func _server_item(id: String, it: Dictionary, detail_key: Variant) -> Dictionary
 	if m:
 		count = int(m.get_string(1))
 		nm = m.get_string(2)
-	return {"id": id, "name": nm, "count": count, "level": int(it.level), "dps_af": int(it.value1),
+	# a search result's lot field (2026-11-11 exchange overhaul): 1-65000 the copies its row stands for (one row per
+	# item, the cheapest copy shown); 65001-65003 the exchange lot itself (every copy its own row); a listing has none
+	var lot := int(it.get("lot", 0))
+	var copies := lot if lot >= 1 and lot <= 65000 else 1
+	return {"id": id, "name": nm, "count": count, "copies": copies, "level": int(it.level), "dps_af": int(it.value1),
 			"spd_abs": int(it.value2), "hand": int(it.hand), "type_damage": int(it.type_damage),
 			"object_type": int(it.object_type), "weight": int(it.get("weight", 0)),
 			"condition": int(it.get("condition", 100)), "maxcondition": 100, "durability": int(it.get("durability", 100)),
@@ -1864,6 +1921,8 @@ func exchange_search(filters: Dictionary, page := 0) -> void:
 	f["page"] = clampi(page, 0, 255)
 	if page == 0:
 		market_count = -1
+		market_distinct = -1
+		market_new = -1
 	client.call("MarketSearch", f)
 
 
@@ -1942,6 +2001,9 @@ func _exchange_text(text: String) -> void:
 		proceeds = 0
 	elif text.begins_with("Realm Exchange returned "):
 		market_count = int(text.get_slice(" ", 3))
+		var m := RegEx.create_from_string("\\(([0-9]+) different item\\(s\\), ([0-9]+) new in the last hour\\)").search(text)
+		market_distinct = int(m.get_string(1)) if m else -1
+		market_new = int(m.get_string(2)) if m else -1
 	elif text.begins_with("Your listings - page "):
 		listing_page = maxi(int(text.get_slice(" ", 4).trim_suffix(".")) - 1, 0)
 	elif text == "That item cannot be traded." or text.begins_with("Your 100 listing slots") \

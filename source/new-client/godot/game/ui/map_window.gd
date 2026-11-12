@@ -372,6 +372,12 @@ func _zone_size_of(z: int) -> float:
 	return float(_zone_sizes[z])
 
 
+## The patrol routes of your quests' targets in a zone (the server's, Server.quest_routes_in): each a line of points
+## in the zone's metres. Drawn as a red line under the quest marks (owner 2026-11-11).
+func zone_quest_routes(z: int) -> Array:
+	return Server.quest_routes_in(z) if Server.active else []
+
+
 func zone_quest_marks(z: int) -> Array:
 	if z == current_zone:
 		return marks
@@ -496,6 +502,83 @@ class MapView extends Control:
 	}
 	const MARK_R := 2.8                         # (owner 2026-11-05: half the first size)
 	var _drawn_marks: Array = []                # [map spot, kind] of the marks drawn now (their hover text)
+
+	## A patrol route's line: a bright red, dashed, with a dark edge. The painted zone maps draw their roads as solid dark
+	## red lines, so a solid crimson route read as one more road (headless preview on East Svealand, 2026-11-11); the
+	## dashes and the brighter red set it apart on grass, snow and water alike.
+	const ROUTE_COLOR := Color(1.0, 0.2, 0.14, 0.96)
+	const ROUTE_EDGE := Color(0.07, 0.02, 0.01, 0.6)
+	const ROUTE_WIDTH := 1.7
+	const ROUTE_DASH := 5.0
+	const ROUTE_GAP := 3.0
+
+	## A route's points (zone metres) as runs of map spots inside the map shown: an area map shows part of a zone, so a
+	## route is cut where it leaves the picture (no line is drawn across the frame to a spot outside).
+	func route_runs(route: PackedVector2Array) -> Array:
+		var runs := []
+		var run := PackedVector2Array()
+		var inside := Rect2(Vector2.ZERO, size)
+		for pt in route:
+			var f := _mark_frac(pt / 0.025)
+			var mp := f * size
+			if f.x >= 0 and inside.has_point(mp):
+				run.append(mp)
+			else:
+				if run.size() >= 2:
+					runs.append(run)
+				run = PackedVector2Array()
+		if run.size() >= 2:
+			runs.append(run)
+		return runs
+
+	## A line of points cut into dashes (each a short line of points), the pattern carried round its corners so a route
+	## of many short legs is dashed evenly.
+	static func route_dashes(points: PackedVector2Array, dash: float, gap: float) -> Array:
+		var out := []
+		if points.size() < 2 or dash <= 0.0 or gap <= 0.0:
+			return out
+		var cur := PackedVector2Array([points[0]])
+		var left := dash
+		var on := true
+		for i in range(1, points.size()):
+			var a := points[i - 1]
+			var b := points[i]
+			var seg := a.distance_to(b)
+			if seg <= 0.0:
+				continue
+			var t := 0.0
+			while seg - t > left:
+				t += left
+				var p := a.lerp(b, t / seg)
+				if on:
+					cur.append(p)
+					out.append(cur)
+					cur = PackedVector2Array()
+				else:
+					cur = PackedVector2Array([p])
+				on = not on
+				left = dash if on else gap
+			left -= seg - t
+			if on:
+				cur.append(b)
+		if on and cur.size() >= 2:
+			out.append(cur)
+		return out
+
+	## A quest target's patrol route (owner 2026-11-11: "a red line indicating the mob patrols that area"): dashed, with
+	## a small dot at each end of an open route. Drawn under the quest marks, so the objective's medallion sits on it.
+	func _draw_route(route: PackedVector2Array) -> void:
+		for run in route_runs(route):
+			var pts: PackedVector2Array = run
+			var parts := route_dashes(pts, ROUTE_DASH, ROUTE_GAP)
+			for d in parts:
+				draw_polyline(d as PackedVector2Array, ROUTE_EDGE, ROUTE_WIDTH + 1.8, true)
+			for d in parts:
+				draw_polyline(d as PackedVector2Array, ROUTE_COLOR, ROUTE_WIDTH, true)
+			if pts[0].distance_to(pts[pts.size() - 1]) > 3.0:        # (an open route: its two ends)
+				for end in [pts[0], pts[pts.size() - 1]]:
+					draw_circle(end, ROUTE_WIDTH * 0.5 + 1.2, ROUTE_EDGE)
+					draw_circle(end, ROUTE_WIDTH * 0.5 + 0.5, ROUTE_COLOR)
 
 	static func draw_mark(ci: CanvasItem, at: Vector2, kind: String, r := MARK_R) -> void:
 		var st: Array = MARK_STYLE.get(kind, MARK_STYLE["step"])
@@ -700,6 +783,9 @@ class MapView extends Control:
 		# (the realm map shows no quest marks - owner 2026-11-05: "remove quest markers from the realm map"; click a
 		# zone to see its quests and objectives, wherever you are)
 		if String(w.shown.get("kind", "")) != "region":
+			if MapWindow.show_quest_marks:              # (under the marks: the objective's medallion sits on its line)
+				for route in w.zone_quest_routes(int(w.shown.id)):
+					_draw_route(route)
 			for m in (w.zone_quest_marks(int(w.shown.id)) if MapWindow.show_quest_marks else []):   # quest marks for the shown zone, wherever you are
 				var f := _mark_frac((m.at as Vector2) / 0.025)
 				var mp := f * size
