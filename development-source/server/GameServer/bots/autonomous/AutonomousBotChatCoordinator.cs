@@ -17,6 +17,34 @@ public static class AutonomousBotChatCoordinator
     private static readonly Dictionary<eRealm, long> LastFactionPlayerResponse = new();
     private static readonly Dictionary<ushort, long> LastLocalPlayerResponse = new();
 
+    /// <summary>
+    /// The gap between two ambient /say lines in one zone: 90 s with 10 bots or fewer, one second less per bot above
+    /// that, never under 30 s (a crowded capital or portal keep).
+    /// </summary>
+    public static long LocalIntervalMilliseconds(int botsInZone) => Math.Clamp(100 - botsInZone, 30, 90) * 1_000L;
+
+    private static Dictionary<ushort, int> _zoneCounts = new();
+    private static long _zoneCountsTick = long.MinValue;
+
+    /// <summary>Live gamebots per zone, counted once a minute from the registry (one pass, integer counts).</summary>
+    private static int BotsInZone(ushort zone, long now)
+    {
+        if (now - _zoneCountsTick >= 60_000 || _zoneCountsTick == long.MinValue)
+        {
+            var counts = new Dictionary<ushort, int>();
+            foreach (GameBot bot in AutonomousBotRegistry.Snapshot())
+            {
+                if (bot?.ObjectState != GameObject.eObjectState.Active)
+                    continue;
+                ushort id = bot.CurrentZone?.ID ?? bot.CurrentRegionID;
+                counts[id] = counts.GetValueOrDefault(id) + 1;
+            }
+            _zoneCounts = counts;
+            _zoneCountsTick = now;
+        }
+        return _zoneCounts.GetValueOrDefault(zone);
+    }
+
     private static readonly string[] FactionOpeners =
     [
         "How fares everyone across the realm?", "Any groups forming today?", "The roads seem lively today.",
@@ -63,9 +91,13 @@ public static class AutonomousBotChatCoordinator
             }
             else
             {
-                if (LastLocalAmbient.TryGetValue(starter.CurrentRegionID, out long last) && GameLoop.GameLoopTime - last < 90_000)
+                // per zone, quicker where many bots are (veteran-bots review 2026-11-11, rvr-social G14: a capital of 300
+                // bots was as quiet as an empty zone under one line per 90 s per region)
+                ushort zone = starter.CurrentZone?.ID ?? starter.CurrentRegionID;
+                if (LastLocalAmbient.TryGetValue(zone, out long last) &&
+                    GameLoop.GameLoopTime - last < LocalIntervalMilliseconds(BotsInZone(zone, GameLoop.GameLoopTime)))
                     return false;
-                LastLocalAmbient[starter.CurrentRegionID] = GameLoop.GameLoopTime;
+                LastLocalAmbient[zone] = GameLoop.GameLoopTime;
             }
         }
 

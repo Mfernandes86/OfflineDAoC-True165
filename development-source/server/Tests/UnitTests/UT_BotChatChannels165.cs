@@ -29,6 +29,15 @@ public class UT_BotChatChannels165
     }
 
     [Test]
+    public void BusyZonesTalkMoreOftenQuietOnesKeepNinetySeconds()
+    {
+        Assert.That(AutonomousBotChatCoordinator.LocalIntervalMilliseconds(0), Is.EqualTo(90_000));
+        Assert.That(AutonomousBotChatCoordinator.LocalIntervalMilliseconds(10), Is.EqualTo(90_000));
+        Assert.That(AutonomousBotChatCoordinator.LocalIntervalMilliseconds(40), Is.EqualTo(60_000));
+        Assert.That(AutonomousBotChatCoordinator.LocalIntervalMilliseconds(300), Is.EqualTo(30_000));
+    }
+
+    [Test]
     public void WithTheSwitchOffEverythingStaysOnFaction()
     {
         BotChatChannels165.PeriodChannels = false;
