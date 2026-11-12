@@ -92,8 +92,9 @@ namespace DOL.GS
                 }
                 string herald = speaker?.Name ?? fallback?.Name ?? "Realm herald";
                 // herald notices go on the realm chat group, where a 2003 raid was called (BotChatChannels165)
+                // ... in veteran shorthand from the siege's own numbers (HeraldShorthand165)
                 BotChatChannels165.Send(BotChatChannels165.PeriodChannels ? BotChatChannels165.Channel.RvR : BotChatChannels165.Channel.Faction,
-                    herald, notice.Realm, null, notice.Text);
+                    herald, notice.Realm, null, HeraldShorthand165.ForNotice(notice.EventId, notice.Realm, notice.Text));
                 // a bot or two may follow the notice with banter165 lines for its situation (owner 2026-11-10)
                 BotBanter165.FollowNotice(notice.EventId, notice.Realm, notice.Text, herald);
             }
