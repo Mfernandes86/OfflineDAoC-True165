@@ -9,9 +9,10 @@ namespace DOL.GS;
 /// What a player sees when browsing the Realm Exchange (2026-11-11 overhaul plan, phase 6). Pure functions over the
 /// search results, run only when a player searches (one human, a few searches a minute); bots never call them.
 /// <list type="bullet">
-/// <item>One row per item: copies of the same item (name, level, quality, crafted, type, stack or single) become one
-/// row showing the cheapest copy (by unit price) that the viewer may buy, with the number of copies. Half of the A-Z pages
-/// used to show one item 20 times.</item>
+/// <item>One row per item: copies of the same item (name, level, quality, crafted, type, stack or single, and the same
+/// stats: bonuses, procs and charges, condition within 10%) become one row showing the cheapest copy (by unit price) that
+/// the viewer may buy, with the number of copies. Half of the A-Z pages used to show one item 20 times. An enchanted or
+/// better copy is its own row, never hidden behind a cheaper plain one (review 2026-11-11).</item>
 /// <item>A default order about the player ("fit"): items at or below his level + 3 first, closest to his level first,
 /// then price. "newest" orders by listing time.</item>
 /// <item>A status line with the number of different items and of listings new in the last hour.</item>
@@ -38,7 +39,7 @@ public static class RealmExchangeBrowse
     /// <summary>The rows of one search, plus the counts the status line shows.</summary>
     public sealed record View(List<Row> Rows, int Listings, int Distinct, int Fresh, bool Grouped);
 
-    private readonly record struct GroupKey(string Name, int Level, int Quality, bool Crafted, int ObjectType, bool Stack);
+    private readonly record struct GroupKey(string Name, int Level, int Quality, bool Crafted, int ObjectType, bool Stack, string Stats);
 
     /// <summary>
     /// Builds the rows of a search. <paramref name="grouped"/> makes one row per item; the distinct count is the same
@@ -75,7 +76,18 @@ public static class RealmExchangeBrowse
 
     private static GroupKey KeyOf(DbInventoryItem item) => new(
         (item.Name ?? string.Empty).ToLowerInvariant(), item.Level, item.Quality, item.IsCrafted, item.Object_Type,
-        item.Count > 1 || item.PackSize > 1);
+        item.Count > 1 || item.PackSize > 1, StatsOf(item));
+
+    /// <summary>
+    /// What makes two copies of one item really differ: the Bonus1-10 and extra bonus type/value pairs, the spells, procs
+    /// and charges, and the condition in 10% steps. Copies with different stats are different rows.
+    /// </summary>
+    public static string StatsOf(DbInventoryItem item) => string.Join(',',
+        item.Bonus1Type, item.Bonus1, item.Bonus2Type, item.Bonus2, item.Bonus3Type, item.Bonus3, item.Bonus4Type, item.Bonus4,
+        item.Bonus5Type, item.Bonus5, item.Bonus6Type, item.Bonus6, item.Bonus7Type, item.Bonus7, item.Bonus8Type, item.Bonus8,
+        item.Bonus9Type, item.Bonus9, item.Bonus10Type, item.Bonus10, item.ExtraBonusType, item.ExtraBonus,
+        item.SpellID, item.SpellID1, item.ProcSpellID, item.ProcSpellID1, item.Charges, item.Charges1,
+        Math.Clamp((int)item.ConditionPercent, 0, 100) / 10);
 
     /// <summary>Whether <paramref name="candidate"/> should stand for its row instead of <paramref name="current"/>.</summary>
     public static bool Better(DbInventoryItem candidate, DbInventoryItem current, string viewerId)
