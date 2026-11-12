@@ -35,4 +35,34 @@ public class UT_RealmRaidTravelFixes
         Assert.That(RealmRaidLootOwner.IsScriptedEpicEncounter(typeof(GrandSummonerGovannon)), Is.True);
         Assert.That(RealmRaidLootOwner.IsScriptedEpicEncounter(typeof(SummonerRoesia)), Is.True);
     }
+
+    [TestCase(true, true, true, false, true, 0f, true, TestName = "Dungeon raider outside, released or late, gathers")]
+    [TestCase(true, true, true, true, true, 0f, false, TestName = "Dungeon raider already inside goes on")]
+    [TestCase(false, true, true, false, true, 0f, false, TestName = "Before the assault staging is the gathering")]
+    [TestCase(true, false, true, false, true, 0f, false, TestName = "A member with the raid column never gathers")]
+    [TestCase(true, true, true, false, false, 0f, false, TestName = "No gather point in this region")]
+    [TestCase(true, true, false, false, true, 20000f, true, TestName = "Dragon raider at the bindstone gathers")]
+    [TestCase(true, true, false, false, true, 5000f, false, TestName = "Dragon raider inside the staging ring goes on")]
+    public void ReinforcementsGatherOnlyWhenAwayFromTheRaid(bool started, bool catchingUp, bool dungeon, bool inside, bool gatherRegion,
+        float lairDistance, bool gather) =>
+        Assert.That(AutonomousRealmRaid.ReinforcementMustGather(started, catchingUp, dungeon, inside, gatherRegion, lairDistance), Is.EqualTo(gather));
+
+    [Test]
+    public void ReinforcementWaveGoesAtEightOrAfterAShortWait()
+    {
+        const long t = 1_000_000;
+        Assert.That(AutonomousRealmRaid.ReinforcementWaveGoes(8, 12, t, t), Is.True, "a party-sized wave goes at once");
+        Assert.That(AutonomousRealmRaid.ReinforcementWaveGoes(5, 12, t, t + 179_000), Is.False, "others are still coming");
+        Assert.That(AutonomousRealmRaid.ReinforcementWaveGoes(5, 12, t, t + 180_000), Is.True, "never more than three minutes");
+        Assert.That(AutonomousRealmRaid.ReinforcementWaveGoes(3, 3, t, t + 30_000), Is.False, "a minute for corpses about to release");
+        Assert.That(AutonomousRealmRaid.ReinforcementWaveGoes(3, 3, t, t + 60_000), Is.True, "everyone expected is here");
+        Assert.That(AutonomousRealmRaid.ReinforcementWaveGoes(0, 4, long.MaxValue, t), Is.False, "nobody gathered yet");
+    }
+
+    [Test]
+    public void OnlyLongTripsAskForARide()
+    {
+        Assert.That(AutonomousWorldBotController.ShouldTryExpeditionRide(40_000), Is.True);
+        Assert.That(AutonomousWorldBotController.ShouldTryExpeditionRide(3_000), Is.False);
+    }
 }

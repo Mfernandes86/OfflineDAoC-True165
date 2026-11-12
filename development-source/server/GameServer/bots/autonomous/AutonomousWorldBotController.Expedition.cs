@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 
 namespace DOL.GS;
@@ -30,54 +31,14 @@ public sealed partial class AutonomousWorldBotController
             Vector2.DistanceSquared(new(c.X,c.Y),new(home.X,home.Y)) <= DragonRallyRoute.ApproachRadius*DragonRallyRoute.ApproachRadius)
             return TravelDragonRally(bot,order,home);
         _dragonRallyPlanning=null; _dragonRallyRoute=null; _dragonRallyEvent=null;
-        // After repeated exterior-corridor failures from one spot (a stable landing whose
-        // corridor never proves, Vindsaul Faste 2026-10-06) the ordinary region travel below
-        // takes over for a while; it has the usual route and pocket recovery.
-        if (GameLoop.GameLoopTime >= _expeditionOrdinaryUntil &&
-            AutonomousRealmRaid.TryIndependentApproach(bot, out var exterior, out var via))
-        {
-            Vector3 position = new(bot.X, bot.Y, bot.Z);
-            if (_expeditionEvent != order.EventId || _expeditionRegion != bot.CurrentRegionID ||
-                Vector3.DistanceSquared(exterior, _expeditionGoal) > 512 * 512 ||
-                _expeditionLastPosition.HasValue && Vector3.DistanceSquared(position, _expeditionLastPosition.Value) > 2048 * 2048)
-            {
-                _expeditionSeams = null;
-                _expeditionEvent = order.EventId; _expeditionRegion = bot.CurrentRegionID; _expeditionGoal = exterior;
-            }
-            _expeditionLastPosition = position;
-            if (_expeditionSeams == null)
-            {
-                if (!RealmRaidMuster.TryRoute(bot.CurrentRegion, PathfindingProvider.Instance, bot.Realm,
-                    new(bot.X, bot.Y, bot.Z), exterior, out _expeditionSeams, via))
-                {
-                    _expeditionSeams = null;
-                    if (++_expeditionRouteFailures >= 4)
-                    {
-                        _expeditionRouteFailures = 0;
-                        _expeditionOrdinaryUntil = GameLoop.GameLoopTime + 120_000;
-                        Log.Warn($"REALM_EXPEDITION_ORDINARY_TRAVEL bot={bot.Name} id={bot.DatabaseID} region={bot.CurrentRegionID} " +
-                            $"position={bot.X},{bot.Y},{bot.Z} event={order.EventId}");
-                        return true;
-                    }
-                    _expeditionRouteRetry = GameLoop.GameLoopTime + 15_000;
-                    bot.StopMovingOnPath(); bot.StopMoving();
-                    SetStatus(bot, "Expedition route retry", c.MonsterName, "No connected exterior corridor; retaining assignment and retrying safely");
-                    return true;
-                }
-                _expeditionRouteFailures = 0;
-                _expeditionLeg = 0;
-            }
-            while (_expeditionLeg < _expeditionSeams.Length &&
-                Vector3.DistanceSquared(new(bot.X, bot.Y, bot.Z), _expeditionSeams[_expeditionLeg]) <= 64 * 64)
-                _expeditionLeg++;
-            if (_expeditionLeg < _expeditionSeams.Length)
-            {
-                if (!IssuePath(bot, _expeditionSeams[_expeditionLeg], preciseArrival: true))
-                { _expeditionSeams = null; _expeditionRouteRetry = GameLoop.GameLoopTime + 15_000; }
-                SetStatus(bot, "Traveling to expedition", c.MonsterName, "Following the validated exterior corridor; no town attendance required");
-                return true;
-            }
-        }
+        // A raider coming back after the raid went in gathers outside and goes back in with a wave (see
+        // AutonomousRealmRaid.Reinforcements).
+        if (AutonomousRealmRaid.TryReinforcementHold(bot, out var wave))
+            return TravelToReinforcementWave(bot, order, wave);
+        if (AutonomousRealmRaid.TryIndependentApproach(bot, out var exterior, out var via) &&
+            FollowExpeditionCorridor(bot, order, exterior, via, "Traveling to expedition",
+                "Following the validated exterior corridor; no town attendance required"))
+            return true;
         // Released/late members own their trip to the encounter. No follower
         // gate, all-eight meetup or dead leader can hold them in another region.
         if (bot.CurrentRegionID != c.RegionId) return TravelAcrossRegions(bot);
@@ -95,6 +56,85 @@ public sealed partial class AutonomousWorldBotController
         bot.StopMovingOnPath();
         bot.StopMoving();
         SetStatus(bot,order.State,c.MonsterName,"Present at expedition staging; waiting for the expedition order");
+        return true;
+    }
+
+    /// <summary>A trip this long on foot first asks the stable planner for a faster ride (late and returning raiders
+    /// used to walk the whole way; audits 2026-11-11). Raiders already at the fight never ask.</summary>
+    public const float ExpeditionRideDistance = 16_000;
+    public static bool ShouldTryExpeditionRide(float remaining) => remaining > ExpeditionRideDistance;
+
+    // Walks the validated exterior corridor (zone seams) toward goal. True while it is handling the trip (walking,
+    // riding, retrying); false once the corridor is done, or while ordinary travel has taken over after failures.
+    private bool FollowExpeditionCorridor(GameBot bot, AutonomousRealmRaid.View order, Vector3 goal, Vector3? via,
+        string state, string detail)
+    {
+        // After repeated exterior-corridor failures from one spot (a stable landing whose
+        // corridor never proves, Vindsaul Faste 2026-10-06) the ordinary region travel
+        // takes over for a while; it has the usual route and pocket recovery.
+        if (GameLoop.GameLoopTime < _expeditionOrdinaryUntil) return false;
+        var c = order.Camp;
+        Vector3 position = new(bot.X, bot.Y, bot.Z);
+        if (_expeditionEvent != order.EventId || _expeditionRegion != bot.CurrentRegionID ||
+            Vector3.DistanceSquared(goal, _expeditionGoal) > 512 * 512 ||
+            _expeditionLastPosition.HasValue && Vector3.DistanceSquared(position, _expeditionLastPosition.Value) > 2048 * 2048)
+        {
+            _expeditionSeams = null;
+            _expeditionEvent = order.EventId; _expeditionRegion = bot.CurrentRegionID; _expeditionGoal = goal;
+        }
+        _expeditionLastPosition = position;
+        if (ShouldTryExpeditionRide(Vector3.Distance(position, goal)) && TryBeginFasterStableRoute(bot, goal, c.ZoneName))
+        {
+            SetStatus(bot, state, c.MonsterName, "Riding toward the expedition; a stable route is faster than walking");
+            return true;
+        }
+        if (_expeditionSeams == null)
+        {
+            if (!RealmRaidMuster.TryRoute(bot.CurrentRegion, PathfindingProvider.Instance, bot.Realm,
+                position, goal, out _expeditionSeams, via))
+            {
+                _expeditionSeams = null;
+                if (++_expeditionRouteFailures >= 4)
+                {
+                    _expeditionRouteFailures = 0;
+                    _expeditionOrdinaryUntil = GameLoop.GameLoopTime + 120_000;
+                    Log.Warn($"REALM_EXPEDITION_ORDINARY_TRAVEL bot={bot.Name} id={bot.DatabaseID} region={bot.CurrentRegionID} " +
+                        $"position={bot.X},{bot.Y},{bot.Z} event={order.EventId}");
+                    return true;
+                }
+                _expeditionRouteRetry = GameLoop.GameLoopTime + 15_000;
+                bot.StopMovingOnPath(); bot.StopMoving();
+                SetStatus(bot, "Expedition route retry", c.MonsterName, "No connected exterior corridor; retaining assignment and retrying safely");
+                return true;
+            }
+            _expeditionRouteFailures = 0;
+            _expeditionLeg = 0;
+        }
+        while (_expeditionLeg < _expeditionSeams.Length &&
+            Vector3.DistanceSquared(position, _expeditionSeams[_expeditionLeg]) <= 64 * 64)
+            _expeditionLeg++;
+        if (_expeditionLeg >= _expeditionSeams.Length) return false;
+        if (!IssuePath(bot, _expeditionSeams[_expeditionLeg], preciseArrival: true))
+        { _expeditionSeams = null; _expeditionRouteRetry = GameLoop.GameLoopTime + 15_000; }
+        SetStatus(bot, state, c.MonsterName, detail);
+        return true;
+    }
+
+    private bool TravelToReinforcementWave(GameBot bot, AutonomousRealmRaid.View order, AutonomousRealmRaid.ReinforcementOrder wave)
+    {
+        string name = order.Camp.MonsterName;
+        if (wave.Arrived)
+        {
+            bot.StopMovingOnPath(); bot.StopMoving();
+            SetStatus(bot, "Waiting for reinforcements", name,
+                $"Gathered outside with {wave.Gathered} of {Math.Min(wave.Expected, AutonomousRealmRaid.ReinforcementWaveSize)}; going back in together");
+            return true;
+        }
+        const string state = "Joining reinforcements", detail = "Going to the raid's gathering point to go back in with the others";
+        if (FollowExpeditionCorridor(bot, order, wave.Point, null, state, detail)) return true;
+        if (!TryBeginFasterStableRoute(bot, wave.Point, order.Camp.ZoneName))
+            IssuePath(bot, wave.Point, preciseArrival: false);
+        SetStatus(bot, state, name, detail);
         return true;
     }
 
