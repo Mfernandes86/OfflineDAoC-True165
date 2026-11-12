@@ -168,7 +168,7 @@ func _ready() -> void:
 	add_child(shape)
 	motion_mode = CharacterBody3D.MOTION_MODE_FLOATING   # every contact is a wall (the client flattens normals)
 	collision_layer = 0
-	collision_mask = ZoneLoader.LAYER_WALL
+	collision_mask = ZoneLoader.LAYER_WALL | ZoneLoader.LAYER_BOUND   # (+ the zone's boundary walls: ZoneBounds)
 	# encumbrance follows the inventory and strength (buffs / debuffs change it too)
 	# (the launcher's server game: the server decides your speed - its MaxSpeed packet, encumbrance included -
 	# ServerWorld sets `encumbrance` from it; the game's own weight sums don't apply)
@@ -176,6 +176,9 @@ func _ready() -> void:
 		PlayerData.hook(self, PlayerData.inventory_changed, func(): encumbrance = PlayerData.encumbrance_mult())
 		PlayerData.hook(self, PlayerData.effects_changed, func(): encumbrance = PlayerData.encumbrance_mult())
 		encumbrance = PlayerData.encumbrance_mult()
+	else:                                                    # your class's forms (berserk, shade) loaded ahead of time
+		PlayerData.hook(self, PlayerData.changed, prewarm_forms)
+		prewarm_forms.call_deferred()
 
 	torch = OmniLight3D.new()
 	torch.name = "Torch"
@@ -287,6 +290,117 @@ var _morph: Node3D
 var _morph_casts := {}                         # a morph model's casting clips (monsters.json cast_clips)
 var _unmorphed := {}                     # your figure while morphed: model, anim, strides, clip lengths
 
+## Your own forms, packed off the main thread ahead of time (GitHub issue #50: berserk froze the game - the Vendo
+## glTF, 7 MB with 138 clips, was parsed and packed on the main thread at every change, ~850 ms; a shade ~200 ms).
+## Kept across zones (static): the forms your class can take (CLASS_FORMS, loaded when the class is known) and the one
+## you are in. A form not ready yet (an illusion) loads on a worker while you keep your figure and keep moving; the
+## change happens when it is in (_form_arrived). Bots' and other players' forms are NpcManager's (_prepared).
+const CLASS_FORMS := {
+	"Berserker": [3, 12],                    # BerserkECSEffect: Vendo Man, a dwarf's Mini Vendo Man (one glTF)
+	"Necromancer": [822],                    # GamePlayer.ShadeModel for the Disciple classes
+	"Hero": [4, 13],                         # StagECSEffect (no monsters.json row for them: your figure stays)
+}
+static var _forms := {}                      # gltf path -> PackedScene (null: it failed to load)
+static var _form_class := ""                 # the class whose forms _forms holds
+static var _form_task: Thread                # the packing job (its own thread: GpuJobs.start_job)
+static var _form_jobs: Array = []            # what it packs: gltf paths or monsters.json model ids
+static var _form_out := {}                   # its results, path -> PackedScene (the worker's until it is done)
+static var _form_queue: Array = []           # asked for while it runs: the next job
+static var _form_waiters: Array = []         # told when a job is in (Callables; freed players drop out)
+static var _form_hook := Callable()          # the frame hook that watches the job (connected only while one runs)
+var _morph_want := {}                        # the form the server asked for while it loads ({}: none)
+var _morph_path := ""                        # the gltf of the form you are in
+
+
+## The forms your class can take, loaded now in the background (PlayerData.changed: the class comes from the server).
+func prewarm_forms() -> void:
+	var cls := PlayerData.class_title()
+	if cls == "" or cls == _form_class:
+		return
+	_form_class = cls
+	for k in _forms.keys():                     # another character / class: only the form you are in stays
+		if k != _morph_path:
+			_forms.erase(k)
+	prewarm_paths(CLASS_FORMS.get(cls, []))
+
+
+## Forms to pack on a worker (gltf paths or monsters.json model ids), unless held or already on their way.
+static func prewarm_paths(list: Array) -> void:
+	for x in list:
+		if (x is String and (x == "" or _forms.has(x))) or _form_jobs.has(x) or _form_queue.has(x):
+			continue
+		_form_queue.append(x)
+	_form_pump()
+
+
+static func form_ready(path: String) -> bool:
+	return _forms.has(path)
+
+
+static func form_instance(path: String) -> Node3D:
+	var ps: PackedScene = _forms.get(path)
+	return ps.instantiate() as Node3D if ps else null
+
+
+## (main thread: a frame hook only while a job runs) the finished job's forms in, its waiters told, the next started.
+static func _form_pump() -> void:
+	if _form_task != null:
+		if not GpuJobs.job_done(_form_task):
+			return
+		GpuJobs.finish_job(_form_task)
+		_form_task = null
+		for p in _form_out:
+			_forms[p] = _form_out[p]
+		_form_jobs = []
+		_form_out = {}
+		var told := _form_waiters
+		_form_waiters = []
+		for c in told:
+			if (c as Callable).is_valid():
+				(c as Callable).call()
+	var tree := Engine.get_main_loop() as SceneTree
+	if _form_queue.is_empty():
+		if tree and _form_hook.is_valid() and tree.process_frame.is_connected(_form_hook):
+			tree.process_frame.disconnect(_form_hook)
+		return
+	_form_jobs = _form_queue
+	_form_queue = []
+	_form_out = {}
+	var jobs := _form_jobs.duplicate()
+	var have := _forms.duplicate()               # (the worker never reads the live cache)
+	var out := _form_out
+	_form_task = GpuJobs.start_job(func(): _form_run(jobs, have, out))
+	if not _form_hook.is_valid():
+		_form_hook = func(): _form_pump()
+	if tree and not tree.process_frame.is_connected(_form_hook):
+		tree.process_frame.connect(_form_hook)
+
+
+## The worker: each form packed as the NPC views pack a monster (NpcManager._pack_model); model ids looked up in
+## monsters.json here (one parse, off the main thread).
+static func _form_run(jobs: Array, have: Dictionary, out: Dictionary) -> void:
+	var table = null
+	for x in jobs:
+		var path := String(x) if x is String else ""
+		if not (x is String):
+			if table == null:
+				table = JSON.parse_string(FileAccess.get_file_as_string("res://content/monsters/monsters.json"))
+			var row = (table as Dictionary).get(str(x), {}) if table is Dictionary else {}
+			path = String((row as Dictionary).get("gltf", "")) if row is Dictionary else ""
+		if path == "" or have.has(path) or out.has(path):
+			continue
+		out[path] = NpcManager._pack_model(path)
+
+
+## A job came in: the form the server asked for while it loaded is taken now (if it is still the one wanted).
+func _form_arrived() -> void:
+	if _morph_want.is_empty():
+		return
+	if _forms.has(String(_morph_want.get("gltf", ""))):
+		morph(_morph_want)
+	elif not _form_waiters.has(_form_arrived):
+		_form_waiters.append(_form_arrived)
+
 
 func morph(info: Dictionary) -> void:
 	# the spell effects' skeleton (SpellFx._skeleton caches the first one under you): looked up again for the body that
@@ -307,20 +421,25 @@ func morph(info: Dictionary) -> void:
 		if _model:
 			_model.visible = not first_person
 	var path := String(info.get("gltf", ""))
-	if path == "" or _model == null:
+	_morph_want = {}                                       # (a newer change replaces one still loading)
+	_morph_path = ""
+	if path == "" or _model == null or not _forms.has(path):
 		_apply_model_yaw()
 		if _model:
 			refresh_gear()                                     # back in your figure: its weapons again
+		if path != "" and _model != null:                  # a form not loaded yet: your figure until it is in, never a
+			_morph_want = info                             # frozen frame (issue #50)
+			prewarm_paths([path])
+			if not _form_waiters.has(_form_arrived):
+				_form_waiters.append(_form_arrived)
 		return
 	# the glTF with its skin, as the NPC views load it (the packed .scn has its textures taken out - drawn untextured,
-	# your shade was a plain solid figure)
-	var m: Node3D = null
-	var ps := NpcManager._pack_model(path)
-	if ps:
-		m = ps.instantiate() as Node3D
+	# your shade was a plain solid figure) - packed ahead of time on a worker (prewarm_forms), instantiated here
+	var m := form_instance(path)
 	if m == null:
 		push_warning("morph model missing: " + path)
 		return
+	_morph_path = path
 	_unmorphed = {"model": _model, "anim": _anim, "strides": _strides, "clip_len": _clip_len}
 	_model.visible = false                                 # your figure and the gear on its bones
 	m.scale *= float(info.get("scale", 1.0))
@@ -352,7 +471,7 @@ func _set_loops() -> void:
 	if _anim == null:
 		return
 	for clip in _anim.get_animation_list():
-		_anim.get_animation(clip).loop_mode = Animation.LOOP_LINEAR if Fig3Figure.loops(clip) else Animation.LOOP_NONE
+		Fig3Figure.set_loop(_anim.get_animation(clip), Animation.LOOP_LINEAR if Fig3Figure.loops(clip) else Animation.LOOP_NONE)
 
 
 func _play(clip: String, speed := 1.0) -> void:
@@ -375,7 +494,7 @@ func _wounded_mult() -> float:
 
 func set_flying(on: bool) -> void:
 	flying = on
-	collision_mask = 0 if on else ZoneLoader.LAYER_WALL   # fly through buildings and terrain
+	collision_mask = 0 if on else ZoneLoader.LAYER_WALL | ZoneLoader.LAYER_BOUND   # fly through buildings and terrain
 	_arm.collision_mask = 0 if on else ZoneLoader.LAYER_WALL | ZoneLoader.LAYER_FLOOR | ZoneLoader.LAYER_SCENERY
 	velocity = Vector3.ZERO
 
@@ -951,7 +1070,7 @@ func _physics_step(delta: float) -> void:
 		_jump_held = jump
 		var clip := ride_clip if _anim and _anim.has_animation(ride_clip) else "ride_horse"
 		if _anim and _anim.has_animation(clip) and _anim.current_animation != clip:
-			_anim.get_animation(clip).loop_mode = Animation.LOOP_LINEAR
+			Fig3Figure.set_loop(_anim.get_animation(clip), Animation.LOOP_LINEAR)
 			_anim.play(clip, 0.2)
 		_ease_step(delta)
 		_pivot.rotation = Vector3(cam_pitch, cam_yaw, 0.0)
