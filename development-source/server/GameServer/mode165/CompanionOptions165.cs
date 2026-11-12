@@ -138,6 +138,12 @@ namespace DOL.GS
         /// <summary>Whether a spell list holds a damage spell (the "Save power" row is offered then).</summary>
         public static bool HasDamageSpell(IEnumerable<Spell> spells) => spells.Any(BotCasterPriority.IsDamage);
 
+        /// <summary>Pure (Q7, veteran review 2026-11-11): a Cleric, Druid or Healer whose Role row is set to anything but
+        /// Automatic - heal first then attack, attack, or melee and heal - takes part in the player's fights.</summary>
+        public static bool HealerRoleFights(eCharacterClass characterClass, int roleChoice) =>
+            roleChoice is 1 or 2 or 3 &&
+            characterClass is eCharacterClass.Cleric or eCharacterClass.Druid or eCharacterClass.Healer;
+
         /// <summary>The player's choice for a generic AI option (0 = Automatic; always 0 for gamebots).</summary>
         public static int Choice(GameBot bot, string key) =>
             Get(bot, key) is { } v && int.TryParse(v, out int i) ? i : 0;

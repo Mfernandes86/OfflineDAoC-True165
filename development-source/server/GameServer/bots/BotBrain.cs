@@ -770,7 +770,7 @@ namespace DOL.AI.Brain
             if (BotBody?.IsTemporaryCompanionRestLocked == true)
                 return false;
 
-            if (BotPartyRoles.IsSupport(BotBody))
+            if (SupportSitsOutFights())
             {
                 _orderedPullTarget = null;
                 _returnToFormationAfterPull = false;
@@ -797,7 +797,7 @@ namespace DOL.AI.Brain
             if (!CompanionEngagementMode.Allows(Body, target)) return;
             if (CompanionPvpEngagement.Enemy(CompanionPvpEngagement.Leader(Body), target))
                 BotBody.WakeTemporaryCompanionRest();
-            if (BotPartyRoles.IsSupport(BotBody))
+            if (SupportSitsOutFights())
             {
                 TryCommandCompanionDruidPet(target);
                 HoldSupportCombat();
@@ -911,6 +911,16 @@ namespace DOL.AI.Brain
 
         /// <summary>The player's "Role" choice for a hired healer (AI Options; 0 = Automatic).</summary>
         private int RoleChoice => CompanionOptions165.Choice(BotBody, "role");
+
+        /// <summary>
+        /// A support class that stays out of the player's fights and pulls (it heals and buffs). Q7 (veteran review
+        /// 2026-11-11): a Cleric, Druid or Healer companion whose player picked a fighting Role ("Heal first, attack when
+        /// nobody is hurt", "Attack, heal only emergencies", "Melee and heal") joins the fight like any other companion;
+        /// before, the four assist and pull checks left it out. Gamebots (always Automatic) are unchanged.
+        /// </summary>
+        private bool SupportSitsOutFights() =>
+            BotPartyRoles.IsSupport(BotBody) && !CompanionOptions165.HealerRoleFights(
+                (eCharacterClass)BotBody.CharacterClass.ID, RoleChoice);
 
         private bool HoldsExclusiveSupportRole() =>
             BotBody?.CharacterClass?.ID is (int)eCharacterClass.Shaman or (int)eCharacterClass.Friar && RoleChoice == 1 &&
@@ -3540,7 +3550,7 @@ namespace DOL.AI.Brain
                 {
                     // Check if owner is attacking something
                     if (leader.TargetObject is GameLiving ownerTarget
-                        && !BotPartyRoles.IsSupport(_brain.BotBody)
+                        && !_brain.SupportSitsOutFights()
                         && PlayerLedPullCoordinator.Available(_brain.BotBody, leader)
                         && _brain.Body.IsWithinRadius(ownerTarget, GROUP_DEFENSE_ASSIST_RADIUS)
                         && PlayerLedPullCoordinator.LeaderAttacks(leader)
@@ -3606,7 +3616,7 @@ namespace DOL.AI.Brain
                 {
                     // Try to get owner's target
                     if (leader.TargetObject is GameLiving ownerTarget
-                        && !BotPartyRoles.IsSupport(_brain.BotBody)
+                        && !_brain.SupportSitsOutFights()
                         && PlayerLedPullCoordinator.Available(_brain.BotBody, leader)
                         && _brain.Body.IsWithinRadius(ownerTarget, GROUP_DEFENSE_ASSIST_RADIUS)
                         && ownerTarget.IsAlive
