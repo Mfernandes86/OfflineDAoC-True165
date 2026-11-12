@@ -18,6 +18,8 @@ public static class AutonomousFrontierTransport
         .OrderBy(bot.GetDistanceTo).FirstOrDefault();
 
     public static GameBot[] BoardingParty(GameBot bot, Passage passage) =>
+        // A relic carrier boards alone (relic audit B4); its escort follows by its own next departure.
+        GameRelic.IsPlayerCarryingRelic(bot) ||
         HasCommittedSiegePassage(bot, passage) || passage.Medallion == "home_necklace" &&
         AutonomousObjectiveAssignments.Parse(bot.PersistentRecord?.ObjectiveKind) != eAutonomousObjectiveKind.RvR
             ? [bot] // Initial PvE meetups can have members returning from different frontiers.
@@ -122,11 +124,19 @@ public static class AutonomousFrontierTransport
         !bot.IsPlayerLedGroup && !bot.IsTemporaryGroupHelper && !bot.IsStunned && !bot.IsMezzed &&
         bot.ObjectState == GameObject.eObjectState.Active && bot.CurrentRegion == porter.CurrentRegion &&
         bot.IsWithinRadius(porter, BoardingRadius) && !bot.InCombat && !bot.IsAttacking &&
-        (bot.Brain as BotBrain)?.HasAggro != true && !GameRelic.IsPlayerCarryingRelic(bot) &&
+        (bot.Brain as BotBrain)?.HasAggro != true && (!GameRelic.IsPlayerCarryingRelic(bot) || CarrierPassage(bot, porter, request?.Passage)) &&
         CanBoardForObjective(bot.Realm, AutonomousObjectiveAssignments.KindFor(bot), request?.Passage) &&
         PassageMatchesSiege(bot,request?.Passage) &&
         request?.Porter == porter && request.ForceId == (bot.TempProperties.GetProperty<string>("RvrEventForce") ?? $"rvr-{bot.DatabaseID}") &&
         Ticket(bot,request.Passage) != null;
+
+    /// <summary>
+    /// A relic carrier boards only its own realm's portal-keep porter in an enemy frontier, for the home passage (owner
+    /// 2026-11-12, relic audit B4: GameRelic.CarrierMayTakePortalKeepPort, the same rule as the players' porter circle).
+    /// </summary>
+    public static bool CarrierPassage(GameBot bot, OFTeleporter porter, Passage passage) =>
+        bot != null && porter != null && passage?.Medallion == "home_necklace" &&
+        GameRelic.CarrierMayTakePortalKeepPort(bot.Realm, porter.Realm, porter.CurrentRegionID, passage.Region);
 
     public static bool CanBoardForObjective(eRealm realm, eAutonomousObjectiveKind objective, Passage passage)
     {

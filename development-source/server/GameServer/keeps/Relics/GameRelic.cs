@@ -652,6 +652,31 @@ namespace DOL.GS
             return player?.TempProperties?.GetProperty<GameRelic>(PLAYER_CARRY_RELIC_WEAK) != null;
         }
 
+        /// <summary>The frontier region a realm's own border keeps stand in (Albion 1, Midgard 100, Hibernia 200), else 0.</summary>
+        public static ushort HomeFrontierRegion(eRealm realm) => realm switch
+        {
+            eRealm.Albion => 1,
+            eRealm.Midgard => 100,
+            eRealm.Hibernia => 200,
+            _ => 0,
+        };
+
+        /// <summary>
+        /// The one teleport a relic carrier may take (owner 2026-11-12, relic audit B4). In the old frontiers a raid ran the
+        /// relic on foot to its own realm's portal keep in the enemy frontier and went home with that portal keep's port, then
+        /// carried it on foot from the border keep to the relic keep (period-data archive, FreddysHouse thread "melee relic",
+        /// July 2002: a Midgard raid ported back to Uppland and walked the last leg to Mjollner). So: a porter of the carrier's
+        /// own realm, standing in another realm's
+        /// frontier, sending it to its own home frontier. Every other porter, portal stone, teleport spell and horse route
+        /// still refuses a carrier.
+        /// </summary>
+        public static bool CarrierMayTakePortalKeepPort(eRealm carrierRealm, eRealm porterRealm, ushort porterRegion, ushort destinationRegion)
+        {
+            ushort home = HomeFrontierRegion(carrierRealm);
+            return home != 0 && porterRealm == carrierRealm && destinationRegion == home &&
+                   porterRegion is 1 or 100 or 200 && porterRegion != home;
+        }
+
         public static MiniTemp GetRelicTemplate(eRealm realm, eRelicType relicType)
         {
             MiniTemp template = new();

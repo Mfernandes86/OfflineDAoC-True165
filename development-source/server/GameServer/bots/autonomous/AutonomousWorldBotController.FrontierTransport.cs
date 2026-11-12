@@ -44,13 +44,16 @@ public sealed partial class AutonomousWorldBotController
     private bool TryFrontierTransport(GameBot bot, CampDestination destination)
     {
         if (bot.CurrentRegionID == destination.RegionId || bot.CurrentRegionID is not (1 or 100 or 200) ||
-            destination.RegionId is not (1 or 100 or 200) || GameRelic.IsPlayerCarryingRelic(bot)) return false;
+            destination.RegionId is not (1 or 100 or 200)) return false;
         var passage = AutonomousFrontierTransport.Destination(bot.Realm,destination.RegionId);
         if (passage == null) return false;
+        // A relic carrier takes only its own portal keep's port home (relic audit B4; the porter itself is checked at boarding).
+        bool carrier = GameRelic.IsPlayerCarryingRelic(bot);
+        if (carrier && !GameRelic.CarrierMayTakePortalKeepPort(bot.Realm, bot.Realm, bot.CurrentRegionID, passage.Region)) return false;
         bool returningToPve = passage.Medallion == "home_necklace" &&
             AutonomousObjectiveAssignments.Parse(bot.PersistentRecord?.ObjectiveKind) != eAutonomousObjectiveKind.RvR;
         var party=AutonomousFrontierTransport.BoardingParty(bot, passage);
-        if(party.Any(GameRelic.IsPlayerCarryingRelic))
+        if(!carrier && party.Any(GameRelic.IsPlayerCarryingRelic))
         {
             foreach(var member in party) member.TempProperties.RemoveProperty(AutonomousFrontierTransport.RequestKey);
             return false;

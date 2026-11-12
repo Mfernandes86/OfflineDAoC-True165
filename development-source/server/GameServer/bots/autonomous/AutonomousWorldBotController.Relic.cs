@@ -29,6 +29,15 @@ public sealed partial class AutonomousWorldBotController
     internal const int CarrierCorneredRadius = 350;
     /// <summary>A carrier without headway for this long is reported (RELIC_CARRIER_STUCK), once per period.</summary>
     internal const long CarrierStuckMilliseconds = 3 * 60_000;
+    /// <summary>Within this reach of its own portal keep's porter a carrier stops running and boards (B4).</summary>
+    internal const int CarrierPorterReach = 1_500;
+    /// <summary>A carrier at its porter whose boarding keeps failing this long walks home the long way instead (B4).</summary>
+    public const long CarrierPortGiveUpMilliseconds = 90_000;
+    /// <summary>After the port home the carrier waits at its border keep for its escort, at most this long (B4).</summary>
+    public const long CarrierRegroupMilliseconds = 2 * 60_000;
+    /// <summary>... or until this many of its realm's raiders stand around it.</summary>
+    public const int CarrierRegroupEscorts = 8;
+    internal const int CarrierRegroupRadius = 800;
 
     private static readonly ConcurrentDictionary<GameRelic, long> RelicReadySince = new();
 
@@ -36,6 +45,9 @@ public sealed partial class AutonomousWorldBotController
     private Vector3 _carrierProgressPosition;
     private ushort _carrierProgressRegion;
     private long _carrierProgressTick, _carrierStuckLoggedTick;
+    private ushort _carrierLastRegion;
+    private long _carrierLandedTick, _carrierPortFailingSince;
+    private bool _carrierPortGivenUp;
     private GameRelic _shrineWalkRelic;
     private Vector3 _shrineWalkFrom;
     private long _shrineWalkCheckedTick;
@@ -54,6 +66,9 @@ public sealed partial class AutonomousWorldBotController
         {
             _relicCarrierFleeing = false;
             _carrierProgressTick = 0;
+            _carrierLastRegion = 0;
+            _carrierLandedTick = _carrierPortFailingSince = 0;
+            _carrierPortGivenUp = false;
             return false;
         }
         ObserveCarrierProgress(bot, now);
@@ -121,6 +136,33 @@ public sealed partial class AutonomousWorldBotController
             SetRvrStatus(bot, "Relic captured", "Relic delivered to the home shrine", carried.Name);
             return true;
         }
+        // B4: the port home. A carrier in another realm's frontier runs to its own portal keep there and takes its port to
+        // the home border keep; there it waits for its escort before the last leg to the home relic keep.
+        ushort fromRegion = _carrierLastRegion;
+        _carrierLastRegion = bot.CurrentRegionID;
+        if (fromRegion != 0 && fromRegion != bot.CurrentRegionID && bot.CurrentRegionID == home.CurrentRegionID &&
+            fromRegion is 1 or 100 or 200 && bot.CurrentRegionID == GameRelic.HomeFrontierRegion(bot.Realm))
+        {
+            _carrierLandedTick = now;
+            if (Log.IsInfoEnabled)
+                Log.Info($"RELIC_CARRIER_PORTED bot=\"{bot.Name}\" relic=\"{carried.Name}\" from={fromRegion} region={bot.CurrentRegionID} x={bot.X} y={bot.Y} z={bot.Z}");
+        }
+        if (_carrierLandedTick != 0 && bot.CurrentRegionID == home.CurrentRegionID)
+        {
+            int escorts = bot.GetNPCsInRadius(CarrierRegroupRadius).OfType<GameBot>()
+                .Count(other => other != bot && other.IsAlive && other.Realm == bot.Realm && other.IsAutonomousWorldBot &&
+                    AutonomousObjectiveAssignments.Is(other, eAutonomousObjectiveKind.RvR));
+            if (!CarrierRegrouped(escorts, now - _carrierLandedTick))
+            {
+                bot.StopMovingOnPath();
+                bot.StopMoving();
+                _carrierProgressTick = now;   // waiting on purpose is no lack of headway
+                SetRvrStatus(bot, "Returning relic", "Waiting for the escort at the border keep", $"{escorts}/{CarrierRegroupEscorts} raiders here");
+                return true;
+            }
+            _carrierLandedTick = 0;
+        }
+        if (CarrierPortalKeepTurn(bot, carried, home, now)) return true;
         if (now - _carrierProgressTick >= CarrierStuckMilliseconds)
             ReportCarrierStuck(bot, carried, now, $"no headway for {(now - _carrierProgressTick) / 60_000} minutes");
         AbstractGameKeep homeKeep = AutonomousRelicShrine.RelicKeepOf(home);
@@ -129,7 +171,7 @@ public sealed partial class AutonomousWorldBotController
             return CarrierEntersHomeShrine(bot, home, homeKeep, carried);
         SetRvrStatus(bot, "Returning relic", "Escort the real relic to its home shrine", home.Name);
         // In the home frontier the walk goes to the home relic keep (the keep route); elsewhere across the zone points
-        // (no porter takes a carrier).
+        // (only the own portal keep's port takes a carrier, CarrierPortalKeepTurn).
         CampDestination destination = homeKeep != null && bot.CurrentRegionID == home.CurrentRegionID
             ? new CampDestination($"rvr-keep-{homeKeep.KeepID}", homeKeep.Name, homeKeep.Name, homeKeep.Region, homeKeep.X, homeKeep.Y, homeKeep.Z, 50, false, true)
             : new CampDestination("relic-home", home.Name, home.CurrentZone?.Description ?? "home shrine", home.CurrentRegionID, home.X, home.Y, home.Z, 50, false, true);
@@ -187,6 +229,59 @@ public sealed partial class AutonomousWorldBotController
         SetRvrStatus(bot, "Relic return blocked", "Into the home shrine", "No walk to the shrine or its gate from here");
         ReportCarrierStuck(bot, carried, GameLoop.GameLoopTime, "no walk to the home shrine or a home gate");
         return true;
+    }
+
+    /// <summary>Pure rule (B4): the carrier leaves its border keep once its escort stands around it, or after the wait.</summary>
+    public static bool CarrierRegrouped(int escortsNear, long waitedMilliseconds) =>
+        escortsNear >= CarrierRegroupEscorts || waitedMilliseconds >= CarrierRegroupMilliseconds;
+
+    /// <summary>Pure rule (B4): the carrier gives its portal keep up for the long walk only after boarding failed this long.</summary>
+    public static bool CarrierGivesUpPort(long failingSince, long now) =>
+        failingSince > 0 && now - failingSince >= CarrierPortGiveUpMilliseconds;
+
+    /// <summary>
+    /// Relic audit B4 (owner 2026-11-12): a carrier in another realm's frontier runs the relic to its own realm's portal keep
+    /// there, with its escort, and takes that keep's port home (GameRelic.CarrierMayTakePortalKeepPort; no other teleport,
+    /// no horse). Only when boarding keeps failing (no ticket can be had) does it walk home the long way through the
+    /// frontier dungeons. True while this turn is spent on the way to, or at, the porter.
+    /// </summary>
+    private bool CarrierPortalKeepTurn(GameBot bot, GameRelic carried, GameRelicPad home, long now)
+    {
+        ushort region = bot.CurrentRegionID;
+        if (_carrierPortGivenUp || region == home.CurrentRegionID ||
+            !GameRelic.CarrierMayTakePortalKeepPort(bot.Realm, bot.Realm, region, home.CurrentRegionID))
+            return false;
+        DOL.GS.Scripts.OFTeleporter porter = AutonomousFrontierTransport.NearestPorter(bot);
+        var passage = AutonomousFrontierTransport.Destination(bot.Realm, home.CurrentRegionID);
+        if (porter == null || passage == null) return false;
+        if (!bot.IsWithinRadius(porter, CarrierPorterReach))
+        {
+            _carrierPortFailingSince = 0;
+            SetRvrStatus(bot, "Returning relic", "Running the relic to the portal keep", porter.Name);
+            return TravelRvrObjective(bot, new CampDestination($"rvr-relic-port-{region}", porter.Name, porter.CurrentZone?.Description ?? "portal keep",
+                region, porter.X, porter.Y, porter.Z, 50, false, true));
+        }
+        if (TryFrontierTransport(bot, new CampDestination("relic-port-home", passage.Location.Name, "frontier", passage.Region,
+                passage.Location.X, passage.Location.Y, passage.Location.Z, 50, false, true)))
+        {
+            _carrierPortFailingSince = 0;
+            _carrierProgressTick = now;   // boarding is headway
+            return true;
+        }
+        if (_carrierPortFailingSince == 0) _carrierPortFailingSince = now;
+        if (!CarrierGivesUpPort(_carrierPortFailingSince, now))
+        {
+            bot.StopMovingOnPath();
+            bot.StopMoving();
+            SetRvrStatus(bot, "Returning relic", "At the portal keep", "Waiting for the port home");
+            return true;
+        }
+        _carrierPortGivenUp = true;
+        bot.TempProperties.RemoveProperty(AutonomousFrontierTransport.RequestKey);
+        if (Log.IsWarnEnabled)
+            Log.Warn($"RELIC_CARRIER_PORT_FAILED bot=\"{bot.Name}\" relic=\"{carried.Name}\" porter=\"{porter.Name}\" region={region} " +
+                $"reason=\"no boarding for {CarrierPortGiveUpMilliseconds / 1000} s; walking home through the dungeons\"");
+        return false;
     }
 
     private void ReportCarrierStuck(GameBot bot, GameRelic carried, long now, string reason)

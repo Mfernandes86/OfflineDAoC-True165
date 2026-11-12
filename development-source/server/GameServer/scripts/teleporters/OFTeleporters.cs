@@ -196,18 +196,20 @@ namespace DOL.GS.Scripts
 
             foreach (GamePlayer player in GetPlayersInRadius(500))
             {
-                // A relic carrier cannot be teleported (relic audit 2026-10-31, L7). Every other teleporter, portal stone
-                // and teleport spell already refused one, and the bots' frontier boarding does; the frontier porter
-                // circle did not, so a player could port a relic home while a bot had to walk it.
-                if (GameRelic.IsPlayerCarryingRelic(player))
-                {
-                    player.Out.SendMessage("You cannot teleport while carrying a relic.", eChatType.CT_System, eChatLoc.CL_SystemWindow);
-                    continue;
-                }
-
                 GameLocation PortLocation = null;
                 // True 1.65 Mode: the medallion is worn on the neck, as in 1.65 (the Mythical slot is an Atlas addition)
                 medallion = player.Inventory.GetItem(Classic165Mode.IsOn ? eInventorySlot.Neck : eInventorySlot.Mythical);
+
+                // A relic carrier cannot be teleported (relic audit 2026-10-31, L7), with one exception (owner 2026-11-12,
+                // relic audit B4): its own realm's portal keep in an enemy frontier sends it home with a home medallion, as
+                // relic raids of the period went home. Every other teleporter, portal stone and teleport spell refuses one.
+                if (GameRelic.IsPlayerCarryingRelic(player) &&
+                    !(medallion?.Id_nb == HomeID && GameRelic.CarrierMayTakePortalKeepPort(player.Realm, Realm, CurrentRegionID,
+                        GameRelic.HomeFrontierRegion(player.Realm))))
+                {
+                    player.Out.SendMessage("You can only take a relic home through your own portal keep.", eChatType.CT_System, eChatLoc.CL_SystemWindow);
+                    continue;
+                }
 
                 switch (player.Realm)
                 {

@@ -134,4 +134,42 @@ public sealed class UT_RelicLaneFixes
             Assert.That(AutonomousRvrEventLayer.CarrierBlocksSiege(eRealm.Midgard, eRealm.None, eRealm.None, [eRealm.Albion]), Is.False);
         });
     }
+
+    [Test]
+    public void ARelicCarrierTakesOnlyItsOwnPortalKeepsPortHome()
+    {
+        Assert.Multiple(() =>
+        {
+            // Albion's portal keep in Odin's Gate (Midgard frontier, region 100) and in Emain Macha (200) send it home to 1.
+            Assert.That(GameRelic.CarrierMayTakePortalKeepPort(eRealm.Albion, eRealm.Albion, 100, 1), Is.True);
+            Assert.That(GameRelic.CarrierMayTakePortalKeepPort(eRealm.Albion, eRealm.Albion, 200, 1), Is.True);
+            Assert.That(GameRelic.CarrierMayTakePortalKeepPort(eRealm.Hibernia, eRealm.Hibernia, 1, 200), Is.True);
+            Assert.That(GameRelic.CarrierMayTakePortalKeepPort(eRealm.Midgard, eRealm.Midgard, 200, 100), Is.True);
+            // Not to another frontier, not from home, not through another realm's porter.
+            Assert.That(GameRelic.CarrierMayTakePortalKeepPort(eRealm.Albion, eRealm.Albion, 100, 200), Is.False, "to Emain");
+            Assert.That(GameRelic.CarrierMayTakePortalKeepPort(eRealm.Albion, eRealm.Albion, 1, 100), Is.False, "out of home");
+            Assert.That(GameRelic.CarrierMayTakePortalKeepPort(eRealm.Albion, eRealm.Albion, 1, 1), Is.False, "home to home");
+            Assert.That(GameRelic.CarrierMayTakePortalKeepPort(eRealm.Albion, eRealm.Hibernia, 100, 1), Is.False, "Hibernia's porter");
+            // Not from a dungeon or a capital (no porter of this kind there), and not for a realmless carrier.
+            Assert.That(GameRelic.CarrierMayTakePortalKeepPort(eRealm.Albion, eRealm.Albion, 248, 1), Is.False, "Summoner's Hall");
+            Assert.That(GameRelic.CarrierMayTakePortalKeepPort(eRealm.None, eRealm.None, 100, 0), Is.False);
+            Assert.That(GameRelic.HomeFrontierRegion(eRealm.Midgard), Is.EqualTo(100));
+        });
+    }
+
+    [Test]
+    public void TheCarrierWaitsForItsEscortAtTheBorderKeepAndGivesItsPortUpOnlyAfterLongFailure()
+    {
+        long regroup = AutonomousWorldBotController.CarrierRegroupMilliseconds;
+        long giveUp = AutonomousWorldBotController.CarrierPortGiveUpMilliseconds;
+        Assert.Multiple(() =>
+        {
+            Assert.That(AutonomousWorldBotController.CarrierRegrouped(2, 10_000), Is.False, "waits");
+            Assert.That(AutonomousWorldBotController.CarrierRegrouped(AutonomousWorldBotController.CarrierRegroupEscorts, 10_000), Is.True, "escort here");
+            Assert.That(AutonomousWorldBotController.CarrierRegrouped(0, regroup), Is.True, "not forever");
+            Assert.That(AutonomousWorldBotController.CarrierGivesUpPort(0, 10 * giveUp), Is.False, "never failed");
+            Assert.That(AutonomousWorldBotController.CarrierGivesUpPort(1_000, 1_000 + giveUp - 1), Is.False);
+            Assert.That(AutonomousWorldBotController.CarrierGivesUpPort(1_000, 1_000 + giveUp), Is.True);
+        });
+    }
 }
