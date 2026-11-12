@@ -1556,6 +1556,11 @@ namespace DOL.AI.Brain
                 return;
             }
 
+            // M6 (veteran review 2026-11-11): a party that called RUN, a solo bot bailing out, a hired healer surviving
+            // to raise its player: run, fight nothing
+            if (BotBody?.IsOnStableMasterRoute == false && TryHoldRetreat())
+                return;
+
             AutonomousBotRealmAbilities.UseActives(BotBody);
 
             // Once a stable ticket has boarded, its waypoint chain exclusively
@@ -3870,6 +3875,10 @@ namespace DOL.AI.Brain
         public virtual void AttackMostWanted()
         {
             if (!IsActive)
+                return;
+
+            // M6: a solo caster steps straight back from a rooted or snared monster (once per 20 s, no route)
+            if (TryCasterStepBack())
                 return;
 
             if (AutonomousDefensivePull.Hold(BotBody) || SoloRangedPull165.Hold(BotBody))

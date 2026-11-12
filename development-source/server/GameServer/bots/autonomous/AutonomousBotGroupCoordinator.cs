@@ -1818,9 +1818,12 @@ public static partial class AutonomousBotGroupCoordinator
             FinishGroupTask(session, "No living group leader remains");
             return false;
         }
-        // M2: the role sheet follows member and puller changes
+        // M2: the role sheet follows member and puller changes; M6: a fighting party calls RUN before a wipe
         if (raidView == null && session.ObjectiveKind == eAutonomousObjectiveKind.GroupPve)
+        {
             RefreshRoleSheet(session, members);
+            CheckGroupRun(session, members, leader);
+        }
 
         // Only enrolled dragon/epic parties use simultaneous hub assembly.
         // Automatic and forced enrollment share this path. Never wait for a
@@ -2448,6 +2451,7 @@ public static partial class AutonomousBotGroupCoordinator
             return;
         session.Ending = true;
         BotGroupRoles.Publish(session.Group, null);
+        BotGroupRetreat.Clear(session.Group);
         GameBot[] members = AllBotMembers(session.Group);
         if (session.ObjectiveKind == eAutonomousObjectiveKind.RvR)
             AutonomousRvrEventLayer.RemoveForce(session.Id);

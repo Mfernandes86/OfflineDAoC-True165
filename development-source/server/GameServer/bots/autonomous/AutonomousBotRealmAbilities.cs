@@ -360,6 +360,34 @@ public static class AutonomousBotRealmAbilities
         }
     }
 
+    /// <summary>
+    /// M6 (veteran review 2026-11-11): a bot leaving a lost fight (a party's RUN, a solo bail-out, a companion healer
+    /// surviving to raise) uses its escape active when it owns one and it is ready: Vanish, else Speed of Sound.
+    /// </summary>
+    public static bool TryUseEscape(GameBot bot)
+    {
+        if (bot == null || !bot.IsAlive || bot.IsMezzed || bot.IsStunned || !States.TryGetValue(bot, out State state))
+            return false;
+        foreach (string key in EscapeActives)
+            foreach (TimedRealmAbility ability in state.Actives)
+            {
+                if (ability.KeyName != key || bot.GetSkillDisabledDuration(ability) > 0) continue;
+                ability.Execute(bot);
+                if (ability.KeyName == Vanish && bot.IsStealthed)
+                {
+                    bot.StopAttack();
+                    (bot.Brain as DOL.AI.Brain.BotBrain)?.ClearAggroList();
+                }
+                Log.Info($"BOT_REALM_ABILITY_USED bot={bot.Name} ability={ability.KeyName.Replace("AtlasOF_", "")} " +
+                    $"health={bot.HealthPercent} reason=escape region={bot.CurrentRegionID}");
+                return true;
+            }
+        return false;
+    }
+
+    /// <summary>The escape actives, in the order a bot leaving a fight tries them.</summary>
+    public static readonly string[] EscapeActives = { Vanish, SpeedOfSound };
+
     /// <summary>What the True 1.65 actives look at, read once per check.</summary>
     public readonly record struct Situation(bool InCombat, bool Battleground, int Health, int Mana, bool Controlled,
         bool Sitting, bool Casting, bool Interrupted, int GroupNear, int GroupHurt, bool GroupFighting, bool DeadMemberNear);
