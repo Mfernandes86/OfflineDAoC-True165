@@ -25,17 +25,27 @@ namespace DOL.GS
         public override string Name { get { return OwnerPlayer != null ? LanguageMgr.GetTranslation(OwnerPlayer.Client, "Effects.StagEffect.Name") : "Stag"; } }
         public override bool HasPositiveEffect { get { return true; } }
 
+        /// <summary>The Stag form's model: the Lurikeen Stag Man for a lurikeen, the Stag Man for every other race.</summary>
+        public static ushort FormModel(int race) => race == (int)eRace.Lurikeen ? (ushort)13 : (ushort)4;
+
+        /// <summary>
+        /// Who takes the form: a player, and a gamebot or hired companion Hero (a GameBot is player-like but is not a
+        /// GamePlayer, so it kept its own figure through the whole effect; the Berserker's Vendo form already covered
+        /// both). Their race, or null for anything else: a monster keeps its model.
+        /// </summary>
+        public static int? FormRace(GameLiving owner) => owner switch
+        {
+            GamePlayer player => player.Race,
+            GameBot bot => bot.Race,
+            _ => null,
+        };
+
         public override void OnStartEffect()
         {
 			m_originalModel = Owner.Model;
 
-			//TODO differentiate model between Lurikeens and other races
-			if (OwnerPlayer != null)
-			{
-				if (OwnerPlayer.Race == (int)eRace.Lurikeen)
-					OwnerPlayer.Model = 13;
-				else OwnerPlayer.Model = 4;
-			}
+			if (FormRace(Owner) is int race)
+				Owner.Model = FormModel(race);
 
 
 			double m_amountPercent = (m_level + 0.5 + Util.RandomDouble()) / 10; //+-5% random
