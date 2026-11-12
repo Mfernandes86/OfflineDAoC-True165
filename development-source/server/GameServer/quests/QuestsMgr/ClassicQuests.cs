@@ -150,6 +150,131 @@ namespace DOL.GS.Quests
             /// comes first (quest audit 2026-11-11, P08-E3: The Red Dagger 20 and 25, Thane's Blood and An End to the
             /// Daggers opened after the level 15 part).</summary>
             public List<int> RequiresAnyOf { get; set; } = new();
+            /// <summary>A kill task (Collection quest) whose turn-in paid a random reward per item; null: the row's fixed
+            /// RewardXP.</summary>
+            public CollectRewards CollectRewards { get; set; }
+        }
+
+        /// <summary>
+        /// The period kill tasks that paid a random reward for each item handed in: experience, some silver, or a gem;
+        /// two of them sometimes freed something hostile instead (quest audit 2026-11-11, P01: Allakhazam 449, 468, 438,
+        /// 404, 1815, 536, comments from 2002-04). Each item is rolled once against the weights; one hostile at most per
+        /// hand-in. Nothing ticks.
+        /// </summary>
+        public sealed class CollectRewards
+        {
+            public enum Kind { Xp, Money, Item, Hostile }
+
+            /// <summary>Weight of the quest row's own RewardXP.</summary>
+            public int XpWeight { get; set; }
+            public int MoneyWeight { get; set; }
+            /// <summary>Copper paid when money is rolled: a random amount between MoneyMin and MoneyMax.</summary>
+            public long MoneyMin { get; set; }
+            public long MoneyMax { get; set; }
+            public int ItemWeight { get; set; }
+            /// <summary>Item Id_nbs; one is picked at random when an item is rolled.</summary>
+            public List<string> Items { get; set; } = new();
+            public int HostileWeight { get; set; }
+            public string HostileName { get; set; }
+            public int HostileTemplateId { get; set; }
+            public byte HostileLevel { get; set; }
+            public ushort HostileModel { get; set; }
+
+            /// <summary>The reward a roll in [0, total weight) lands on; Xp when no weight is set (or an item/hostile
+            /// has nothing to give).</summary>
+            public Kind Pick(int roll)
+            {
+                foreach ((Kind kind, int weight) in Weights())
+                {
+                    if (roll < weight)
+                        return kind;
+                    roll -= weight;
+                }
+                return Kind.Xp;
+            }
+
+            public int TotalWeight => Weights().Sum(w => w.Weight);
+
+            private IEnumerable<(Kind Kind, int Weight)> Weights()
+            {
+                yield return (Kind.Xp, Math.Max(0, XpWeight));
+                yield return (Kind.Money, MoneyMax > 0 ? Math.Max(0, MoneyWeight) : 0);
+                yield return (Kind.Item, Items is { Count: > 0 } ? Math.Max(0, ItemWeight) : 0);
+                yield return (Kind.Hostile, !string.IsNullOrWhiteSpace(HostileName) ? Math.Max(0, HostileWeight) : 0);
+            }
+        }
+
+        /// <summary>The random turn-in rewards of a Collection quest, or null.</summary>
+        public static CollectRewards CollectRewardsFor(int questId) =>
+            _config.Quests.TryGetValue(questId, out QuestInfo info) ? info.CollectRewards : null;
+
+        /// <summary>
+        /// One item handed in to a kill task with <see cref="CollectRewards"/>: rolls what it pays. Experience is the row's
+        /// fixed figure; a hostile appears only if <paramref name="hostileAllowed"/> (one per hand-in). Returns true when a
+        /// hostile appeared.
+        /// </summary>
+        public static bool GiveCollectReward(GamePlayer player, GameObject giver, CollectRewards rewards, long rewardXp, bool hostileAllowed)
+        {
+            int total = rewards.TotalWeight;
+            CollectRewards.Kind kind = total > 0 ? rewards.Pick(Util.Random(total - 1)) : CollectRewards.Kind.Xp;
+            if (kind == CollectRewards.Kind.Hostile && !hostileAllowed)
+                kind = CollectRewards.Kind.Xp;
+            switch (kind)
+            {
+                case CollectRewards.Kind.Money:
+                    long copper = Util.Random((int)Math.Max(1, Math.Min(int.MaxValue, rewards.MoneyMin)), (int)Math.Min(int.MaxValue, Math.Max(rewards.MoneyMin, rewards.MoneyMax)));
+                    player.AddMoney(copper, "You receive {0}.");
+                    InventoryLogging.LogInventoryAction(giver, player, eInventoryActionType.Quest, copper);
+                    return false;
+                case CollectRewards.Kind.Item:
+                    DbItemTemplate template = GameServer.Database.FindObjectByKey<DbItemTemplate>(rewards.Items[Util.Random(rewards.Items.Count - 1)]);
+                    if (template != null && player.Inventory.AddTemplate(GameInventoryItem.Create(template), 1, eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack))
+                    {
+                        player.Out.SendMessage($"{giver?.GetName(0, true) ?? "You"} gives you {template.GetName(1, false)}.", PacketHandler.eChatType.CT_System, PacketHandler.eChatLoc.CL_SystemWindow);
+                        InventoryLogging.LogInventoryAction(giver, player, eInventoryActionType.Quest, template);
+                        return false;
+                    }
+                    player.ForceGainExperience(rewardXp);
+                    return false;
+                case CollectRewards.Kind.Hostile:
+                    if (SpawnHostile(player, rewards))
+                        return true;
+                    player.ForceGainExperience(rewardXp);
+                    return false;
+                default:
+                    player.ForceGainExperience(rewardXp);
+                    return false;
+            }
+        }
+
+        /// <summary>The thing a turn-in frees: beside the player on walkable ground, attacking it, gone after five minutes.</summary>
+        private static bool SpawnHostile(GamePlayer player, CollectRewards rewards)
+        {
+            var npc = new GameNPC();
+            if (rewards.HostileTemplateId > 0 && NpcTemplateMgr.GetTemplate(rewards.HostileTemplateId) is INpcTemplate template)
+                npc.LoadTemplate(template);
+            npc.Name = rewards.HostileName;
+            if (rewards.HostileLevel > 0) npc.Level = rewards.HostileLevel;
+            if (rewards.HostileModel > 0) npc.Model = rewards.HostileModel;
+            if (npc.Model == 0) npc.Model = BodiedModel(rewards.HostileName, player.CurrentRegionID);
+            if (npc.Model == 0)
+            {
+                Log.Warn($"CLASSIC_QUEST_TURNIN_HOSTILE_NO_MODEL name=\"{rewards.HostileName}\": not spawned (give it a HostileModel or HostileTemplateId)");
+                return false;
+            }
+            npc.Realm = eRealm.None;
+            var at = ApproachPoint(player, 0);
+            npc.CurrentRegionID = player.CurrentRegionID;
+            npc.X = (int)at.X; npc.Y = (int)at.Y; npc.Z = (int)at.Z;
+            npc.Heading = npc.GetHeading(player);
+            npc.RespawnInterval = -1;
+            npc.TempProperties.SetProperty(EventSpawnProperty, player.Name);
+            npc.Flags &= ~(GameNPC.eFlags.PEACE | GameNPC.eFlags.CANTTARGET);
+            if (!npc.AddToWorld())
+                return false;
+            if (npc.Brain is DOL.AI.Brain.StandardMobBrain brain) brain.AddToAggroList(player, 1);
+            new ECSGameTimer(npc, _ => { if (npc.ObjectState == GameObject.eObjectState.Active) npc.Delete(); return 0; }, 300_000);
+            return true;
         }
 
         /// <summary>The branch rules of a classic quest (<see cref="QuestInfo.OnlyDuring"/>,

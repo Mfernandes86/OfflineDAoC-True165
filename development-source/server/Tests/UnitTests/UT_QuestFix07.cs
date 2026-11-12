@@ -79,6 +79,35 @@ public class UT_QuestFix07
         Assert.That(QuestTalkTruce.TalkedToBeforeThisHunt(At, step, "Fallen One", 200), Is.EqualTo(truce));
     }
 
+    [Test]
+    public void CollectRewardsParseAndRollByWeight()
+    {
+        var config = Parse("""
+        { "Quests": { "117": { "Steps": [ null ], "CollectRewards": { "XpWeight": 50, "MoneyWeight": 30, "MoneyMin": 4000, "MoneyMax": 6000,
+            "ItemWeight": 15, "Items": [ "gem_a", "gem_b" ], "HostileWeight": 5, "HostileName": "freed spirit", "HostileLevel": 30 } } } }
+        """);
+        var rewards = config.Quests[117].CollectRewards;
+        Assert.Multiple(() =>
+        {
+            Assert.That(rewards.TotalWeight, Is.EqualTo(100));
+            Assert.That(rewards.Pick(0), Is.EqualTo(ClassicQuests.CollectRewards.Kind.Xp));
+            Assert.That(rewards.Pick(49), Is.EqualTo(ClassicQuests.CollectRewards.Kind.Xp));
+            Assert.That(rewards.Pick(50), Is.EqualTo(ClassicQuests.CollectRewards.Kind.Money));
+            Assert.That(rewards.Pick(80), Is.EqualTo(ClassicQuests.CollectRewards.Kind.Item));
+            Assert.That(rewards.Pick(95), Is.EqualTo(ClassicQuests.CollectRewards.Kind.Hostile));
+            Assert.That(rewards.Items, Has.Count.EqualTo(2));
+        });
+    }
+
+    [Test]
+    public void ACollectRewardWithNothingToGiveHasNoWeight()
+    {
+        var rewards = new ClassicQuests.CollectRewards { XpWeight = 10, ItemWeight = 90, HostileWeight = 50 };   // no items, no hostile name
+        Assert.That(rewards.TotalWeight, Is.EqualTo(10));
+        Assert.That(rewards.Pick(5), Is.EqualTo(ClassicQuests.CollectRewards.Kind.Xp));
+        Assert.That(new ClassicQuests.CollectRewards().TotalWeight, Is.Zero);
+    }
+
     [TestCase(0, false)]
     [TestCase(3, true)]
     [TestCase(35, true)]

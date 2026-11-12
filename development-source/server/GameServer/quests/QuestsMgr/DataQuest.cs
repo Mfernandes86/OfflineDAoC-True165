@@ -2243,6 +2243,17 @@ namespace DOL.GS.Quests
 			if (StartType == eStartType.Collection && item.Id_nb.Equals(DBDataQuest.CollectItemTemplate))
 			{
 				DbCharacterXDataQuest charQuest = GetCharacterQuest(player, ID, true);
+				// True 1.65: some period kill tasks paid a random reward per item (classic-quests.json CollectRewards; quest
+				// audit 2026-11-11, P01); without one the row's fixed RewardXP, as before.
+				ClassicQuests.CollectRewards collectRewards = ClassicQuests.CollectRewardsFor(ID);
+				bool hostileFreed = false;
+				void GiveTurnInReward(long xp)
+				{
+					if (collectRewards == null)
+						player.ForceGainExperience(xp);
+					else if (ClassicQuests.GiveCollectReward(player, obj, collectRewards, xp, !hostileFreed))
+						hostileFreed = true;
+				}
 
 				if (charQuest.Count < MaxQuestCount && player.Level <= MaxLevel && player.Level >= Level)
 				{
@@ -2261,7 +2272,7 @@ namespace DOL.GS.Quests
 								rewardXP = player.GetExperienceNeededForLevel(player.Level) / 50;
 							else if (!Classic165Mode.IsOn && lvlXP > rewardXP)   // True 1.65: the period fixed reward per item (owner 2026-11-01)
 								rewardXP = lvlXP;
-							player.ForceGainExperience(rewardXP);
+							GiveTurnInReward(rewardXP);
 						}
 						if (m_sourceTexts.Count > 0)
 						{
@@ -2288,7 +2299,7 @@ namespace DOL.GS.Quests
 										rewardXP = player.GetExperienceNeededForLevel(player.Level) / 50;
 									else if (!Classic165Mode.IsOn && lvlXP > rewardXP)   // True 1.65: the period fixed reward per item (owner 2026-11-01)
 										rewardXP = lvlXP;
-									player.ForceGainExperience(rewardXP);
+									GiveTurnInReward(rewardXP);
 								}
 								//remove only the remaining turn-ins
 								item.Count -= 1;
@@ -2307,7 +2318,7 @@ namespace DOL.GS.Quests
 										rewardXP = player.GetExperienceNeededForLevel(player.Level) / 50;
 									else if (!Classic165Mode.IsOn && lvlXP > rewardXP)   // True 1.65: the period fixed reward per item (owner 2026-11-01)
 										rewardXP = lvlXP;
-									player.ForceGainExperience(rewardXP);
+									GiveTurnInReward(rewardXP);
 								}
 								//remove only the remaining turn-ins
 								item.Count -= 1;
