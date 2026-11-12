@@ -55,7 +55,11 @@ namespace DOL.GS.Quests.Hibernia
 		protected const int minimumLevel = 50;
 		protected const int maximumLevel = 50;
 
-		private static GameNPC Brigit = null; // Start NPC        
+		private static GameNPC Brigit = null; // Start NPC
+
+		/// <summary>True 1.65 Mode: the period The Moonstone Twin (level 50), Allakhazam quest 299: after the level 47 part (the Faerie Queen) the player slays Caithor in the Cursed Forest; the moonstone's twin goes back to Brigit, who sends the player to Lauralaye near the vault keeper for the armour.</summary>
+		private const string Line165 = "The Moonstone Twin";
+		private static readonly string Title165 = Epics165.FinaleTitle(Line165);        
 		private static GhostOfCaithor Caithor = null; // Mob to kill
 
 		private static DbItemTemplate Moonstone = null; //ball of flame
@@ -1250,6 +1254,12 @@ namespace DOL.GS.Quests.Hibernia
 
 			#endregion
 
+			if (Classic165Mode.IsOn)
+			{
+				Load165();
+				return;
+			}
+
 			GameEventMgr.AddHandler(GamePlayerEvent.AcceptQuest, new DOLEventHandler(SubscribeQuest));
 			GameEventMgr.AddHandler(GamePlayerEvent.DeclineQuest, new DOLEventHandler(SubscribeQuest));
 
@@ -1266,6 +1276,11 @@ namespace DOL.GS.Quests.Hibernia
 		[ScriptUnloadedEvent]
 		public static void ScriptUnloaded(DOLEvent e, object sender, EventArgs args)
 		{
+			if (Classic165Mode.IsOn)
+			{
+				Unload165();
+				return;
+			}
 			//if not loaded, don't worry
 			if (Brigit == null)
 				return;
@@ -1279,6 +1294,76 @@ namespace DOL.GS.Quests.Hibernia
 			/* Now we remove to Brigit the possibility to give this quest to players */
 			Brigit.RemoveQuestToGive(typeof (Essence_50));
 		}
+
+		#region True 1.65 Mode: The Moonstone Twin (level 50), after the line's level 47 part
+
+		private static void Load165()
+		{
+			if (Brigit == null)
+			{
+				log.Warn("True 1.65 Mode: Brigit not found, \"" + Title165 + "\" not loaded");
+				return;
+			}
+			GameEventMgr.AddHandler(GamePlayerEvent.AcceptQuest, new DOLEventHandler(SubscribeQuest));
+			GameEventMgr.AddHandler(GamePlayerEvent.DeclineQuest, new DOLEventHandler(SubscribeQuest));
+			GameEventMgr.AddHandler(Brigit, GameObjectEvent.Interact, new DOLEventHandler(TalkToBrigit165));
+			Brigit.AddQuestToGive(typeof(Essence_50));
+			if (log.IsInfoEnabled)
+				log.Info("Quest \"" + Title165 + "\" initialized (True 1.65 Mode, starts with Brigit)");
+		}
+
+		private static void Unload165()
+		{
+			if (Brigit == null)
+				return;
+			GameEventMgr.RemoveHandler(GamePlayerEvent.AcceptQuest, new DOLEventHandler(SubscribeQuest));
+			GameEventMgr.RemoveHandler(GamePlayerEvent.DeclineQuest, new DOLEventHandler(SubscribeQuest));
+			GameEventMgr.RemoveHandler(Brigit, GameObjectEvent.Interact, new DOLEventHandler(TalkToBrigit165));
+			Brigit.RemoveQuestToGive(typeof(Essence_50));
+		}
+
+		/// <summary>No recorded period speech for the offer: the quest window itself makes the offer.</summary>
+		private static void TalkToBrigit165(DOLEvent e, object sender, EventArgs args)
+		{
+			GamePlayer player = ((SourceEventArgs) args).Source as GamePlayer;
+			if (player == null || player.IsDoingQuest(typeof(Essence_50)) != null || Brigit.CanGiveQuest(typeof(Essence_50), player) <= 0)
+				return;
+			player.Out.SendQuestSubscribeCommand(Brigit, QuestMgr.GetIDForQuestType(typeof(Essence_50)),
+				Title165 + ": slay Caithor in the Cursed Forest and bring back the moonstone's twin.");
+		}
+
+		private static void Accept165(GamePlayer player, byte response)
+		{
+			if (response == 0x00 || Brigit == null || player.IsDoingQuest(typeof(Essence_50)) != null ||
+			    Brigit.CanGiveQuest(typeof(Essence_50), player) <= 0)
+				return;
+			Brigit.GiveQuest(typeof(Essence_50), player, 1);
+		}
+
+		private string Description165 => Step switch
+		{
+			1 => "Kill the far dorochas guarding the steed along the west bank of the river in the Cursed Forest; a giant Caithor " +
+			     "appears. Kill him and the true Caithor appears with another set of far dorochas. Kill the true Caithor and take " +
+			     "the moonstone's twin.",
+			2 => "Return to Brigit and give her the moonstone.",
+			3 => "Brigit sends you to Lauralaye near the vault keeper for your reward. Make sure you have 6 free slots in your inventory.",
+			_ => base.Description
+		};
+
+		private void Notify165(DOLEvent e, GamePlayer player, EventArgs args)
+		{
+			if (Step == 2 && e == GamePlayerEvent.GiveItem && args is GiveItemEventArgs given && given.Target?.Name == Brigit.Name &&
+			    given.Item?.Id_nb == Moonstone.Id_nb)
+			{
+				RemoveItem(Brigit, player, Moonstone);
+				Step = 3;
+			}
+			else if (Step == 3 && e == GameObjectEvent.InteractWith && args is InteractWithEventArgs talk &&
+			         Epics165.IsNamed(player, talk.Target, "Lauralaye") && Epics165.HasRoomForArmour(player))
+				FinishQuest();
+		}
+
+		#endregion
 
 		protected static void TalkToBrigit(DOLEvent e, object sender, EventArgs args)
 		{
@@ -1393,6 +1478,11 @@ namespace DOL.GS.Quests.Hibernia
 			if (player.Level < minimumLevel || player.Level > maximumLevel)
 				return false;
 
+			// True 1.65 Mode: the finale follows the line's level 47 part (quest audit 2026-11-11, P03-E1: the
+			// prerequisite was commented out, so any level 50 of the class could take it without parts 43/45/47).
+			if (Classic165Mode.IsOn && !Epics165.FinishedLastPart(player, Line165))
+				return false;
+
 			return true;
 		}
 
@@ -1436,6 +1526,12 @@ namespace DOL.GS.Quests.Hibernia
 
 		private static void CheckPlayerAcceptQuest(GamePlayer player, byte response)
 		{
+			if (Classic165Mode.IsOn)
+			{
+				Accept165(player, response);
+				return;
+			}
+
 			if(Brigit.CanGiveQuest(typeof (Essence_50), player)  <= 0)
 				return;
 
@@ -1458,7 +1554,7 @@ namespace DOL.GS.Quests.Hibernia
 		//Set quest name
 		public override string Name
 		{
-			get { return "The Moonstone Twin (Level 50 Path of Essence Epic)"; }
+			get { return Classic165Mode.IsOn ? Title165 : "The Moonstone Twin (Level 50 Path of Essence Epic)"; }
 		}
 
 		// Define Steps
@@ -1466,6 +1562,8 @@ namespace DOL.GS.Quests.Hibernia
 		{
 			get
 			{
+				if (Classic165Mode.IsOn)
+					return Description165;
 				switch (Step)
 				{
 					case 1:
@@ -1498,6 +1596,11 @@ namespace DOL.GS.Quests.Hibernia
 					return;
 				}
 
+			}
+			if (Classic165Mode.IsOn && Step >= 2)
+			{
+				Notify165(e, player, args);
+				return;
 			}
 			if (Step == 2 && e == GamePlayerEvent.GiveItem)
 			{
