@@ -327,6 +327,9 @@ namespace DOL.GS.Commands
 					result.Append(bot.CurrentZone.Description);
 			}
 			result.Append(" [Playerbot]");
+			// a gamebot waiting for a party shows LFG, as a player's flag did (veteran-bots review 2026-11-11, rvr-social G6)
+			if (AutonomousObjectiveAssignments.IsAwaitingGroupMatchmaking(bot))
+				result.Append(" <LFG>");
 			return result.ToString();
 		}
 
@@ -340,6 +343,8 @@ namespace DOL.GS.Commands
 				return bot.Group == null;
 			if (first.Equals("frontiers", StringComparison.OrdinalIgnoreCase))
 				return bot.CurrentZone?.IsRvR == true;
+			if (first.Equals("lfg", StringComparison.OrdinalIgnoreCase))
+				return AutonomousObjectiveAssignments.IsAwaitingGroupMatchmaking(bot);
 			if (key is "help" or "staff" or "gm" or "admin" or "cg" or "bg" or "adv" or "rp" or "hc" or "hardcore")
 				return false;
 			if (int.TryParse(first, out int minimum))

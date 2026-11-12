@@ -74,6 +74,9 @@ public static class AutonomousBotChatCoordinator
             return CompanionChat165.TryAmbient(starter);
         if (!Eligible(starter))
             return false;
+        // a bot waiting for a party puts out an /lfg line now and then (veteran-bots review 2026-11-11, rvr-social G6)
+        if (AutonomousObjectiveAssignments.IsAwaitingGroupMatchmaking(starter) && TryLfgLine(starter))
+            return true;
 
         bool factionAudience = HasFactionAudience(starter.Realm);
         bool localAudience = HasLocalAudience(starter);
@@ -121,6 +124,71 @@ public static class AutonomousBotChatCoordinator
 
         ScheduleBotReplies(starter, opening, faction, false, topic, channel);
         return true;
+    }
+
+    private sealed class LfgBox
+    {
+        public long Next;
+    }
+
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<GameBot, LfgBox> NextLfg = new();
+    private static readonly Dictionary<eRealm, long> LastLfg = new();
+
+    /// <summary>One /lfg line per realm per 40 seconds at most.</summary>
+    public const long LfgRealmIntervalMilliseconds = 40_000;
+
+    /// <summary>
+    /// A bot waiting for a party (GroupPvE matchmaking) says one /lfg line every 3-6 minutes, as a 2003 player ran his
+    /// /lfg macro outside the dungeon, at most one line per realm per 40 seconds and only while a player of the realm is
+    /// online. A player who /sends or invites it is answered by the existing invite handling.
+    /// </summary>
+    private static bool TryLfgLine(GameBot bot)
+    {
+        if (!BotChatChannels165.PeriodChannels || !HasFactionAudience(bot.Realm))
+            return false;
+        long now = GameLoop.GameLoopTime;
+        LfgBox box = NextLfg.GetValue(bot, _ => new LfgBox { Next = now + Random.Shared.Next(60_000, 180_000) });
+        if (now < box.Next)
+            return false;
+        lock (Sync)
+        {
+            if (LastLfg.TryGetValue(bot.Realm, out long last) && now - last < LfgRealmIntervalMilliseconds)
+                return false;
+            LastLfg[bot.Realm] = now;
+        }
+        box.Next = now + Random.Shared.Next(180_000, 360_001);
+        string line = BotBanter165.TryOpener(bot, "lfg", "realm") ??
+                      BuiltInLfgLine(bot.Level, bot.CharacterClass?.Name ?? bot.ClassName, BotPartyRoleOf(bot), bot.CurrentZone?.Description, Random.Shared);
+        return BotChatChannels165.Send(BotChatChannels165.Channel.Lfg, bot, line);
+    }
+
+    private static string BotPartyRoleOf(GameBot bot) => bot.CharacterClass?.ID switch
+    {
+        (int)eCharacterClass.Cleric or (int)eCharacterClass.Friar or (int)eCharacterClass.Healer or (int)eCharacterClass.Shaman or
+            (int)eCharacterClass.Druid or (int)eCharacterClass.Bard or (int)eCharacterClass.Warden => "healer",
+        (int)eCharacterClass.Armsman or (int)eCharacterClass.Paladin or (int)eCharacterClass.Warrior or (int)eCharacterClass.Thane or
+            (int)eCharacterClass.Hero or (int)eCharacterClass.Champion => "tank",
+        (int)eCharacterClass.Sorcerer or (int)eCharacterClass.Enchanter or (int)eCharacterClass.Minstrel or
+            (int)eCharacterClass.Skald or (int)eCharacterClass.Mentalist => "cc",
+        _ => "dps",
+    };
+
+    /// <summary>A period /lfg macro line when the banter library has none for the bot.</summary>
+    public static string BuiltInLfgLine(int level, string className, string role, string zone, Random random)
+    {
+        random ??= Random.Shared;
+        string where = string.IsNullOrWhiteSpace(zone) ? string.Empty : $" around {zone}";
+        return (role, random.Next(4)) switch
+        {
+            ("healer", 0) => "healer lf xp grp",
+            ("healer", 1) => $"lvl {level} {className} lfg, can heal",
+            ("tank", 0) => $"{className} lf xp grp, can tank",
+            ("tank", 1) => $"lvl {level} tank lfg{where}",
+            ("cc", 0) => $"{className} lfg, have mez",
+            (_, 2) => $"lf xp grp{where}",
+            (_, 3) => $"{level} {className} lfg, any grp",
+            _ => $"lfg {level} {className}, ready now",
+        };
     }
 
     public static void OnPlayerFactionChat(GamePlayer player, string message)

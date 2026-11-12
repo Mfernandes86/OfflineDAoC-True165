@@ -38,6 +38,18 @@ public class UT_BotChatChannels165
     }
 
     [Test]
+    public void LfgMacroLinesAreShortAndNameTheBot()
+    {
+        for (int seed = 0; seed < 12; seed++)
+        {
+            string line = AutonomousBotChatCoordinator.BuiltInLfgLine(24, "Cleric", "healer", "Pennine Mountains", new System.Random(seed));
+            Assert.That(line, Does.Contain("lf").IgnoreCase);
+            Assert.That(line.Length, Is.LessThan(60));
+        }
+        Assert.That(AutonomousBotChatCoordinator.LfgRealmIntervalMilliseconds, Is.EqualTo(40_000));
+    }
+
+    [Test]
     public void WithTheSwitchOffEverythingStaysOnFaction()
     {
         BotChatChannels165.PeriodChannels = false;

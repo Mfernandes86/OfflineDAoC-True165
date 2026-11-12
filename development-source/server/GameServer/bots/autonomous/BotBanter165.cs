@@ -401,6 +401,10 @@ namespace DOL.GS
             return names;
         }
 
+        /// <summary>An opening line (never a reply) for a fixed situation (e.g. lfg), or null.</summary>
+        public static string TryOpener(GameBot bot, string situation, string channel) =>
+            bot == null || Current.Count == 0 ? null : Pick([situation], channel, bot, Read(bot).Values, false, out _);
+
         /// <summary>One line for a fixed situation (e.g. guild_join), or null.</summary>
         public static string TryLine(GameBot bot, string situation, string channel) =>
             bot == null || Current.Count == 0 ? null : Pick([situation], channel, bot, Read(bot).Values, null, out _);
