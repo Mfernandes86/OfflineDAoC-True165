@@ -24,4 +24,15 @@ public class UT_RealmRaidTravelFixes
         Assert.That(RealmRaidStaging.IsClear(new Vector3(5050, 0, 0), hazards), Is.False);
         Assert.That(RealmRaidStaging.IsClear(new Vector3(810, 0, 0), []), Is.True);
     }
+
+    [Test]
+    public void PlayerLootShareIsForScriptedEncountersNotEpicTrash()
+    {
+        Assert.That(RealmRaidLootOwner.IsScriptedEpicEncounter(typeof(GameEpicNPC)), Is.False);
+        Assert.That(RealmRaidLootOwner.IsScriptedEpicEncounter(typeof(GameEpicDungeonNPC)), Is.False);
+        Assert.That(RealmRaidLootOwner.IsScriptedEpicEncounter(typeof(GameNPC)), Is.False);
+        Assert.That(RealmRaidLootOwner.IsScriptedEpicEncounter(typeof(GameEpicBoss)), Is.True);
+        Assert.That(RealmRaidLootOwner.IsScriptedEpicEncounter(typeof(GrandSummonerGovannon)), Is.True);
+        Assert.That(RealmRaidLootOwner.IsScriptedEpicEncounter(typeof(SummonerRoesia)), Is.True);
+    }
 }

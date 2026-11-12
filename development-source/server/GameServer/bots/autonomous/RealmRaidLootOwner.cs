@@ -20,6 +20,18 @@ namespace DOL.GS
 
         public const int PlayerSharePercent = 25;
 
+        /// <summary>
+        /// Whether a raid kill is one whose loot a player in the encounter shares, apart from the raid's own boss and
+        /// final bosses: a scripted epic encounter (a named boss's own class), never the plain epic-class trash of the
+        /// world rows (GameEpicNPC, GameEpicDungeonNPC). Audits 2026-11-11 (sh-bosses M8, epic-bosses M3): the test was
+        /// "any epic-class monster", so in Summoner's Hall and the epic dungeons, where nearly every trash spawn is
+        /// epic-class, one trash item in four went to the player against the rule's own comment.
+        /// </summary>
+        public static bool SharesWithPlayers(GameNPC victim) => victim != null && IsScriptedEpicEncounter(victim.GetType());
+
+        public static bool IsScriptedEpicEncounter(Type type) => type != null && typeof(IGameEpicNpc).IsAssignableFrom(type) &&
+            type != typeof(GameEpicNPC) && type != typeof(GameEpicDungeonNPC);
+
         /// <summary>The real players in the encounter (set by the kill that drops the loot).</summary>
         internal GamePlayer[] Players { get; set; } = [];
         private readonly GameBot[] _members;
