@@ -844,10 +844,16 @@ namespace DOL.GS
                     if (busyLeft <= 0) continue;
                     busyLeft--;
                 }
-                bot.TargetObject = _target;
-                brain.AddToAggroList(_target, bot.InCombat || bot.IsAttacking ? 10_000 : 1);
-                brain.FSM.SetCurrentState(DOL.GS.eFSMStateType.AGGRO);
-                brain.NextThinkTick = GameLoop.GameLoopTime; // act on the call now, not at the next idle think
+                // The bot holds the call itself (sh-bosses L5): without that its party's kill target took it straight
+                // back on its next think. A bot that does not take the call (a tank holding its own target) is
+                // ordered the old way.
+                if (!brain.TakeRaidCall(_target))
+                {
+                    bot.TargetObject = _target;
+                    brain.AddToAggroList(_target, bot.InCombat || bot.IsAttacking ? 10_000 : 1);
+                    brain.FSM.SetCurrentState(DOL.GS.eFSMStateType.AGGRO);
+                    brain.NextThinkTick = GameLoop.GameLoopTime; // act on the call now, not at the next idle think
+                }
                 called++;
             }
             if (called > 0)
