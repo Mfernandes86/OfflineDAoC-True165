@@ -19,7 +19,7 @@ namespace DOL.GS
         public double CostPerPoint;     // expected net copper per point of the target (can be negative: a profit)
         public double SecondsPerPoint;
         public ushort RecipeId;         // the CraftedItem id (what the client sends to make it)
-        public int PointsPerGain;       // target points one gain gives (secondaries: one per matching ingredient entry)
+        public int PointsPerGain;       // target points one gain gives (the crafting skill rate per matching entry, capped)
     }
 
     /// <summary>The expected path from a skill now to a goal (average luck).</summary>
@@ -515,6 +515,8 @@ namespace DOL.GS
             public bool InCapitalCity;
             public int CraftingSkillBonus;
             public int MaxCraftTime;
+            /// <summary>Points per skill gain: the launcher's crafting skill rate (CraftingRate165; 1 = original).</summary>
+            public int Rate = 1;
             public readonly List<Candidate> Candidates = new();
         }
 
@@ -535,6 +537,7 @@ namespace DOL.GS
                 InCapitalCity = player?.CurrentRegion?.IsCapitalCity == true,
                 CraftingSkillBonus = player?.CurrentRegion?.IsCapitalCity == true ? player.CraftingSkillBonus : 0,
                 MaxCraftTime = ServerProperties.Properties.MAX_CRAFT_TIME,
+                Rate = CraftingRate165.PlayerRate,
             };
             if (player == null)
                 return ctx;
@@ -558,18 +561,22 @@ namespace DOL.GS
             return ctx;
         }
 
-        /// <summary>How many target points one gain of this recipe gives at these skills (secondaries stop at 1300).</summary>
-        public static int PointsPerGain(RecipeInfo info, eCraftingSkill target, int[] skills)
+        /// <summary>
+        /// How many target points one gain of this recipe gives at these skills: the crafting skill rate for the trade
+        /// itself or for each matching secondary entry (GainCraftingSkillPoints), secondaries stopping at 1300.
+        /// </summary>
+        public static int PointsPerGain(RecipeInfo info, eCraftingSkill target, int[] skills, int rate = 1)
         {
-            int points = 0;
+            int entries = 0;
             if (info.Trade == target)
-                points = 1;
+                entries = 1;
             else
             {
                 foreach (eCraftingSkill g in info.SecondaryGains)
                     if (g == target)
-                        points++;
+                        entries++;
             }
+            int points = entries * CraftingRate165.Sanitize(rate);
             if (points > 0 && IsCappedSecondary(target))
                 points = Math.Min(points, Math.Max(0, AbstractCraftingSkill.subSkillCap - skills[(int)target]));
             return points;
@@ -597,7 +604,7 @@ namespace DOL.GS
             points = 0;
             if (!info.Plannable || pMake <= 0 || pGain <= 0 || !SecondaryRequirementMet(info, skills))
                 return false;
-            points = PointsPerGain(info, ctx.Target, skills);
+            points = PointsPerGain(info, ctx.Target, skills, ctx.Rate);
             return points > 0;
         }
 
@@ -676,18 +683,15 @@ namespace DOL.GS
         }
 
         /// <summary>
-        /// One expected gain of a step: the trade +1 (secondaries stop at 1300) and each secondary entry +1 below 1300,
-        /// in GainCraftingSkillPoints order.
+        /// One expected gain of a step: the trade +rate (secondaries stop at 1300) and each secondary entry +rate up to
+        /// 1300, in GainCraftingSkillPoints order (rate = the crafting skill rate, 1 = the original single point).
         /// </summary>
-        public static void ApplyGain(RecipeInfo info, int[] skills)
+        public static void ApplyGain(RecipeInfo info, int[] skills, int rate = 1)
         {
-            if (!IsCappedSecondary(info.Trade) || skills[(int)info.Trade] < AbstractCraftingSkill.subSkillCap)
-                skills[(int)info.Trade]++;
+            int t = (int)info.Trade;
+            skills[t] += CraftingRate165.Points(skills[t], rate, IsCappedSecondary(info.Trade) ? AbstractCraftingSkill.subSkillCap : CraftingRate165.NoCap);
             foreach (eCraftingSkill g in info.SecondaryGains)
-            {
-                if (skills[(int)g] < AbstractCraftingSkill.subSkillCap)
-                    skills[(int)g]++;
-            }
+                skills[(int)g] += CraftingRate165.Points(skills[(int)g], rate, AbstractCraftingSkill.subSkillCap);
         }
 
         /// <summary>The expected (average luck) path from the player's skills now to the goal.</summary>
@@ -740,7 +744,7 @@ namespace DOL.GS
                 est.Resale += step.SellValue / step.PGain;
 
                 Array.Copy(skills, before, SkillSlots);
-                ApplyGain(FindInfo(ctx, step.RecipeId), skills);
+                ApplyGain(FindInfo(ctx, step.RecipeId), skills, ctx.Rate);
                 for (int i = 0; i < SkillSlots; i++)
                 {
                     if (skills[i] != before[i])
@@ -846,7 +850,8 @@ namespace DOL.GS
                 }
                 packets.Add(payload);
             }
-            packets.Add([(byte)trade, 0, 0, 0]);   // end of the list
+            // end of the list; byte 2 = points per skill gain (the crafting skill rate) so the window's per-point figures match
+            packets.Add([(byte)trade, 0, (byte)CraftingRate165.PlayerRate, 0]);
             return packets;
         }
 

@@ -45,6 +45,7 @@ namespace DOL.UnitTests
         private bool _classic;
         private int _sellRatio;
         private int _maxCraftTime;
+        private double _craftRate;
 
         [SetUp]
         public void Setup()
@@ -54,6 +55,7 @@ namespace DOL.UnitTests
             _classic = Properties.CLASSIC165_MODE;
             _sellRatio = Properties.ITEM_SELL_RATIO;
             _maxCraftTime = Properties.MAX_CRAFT_TIME;
+            _craftRate = Properties.CRAFTING_SKILL_RATE;
             Properties.CLASSIC165_MODE = true;
             Properties.ITEM_SELL_RATIO = 50;
             Properties.MAX_CRAFT_TIME = 0;
@@ -66,6 +68,7 @@ namespace DOL.UnitTests
             Properties.CLASSIC165_MODE = _classic;
             Properties.ITEM_SELL_RATIO = _sellRatio;
             Properties.MAX_CRAFT_TIME = _maxCraftTime;
+            Properties.CRAFTING_SKILL_RATE = _craftRate;
         }
 
         private static T Skill<T>(eCraftingSkill id) where T : AbstractCraftingSkill
@@ -457,6 +460,87 @@ namespace DOL.UnitTests
             Assert.That(est.Feasible, Is.True);
             Assert.That(est.Reached, Is.EqualTo(1000));
             Assert.That(watch.ElapsedMilliseconds, Is.LessThan(500));
+        }
+
+        // ---- the crafting skill rate (launcher option, owner 2026-11-12): a gain gives the rate in points
+
+        [Test]
+        public void Rate_ContextReadsTheLauncherOption()
+        {
+            Properties.CRAFTING_SKILL_RATE = 5;
+            Assert.That(CraftAssist165Economics.BuildContext(null, eCraftingSkill.Tailoring, true).Rate, Is.EqualTo(5));
+            Properties.CRAFTING_SKILL_RATE = 0;
+            Assert.That(CraftAssist165Economics.BuildContext(null, eCraftingSkill.Tailoring, true).Rate, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void Rate_PointsPerGainAndApplyGainUseItWithinTheCaps()
+        {
+            var info = CraftAssist165Economics.Describe(1, MakeRecipe(eCraftingSkill.Tailoring, 900, eObjectType.Leather, 1, (Leather, 30), (Cloth, 2), (Thread, 1)),
+                Skill<Tailoring>(eCraftingSkill.Tailoring));
+            int[] skills = CraftAssist165Economics.SkillArray(new Dictionary<eCraftingSkill, int>
+            {
+                [eCraftingSkill.Tailoring] = 1295, [eCraftingSkill.LeatherCrafting] = 1295, [eCraftingSkill.ClothWorking] = 1288,
+            });
+            Assert.That(CraftAssist165Economics.PointsPerGain(info, eCraftingSkill.Tailoring, skills, 10), Is.EqualTo(10));
+            Assert.That(CraftAssist165Economics.PointsPerGain(info, eCraftingSkill.ClothWorking, skills, 10), Is.EqualTo(12), "two entries, 12 to the cap");
+            Assert.That(CraftAssist165Economics.PointsPerGain(info, eCraftingSkill.LeatherCrafting, skills, 10), Is.EqualTo(5));
+            Assert.That(CraftAssist165Economics.PointsPerGain(info, eCraftingSkill.ClothWorking, skills, 1), Is.EqualTo(2), "1x unchanged");
+
+            CraftAssist165Economics.ApplyGain(info, skills, 10);
+            Assert.That(skills[(int)eCraftingSkill.Tailoring], Is.EqualTo(1305));         // the main trade has no cap
+            Assert.That(skills[(int)eCraftingSkill.LeatherCrafting], Is.EqualTo(1300));
+            Assert.That(skills[(int)eCraftingSkill.ClothWorking], Is.EqualTo(1300));     // +10, then +2 to the cap
+        }
+
+        [Test]
+        public void Rate_FiveTimesFewerCraftsMaterialsAndSeconds()
+        {
+            var cloth = Skill<ClothWorking>(eCraftingSkill.ClothWorking);
+            var doll = CraftAssist165Economics.Describe(7, MakeRecipe(eCraftingSkill.ClothWorking, 100, eObjectType.GenericItem, 0, (Material("x", 99, 10), 1)), cloth);
+            var start = new Dictionary<eCraftingSkill, int> { [eCraftingSkill.ClothWorking] = 100 };
+            var one = CraftAssist165Economics.Simulate(Context(eCraftingSkill.ClothWorking, (doll, 4, 20)), start, 110);
+            var ctx = Context(eCraftingSkill.ClothWorking, (doll, 4, 20));
+            ctx.Rate = 5;
+            var five = CraftAssist165Economics.Simulate(ctx, start, 110);
+
+            double attempts = 1 / (0.92 * 0.45);
+            Assert.That(one.Crafts, Is.EqualTo(10 * attempts).Within(1e-9));
+            Assert.That(five.Feasible, Is.True);
+            Assert.That(five.Reached, Is.EqualTo(110));
+            Assert.That(five.Crafts, Is.EqualTo(2 * attempts).Within(1e-9));         // two gains of five points
+            Assert.That(five.Seconds, Is.EqualTo(one.Seconds / 5).Within(1e-9));
+            Assert.That(five.MaterialCost, Is.EqualTo(one.MaterialCost / 5).Within(1e-9));
+            Assert.That(five.NetCost, Is.EqualTo(2 * 6 / 0.45).Within(1e-9));
+            Assert.That(CraftAssist165Economics.Pick(ctx, CraftAssist165Economics.SkillArray(start)).CostPerPoint,
+                Is.EqualTo(6 / (0.45 * 5)).Within(1e-9));
+        }
+
+        [Test]
+        public void Rate_TheLastGainMayPassTheGoal()
+        {
+            var cloth = Skill<ClothWorking>(eCraftingSkill.ClothWorking);
+            var doll = CraftAssist165Economics.Describe(7, MakeRecipe(eCraftingSkill.ClothWorking, 100, eObjectType.GenericItem, 0, (Material("x", 99, 10), 1)), cloth);
+            var ctx = Context(eCraftingSkill.ClothWorking, (doll, 4, 20));
+            ctx.Rate = 5;
+            var est = CraftAssist165Economics.Simulate(ctx, new Dictionary<eCraftingSkill, int> { [eCraftingSkill.ClothWorking] = 100 }, 103);
+            Assert.That(est.Crafts, Is.EqualTo(1 / (0.92 * 0.45)).Within(1e-9), "one gain, not three");
+            Assert.That(est.Reached, Is.EqualTo(105));
+        }
+
+        [Test]
+        public void Rate_ARecipeStopsWhenItGoesGrey()
+        {
+            var tailoring = Skill<Tailoring>(eCraftingSkill.Tailoring);
+            var low = CraftAssist165Economics.Describe(1, MakeRecipe(eCraftingSkill.Tailoring, 460, eObjectType.GenericItem, 0, (Material("a", 99, 1), 1)), tailoring);
+            var ctx = Context(eCraftingSkill.Tailoring, (low, 0, 10));
+            ctx.Rate = 3;
+            // gains at 500, 503, 506 and 509 (still green); the 509 gain gives its three points (512), then it is grey
+            var est = CraftAssist165Economics.Simulate(ctx, new Dictionary<eCraftingSkill, int> { [eCraftingSkill.Tailoring] = 500 }, 520);
+            Assert.That(est.Feasible, Is.False);
+            Assert.That(est.Reached, Is.EqualTo(512));
+            int[] at = CraftAssist165Economics.SkillArray(new Dictionary<eCraftingSkill, int> { [eCraftingSkill.Tailoring] = 512 });
+            Assert.That(CraftAssist165Economics.Pick(ctx, at), Is.Null, "the assistant never picks it once grey");
         }
 
         // ---- op 42
