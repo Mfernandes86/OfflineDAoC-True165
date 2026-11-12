@@ -60,6 +60,10 @@ hold). Its changelog has the history of everything this version inherits.
   and each bot dyes its kept pieces in one signature colour.
 - Performance for large populations: shared planning views, cached reachable regions, a per-tick cap on
   non-combat decisions, less log traffic, and the console and server.log written from a background queue.
+- Companions: drag a companion's items between its own bag, its paper doll and its figure. Everything used to have to
+  go through your own backpack (GitHub issue #50).
+- A second hostile Gokstad stood inside Muspelheim beside the friendly skald at the pass; he is gone. Osier, Cleddyf
+  Difwych and the Mad Sprite also stood twice and are one again (GitHub issue #50).
 
 ### Realm Exchange
 
@@ -110,6 +114,18 @@ in a live raid: a new world has no level 50 gamebots until they level up.
 - Relics: a realm takes the sentinel keeps one after another and then the relic keep. The carrier can go home
   through its own realm's portal keep, as relic raids of the period did, and through nothing else. A dropped
   relic returns after 30 minutes.
+- Keeps: the inner gate of Caer Erasleigh, Caer Boldiam, Caer Sursbrooke and Caer Berkstead can be hit in melee. The
+  server had that door about 1,380 units from the gate the game draws, so melee said out of range (GitHub issue #52).
+
+### Launcher and commands
+
+- Launcher: a CRAFTING SKILL RATE option under the XP rates (1x, 2x, 3x, 5x, 10x). Each skill gain gives that many
+  points, and the crafting assistant plans with it. Like the XP rates it can only be changed with the server
+  stopped. It applies to your characters; gamebot crafters are unchanged.
+- The Player XP rate now counts in the frontier zones, the battlegrounds, Darkness Falls, Summoner's Hall and the
+  frontier dungeons too, for you and your companions. It used to be 1x there whatever you chose (GitHub issue #51).
+- `/dfowner` is a GM command (the launcher's Make Me a GM could not run it) and takes `none`, `alb`, `mid` or `hib`
+  as well as 0-3 (GitHub issue #50).
 
 ### New client
 
@@ -117,6 +133,19 @@ in a live raid: a new world has no level 50 gamebots until they level up.
   ceiling (GitHub issue #42). A wet sliver at the edge of a water mask is no longer water (GitHub issue #44, Emain
   Macha).
 - Broadcast chat has its own channel instead of the system one.
+- The stutter in busy places is fixed: a figure coming into view made every figure of its kind in view rebuild its
+  animation data in the same frame, a freeze of 170-200 ms each time. On the walk down Camelot's main road frames
+  over 100 ms went from about 50 a minute to none.
+- Skies: every outdoor zone uses the 1.64 sky of its region. Muspelheim had a red sky from a later client that
+  changed in a single frame at the gates; it now has the Midgard sky and the red fog of the original, which fades in
+  as you walk in. The other zones with area fog in 1.64 have it too (GitHub issue #50).
+- The invisible boundary walls of the original client are in: you can no longer climb out of the playable ground,
+  for example over the rim of Muspelheim (GitHub issue #50).
+- Quickbar: a slot remembers the skill itself, so styles no longer swap under their icons after you train something
+  new (worst for a Berserker's Left Axe styles). Saved bars are converted by name. Tooltips can no longer land on
+  the wrong row (GitHub issue #50).
+- Going berserk, or into a Necromancer's shade, no longer freezes the game for most of a second: the form is loaded
+  in the background when you enter the world (GitHub issue #50).
 
 ## 0.6 (2026-11-11)
 
