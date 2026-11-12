@@ -22,7 +22,7 @@ namespace DOL.GS
         protected int m_level;
 
         public override ushort Icon { get { return 480; } }
-        public override string Name { get { return LanguageMgr.GetTranslation(((GamePlayer)Owner).Client, "Effects.StagEffect.Name"); } }
+        public override string Name { get { return OwnerPlayer != null ? LanguageMgr.GetTranslation(OwnerPlayer.Client, "Effects.StagEffect.Name") : "Stag"; } }
         public override bool HasPositiveEffect { get { return true; } }
 
         public override void OnStartEffect()

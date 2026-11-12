@@ -4846,13 +4846,21 @@ namespace DOL.AI.Brain
 
                         case Abilities.Stag:
                         {
-                            if (Body.TargetObject is GameLiving target)
+                            // Stag is a 15-minute ability: save it for fights that need it (the
+                            // same hard-fight test Berserk uses) instead of the first grey mob.
+                            if (Body.TargetObject is GameLiving target && HardFight(target) &&
+                                EffectListService.GetAbilityEffectOnTarget(Body, eEffect.Stag) == null)
                             {
                                 if (Body.IsWithinRadius(Body.TargetObject, Body.MeleeAttackRange) &&
                                     GameServer.ServerRules.IsAllowedToAttack(Body, target, true))
                                 {
-                                    new StagECSGameEffect(new ECSGameEffectInitParams(Body, StagAbilityHandler.DURATION * 1000, 1), ab.Level);
-                                    Body.DisableSkill(ab, StagAbilityHandler.DURATION * 5000);
+                                    // DURATION is already in milliseconds, and constructing an ECS
+                                    // effect does not start it. Start it the way Berserk does and
+                                    // only spend the real reuse timer once the effect was accepted.
+                                    var stag = new StagECSGameEffect(
+                                        new ECSGameEffectInitParams(Body, StagAbilityHandler.DURATION, 1), ab.Level);
+                                    if (stag.Start())
+                                        Body.DisableSkill(ab, StagAbilityHandler.REUSE_TIMER);
                                 }
                             }
                             break;
