@@ -3542,7 +3542,7 @@ namespace DOL.GS
                 // True 1.65 Mode: a monster already fighting someone outside the bot's group is theirs, as players left
                 // it (2026-10-31: ~15 bots shared Silvermine feccan; Champions' and Bards' openers landed on others' fights).
                 .Where(npc => !Classic165Mode.IsOn || !npc.InCombat || npc.TargetObject == bot ||
-                              npc.TargetObject is GameLiving fighting && bot.Group != null && fighting.Group == bot.Group)
+                              npc.TargetObject is GameLiving fighting && AutonomousMobClaims.SameFight(bot, fighting))
                 // ... and one another bot (or player) outside its group has pulled or hit, even before it turns on them
                 // (owner 2026-11-05: bots shared monsters and their XP)
                 .Where(npc => !AutonomousMobClaims.TakenByOther(bot, npc))
