@@ -22,6 +22,17 @@ namespace DOL.GS
         /// <summary>The bot's squad, fixed by its id.</summary>
         public static int SquadOf(long botId) => (int)(((ulong)botId * 0x9E3779B97F4A7C15UL >> 35) % Squads);
 
+        /// <summary>The share of a window over which one squad's members re-pick (four squads: 0-100 s of the 120 s).</summary>
+        public const long RepickSpreadMilliseconds = 25_000;
+
+        /// <summary>
+        /// When in the next window a member re-picks its roam point (performance review 2026-11-11): each squad at its own
+        /// 25-second slot, its members spread over that slot - not every roamer of every realm within the same 5 s, a burst
+        /// of navmesh picks and route plans every two minutes. Always inside the window, so the squad still agrees.
+        /// </summary>
+        public static long RepickOffsetMilliseconds(int squad, long objectId) =>
+            squad * RepickSpreadMilliseconds + (long)((ulong)objectId % (ulong)RepickSpreadMilliseconds);
+
         /// <summary>The landmark a squad heads for in a window: the same for all its members, different between squads.</summary>
         public static int AnchorIndex(eRealm realm, int squad, long window, int anchorCount)
         {

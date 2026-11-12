@@ -221,7 +221,8 @@ namespace DOL.GS
                 }
                 _battlegroundRoamPoint = anchor;
                 _nextBattlegroundRoamTick = BattlegroundSquads.Enabled
-                    ? (window + 1) * BattlegroundSquads.WindowMilliseconds + bot.ObjectID % 5_000
+                    ? (window + 1) * BattlegroundSquads.WindowMilliseconds +
+                      BattlegroundSquads.RepickOffsetMilliseconds(BattlegroundSquads.SquadOf(bot.DatabaseID), bot.ObjectID)
                     : now + 120_000 + bot.ObjectID % 30_000;
             }
             IssueVariedRvrPath(bot, _battlegroundRoamPoint.Value);

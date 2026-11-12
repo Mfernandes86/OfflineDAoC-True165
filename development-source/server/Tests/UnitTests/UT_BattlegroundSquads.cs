@@ -18,6 +18,22 @@ public class UT_BattlegroundSquads
     }
 
     [Test]
+    public void RoamersRepickSpreadOverTheWindowSquadBySquad()
+    {
+        var offsets = new HashSet<long>();
+        for (int squad = 0; squad < BattlegroundSquads.Squads; squad++)
+            for (long id = 0; id < 100_000; id += 37)
+            {
+                long offset = BattlegroundSquads.RepickOffsetMilliseconds(squad, id);
+                Assert.That(offset, Is.InRange(squad * BattlegroundSquads.RepickSpreadMilliseconds,
+                    (squad + 1) * BattlegroundSquads.RepickSpreadMilliseconds - 1), "each squad in its own slot");
+                Assert.That(offset, Is.LessThan(BattlegroundSquads.WindowMilliseconds), "still inside the window: the squad agrees");
+                offsets.Add(offset / 5_000);
+            }
+        Assert.That(offsets.Count, Is.GreaterThan(15), "not all in one 5-second burst");
+    }
+
+    [Test]
     public void ASquadsMembersShareTheirLandmarkAndItMovesOn()
     {
         int first = BattlegroundSquads.AnchorIndex(eRealm.Albion, 2, 100, 3);
