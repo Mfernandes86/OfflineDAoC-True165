@@ -27,5 +27,14 @@ namespace DOL.UnitTests
             Assert.That(brain.FSM.GetState(eFSMStateType.AGGRO), Is.InstanceOf<QuestFellowState_AGGRO>());
             Assert.That(brain.FSM.GetState(eFSMStateType.PATROLLING), Is.InstanceOf<StandardMobState_PATROLLING>());
         }
+
+        [Test]
+        public void AFellowNeverLeadsItselfOrAnotherFellow()
+        {
+            // the bwgan hunters: leader and fellow share a name
+            Assert.That(QuestFellowBrain.CanLead(isSelf: true, isFellow: true), Is.False);
+            Assert.That(QuestFellowBrain.CanLead(isSelf: false, isFellow: true), Is.False);
+            Assert.That(QuestFellowBrain.CanLead(isSelf: false, isFellow: false), Is.True);
+        }
     }
 }

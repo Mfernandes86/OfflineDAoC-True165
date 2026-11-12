@@ -43,6 +43,13 @@ namespace DOL.AI.Brain
             }
         }
 
+        /// <summary>
+        /// Pure: an NPC of the leader's name may lead this fellow - never the fellow itself and never another fellow
+        /// (quest verify 2026-11-11: the bwgan hunters' fellow has its leader's name, found itself at distance 0 and
+        /// stood at its spawn "following" itself, so the pair never walked together).
+        /// </summary>
+        public static bool CanLead(bool isSelf, bool isFellow) => !isSelf && !isFellow;
+
         private GameNPC FindLeader()
         {
             string name = ClassicQuests.FellowLeaderName(Body.InternalID);
@@ -53,6 +60,8 @@ namespace DOL.AI.Brain
             int bestDistance = int.MaxValue;
             foreach (GameNPC npc in WorldMgr.GetNPCsByNameFromRegion(name, Body.CurrentRegionID, Body.Realm))
             {
+                if (!CanLead(npc == Body, npc.Brain is QuestFellowBrain))
+                    continue;
                 int distance = npc.SpawnPoint.GetDistanceTo(Body.SpawnPoint);
                 if (distance < bestDistance)
                 {
