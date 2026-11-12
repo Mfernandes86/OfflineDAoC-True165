@@ -52,10 +52,10 @@ namespace DOL.GS
             // True 1.65 Mode: only real vials from the bag, used up (Supplies165); no free coats
             if (Classic165Mode.IsOn)
             {
-                bool coated = Supplies165.CoatFromVial(bot, eInventorySlot.RightHandWeapon, eSpellType.DamageOverTime, level);
-                coated |= Supplies165.CoatFromVial(bot, eInventorySlot.TwoHandWeapon, eSpellType.DamageOverTime, level);
-                coated |= Supplies165.CoatFromVial(bot, eInventorySlot.LeftHandWeapon, eSpellType.StrengthConstitutionDebuff, level) ||
-                          Supplies165.CoatFromVial(bot, eInventorySlot.LeftHandWeapon, eSpellType.DamageOverTime, level);
+                bool rvr = bot.CurrentRegion?.IsRvR == true;
+                bool coated = CoatFirst(bot, eInventorySlot.RightHandWeapon, MainHandPoisons(rvr), level);
+                coated |= CoatFirst(bot, eInventorySlot.TwoHandWeapon, MainHandPoisons(rvr), level);
+                coated |= CoatFirst(bot, eInventorySlot.LeftHandWeapon, OffHandPoisons(rvr), level);
                 if (coated) Changed(bot);
                 return coated;
             }
@@ -72,6 +72,34 @@ namespace DOL.GS
             changed |= Apply(bot, eInventorySlot.LeftHandWeapon, debuff ?? damage);
             if (changed) Changed(bot);
             return changed;
+        }
+
+        private static readonly eSpellType[] PveMainHand = [eSpellType.DamageOverTime];
+        private static readonly eSpellType[] RvrMainHand = [eSpellType.DamageOverTime, eSpellType.Disease];
+        private static readonly eSpellType[] PveOffHand = [eSpellType.StrengthConstitutionDebuff, eSpellType.DamageOverTime];
+        private static readonly eSpellType[] RvrOffHand =
+            [eSpellType.UnbreakableSpeedDecrease, eSpellType.StrengthConstitutionDebuff, eSpellType.DamageOverTime];
+
+        /// <summary>
+        /// Q32 (veteran review 2026-11-11; period assassins: crippling poison on the off-hand so the enemy cannot run,
+        /// lethal or disease on the main hand): the main-hand vials in order of preference, PvE or RvR.
+        /// </summary>
+        public static IReadOnlyList<eSpellType> MainHandPoisons(bool rvr) => rvr ? RvrMainHand : PveMainHand;
+
+        /// <summary>Q32: the off-hand vials in order of preference: crippling first in RvR, weakening in PvE.</summary>
+        public static IReadOnlyList<eSpellType> OffHandPoisons(bool rvr) => rvr ? RvrOffHand : PveOffHand;
+
+        /// <summary>Q32: the kinds an assassin gamebot keeps in its bag: crippling too while its job is RvR.</summary>
+        public static IReadOnlyList<eSpellType> StockedPoisons(bool rvrJob) => rvrJob
+            ? [eSpellType.DamageOverTime, eSpellType.StrengthConstitutionDebuff, eSpellType.UnbreakableSpeedDecrease]
+            : [eSpellType.DamageOverTime, eSpellType.StrengthConstitutionDebuff];
+
+        private static bool CoatFirst(GameBot bot, eInventorySlot slot, IReadOnlyList<eSpellType> order, int level)
+        {
+            foreach (eSpellType type in order)
+                if (Supplies165.CoatFromVial(bot, slot, type, level))
+                    return true;
+            return false;
         }
 
         /// <summary>The weapons the bot fights with now: the two-hander, or the main hand and a left-hand weapon.</summary>

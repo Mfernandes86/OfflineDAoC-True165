@@ -228,7 +228,9 @@ namespace DOL.GS
                 .Where(m => AutonomousBotEconomy.SellsForCoin(m) && m.TradeItems != null && (m.Realm == eRealm.None || m.Realm == bot.Realm))
                 .ToArray();
             bool bought = false;
-            foreach (eSpellType type in new[] { eSpellType.DamageOverTime, eSpellType.StrengthConstitutionDebuff })
+            // Q32: an assassin whose job is RvR also keeps crippling poison for its off-hand
+            bool rvrJob = AutonomousObjectiveAssignments.Is(bot, eAutonomousObjectiveKind.RvR) || bot.CurrentRegion?.IsRvR == true;
+            foreach (eSpellType type in BotPoisonSupply.StockedPoisons(rvrJob))
             {
                 int have = bot.Inventory.AllItems.Where(i => i != null && i.Object_Type == (int)eObjectType.Poison &&
                                                             PoisonSpell(i)?.SpellType == type).Sum(i => i.Count);
