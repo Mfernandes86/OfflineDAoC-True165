@@ -762,6 +762,9 @@ namespace DOL.GS
 		/// </summary>
 		public static List<DbDataQuest> DataQuestCache => _dataQuestCache.SelectMany(k => k.Value).ToList();
 
+		/// <summary>The data quest cache itself (start region -> rows); a new dictionary each time it is refilled.</summary>
+		public static Dictionary<ushort, List<DbDataQuest>> DataQuestCacheByRegion => _dataQuestCache;
+
 		/// <summary>
 		/// Load any data driven quests for this object
 		/// </summary>

@@ -1048,29 +1048,12 @@ namespace DOL.GS.Quests
 				}
 			}
 
-			// check to see if this quest requires another to be done first
-			if (m_questDependencies.Count > 0)
-			{
-				int numFound = 0;
-
-				foreach (string str in m_questDependencies)
-				{
-					foreach (AbstractQuest quest in finishedQuests)
-					{
-						// A finished scripted quest of that name counts too: Master Torr's Commencement needs his own
-						// scripted "Immediate Resolution" (ImmediateResolutionVB), and only three class-locked classic quests
-						// of that name counted, so every other class could never be offered it (quest probe 2026-10-15).
-						if (string.Equals(quest.Name, str, StringComparison.OrdinalIgnoreCase))
-						{
-							numFound++;
-							break;
-						}
-					}
-				}
-
-				if (numFound < m_questDependencies.Count)
-					return false;
-			}
+			// check to see if this quest requires another to be done first. A name shared by several parts of a chain needs
+			// the part just before this one, not any of them; scripted quests of a data quest chain's name no longer count
+			// for it; "#id" names exact rows (quest audit 2026-11-11, QuestDependencyRule).
+			if (m_questDependencies.Count > 0 &&
+			    !QuestDependencyRule.AllMet(m_questDependencies, DBDataQuest.Name, DBDataQuest.MinLevel, player, finishedQuests))
+				return false;
 
 			return true;
 		}
