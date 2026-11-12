@@ -226,7 +226,13 @@ func in_group() -> bool:
 func group_rows() -> Array:
 	if group.is_empty():
 		return []
-	var me := {"name": display_name(), "class_name": String(ClassDb.cls(_class_id()).get("name", "")), "level": level,
+	# your class as the server names it (Server.apply_to_player keeps it current), as the 1.64 group window showed the
+	# class the server sent; the class id is the one picked on the select screen and stays the base class after a
+	# promotion in the same session (GitHub #49: an Enchanter promoted at the trainer still read MAGICIAN here)
+	var cls := class_title() if Server.active else ""
+	if cls == "":
+		cls = String(ClassDb.cls(_class_id()).get("name", ""))
+	var me := {"name": display_name(), "class_name": cls, "level": level,
 			"hp": float(hp) / maxf(1.0, float(max_hp)), "hp_pts": hp,
 			"power": float(power_pts) / maxf(1.0, float(max_power)) if max_power > 0 else 0.0, "power_pts": power_pts,
 			"end": float(end_pts) / float(MAX_END), "effects": self_effects.call() if self_effects.is_valid() else [], "me": true}
