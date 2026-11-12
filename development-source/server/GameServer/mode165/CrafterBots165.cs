@@ -69,6 +69,8 @@ namespace DOL.GS
         {
             if (!Classic165Mode.IsOn || bot?.PersistentRecord is not { } record || bot.Inventory == null)
                 return;
+            // any gamebot at level 20, 30 or 40 may order its crafted set from the realm's crafters (CraftOrders165)
+            CraftOrders165.PostMilestoneOrders(bot);
             eCraftingSkill craft = CraftOf(record);
             if (craft == eCraftingSkill.NoCrafting)
                 return;
@@ -76,6 +78,9 @@ namespace DOL.GS
             if (NextCraft.TryGetValue(bot.DatabaseID, out long next) && now < next)
                 return;
             NextCraft[bot.DatabaseID] = now + CraftEveryMilliseconds;
+            // orders first: a crafter's real income (veteran-bots review 2026-11-11, economy G5)
+            if (craft is eCraftingSkill.ArmorCrafting or eCraftingSkill.Tailoring or eCraftingSkill.WeaponCrafting)
+                CraftOrders165.FillOrders(bot, record, craft);
             // A session is several combines, as a player's is (run 5, 2026-10-30: one combine per 30-minute errand left the
             // best bot crafter at skill 5 after five hours, so siege kits beyond rams and real crafted gear never came).
             // It stops when the bot can't pay for the next materials or has no room.
@@ -408,6 +413,10 @@ namespace DOL.GS
                 record.Dirty = true;
             }
         }
+
+        /// <summary>The recipes of a craft for a realm (loaded once per craft and realm), easiest first.</summary>
+        public static Recipe[] RecipesOf(eCraftingSkill craft, eRealm realm) =>
+            Recipes.GetOrAdd((craft, realm), key => LoadRecipes(key.Item1, key.Item2));
 
         /// <summary>The recipes of a craft with their material cost (each ingredient's template price x count).</summary>
         // Only recipes whose product is of the crafter's realm or of none (a player of that realm crafts only those).

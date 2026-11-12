@@ -355,7 +355,10 @@ namespace DOL.GS
         internal static void NoteRemovedFromWorld(GameBot bot)
         {
             if (bot != null)
+            {
                 AutonomousBotDyes.Forget(bot.DatabaseID);   // per-bot dye rest leaves with the bot (owner 2026-11-10)
+                CraftOrders165.Forget(bot.DatabaseID);      // its milestone set plan leaves with it (orders lapse on their own)
+            }
             if (bot == null || HiredCompanions165.IsHired(bot) || bot.IsTemporaryGroupHelper)
                 return;
             BotLogoutReason reason = Logouts.TryRemove(bot.DatabaseID, out LogoutIntent intent) ? intent.Reason
@@ -823,6 +826,7 @@ namespace DOL.GS
             AutonomousBotStatusPersistence.Forget(botId);
             AutonomousBotEconomy.ForgetCachedDecision(botId);
             AutonomousBotDyes.Forget(botId);
+            CraftOrders165.Forget(botId);
             if (!string.IsNullOrWhiteSpace(name))
                 BotNameService.ReleaseBotName(name);
             // The guild list and its social-window entry live on the game loop.
