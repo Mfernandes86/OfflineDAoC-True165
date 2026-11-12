@@ -3406,8 +3406,13 @@ namespace DOL.AI.Brain
 
         /// <summary>Q14: a class whose weapon swings a damage add or proc helps - not a pure caster or a healer.</summary>
         public static bool MeleeBuffHelps(ICharacterClass cls) =>
-            cls == null || cls.ClassType != eClassType.ListCaster &&
-            BotPartyRoles.For((eCharacterClass)cls.ID) != BotPartyRole.Support;
+            cls == null || MeleeBuffHelps(cls.ClassType, (eCharacterClass)cls.ID);
+
+        /// <summary>Pure. A Valewalker is a list caster by class type but fights with its scythe (review 2026-11-11: the
+        /// first version of Q14 took its damage adds away).</summary>
+        public static bool MeleeBuffHelps(eClassType classType, eCharacterClass characterClass) =>
+            (classType != eClassType.ListCaster || characterClass == eCharacterClass.Valewalker) &&
+            BotPartyRoles.For(characterClass) != BotPartyRole.Support;
 
         private eSpellType _cachedFightSong;
         private long _cachedFightSongUntil;
