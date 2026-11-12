@@ -21,6 +21,8 @@ public static class RealmMarketPass
 {
     public const int SellersPerPass = 40;
     public const double BudgetMilliseconds = 2.0;
+    /// <summary>Most bumped copies paid out per realm and pass (each payout writes to the database under the locks).</summary>
+    public const int MaxCreditsPerPass = 5;
 
     private static readonly int[] Cursor = new int[4];
 
@@ -45,8 +47,11 @@ public static class RealmMarketPass
         using (scope)
         {
             int count = Math.Min(SellersPerPass, sellers.Length);
+            int creditsAtStart = Exchange165.CreditCount;
             for (int i = 0; i < count; i++)
             {
+                if (Exchange165.CreditCount - creditsAtStart >= MaxCreditsPerPass)
+                    break;
                 int index = (Cursor[(int)realm] = (Cursor[(int)realm] + 1) % sellers.Length);
                 if (Step(sellers[index], utcNow))
                     actions++;

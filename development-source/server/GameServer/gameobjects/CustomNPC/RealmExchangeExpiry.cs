@@ -270,14 +270,20 @@ public static class RealmExchangeExpiry
 
     /// <summary>Most expired listings handled per sweep (bounded writes; the rest wait a minute).</summary>
     public const int MaxPerSweep = 200;
+    /// <summary>Most owners paid out per sweep: each payout writes to the database under the exchange and money locks
+    /// (review 2026-11-11: after a restart the catch-up of offline owners stalled merchant trades behind them).</summary>
+    public const int MaxCreditsPerSweep = 20;
 
     public static int ExpireDue(DateTime utcNow)
     {
         int removed = 0;
+        int creditsAtStart = Exchange165.CreditCount;
         // Once a minute, only the listings whose expiry minute has come (the expiry wheel): no full copy, no parsing of
         // every timestamp. Nothing runs in individual AI turns.
         foreach (DbInventoryItem item in MarketCache.ReadBook(book => book.Due(utcNow, MaxPerSweep)))
         {
+            if (Exchange165.CreditCount - creditsAtStart >= MaxCreditsPerSweep)
+                break;   // the rest wait for the next minute
             if (!IsExpired(item, utcNow))
             {
                 // the index had an older timestamp: re-read it so the wheel holds the real expiry
