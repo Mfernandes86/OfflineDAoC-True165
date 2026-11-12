@@ -785,6 +785,11 @@ public static class AutonomousPetSupport
             petBrain.Body.ObjectState is not GameObject.eObjectState.Active)
             return;
 
+        // Q15 (veteran review 2026-11-11): a Hunter keeps its pet at heel while it draws the Critical Shot opener on an
+        // idle monster (sent first, the pet put the monster in combat and the opener never happened)
+        if (ownerBrain.HoldsPetForCriticalShot(combatTarget, petBrain))
+            combatTarget = null;
+
         if (petBrain is ControlledMobBrain controlled)
         {
             controlled.AggroLevel = 0;

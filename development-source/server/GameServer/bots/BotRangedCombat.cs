@@ -160,6 +160,19 @@ namespace DOL.GS
                    stance == eBotStance.Auto && !targetInMeleeRange;
         }
 
+        /// <summary>How long a Hunter holds its pet back for its Critical Shot draw at most.</summary>
+        public const long CriticalShotPetHoldMilliseconds = 7_000;
+
+        /// <summary>
+        /// Pure (Q15, veteran review 2026-11-11; Prima's Hunter: "always with a critical shot followed by three or so
+        /// normal shots"): the pet waits while the owner, bow in hand and able to Critical Shot, opens on a monster that
+        /// is not fighting yet - but never longer than the hold, and never once the pet is already on it.
+        /// </summary>
+        public static bool HoldPetForCriticalShot(bool hasCriticalShot, bool bowInHand, bool targetIdle,
+            bool petAlreadyOnTarget, long heldMilliseconds) =>
+            hasCriticalShot && bowInHand && targetIdle && !petAlreadyOnTarget &&
+            heldMilliseconds < CriticalShotPetHoldMilliseconds;
+
         public static bool ShouldCloseToRangedRange(
             bool useRangedWeapon,
             int distanceToTarget,
