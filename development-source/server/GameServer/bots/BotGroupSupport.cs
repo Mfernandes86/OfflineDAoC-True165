@@ -78,6 +78,27 @@ namespace DOL.GS
         private sealed record HealClaim(GameLiving Target, Spell Spell, long Started, long Expires);
         private static readonly ConditionalWeakTable<object, State> States = new();
 
+        /// <summary>
+        /// Pure: which corpse is raised first (veteran review 2026-11-11, Q21; period groups raise the raisers first).
+        /// A human player first as before, then anyone who can raise others, then power users, then tanks, then the
+        /// rest; distance breaks ties.
+        /// </summary>
+        public static int ResurrectionOrder(bool humanPlayer, bool canResurrect, bool usesPower, bool tank) =>
+            humanPlayer ? 0 : canResurrect ? 1 : usesPower ? 2 : tank ? 3 : 4;
+
+        private static int ResurrectionOrder(GameLiving corpse)
+        {
+            ICharacterClass characterClass = corpse switch
+            {
+                GameBot b => b.CharacterClass,
+                GamePlayer p => p.CharacterClass,
+                _ => null
+            };
+            bool usesPower = characterClass?.ClassType is eClassType.ListCaster or eClassType.Hybrid && corpse.MaxMana > 0;
+            return ResurrectionOrder(corpse is GamePlayer, corpse is GameBot raiser && raiser.ResurrectionSpell != null,
+                usesPower, BotHealTriage165.IsTank(corpse));
+        }
+
         public static int CombatResurrectionBudget(int healers, int criticalMembers) =>
             Math.Max(0, Math.Min(healers / 2, healers - Math.Max(1, criticalMembers)));
 
@@ -133,7 +154,7 @@ namespace DOL.GS
             int budget = combat ? CombatResurrectionBudget(healers, critical) : healers;
             State state = States.GetOrCreateValue(scope);
             foreach (GameLiving corpse in members.Where(m => !m.IsAlive && m.ObjectState == GameObject.eObjectState.Active &&
-                m.CurrentRegionID == bot.CurrentRegionID && bot.IsWithinRadius(m, range)).OrderBy(m => m is GamePlayer ? 0 : 1).ThenBy(bot.GetDistanceTo))
+                m.CurrentRegionID == bot.CurrentRegionID && bot.IsWithinRadius(m, range)).OrderBy(ResurrectionOrder).ThenBy(bot.GetDistanceTo))
             {
                 if (!HasCorpseLineOfSight(bot, corpse)) continue;
                 if (corpse.TempProperties.GetProperty<GameLiving>("RESURRECT_CASTER") != null) continue;
