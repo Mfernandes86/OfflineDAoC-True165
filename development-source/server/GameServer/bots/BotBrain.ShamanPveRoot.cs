@@ -39,30 +39,13 @@ namespace DOL.AI.Brain
             if (roots.Length == 0)
                 return false;
 
-            GameLiving[] members = group.GetMembersInTheGroup()
-                .Where(member => member?.IsAlive == true && member.CurrentRegion == shaman.CurrentRegion)
-                .ToArray();
-            if (members.Length < 2)
+            // M5 (veteran review 2026-11-11): the group's fight board, not a member list and area search of its own
+            GroupFightBoard board = FightBoard();
+            HashSet<GameLiving> members = board.MemberSet;
+            if (board.Members.Length < 2)
                 return false;
-
-            HashSet<GameLiving> selectedTargets = new();
-            HashSet<GameLiving> activeTargets = new();
-            foreach (GameLiving member in members)
-            {
-                if (member.TargetObject is GameLiving target && target.IsAlive)
-                {
-                    selectedTargets.Add(target);
-                    if ((member.IsAttacking || member.InCombat) && target is GameNPC)
-                        activeTargets.Add(target);
-                }
-
-                if (member.ControlledBrain?.Body?.TargetObject is GameLiving petTarget && petTarget.IsAlive)
-                {
-                    selectedTargets.Add(petTarget);
-                    if (petTarget is GameNPC)
-                        activeTargets.Add(petTarget);
-                }
-            }
+            HashSet<GameLiving> selectedTargets = board.SelectedTargets;
+            HashSet<GameLiving> activeTargets = board.ActiveTargets;
             if (activeTargets.Count == 0)
                 return false;
 
@@ -71,9 +54,9 @@ namespace DOL.AI.Brain
                          .Select(pair => pair.Key).ToArray())
                 _shamanPveRootRetryUntil.Remove(expired);
 
-            List<GameNPC> nearby = shaman.GetNPCsInRadius(1800);
-            HashSet<GameLiving> petTargets = GroupPetTargets(nearby, members);
-            foreach (GameNPC add in nearby
+            HashSet<GameLiving> petTargets = board.PetTargets;
+            foreach (GameNPC add in board.NpcsOnGroup
+                         .Where(npc => shaman.IsWithinRadius(npc, 1800))
                          .Where(npc => npc?.IsAlive == true && npc.Realm == eRealm.None &&
                              !BotPvpCrowdControl.PlayerLike(npc) && CanDefendAgainst(npc))
                          .OrderBy(shaman.GetDistanceTo).Take(24))

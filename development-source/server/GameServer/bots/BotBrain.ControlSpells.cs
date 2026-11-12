@@ -56,34 +56,11 @@ namespace DOL.AI.Brain
             return Body.Group?.IsInTheGroup(victim) == true;
         }
 
-        private int _monstersOnGroupCount;
-        private long _monstersOnGroupUntil;
-
-        /// <summary>MonstersOnGroup (up to EmergencyAddCount + 1), counted at most once a second per bot.</summary>
-        private int MonstersOnGroupCached()
-        {
-            long now = GameLoop.GameLoopTime;
-            if (now >= _monstersOnGroupUntil)
-            {
-                _monstersOnGroupCount = MonstersOnGroup(EmergencyAddCount + 1);
-                _monstersOnGroupUntil = now + 1_000;
-            }
-            return _monstersOnGroupCount;
-        }
-
-        /// <summary>Monsters fighting this bot or its group, counted up to <paramref name="stopAt"/>.</summary>
-        private int MonstersOnGroup(int stopAt)
-        {
-            int count = 0;
-            foreach (GameNPC npc in Body.GetNPCsInRadius(1800))
-            {
-                if (npc?.IsAlive == true && npc is not GameBot && npc.Realm == eRealm.None &&
-                    npc.TargetObject is GameLiving victim && (victim == Body || Body.Group?.IsInTheGroup(victim) == true) &&
-                    ++count >= stopAt)
-                    break;
-            }
-            return count;
-        }
+        /// <summary>
+        /// Monsters fighting this bot or its group (up to EmergencyAddCount + 1). M5 (veteran review 2026-11-11): read
+        /// from the group's fight board, rebuilt at most once a second for the whole group, instead of an area search per bot.
+        /// </summary>
+        private int MonstersOnGroupCached() => Math.Min(FightBoard()?.MonstersOnGroup ?? 0, EmergencyAddCount + 1);
 
         /// <summary>A groupmate or this bot's pet holds the bot's target in melee.</summary>
         private bool GroupHoldsTarget(GameLiving target)
@@ -138,22 +115,7 @@ namespace DOL.AI.Brain
             }
             return BotControlSpells.IsUntouchedAdd(realAttacker, false, false, false);
         }
-
-        /// <summary>
-        /// What every pet of the group targets: members' controlled pets, plus pets without an owner link (Theurgist
-        /// elementals, bombers) whose brain names a group member as owner. Reads the NPC list the caller already has.
-        /// </summary>
-        private static HashSet<GameLiving> GroupPetTargets(IEnumerable<GameNPC> npcs, ICollection<GameLiving> members)
-        {
-            HashSet<GameLiving> targets = null;
-            foreach (GameLiving member in members)
-                if (member?.ControlledBrain?.Body?.TargetObject is GameLiving petTarget && petTarget.IsAlive)
-                    (targets ??= new()).Add(petTarget);
-            foreach (GameNPC npc in npcs)
-                if (npc?.IsAlive == true && npc.Brain is IControlledBrain pet && npc.TargetObject is GameLiving target &&
-                    target.IsAlive && pet.GetLivingOwner() is GameLiving owner && members.Contains(owner))
-                    (targets ??= new()).Add(target);
-            return targets;
-        }
+        // (M5: what every pet of the group targets - owned pets and owner-linked elementals and bombers - is now
+        // GroupFightBoard.PetTargets, built once a second for the whole group.)
     }
 }

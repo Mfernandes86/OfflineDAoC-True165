@@ -120,33 +120,11 @@ namespace DOL.AI.Brain
             if (control == null || control.Length == 0)
                 return false;
 
-            GameLiving[] members = (group?.GetMembersInTheGroup() ?? [bot])
-                .Where(member => member?.IsAlive == true && member.CurrentRegion == bot.CurrentRegion)
-                .Concat(ownPet != null ? [ownPet] : [])
-                .Distinct()
-                .ToArray();
-            HashSet<GameLiving> selectedTargets = new();
-            HashSet<GameLiving> activeTargets = new();
-            HashSet<GameLiving> attackedTargets = new();   // True 1.65: what somebody is hitting right now
-            foreach (GameLiving member in members)
-            {
-                if (member.TargetObject is GameLiving target && target.IsAlive)
-                {
-                    selectedTargets.Add(target);
-                    if ((member.IsAttacking || member.InCombat) && target is GameNPC)
-                        activeTargets.Add(target);
-                    if (AttacksTarget(member, target))
-                        attackedTargets.Add(target);
-                }
-                if (member.ControlledBrain?.Body is GameLiving pet && pet.TargetObject is GameLiving petTarget && petTarget.IsAlive)
-                {
-                    selectedTargets.Add(petTarget);
-                    if (petTarget is GameNPC)
-                        activeTargets.Add(petTarget);
-                    if (AttacksTarget(pet, petTarget))
-                        attackedTargets.Add(petTarget);
-                }
-            }
+            // M5 (veteran review 2026-11-11): the group's fight board, not a member list and area search of its own
+            GroupFightBoard board = FightBoard();
+            HashSet<GameLiving> selectedTargets = board.SelectedTargets;
+            HashSet<GameLiving> activeTargets = board.ActiveTargets;
+            HashSet<GameLiving> attackedTargets = board.AttackedTargets;   // True 1.65: what somebody is hitting right now
             if (activeTargets.Count == 0)
                 return false;
 
@@ -157,14 +135,13 @@ namespace DOL.AI.Brain
 
             bool classic165 = Classic165Mode.IsOn;
             GameLiving killTarget = classic165 ? GroupKillTarget() : null;
-            List<GameNPC> nearby = bot.GetNPCsInRadius(1800);
             // owner 2026-11-08: also skip adds hurt in the last seconds, with a DoT or snare on them, the bot's own target,
             // or targeted by a groupmate's pet or elemental; untouched adds at full health first
-            HashSet<GameLiving> petTargets = GroupPetTargets(nearby, members);
-            List<GameNPC> adds = nearby
+            HashSet<GameLiving> petTargets = board.PetTargets;
+            List<GameNPC> adds = board.NpcsOnGroup
                 .Where(npc => npc?.IsAlive == true && npc.Realm == eRealm.None && !BotPvpCrowdControl.PlayerLike(npc) &&
-                    !IsUntargetable(npc) && CanDefendAgainst(npc) &&
-                    npc.TargetObject is GameLiving victim && members.Contains(victim) &&
+                    bot.IsWithinRadius(npc, 1800) && !IsUntargetable(npc) && CanDefendAgainst(npc) &&
+                    npc.TargetObject is GameLiving victim && (board.MemberSet.Contains(victim) || victim == ownPet) &&
                     !IsHandledAdd(classic165, selectedTargets.Contains(npc), attackedTargets.Contains(npc), npc == killTarget,
                         npc == Body.TargetObject) &&
                     IsUntouchedAdd(npc, petTargets) &&

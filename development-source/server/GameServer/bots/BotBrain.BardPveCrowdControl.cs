@@ -23,33 +23,17 @@ namespace DOL.AI.Brain
                 return false;
             _nextBardPveMezLook = GameLoop.GameLoopTime + 1_000;   // owner 2026-11-08: once a second, as add control
 
-            GameLiving[] members = group.GetMembersInTheGroup()
-                .Where(member => member?.IsAlive == true && member.CurrentRegion == bard.CurrentRegion)
-                .ToArray();
-            if (members.Length < 2)
+            // M5 (veteran review 2026-11-11): the group's fight board, not a member list and area search of its own
+            GroupFightBoard board = FightBoard();
+            HashSet<GameLiving> members = board.MemberSet;
+            if (board.Members.Length < 2)
                 return false;
 
             // The normal selector already owns the primary kill target. An add
             // must be attacking this exact group while somebody is fighting a
             // distinct monster; merely seeing a neutral mob cannot start a pull.
-            HashSet<GameLiving> selectedTargets = new();
-            HashSet<GameLiving> activeTargets = new();
-            foreach (GameLiving member in members)
-            {
-                if (member.TargetObject is GameLiving target && target.IsAlive)
-                {
-                    selectedTargets.Add(target);
-                    if ((member.IsAttacking || member.InCombat) && target is GameNPC)
-                        activeTargets.Add(target);
-                }
-
-                if (member.ControlledBrain?.Body?.TargetObject is GameLiving petTarget && petTarget.IsAlive)
-                {
-                    selectedTargets.Add(petTarget);
-                    if (petTarget is GameNPC)
-                        activeTargets.Add(petTarget);
-                }
-            }
+            HashSet<GameLiving> selectedTargets = board.SelectedTargets;
+            HashSet<GameLiving> activeTargets = board.ActiveTargets;
             if (activeTargets.Count == 0)
                 return false;
 
@@ -72,11 +56,11 @@ namespace DOL.AI.Brain
             if (singleTargetMezzes.Length == 0 && areaMezzes.Length == 0)
                 return false;
 
-            List<GameNPC> nearby = bard.GetNPCsInRadius(1800);
             // owner 2026-11-08: no add a pet or elemental of the group targets, none hurt or DoT'd lately
-            HashSet<GameLiving> petTargets = GroupPetTargets(nearby, members);
+            HashSet<GameLiving> petTargets = board.PetTargets;
             List<GameNPC> safeAdds = new();
-            foreach (GameNPC add in nearby
+            foreach (GameNPC add in board.NpcsOnGroup
+                         .Where(npc => bard.IsWithinRadius(npc, 1800))
                          .Where(npc => npc?.IsAlive == true && npc.Realm == eRealm.None &&
                              !BotPvpCrowdControl.PlayerLike(npc) && CanDefendAgainst(npc))
                          .OrderBy(bard.GetDistanceTo).Take(24))
