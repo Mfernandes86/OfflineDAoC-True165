@@ -116,6 +116,9 @@ in a live raid: a new world has no level 50 gamebots until they level up.
   relic returns after 30 minutes.
 - Keeps: the inner gate of Caer Erasleigh, Caer Boldiam, Caer Sursbrooke and Caer Berkstead can be hit in melee. The
   server had that door about 1,380 units from the gate the game draws, so melee said out of range (GitHub issue #52).
+- Keeps: the server's walking map of the Pennine Mountains is rebuilt around those four keeps from the 1.64 keep,
+  as the other Albion frontier zones were in 0.3. Gamebots are held by a closed inner gate (they could walk past
+  it), and the four keeps lose the two side doors of the later keep model, which the 1.64 keep does not have.
 
 ### Launcher and commands
 
@@ -148,6 +151,9 @@ in a live raid: a new world has no level 50 gamebots until they level up.
   the wrong row (GitHub issue #50).
 - Going berserk, or into a Necromancer's shade, no longer freezes the game for most of a second: the form is loaded
   in the background when you enter the world (GitHub issue #50).
+- A Hero's Stag form is drawn: the stag-headed huntsman of the 1.64 client, half size for a Lurikeen, with your
+  weapons in its hands. A Hero used to keep its own figure. Gamebot and companion Heroes take the form too (the
+  server changed the model only for a player), and it is loaded in the background like the other forms.
 
 ## 0.6 (2026-11-11)
 
