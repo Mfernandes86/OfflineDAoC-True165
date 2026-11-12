@@ -198,9 +198,19 @@ namespace DOL.AI.Brain
         // whoever stands in them; 145 raiders by the Magical Earthmender were swinging at them and 2 at the Earthmender.
         public static bool IsUntargetable(GameLiving living) => living is GameNPC { Flags: var flags } && (flags & GameNPC.eFlags.CANTTARGET) != 0;
 
+        /// <summary>
+        /// epic-bosses L1: a player who has a boss targeted keeps it when the boss turns untargetable mid-fight (Lich Lord
+        /// Sanguis at 5%); only a new target cannot be picked. Bots dropped him at once, so only blows already in flight
+        /// could finish the last 5,000 and he went on killing raiders who would not answer. A scripted boss already on the
+        /// bot's aggro list stays there and may be fought on; a new untargetable monster is still refused (the fire
+        /// patches the rule was written for are never on a list: they are untargetable from the start).
+        /// </summary>
+        private bool KeepsUntargetableFoe(GameLiving living) =>
+            RaidBossTraits.KeepsFoeThatTurnedUntargetable(AggroList.ContainsKey(living), living is GameEpicBoss);
+
         public void ForceAddToAggroList(GameLiving living, long aggroAmount)
         {
-            if (IsUntargetable(living)) return;
+            if (IsUntargetable(living) && !KeepsUntargetableFoe(living)) return;
             if (!CompanionEngagementMode.Allows(Body, living)) return;
             if (_autonomousWorldController?.IgnoresTarget(living) == true) return;
             if (CompanionRaidSiege.Ignores(Body as GameBot, living)) return;
@@ -292,7 +302,7 @@ namespace DOL.AI.Brain
         protected virtual bool ShouldBeRemovedFromAggroList(GameLiving living)
         {
             return !living.IsAlive ||
-                   IsUntargetable(living) ||
+                   IsUntargetable(living) && !KeepsUntargetableFoe(living) ||   // epic-bosses L1
                    living.ObjectState != GameObject.eObjectState.Active ||
                    living.CurrentRegion != Body.CurrentRegion ||
                    !Body.IsWithinRadius(living, MAX_AGGRO_LIST_DISTANCE) ||

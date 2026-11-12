@@ -122,6 +122,13 @@ namespace DOL.UnitTests
             Assert.That(RaidBossTraits.PointOutsideCircle(0, 0, 0, 0, 300, 150, 0, 0), Is.EqualTo((450, 0)));
         }
 
+        [TestCase(true, true, true)]     // Lich Lord Sanguis at 5%, already being fought
+        [TestCase(false, true, false)]   // a bot that never had him cannot pick him now
+        [TestCase(false, false, false)]  // the fire primal's patches: untargetable from the start
+        [TestCase(true, false, false)]   // an ordinary monster that turned untargetable is dropped as before
+        public void ABossThatTurnsUntargetableMidFightIsKeptByItsFighters(bool onList, bool boss, bool kept) =>
+            Assert.That(RaidBossTraits.KeepsFoeThatTurnedUntargetable(onList, boss), Is.EqualTo(kept));
+
         private sealed class PlainBoss : IRaidBossTraits { }
     }
 }

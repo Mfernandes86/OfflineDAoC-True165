@@ -52,6 +52,13 @@ namespace DOL.GS
         public static bool BladeturnFeedsBoss(bool ownTargetConsumes, bool killTargetConsumes, bool partyTargetConsumes) =>
             ownTargetConsumes || killTargetConsumes || partyTargetConsumes;
 
+        /// <summary>
+        /// epic-bosses L1: a foe that turned untargetable stays fought by a bot that already had it on its aggro list,
+        /// when it is a scripted boss (a player keeps a target that turns untargetable; a new one cannot be picked).
+        /// </summary>
+        public static bool KeepsFoeThatTurnedUntargetable(bool alreadyOnAggroList, bool scriptedBoss) =>
+            alreadyOnAggroList && scriptedBoss;
+
         public enum LairAction { Hold, Lead, Return }
 
         /// <summary>
