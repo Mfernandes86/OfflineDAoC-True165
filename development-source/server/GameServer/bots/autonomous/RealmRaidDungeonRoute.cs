@@ -79,6 +79,7 @@ namespace DOL.GS
         private Vector3 _musterPoint;
         private long _musterSince, _nextMusterLog, _musterEngagedTick;
         private bool _musterEngaged;
+        private float _musterKeepOut;
 
         public const long TargetNoProgressMilliseconds = 5 * 60_000;
         public const long BlockedTargetRetryMilliseconds = 15 * 60_000;
@@ -340,6 +341,22 @@ namespace DOL.GS
         public const long FinalMusterPatienceMilliseconds = 20 * 60_000;
         public const int FinalMusterRadius = 1_500;
         public const float FinalMusterStandOff = 1_400f;
+        /// <summary>The muster point stands at least this far beyond the encounter's own aggro range.</summary>
+        public const float MusterAggroClearance = 600f;
+        /// <summary>No muster post, and no raider counted as mustered, within the aggro range plus this.</summary>
+        public const float MusterPostAggroMargin = 300f;
+
+        /// <summary>
+        /// How far from the encounter the muster point stands: 1,400, or the encounter's aggro range plus 600 when that is
+        /// more. The range is read from the monster (Olcasgean reaches 1,500 and Apocalypse aggroes at 1,300: a fixed
+        /// 1,400 stood inside both).
+        /// </summary>
+        public static float MusterStandOff(int aggroRange) => Math.Max(FinalMusterStandOff, Math.Max(0, aggroRange) + MusterAggroClearance);
+
+        /// <summary>The circle round the encounter that no muster post enters: its aggro range plus 300.</summary>
+        public static float MusterKeepOutRadius(int aggroRange) => Math.Max(0, aggroRange) + MusterPostAggroMargin;
+
+        private static int AggroRangeOf(GameNPC npc) => (npc?.Brain as StandardMobBrain)?.AggroRange ?? 0;
         public const long FinalEngageGraceMilliseconds = 2 * 60_000;
 
         /// <summary>
@@ -357,7 +374,11 @@ namespace DOL.GS
                 _musterTarget = _target;
                 _musterSince = now;
                 _musterEngaged = false;
-                _musterPoint = MusterPoint(participants);
+                RealmRaidFormation.ClearKeepOut(_musterPoint);
+                int aggro = AggroRangeOf(_target);
+                _musterKeepOut = MusterKeepOutRadius(aggro);
+                _musterPoint = MusterPoint(participants, MusterStandOff(aggro));
+                RealmRaidFormation.SetKeepOut(_musterPoint, new(_target.X, _target.Y, _target.Z), _musterKeepOut);
             }
             if (_target.InCombat)
                 return false; // a fight in progress is never interrupted
@@ -374,8 +395,10 @@ namespace DOL.GS
             int living = participants.Count(p => p.IsAlive);
             int needed = FinalMusterNeeded(living, now - _musterSince);
             var point = new Point3D((int)_musterPoint.X, (int)_musterPoint.Y, (int)_musterPoint.Z);
+            // Only raiders at the muster point count, never those standing by the boss: anyone within 2,000 of it counted
+            // before, so the first arrivals inside its reach filled the muster themselves.
             int mustered = participants.Count(p => p.IsAlive && p.CurrentRegionID == _region &&
-                                                   (p.IsWithinRadius(point, FinalMusterRadius) || p.IsWithinRadius(_target, TargetPresenceRadius)));
+                                                   p.IsWithinRadius(point, FinalMusterRadius) && !p.IsWithinRadius(_target, (int)_musterKeepOut));
             if (mustered >= needed)
             {
                 _musterEngaged = true;
@@ -400,43 +423,56 @@ namespace DOL.GS
         }
 
         /// <summary>
-        /// The point on the walked path from the raid's main body to the encounter's approach that lies
-        /// <see cref="FinalMusterStandOff"/> from the encounter (or the main body itself when it is closer).
+        /// The point on the walked path from the encounter's approach toward the raid that lies <paramref name="standOff"/>
+        /// from the encounter. A spot already between the stand-off and 200 beyond it is taken as it is. The main body used
+        /// to be taken whenever it stood within 1,600 of the encounter, inside the reach of the bigger ones; a path that
+        /// never leaves the stand-off circle now gives the node furthest from the encounter.
         /// </summary>
-        private Vector3 MusterPoint(GameLiving[] participants)
+        private Vector3 MusterPoint(GameLiving[] participants, float standOff)
         {
             var nav = PathfindingProvider.Instance;
             Vector3 boss = new(_target.X, _target.Y, _target.Z);
             GameLiving[] inside = participants.Where(p => p.IsAlive && p.CurrentRegionID == _region).ToArray();
             Zone zone = WorldMgr.GetRegion(_region)?.GetZone((int)Front.X, (int)Front.Y);
-            if (!TryRegroupFront(inside, out Vector3 body) || zone == null || !nav.IsAvailable || !nav.HasNavmesh(zone))
-                return Front;
-            if (Vector3.Distance(body, boss) <= FinalMusterStandOff + 200)
-                return body;
-            // Searched from the encounter's approach toward the raid, so the path always starts at the encounter even
-            // when it is too long to finish. From the raid's side a partial path ended wherever the search gave up:
-            // Legion's muster in Darkness Falls was placed 19,000 units from him and nobody ever reached it (run 9).
+            Vector3 best = Front;
+            float bestDistance = Vector3.Distance(Front, boss);
+            if (zone == null || !nav.IsAvailable || !nav.HasNavmesh(zone))
+                return best;
+            var toward = new List<Vector3>(2);
+            if (TryRegroupFront(inside, out Vector3 body)) toward.Add(body);
             Span<WrappedPathfindingNode> nodes = stackalloc WrappedPathfindingNode[256];
-            PathfindingResult path = nav.GetPathStraight(zone, Front, body, nav.DefaultFilters, nodes);
-            if (path.Status == PathfindingStatus.PathFound || path.Status == PathfindingStatus.PartialPathFound)
+            foreach (Vector3 goal in toward)
             {
+                float goalDistance = Vector3.Distance(goal, boss);
+                if (goalDistance >= standOff && goalDistance <= standOff + 200)
+                    return goal;
+                // Searched from the encounter's approach toward the raid, so the path always starts at the encounter even
+                // when it is too long to finish. From the raid's side a partial path ended wherever the search gave up:
+                // Legion's muster in Darkness Falls was placed 19,000 units from him and nobody ever reached it (run 9).
+                PathfindingResult path = nav.GetPathStraight(zone, Front, goal, nav.DefaultFilters, nodes);
+                if (path.Status != PathfindingStatus.PathFound && path.Status != PathfindingStatus.PartialPathFound)
+                    continue;
                 for (int i = 1; i < path.NodeCount; i++)
                 {
                     Vector3 a = nodes[i - 1].Position, b = nodes[i].Position;
-                    if (Vector3.Distance(b, boss) < FinalMusterStandOff) continue;
+                    float d = Vector3.Distance(b, boss);
+                    if (d < standOff)
+                    {
+                        if (d > bestDistance) { best = b; bestDistance = d; }
+                        continue;
+                    }
                     // a inside the stand-off circle, b outside: the crossing point on a-b.
                     float lo = 0, hi = 1;
                     for (int step = 0; step < 12; step++)
                     {
                         float mid = (lo + hi) / 2;
-                        if (Vector3.Distance(Vector3.Lerp(a, b, mid), boss) >= FinalMusterStandOff) hi = mid; else lo = mid;
+                        if (Vector3.Distance(Vector3.Lerp(a, b, mid), boss) >= standOff) hi = mid; else lo = mid;
                     }
                     Vector3? floor = nav.GetClosestPoint(zone, Vector3.Lerp(a, b, hi), 64, 64, 128, nav.DefaultFilters);
                     return floor ?? b;
                 }
-                if (path.NodeCount > 0) return nodes[path.NodeCount - 1].Position;
             }
-            return Front;
+            return best;
         }
 
         public const long CallTargetAfterMilliseconds = 90_000;

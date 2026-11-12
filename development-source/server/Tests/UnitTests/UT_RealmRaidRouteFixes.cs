@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Numerics;
 using DOL.GS;
 using NUnit.Framework;
 
@@ -39,5 +41,54 @@ namespace DOL.UnitTests
         [TestCase(false, false, false, true, true)]
         public void EpicDungeonTargetsAreBossesAfterTheFirstHour(bool firstHour, bool boss, bool final, bool add, bool target) =>
             Assert.That(RealmRaidDungeonRoute.IsEpicDungeonTarget(firstHour, boss, final, add), Is.EqualTo(target));
+
+        // The muster point stands beyond the encounter's own reach; posts keep out of its aggro range plus 300.
+        [TestCase(600, 1_400f, 900f)]     // Govannon and the summoners
+        [TestCase(850, 1_450f, 1_150f)]   // Legion
+        [TestCase(1_300, 1_900f, 1_600f)] // Apocalypse
+        [TestCase(1_500, 2_100f, 1_800f)] // Olcasgean
+        [TestCase(0, 1_400f, 300f)]       // no aggro range (Uaimh Lairmaster)
+        public void MusterStandsOutsideTheEncounterReach(int aggro, float standOff, float keepOut)
+        {
+            Assert.That(RealmRaidDungeonRoute.MusterStandOff(aggro), Is.EqualTo(standOff));
+            Assert.That(RealmRaidDungeonRoute.MusterKeepOutRadius(aggro), Is.EqualTo(keepOut));
+        }
+
+        [Test]
+        public void MusterPostsNeverLandInsideTheKeepOutCircle()
+        {
+            var nav = new UT_RealmRaidFormation.Mesh();
+            var occupied = new List<Vector3>();
+            Vector3 center = new(20000, 20000, 1000);
+            // Legion 1,450 from the muster point, keep-out 1,150: a post spread of up to 930 would reach 520 from him.
+            Vector3 boss = center + new Vector3(1450, 0, 0);
+            int placed = 0;
+            for (int slot = 0; slot < RealmRaidRecruitmentPolicy.MaximumParties; slot++)
+            {
+                if (!RealmRaidFormation.TryResolve(nav, UT_RealmRaidFormation.Zone(), center, slot, occupied, (boss, 1150f), out Vector3 post))
+                    continue;
+                Assert.That(Vector3.Distance(post, boss), Is.GreaterThanOrEqualTo(1150f));
+                occupied.Add(post);
+                placed++;
+            }
+            Assert.That(placed, Is.GreaterThan(RealmRaidRecruitmentPolicy.MaximumParties / 2));
+            Assert.That(RealmRaidFormation.OutsideKeepOut(boss + new Vector3(0, 1149, 0), boss, 1150f), Is.False);
+            Assert.That(RealmRaidFormation.OutsideKeepOut(boss, boss, 0), Is.True);
+        }
+
+        [Test]
+        public void TheRouteRegistersTheKeepOutForItsOwnMusterPointOnly()
+        {
+            var nav = new UT_RealmRaidFormation.Mesh();
+            Vector3 center = new(30000, 30000, 1000), boss = center + new Vector3(200, 0, 0);
+            RealmRaidFormation.SetKeepOut(center, boss, 5000f);
+            try
+            {
+                Assert.That(RealmRaidFormation.TryResolve(nav, UT_RealmRaidFormation.Zone(), center, 0, [], out _), Is.False);
+                Assert.That(RealmRaidFormation.TryResolve(nav, UT_RealmRaidFormation.Zone(), center + new Vector3(1, 0, 0), 0, [], out _), Is.True);
+            }
+            finally { RealmRaidFormation.ClearKeepOut(center); }
+            Assert.That(RealmRaidFormation.TryResolve(nav, UT_RealmRaidFormation.Zone(), center, 0, [], out _), Is.True);
+        }
     }
 }
