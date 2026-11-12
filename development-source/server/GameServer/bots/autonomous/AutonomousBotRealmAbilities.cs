@@ -37,6 +37,10 @@ public static class AutonomousBotRealmAbilities
     public const string SoldiersBarricade = "AtlasOF_SoldiersBarricade", FaithHealing = "AtlasOF_FaithHealing",
         RagingPower = "AtlasOF_RagingPower", VolcanicPillar = "AtlasOF_VolcanicPillar", BatteryOfLife = "AtlasOF_BatteryOfLife";
 
+    // Owner 2026-11-11: the Cabalist's Juggernaut (Prima: "Summons powerful pet for 4 minutes", 14 points, 30 minutes),
+    // for a bot a timed second pet beside its simulacrum (BotJuggernaut165).
+    public const string Juggernaut = "AtlasOF_Juggernaut";
+
     /// <summary>Prerequisites, as the Atlas handlers' CheckRequirement (written for GamePlayer only).</summary>
     public static (string Key, int Level)? Requirement(string key, int classId) => key switch
     {
@@ -60,7 +64,7 @@ public static class AutonomousBotRealmAbilities
     /// <summary>True 1.65 Mode adds these (escape and rescue first, then group, then self).</summary>
     public static readonly string[] ClassicActives =
         { Vanish, PerfectRecovery, BunkerOfFaith, BatteryOfLife, SoldiersBarricade, FaithHealing, SpeedOfSound, AmelioratingMelodies,
-          VolcanicPillar, MasteryOfConcentration, RagingPower, MysticCrystalLore };
+          VolcanicPillar, Juggernaut, MasteryOfConcentration, RagingPower, MysticCrystalLore };
 
     public static string[] UsableActivesFor(bool classic) => classic ? ClassicActives.Concat(UsableActives).ToArray() : UsableActives;
 
@@ -101,7 +105,7 @@ public static class AutonomousBotRealmAbilities
     private static readonly Step[] ClassActiveSteps = Build((Vanish, 1), (SpeedOfSound, 1), (BunkerOfFaith, 1),
         (PerfectRecovery, 1), (AmelioratingMelodies, 1), (SoldiersBarricade, 1), (FaithHealing, 1), (VolcanicPillar, 1),
         (BatteryOfLife, 1),
-        (MysticCrystalLore, 1), (MysticCrystalLore, 2), (RagingPower, 1));
+        (MysticCrystalLore, 1), (MysticCrystalLore, 2), (RagingPower, 1), (Juggernaut, 1));
 
     private static Step[] Insert(Step[] build, Step after, Step[] steps)
     {
@@ -535,6 +539,8 @@ public static class AutonomousBotRealmAbilities
             FaithHealing => burst || s.InCombat && s.Health < 25,
             RagingPower => s.InCombat && !s.Sitting && s.Mana < 25,
             VolcanicPillar => s.InCombat && !s.Casting && s.EnemiesAtTarget >= 3,
+            // a 30-minute summon: a fight against another realm, the Cabalist under half health, or its group under burst
+            Juggernaut => BotJuggernaut165.Wanted(s.InCombat, s.Controlled, s.Battleground, s.Health, burst),
             MasteryOfConcentration => s.InCombat && s.Interrupted && (s.Battleground || s.Health < 60),
             MysticCrystalLore => !s.InCombat && !s.Sitting && s.Mana < 30,
             _ => false,

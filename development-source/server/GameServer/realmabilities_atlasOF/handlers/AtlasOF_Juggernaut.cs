@@ -45,6 +45,15 @@ namespace DOL.GS.RealmAbilities
             if (CheckPreconditions(living, DEAD | SITTING | MEZZED | STUNNED))
                 return;
 
+            // A gamebot or companion Cabalist keeps its simulacrum: its Juggernaut is a second, timed pet beside it
+            // (owner 2026-11-11, BotJuggernaut165). The player's ability below is unchanged.
+            if (living is GameBot bot)
+            {
+                if (BotJuggernaut165.Summon(bot))
+                    DisableSkill(living);
+                return;
+            }
+
             _caster = living as GamePlayer;
 
             if (_caster == null)
