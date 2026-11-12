@@ -108,7 +108,7 @@ namespace DOL.AI.Brain
                 {
                     GameNPC pet = null;
                     foreach (GameNPC candidate in Body.GetNPCsInRadius(2000))
-                        if (candidate.Brain is IControlledBrain && candidate.IsAlive && (pet == null || Body.GetDistanceTo(candidate) < Body.GetDistanceTo(pet)))
+                        if (DOL.GS.EpicEncounterMechanics.IsDevourablePet(candidate) && (pet == null || Body.GetDistanceTo(candidate) < Body.GetDistanceTo(pet)))
                             pet = candidate;
                     if (pet != null)
                     {

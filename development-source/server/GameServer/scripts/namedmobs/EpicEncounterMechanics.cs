@@ -33,6 +33,16 @@ namespace DOL.GS
         /// </summary>
         public const int PetDevourIntervalMilliseconds = 5_000;
 
+        /// <summary>
+        /// What the princes may devour: a living pet. A gamebot's own brain also implements IControlledBrain (it can
+        /// follow a player), and a gamebot is an NPC to the server, so the old test ate the raiders themselves, one every
+        /// five seconds, usually the tank (Darkness Falls audit L1, 2026-11-11). Gamebots are never prey; their pets are.
+        /// </summary>
+        public static bool IsDevourablePet(GameNPC candidate) =>
+            candidate != null && IsDevourablePet(candidate is GameBot, candidate.Brain is DOL.AI.Brain.IControlledBrain, candidate.IsAlive);
+
+        public static bool IsDevourablePet(bool isGameBot, bool hasControlledBrain, bool isAlive) => isAlive && hasControlledBrain && !isGameBot;
+
         public static bool FightIsOver(GameNPC boss) => boss == null || !boss.IsAlive || !boss.InCombatInLast(ResetQuietMilliseconds);
     }
 }
