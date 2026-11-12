@@ -8,6 +8,9 @@ namespace DOL.GS
     /// Crowd control and snares used like a veteran player (owner 2026-11-08). Mez and root only go on adds nobody is
     /// attacking, never on the kill target; a snare only on a runner; a stun only to interrupt a cast or to peel a monster
     /// off a non-tank; a long-reuse stun or mez only in an emergency. Snare-nukes (damage + snare) count as damage.
+    /// One exception (owner 2026-11-11): a solo Cleric's ranged pull uses its stun once, after the second Smite, when the
+    /// stun is long enough to buy another Smite - Prima's chain "a Smite spec spell, followed by a base line Smite, a Stun
+    /// (at higher levels) and another base line Smite until the mob closes" (SoloRangedPull165.TryChainStun).
     /// These spells are kept out of the ordinary nuke rotation and only go through the dedicated rules.
     /// </summary>
     public static class BotControlSpells

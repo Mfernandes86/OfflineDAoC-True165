@@ -39,6 +39,8 @@ namespace DOL.GS
             public bool Reposition;          // set by a failed shot: find a closer spot before trying again
             public string LastFailure = "";
             public bool PutAwayPending;      // the shot is made: stop and take the melee weapon on the next turn
+            public int FollowUps;            // damage spells cast after the opener while the monster closes
+            public bool StunCast;            // the Cleric's one stun of this pull is spent
             public string ShotResult = "";
         }
 
@@ -106,6 +108,8 @@ namespace DOL.GS
             s.Reposition = false;
             s.LastFailure = "";
             s.PutAwayPending = false;
+            s.FollowUps = 0;
+            s.StunCast = false;
             bot.WakeRecoveryRest();
             bot.StopAttack();
             bot.StopFollowing();
@@ -272,9 +276,65 @@ namespace DOL.GS
                 return false;
             }
             // Q28: a spell puller casts again while the monster closes (Prima's Cleric: "a Smite spec spell, followed by a
-            // base line Smite ... and another base line Smite until the mob closes") - damage spells only, no control
+            // base line Smite, a Stun (at higher levels) and another base line Smite until the mob closes") - damage
+            // spells, and for the Cleric that one stun of its chain
             if (s.Spell != null && Noticed(target, bot))
-                TryFireAgain(bot, target);
+                TryFireAgain(bot, target, s);
+            return true;
+        }
+
+        // ------------------------------------------------------------ the Cleric's pull chain (owner 2026-11-11)
+
+        /// <summary>
+        /// Pure: the stun is worth its place in the chain when it holds the monster longer than the stun itself and one
+        /// more Smite take to cast, with half a second to spare - Prima: "Stun won't be useful until higher levels, when
+        /// you can stun a mob long enough to get off an extra Smite on the pull" (the 6-second stun of level 26 and up).
+        /// </summary>
+        public static bool ChainStunWorthIt(int stunDurationMilliseconds, int stunCastMilliseconds, int smiteCastMilliseconds) =>
+            stunDurationMilliseconds > 0 && smiteCastMilliseconds > 0 &&
+            stunDurationMilliseconds >= stunCastMilliseconds + smiteCastMilliseconds + 500;
+
+        /// <summary>Pure: the stun comes after the opener and one more Smite, once a pull, and only from a Cleric.</summary>
+        public static bool ChainStunTurn(bool cleric, int followUps, bool stunCast) => cleric && followUps >= 1 && !stunCast;
+
+        /// <summary>Pure: a cast fits into what is left of the stun on the monster.</summary>
+        public static bool CastFitsStun(long stunLeftMilliseconds, int castMilliseconds) =>
+            stunLeftMilliseconds > castMilliseconds + 300;
+
+        private static long StunLeft(GameLiving target) =>
+            target.IsStunned ? EffectListService.GetEffectOnTarget(target, eEffect.Stun)?.GetRemainingTimeForClient() ?? 0 : 0;
+
+        /// <summary>The Cleric's best single-target stun with a cast time that it can cast now, or null.</summary>
+        private static Spell ReadyChainStun(GameBot bot)
+        {
+            Spell best = null;
+            if (bot.Spells == null)
+                return null;
+            foreach (Spell spell in bot.Spells)
+                if (spell != null && spell.SpellType == eSpellType.Stun && spell.Target == eSpellTarget.ENEMY && spell.Radius == 0 &&
+                    !spell.IsInstantCast && spell.Level <= bot.Level && (best == null || spell.Level > best.Level))
+                    best = spell;
+            return best != null && bot.Mana >= bot.PowerCost(best) && bot.GetSkillDisabledDuration(best) == 0 ? best : null;
+        }
+
+        /// <summary>The chain's stun: cast when it is its turn, it will finish before the monster arrives and the monster can
+        /// be stunned. True when the stun was cast.</summary>
+        private static bool TryChainStun(GameBot bot, GameLiving target, State s, Spell smite, double toMelee)
+        {
+            if (!ChainStunTurn(bot.CharacterClass?.ID == (int)eCharacterClass.Cleric, s.FollowUps, s.StunCast) ||
+                target.IsStunned || EffectListService.GetEffectOnTarget(target, eEffect.StunImmunity) != null ||
+                ReadyChainStun(bot) is not { } stun || !ChainStunWorthIt(stun.Duration, stun.CastTime, smite.CastTime) ||
+                !bot.IsWithinRadius(target, Math.Max(200, stun.Range - RangeMargin)) ||
+                !KeepFiring(toMelee, IncomingSpeed(target), stun.CastTime))
+                return false;
+            IPathfindingMgr nav = PathfindingProvider.Instance;
+            if (!HasSight(nav, bot.CurrentZone, new(bot.X, bot.Y, bot.Z), new(target.X, target.Y, target.Z)))
+                return false;
+            bot.TargetObject = target;
+            if (!bot.CastSpell(stun, SkillBase.GetSpellLine(GlobalSpellsLines.Mob_Spells)))
+                return false;
+            s.StunCast = true;
+            FeatureCounters165.Add("bot_cleric_pull_stun");
             return true;
         }
 
@@ -289,22 +349,29 @@ namespace DOL.GS
         private static int BowDrawMilliseconds(GameBot bot) =>
             bot.Inventory?.GetItem(eInventorySlot.DistanceWeapon) is { SPD_ABS: > 0 } bow ? bow.SPD_ABS * 100 : 4000;
 
-        private static void TryFireAgain(GameBot bot, GameLiving target)
+        private static void TryFireAgain(GameBot bot, GameLiving target, State s)
         {
             if (bot.IsCasting || bot.castingComponent?.HasPendingSkillRequests == true || bot.IsCrowdControlled ||
                 bot.IsBeingInterrupted)
                 return;
             Spell again = AutonomousDefensivePull.SelectReadyPullSpell(bot.Spells, bot.Level, bot.Mana, bot.PowerCost,
                 bot.GetSkillDisabledDuration);
-            if (again == null || !BotCasterPriority.IsDamage(again) || BotControlSpells.IsControl(again) ||
-                !bot.IsWithinRadius(target, Math.Max(200, again.Range - RangeMargin)) ||
-                !KeepFiring(bot.GetDistanceTo(target) - bot.attackComponent.AttackRange, IncomingSpeed(target), again.CastTime))
+            if (again == null || !BotCasterPriority.IsDamage(again) || BotControlSpells.IsControl(again))
+                return;
+            double toMelee = bot.GetDistanceTo(target) - bot.attackComponent.AttackRange;
+            // the Cleric's chain: opener, Smite, then its stun once, then Smites again
+            if (TryChainStun(bot, target, s, again, toMelee))
+                return;
+            // a stunned monster stands where it is: a cast that fits into the rest of the stun goes ahead
+            if (!bot.IsWithinRadius(target, Math.Max(200, again.Range - RangeMargin)) || toMelee <= 0 ||
+                !(CastFitsStun(StunLeft(target), again.CastTime) || KeepFiring(toMelee, IncomingSpeed(target), again.CastTime)))
                 return;
             IPathfindingMgr nav = PathfindingProvider.Instance;
             if (!HasSight(nav, bot.CurrentZone, new(bot.X, bot.Y, bot.Z), new(target.X, target.Y, target.Z)))
                 return;
             bot.TargetObject = target;
-            bot.CastSpell(again, SkillBase.GetSpellLine(GlobalSpellsLines.Mob_Spells));
+            if (bot.CastSpell(again, SkillBase.GetSpellLine(GlobalSpellsLines.Mob_Spells)))
+                s.FollowUps++;
         }
 
         public static void OnAttack(GameLiving actor, AttackData attack)
