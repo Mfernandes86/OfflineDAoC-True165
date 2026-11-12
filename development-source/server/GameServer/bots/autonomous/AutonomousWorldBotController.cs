@@ -6227,7 +6227,28 @@ namespace DOL.GS
             _ => eRealm.Albion,
         };
 
+        /// <summary>How long one reachable-regions answer is shared (veteran review Q30: a breadth-first search over every
+        /// zone point, with LINQ, ran on every plan). The answer depends only on the realm, the start region, whether the
+        /// realm may enter Darkness Falls and whether the DF catalog is complete; those are part of the key, so the time
+        /// limit only covers a navmesh or zone-point reload.</summary>
+        public const int ReachableRegionsCacheMilliseconds = 10 * 60_000;
+
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<(eRealm, ushort, bool, bool), (long Tick, ushort[] Regions)>
+            ReachableRegionsCache = new();
+
         private static HashSet<ushort> ReachableRegions(eRealm realm, ushort startRegion)
+        {
+            var key = (realm, startRegion, DFEnterJumpPoint.CanRealmEnter(realm), AutonomousDungeonGoalCatalog.HasCompleteDarknessFallsCatalog);
+            long now = GameLoop.GameLoopTime;
+            if (ReachableRegionsCache.TryGetValue(key, out var cached) && now >= cached.Tick &&
+                now - cached.Tick < ReachableRegionsCacheMilliseconds)
+                return new HashSet<ushort>(cached.Regions);   // a copy: SelectCamp adds a battleground to its set
+            HashSet<ushort> seen = SearchReachableRegions(realm, startRegion);
+            ReachableRegionsCache[key] = (now, seen.ToArray());
+            return seen;
+        }
+
+        private static HashSet<ushort> SearchReachableRegions(eRealm realm, ushort startRegion)
         {
             var seen = new HashSet<ushort> { startRegion };
             var queue = new Queue<ushort>();
