@@ -732,6 +732,57 @@ namespace DOL.GS
         /// are out of reach, come back every six minutes and hit hard. Taken as the primal's adds, they were the raid's
         /// target over and over; three were skipped for no damage and the raid fell from 230 inside to 28 (run 22).
         /// </summary>
+        /// <summary>
+        /// Script adds that must die before their timer runs out, not monsters to clear: Grand Summoner Govannon's summoned
+        /// sacrifice and summoned demon never attack, so no defence rule ever fired, they reached the centre and the Shade of
+        /// Aelfgar spawned every time (sh-bosses L5). Lossren's Tortured Souls are not on the list: they return for ever.
+        /// </summary>
+        public static bool IsKillFirstBrain(string brainType) => brainType is "SummonedSacrificeBrain" or "SummonedDemonBrain";
+        public const int KillFirstCallers = 16;
+        public const int KillFirstReach = 2_500;
+
+        /// <summary>Who is called onto a kill-first add first: idle ranged, busy ranged, idle melee, busy melee.</summary>
+        public static int KillFirstRank(bool ranged, bool busy) => (ranged ? 0 : 2) + (busy ? 1 : 0);
+
+        /// <summary>
+        /// Calls up to <see cref="KillFirstCallers"/> raiders within 2,500 onto each living kill-first add beside the target,
+        /// nearest idle ranged raiders first; raiders already on it count. The boss stays the raid's target.
+        /// </summary>
+        private void CallKillFirst(GameNPC[] live, GameLiving[] participants)
+        {
+            foreach (GameNPC add in live)
+            {
+                if (add.Brain == null || !IsKillFirstBrain(add.Brain.GetType().Name) || !add.IsAlive ||
+                    add.ObjectState != GameObject.eObjectState.Active || add.CurrentRegionID != _target.CurrentRegionID ||
+                    !add.IsWithinRadius(_target, (int)EncounterAddRadius))
+                    continue;
+                int onIt = 0;
+                var callable = new List<(GameBot Bot, DOL.AI.Brain.BotBrain Brain, int Rank, float Distance)>();
+                foreach (GameLiving member in participants)
+                {
+                    if (member is not GameBot bot || !bot.IsAlive || bot.CurrentRegionID != add.CurrentRegionID) continue;
+                    if (bot.TargetObject == add) { onIt++; continue; }
+                    if (!bot.IsWithinRadius(add, KillFirstReach) || bot.Brain is not DOL.AI.Brain.BotBrain brain ||
+                        !GameServer.ServerRules.IsAllowedToAttack(bot, add, true))
+                        continue;
+                    callable.Add((bot, brain, KillFirstRank(AutonomousRvrDefense.IsRangedDefender(bot), bot.InCombat || bot.IsAttacking),
+                        (float)bot.GetDistanceTo(add)));
+                }
+                int called = 0;
+                foreach (var (bot, brain, _, _) in callable.OrderBy(c => c.Rank).ThenBy(c => c.Distance).Take(Math.Max(0, KillFirstCallers - onIt)))
+                {
+                    bot.TargetObject = add;
+                    brain.AddToAggroList(add, 10_000);
+                    brain.FSM.SetCurrentState(DOL.GS.eFSMStateType.AGGRO);
+                    brain.NextThinkTick = GameLoop.GameLoopTime;
+                    called++;
+                }
+                if (called > 0)
+                    log.Info($"REALM_EXPEDITION_KILL_FIRST region={_region} target=\"{_target.Name}\" add=\"{add.Name}\" health={add.HealthPercent} " +
+                             $"onIt={onIt} called={called}");
+            }
+        }
+
         private static bool IsEncounterHazard(GameNPC npc) =>
             npc.Brain?.GetType().Name is "VortexBrain" or "WaterfallAntipassBrain";
         public const int ThinAttackNear = 16;
@@ -912,6 +963,7 @@ namespace DOL.GS
                 if (!wipedOut && !ShouldSkipTarget(final, now - _targetProgressTick))
                 {
                     CallTarget(participants, now);
+                    if (_target is GameEpicBoss) CallKillFirst(live, participants);
                     Hold = false; Status = $"Clearing {_target.Name} ({_target.HealthPercent}%)"; return;
                 }
                 log.Warn($"REALM_EXPEDITION_TARGET_SKIPPED region={_region} target=\"{_target.Name}\" at={_target.X},{_target.Y},{_target.Z} " +

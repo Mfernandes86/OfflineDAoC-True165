@@ -113,6 +113,22 @@ namespace DOL.UnitTests
                 Is.LessThan(RealmRaidDungeonRoute.ApproachSearchKey(floorAbove, encounter)));
         }
 
+        // Govannon's sacrifice and demon are killed first; Lossren's souls are not on the list.
+        [TestCase("SummonedSacrificeBrain", true)]
+        [TestCase("SummonedDemonBrain", true)]
+        [TestCase("TorturedSoulsBrain", false)]
+        [TestCase("ShadeOfAelfgarBrain", false)]
+        public void KillFirstListIsGovannonsSummons(string brain, bool killFirst) =>
+            Assert.That(RealmRaidDungeonRoute.IsKillFirstBrain(brain), Is.EqualTo(killFirst));
+
+        [Test]
+        public void IdleRangedRaidersAreCalledOntoKillFirstAddsFirst()
+        {
+            Assert.That(RealmRaidDungeonRoute.KillFirstRank(true, false), Is.LessThan(RealmRaidDungeonRoute.KillFirstRank(true, true)));
+            Assert.That(RealmRaidDungeonRoute.KillFirstRank(true, true), Is.LessThan(RealmRaidDungeonRoute.KillFirstRank(false, false)));
+            Assert.That(RealmRaidDungeonRoute.KillFirstRank(false, false), Is.LessThan(RealmRaidDungeonRoute.KillFirstRank(false, true)));
+        }
+
         [Test]
         public void MusterPostsNeverLandInsideTheKeepOutCircle()
         {
