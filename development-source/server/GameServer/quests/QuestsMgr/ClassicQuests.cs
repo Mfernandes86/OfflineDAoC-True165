@@ -66,6 +66,20 @@ namespace DOL.GS.Quests
             /// <summary>An NPC summoned for the player to talk to (the Enchantress calls up Lucan in Morven's Return):
             /// it appears at the point instead of beside the player, is of the player's realm and never attacks.</summary>
             public bool Peaceful { get; set; }
+            /// <summary>Others that appear together with it and leave with it (Protecting the Healer: Golga and four
+            /// svartalf chanters, walkthrough 138; quest audit 2026-11-11, P04-E3). Optional.</summary>
+            public List<EscortSpawn> Escort { get; set; }
+        }
+
+        /// <summary>One kind of NPC that comes with an <see cref="EventSpawn"/>.</summary>
+        public sealed class EscortSpawn
+        {
+            public string Name { get; set; }
+            public int TemplateId { get; set; }
+            public byte Level { get; set; }
+            public ushort Model { get; set; }
+            public int Count { get; set; } = 1;
+            public bool Peaceful { get; set; }
         }
 
         /// <summary>
@@ -1259,6 +1273,52 @@ namespace DOL.GS.Quests
         /// <summary>Model 0 is drawn as nothing in the client.</summary>
         public static bool IsBodied(ushort model) => model != 0;
 
+        /// <summary>One event NPC: from its template, never without a body (owner 2026-11-10: Anklebiter came with model 0,
+        /// drawn as nothing, and attacked unseen - the look of a standing NPC of that name is borrowed, otherwise
+        /// <paramref name="noModel"/> and nothing spawns). A fight comes at the player from a short way off on walkable
+        /// ground (owner 2026-10-07: spawning on top of the player looked wrong); a summoned NPC stands at the step's
+        /// point, of the player's realm and peaceful.</summary>
+        private static GameNPC SpawnOne(GamePlayer player, EventSpawn spawn, string name, int templateId, byte level, ushort model,
+            bool peaceful, int index, out bool noModel)
+        {
+            noModel = false;
+            var npc = new GameNPC();
+            if (templateId > 0 && NpcTemplateMgr.GetTemplate(templateId) is INpcTemplate template)
+                npc.LoadTemplate(template);
+            npc.Name = name;
+            if (level > 0) npc.Level = level;
+            if (model > 0) npc.Model = model;
+            if (npc.Model == 0)
+            {
+                ushort look = BodiedModel(name, spawn.Region);
+                if (look == 0)
+                {
+                    noModel = true;
+                    return null;
+                }
+                npc.Model = look;
+            }
+            npc.Realm = peaceful ? player.Realm : eRealm.None;
+            var at = peaceful ? new System.Numerics.Vector3(spawn.X + 90 + 60 * index, spawn.Y, spawn.Z) : ApproachPoint(player, index);
+            npc.CurrentRegionID = peaceful ? spawn.Region : player.CurrentRegionID;
+            npc.X = (int)at.X; npc.Y = (int)at.Y; npc.Z = (int)at.Z;
+            npc.Heading = npc.GetHeading(player);
+            npc.RespawnInterval = -1; // never respawns: one encounter for this player's step
+            npc.TempProperties.SetProperty(EventSpawnProperty, player.Name);
+            if (peaceful)
+            {
+                npc.Flags |= GameNPC.eFlags.PEACE;
+                if (npc.Brain is DOL.AI.Brain.StandardMobBrain calm) calm.AggroLevel = 0;
+            }
+            else // a fight: the template of a townsperson the quest turns on (Dark Bishop Burhoff, Gokstad) is peaceful
+                npc.Flags &= ~(GameNPC.eFlags.PEACE | GameNPC.eFlags.CANTTARGET);
+            if (!npc.AddToWorld()) return null;
+            if (!peaceful && npc.Brain is DOL.AI.Brain.StandardMobBrain brain) brain.AddToAggroList(player, 1);
+            new ECSGameTimer(npc, _ => { if (npc.ObjectState == GameObject.eObjectState.Active) npc.Delete(); return 0; },
+                Math.Max(60, spawn.DespawnSeconds) * 1000);
+            return npc;
+        }
+
         private static void TrySpawnEvent(GamePlayer player, int quest, int step, EventSpawn spawn)
         {
             var key = (player, quest, step);
@@ -1271,47 +1331,31 @@ namespace DOL.GS.Quests
             var spawned = new List<GameNPC>();
             for (int i = 0; i < Math.Max(1, spawn.Count); i++)
             {
-                var npc = new GameNPC();
-                if (spawn.TemplateId > 0 && NpcTemplateMgr.GetTemplate(spawn.TemplateId) is INpcTemplate template)
-                    npc.LoadTemplate(template);
-                npc.Name = spawn.Name;
-                if (spawn.Level > 0) npc.Level = spawn.Level;
-                if (spawn.Model > 0) npc.Model = spawn.Model;
-                // Never a monster with no body (owner 2026-11-10: Anklebiter came with model 0, drawn as nothing, and
-                // attacked unseen): borrow the look of a standing NPC of that name, otherwise don't spawn it.
-                if (npc.Model == 0)
+                GameNPC npc = SpawnOne(player, spawn, spawn.Name, spawn.TemplateId, spawn.Level, spawn.Model, spawn.Peaceful, i, out bool noModel);
+                if (noModel)
                 {
-                    ushort look = BodiedModel(spawn.Name, spawn.Region);
-                    if (look == 0)
-                    {
-                        Log.Warn($"CLASSIC_QUEST_SPAWN_NO_MODEL quest={quest} step={step} name=\"{spawn.Name}\": not spawned (give it a Model or TemplateId)");
-                        return;
-                    }
-                    npc.Model = look;
+                    Log.Warn($"CLASSIC_QUEST_SPAWN_NO_MODEL quest={quest} step={step} name=\"{spawn.Name}\": not spawned (give it a Model or TemplateId)");
+                    return;
                 }
-                npc.Realm = spawn.Peaceful ? player.Realm : eRealm.None;
-                // A short way off on walkable ground, then they come at the player (owner 2026-10-07: spawning on top
-                // of the player looked wrong). A summoned NPC stands at its point, beside the NPC that summons it.
-                var at = spawn.Peaceful ? new System.Numerics.Vector3(spawn.X + 90 + 60 * i, spawn.Y, spawn.Z) : ApproachPoint(player, i);
-                npc.CurrentRegionID = spawn.Peaceful ? spawn.Region : player.CurrentRegionID;
-                npc.X = (int)at.X; npc.Y = (int)at.Y; npc.Z = (int)at.Z;
-                npc.Heading = npc.GetHeading(player);
-                npc.RespawnInterval = -1; // never respawns: one encounter for this player's step
-                npc.TempProperties.SetProperty(EventSpawnProperty, player.Name);
-                if (spawn.Peaceful)
-                {
-                    npc.Flags |= GameNPC.eFlags.PEACE;
-                    if (npc.Brain is DOL.AI.Brain.StandardMobBrain calm) calm.AggroLevel = 0;
-                }
-                else // a fight: the template of a townsperson the quest turns on (Dark Bishop Burhoff, Gokstad) is peaceful
-                    npc.Flags &= ~(GameNPC.eFlags.PEACE | GameNPC.eFlags.CANTTARGET);
-                if (!npc.AddToWorld()) continue;
-                if (!spawn.Peaceful && npc.Brain is DOL.AI.Brain.StandardMobBrain brain) brain.AddToAggroList(player, 1);
-                spawned.Add(npc);
-                new ECSGameTimer(npc, _ => { if (npc.ObjectState == GameObject.eObjectState.Active) npc.Delete(); return 0; },
-                    Math.Max(60, spawn.DespawnSeconds) * 1000);
+                if (npc != null) spawned.Add(npc);
             }
             if (spawned.Count == 0) return;
+            // Its escort comes and goes with it (one-off spawns on the same 5 s refresh; nothing ticks for them).
+            int index = spawned.Count;
+            foreach (EscortSpawn escort in spawn.Escort ?? new List<EscortSpawn>())
+            {
+                if (string.IsNullOrWhiteSpace(escort?.Name)) continue;
+                for (int i = 0; i < Math.Max(1, escort.Count); i++, index++)
+                {
+                    GameNPC npc = SpawnOne(player, spawn, escort.Name, escort.TemplateId, escort.Level, escort.Model, escort.Peaceful, index, out bool noModel);
+                    if (noModel)
+                    {
+                        Log.Warn($"CLASSIC_QUEST_SPAWN_NO_MODEL quest={quest} step={step} escort=\"{escort.Name}\": not spawned (give it a Model or TemplateId)");
+                        break;
+                    }
+                    if (npc != null) spawned.Add(npc);
+                }
+            }
             EventSpawns[key] = spawned;
             if (Log.IsInfoEnabled)
                 Log.Info($"CLASSIC_QUEST_EVENT_SPAWN quest={quest} step={step} for={player.Name} npc=\"{spawn.Name}\" count={spawned.Count} " +

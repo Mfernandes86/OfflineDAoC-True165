@@ -145,6 +145,20 @@ public class UT_QuestFix07
         Assert.That(guide.Level, Is.EqualTo(expected));
     }
 
+    [Test]
+    public void AnEventSpawnCanBringAnEscort()
+    {
+        var config = Parse("""
+        { "Quests": { "20377": { "Steps": [ null, { "Spawn": { "Name": "Golga", "TemplateId": 1, "Peaceful": true,
+            "Escort": [ { "Name": "svartalf chanter", "TemplateId": 2, "Level": 20, "Count": 4 } ] } } ] } } }
+        """);
+        var spawn = config.Quests[20377].Steps[1].Spawn;
+        Assert.That(spawn.Escort, Has.Count.EqualTo(1));
+        Assert.That(spawn.Escort[0].Count, Is.EqualTo(4));
+        Assert.That(spawn.Escort[0].Peaceful, Is.False);
+        Assert.That(Parse("""{ "Quests": { "1": { "Steps": [ null, { "Spawn": { "Name": "x" } } ] } } }""").Quests[1].Steps[1].Spawn.Escort, Is.Null);
+    }
+
     [TestCase(8, 8, 16, true)]
     [TestCase(15, 8, 16, true)]
     [TestCase(16, 8, 16, false)]
