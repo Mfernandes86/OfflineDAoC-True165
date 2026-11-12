@@ -65,4 +65,19 @@ public class UT_RealmRaidTravelFixes
         Assert.That(AutonomousWorldBotController.ShouldTryExpeditionRide(40_000), Is.True);
         Assert.That(AutonomousWorldBotController.ShouldTryExpeditionRide(3_000), Is.False);
     }
+
+    [Test]
+    public void AnUnplaceableSlotDoesNotBlockLaterParties()
+    {
+        var failed = new System.Collections.Generic.Dictionary<int, long>();
+        int tries = 0;
+        int slot = AutonomousRealmRaid.NextPlaceableSlot(38, s => s == 0, s => failed.ContainsKey(s), s => { tries++; return s != 1; }, s => failed[s] = 1);
+        Assert.That(slot, Is.EqualTo(2), "slot 1 has no post; the next free slot is used");
+        Assert.That(failed.Keys, Is.EquivalentTo(new[] { 1 }));
+        tries = 0;
+        slot = AutonomousRealmRaid.NextPlaceableSlot(38, s => s is 0 or 2, s => failed.ContainsKey(s), s => { tries++; return true; }, s => failed[s] = 1);
+        Assert.That(slot, Is.EqualTo(3));
+        Assert.That(tries, Is.EqualTo(1), "a slot that just failed is not searched again");
+        Assert.That(AutonomousRealmRaid.NextPlaceableSlot(2, s => false, s => false, s => false, s => { }), Is.EqualTo(-1));
+    }
 }

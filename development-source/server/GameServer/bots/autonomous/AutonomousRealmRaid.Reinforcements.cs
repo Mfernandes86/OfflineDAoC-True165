@@ -160,4 +160,44 @@ public static partial class AutonomousRealmRaid
         r.Bot.Group != null && Membership.GetValueOrDefault(r.Bot.Group) == raid &&
         raid.Parties.TryGetValue(r.Bot.Group, out Party party) && party.CatchingUp.Contains(r.Bot.DatabaseID) &&
         AutonomousBotRegistry.Contains(r.Bot.DatabaseID);
+
+    // ---- Formation slots -------------------------------------------------------------------------------------------
+
+    /// <summary>A slot whose hub or staging post could not be placed is not searched again for this long.</summary>
+    public const long FailedSlotRetryMilliseconds = 60_000;
+
+    /// <summary>
+    /// The lowest free formation slot that can be placed, skipping a slot that just failed (epic-routes M7: the lowest
+    /// free slot was always taken, so one slot with no hub or staging post blocked every later party and capped the
+    /// raid below 200). <paramref name="place"/> is tried at most once per slot.
+    /// </summary>
+    public static int NextPlaceableSlot(int maximum, Func<int, bool> used, Func<int, bool> recentlyFailed, Func<int, bool> place,
+        Action<int> failed)
+    {
+        for (int slot = 0; slot < maximum; slot++)
+        {
+            if (used(slot) || recentlyFailed(slot)) continue;
+            if (place(slot)) return slot;
+            failed(slot);
+        }
+        return -1;
+    }
+
+    private static readonly ConditionalWeakTable<Raid, Dictionary<int, long>> FailedSlots = new();
+
+    /// <summary>For TryJoin, TryGetForcedStaging and CommitForcedParty (caller holds the raid lock).</summary>
+    private static bool TryPlaceableSlot(Raid raid, out int slot, out Vector3 staging, out Vector3 hubPost)
+    {
+        long now = GameLoop.GameLoopTime;
+        Dictionary<int, long> failedUntil = FailedSlots.GetValue(raid, _ => new Dictionary<int, long>());
+        Vector3 foundStaging = default, foundHub = default;
+        slot = NextPlaceableSlot(RealmRaidRecruitmentPolicy.MaximumParties,
+            s => raid.Parties.Values.Any(p => p.FormationSlot == s),
+            s => failedUntil.GetValueOrDefault(s) > now,
+            s => TryStaging(raid, s, out foundStaging) && TryHubPost(raid, s, out foundHub),
+            s => failedUntil[s] = now + FailedSlotRetryMilliseconds);
+        staging = foundStaging;
+        hubPost = foundHub;
+        return slot >= 0;
+    }
 }
