@@ -51,6 +51,7 @@ namespace DOL.GS.GameEvents
 		public static void InitStarterEquipment()
 		{
 			m_cachedClassEquipment.Clear();
+			s_starterWeapons.Clear();
 			
 			// Init Startup Collection.
 			foreach (var equipclass in GameServer.Database.SelectAllObjects<StarterEquipment>())
@@ -94,6 +95,19 @@ namespace DOL.GS.GameEvents
 		/// database, keeping their level-one loadout identical to a real player.
 		/// </summary>
 		public static DbItemTemplate GetStarterWeaponTemplate(eCharacterClass characterClass)
+		{
+			// Veteran review 2026-11-11 (Q11): bots ask this on every swing; the filter-and-sort below was about 9% of all
+			// memory garbage. One answer per class, dropped whenever the starter equipment is reloaded.
+			if (s_starterWeapons.TryGetValue(characterClass, out DbItemTemplate cached))
+				return cached;
+			DbItemTemplate weapon = FindStarterWeaponTemplate(characterClass);
+			s_starterWeapons[characterClass] = weapon;
+			return weapon;
+		}
+
+		private static readonly System.Collections.Concurrent.ConcurrentDictionary<eCharacterClass, DbItemTemplate> s_starterWeapons = new();
+
+		private static DbItemTemplate FindStarterWeaponTemplate(eCharacterClass characterClass)
 		{
 			if (!m_cachedClassEquipment.ContainsKey(characterClass))
 				InitStarterEquipment();
