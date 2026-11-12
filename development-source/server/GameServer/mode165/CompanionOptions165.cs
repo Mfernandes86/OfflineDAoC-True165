@@ -35,7 +35,7 @@ namespace DOL.GS
             KindLifeTransfer = 16, KindAmnesia = 17, KindPerform = 18, KindSavePower = 26, KindPositioning = 27,
             KindDebuffLine = 28, KindSavePowerCaster = 29, KindAttackSpells = 30;
         /// <summary>Companion controls (veteran review M7 and the owner's twist option, 2026-11-11; CompanionControls165).</summary>
-        public const byte KindTwist = 40;
+        public const byte KindTwist = 40, KindStance = 41;
         /// <summary>The fourth Role choice of every healer's Role row (owner 2026-11-11; CompanionSpellOptions165).</summary>
         public const string MeleeHealChoice = "Melee and heal, no attack spells (melee interrupts casts)";
         public static readonly HashSet<string> Verbs = ["charm", "pet", "subpet", "song", "option"];
@@ -125,6 +125,10 @@ namespace DOL.GS
             // them; off (Automatic) they hold one, as since 2026-10-30. Companions only; a switch plays without its sound.
             new(KindTwist, "twist", "Twist songs / chants", ["Automatic (hold one)", "Twist (cycle them)"],
                 bot => CompanionControls165.OffersTwist((eCharacterClass)bot.CharacterClass.ID, CompanionControls165.SongKinds(bot))),
+            // M7 (veteran review): a stance of its own ("tank aggressive, healer passive"); Automatic follows the player's
+            // /aggressive, /defensive or /passive
+            new(KindStance, "stance", "Stance", ["Automatic (the group's stance)", "Aggressive", "Defensive", "Passive"],
+                _ => true),
         ];
 
         /// <summary>A generic AI option's stored key and choices (choice 0 Automatic), or null for an unknown kind.</summary>
@@ -546,7 +550,11 @@ namespace DOL.GS
                     Generic option = Generics.FirstOrDefault(g => g.Kind == kind);
                     if (option == null || !option.Applies(bot) || i < 0 || i >= option.Choices.Length)
                         return "Choose an option.";
+                    bool wasPassive = option.Kind == KindStance && CompanionEngagementMode.PassiveLeader(bot) != null;
                     Set(hired, option.Key, i == 0 ? null : i.ToString());
+                    // a companion leaving its own passive stance: its pets defend again at once
+                    if (wasPassive && CompanionEngagementMode.PassiveLeader(bot) == null)
+                        CompanionEngagementMode.RestorePets(bot);
                     // the Hunter's pet switched off: the wolf that is out goes now
                     if (option.Kind == KindHunterPet && i == 1 && bot.ControlledBrain != null)
                         bot.CommandNpcRelease();

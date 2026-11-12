@@ -48,12 +48,19 @@ namespace DOL.GS
             if (player.Group == null) return;
             foreach (GameBot bot in player.Group.GetMembersInTheGroup().OfType<GameBot>())
             {
-                if (!bot.IsPlayerCompanion || (bot.PlayerGroupLeader ?? bot.Owner) != player || bot.CurrentRegion?.IsCapitalCity == true)
+                if (!bot.IsPlayerCompanion || (bot.PlayerGroupLeader ?? bot.Owner) != player || PassiveLeader(bot) != null)
                     continue;
-                foreach (GameNPC pet in BotGroupPetBuffTargets.AttachedTree(bot.ControlledBrain, bot, new HashSet<IControlledBrain>()))
-                    if (pet.Brain is IControlledBrain brain && brain.AggressionState == eAggressionState.Passive)
-                        brain.SetAggressionState(eAggressionState.Defensive);
+                RestorePets(bot);
             }
+        }
+
+        /// <summary>One companion's pets defend again (outside a capital, where companion pets stay passive anyway).</summary>
+        public static void RestorePets(GameBot bot)
+        {
+            if (bot == null || bot.CurrentRegion?.IsCapitalCity == true) return;
+            foreach (GameNPC pet in BotGroupPetBuffTargets.AttachedTree(bot.ControlledBrain, bot, new HashSet<IControlledBrain>()))
+                if (pet.Brain is IControlledBrain brain && brain.AggressionState == eAggressionState.Passive)
+                    brain.SetAggressionState(eAggressionState.Defensive);
         }
 
         /// <summary>The op-30 payload byte for a stance: 0 aggressive, 1 defensive, 2 passive.</summary>
@@ -84,9 +91,12 @@ namespace DOL.GS
                 if (actor is GameBot bot)
                 {
                     GamePlayer leader = bot.PlayerGroupLeader ?? bot.Owner;
-                    return bot.IsPlayerCompanion &&
-                        leader != null && bot.Group != null && bot.Group == leader.Group &&
-                        Modes.TryGetValue(leader, out Mode mode) && mode.Stance == stance ? leader : null;
+                    if (!bot.IsPlayerCompanion || leader == null || bot.Group == null || bot.Group != leader.Group)
+                        return null;
+                    // M7: a companion's own stance (AI Options "Stance") wins over its player's
+                    CompanionStance group = Modes.TryGetValue(leader, out Mode mode) ? mode.Stance : CompanionStance.Aggressive;
+                    return CompanionControls165.EffectiveStance(CompanionOptions165.Choice(bot, "stance"), group) == stance
+                        ? leader : null;
                 }
                 actor = (actor as GameNPC)?.Brain is IControlledBrain controlled ? controlled.Owner : null;
             }
@@ -152,7 +162,8 @@ namespace DOL.GS
         }
         public static void RememberPull(GamePlayer player, GameLiving target)
         {
-            if (player != null && Modes.TryGetValue(player, out Mode mode) && mode.Stance == CompanionStance.Defensive) mode.Pull = target;
+            // kept whatever the group's stance: a companion on its own Defensive stance waits for the pull too (M7)
+            if (player != null) Modes.GetOrCreateValue(player).Pull = target;
         }
         public static GameLiving NearbyPull(GameBot bot)
         {

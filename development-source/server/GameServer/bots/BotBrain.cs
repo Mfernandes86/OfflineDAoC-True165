@@ -1397,7 +1397,7 @@ namespace DOL.AI.Brain
                 _ambientWanderMovement = false;
                 return;
             }
-            if (!ambientWander && CompanionHealerCombatHold.Holds(BotBody, leader) && !CompanionEngagementMode.IsPassive(leader))
+            if (!ambientWander && CompanionHealerCombatHold.Holds(BotBody, leader) && CompanionEngagementMode.PassiveLeader(BotBody) == null)
             {
                 // Stop a formation walk already under way; other movement is left alone.
                 if (Body.IsMoving && CompanionFollowPolicy.HasFormationOrder(BotBody))

@@ -88,5 +88,24 @@ namespace DOL.GS
         /// </summary>
         public static bool PassiveKeepsCast(bool charm, bool speedSong, bool cureMez, bool heal, bool instant, bool leaderMoving) =>
             charm || speedSong || cureMez || heal && (instant || !leaderMoving);
+
+        // ---- Per-companion stance (M7, G13)
+
+        /// <summary>The "Stance" row's choices: 0 Automatic (the group's stance), 1 aggressive, 2 defensive, 3 passive.</summary>
+        public const int StanceGroup = 0, StanceAggressive = 1, StanceDefensive = 2, StancePassive = 3;
+
+        /// <summary>Pure: the stance this companion's own choice sets, or null to follow the group's.</summary>
+        public static CompanionStance? OwnStance(int choice) => choice switch
+        {
+            StanceAggressive => CompanionStance.Aggressive,
+            StanceDefensive => CompanionStance.Defensive,
+            StancePassive => CompanionStance.Passive,
+            _ => null,
+        };
+
+        /// <summary>Pure: a companion's stance - its own choice when it has one, else its player's /aggressive, /defensive
+        /// or /passive.</summary>
+        public static CompanionStance EffectiveStance(int ownChoice, CompanionStance groupStance) =>
+            OwnStance(ownChoice) ?? groupStance;
     }
 }
