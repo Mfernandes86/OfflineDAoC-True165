@@ -2051,6 +2051,7 @@ public static class AutonomousPetSupport
 
         int activeCount;
         int activeLevels;
+        bool healerOut;
         lock (commander.ControlledNpcListLock)
         {
             var active = commander.ControlledNpcList?.Where(brain => brain?.Body is
@@ -2060,6 +2061,7 @@ public static class AutonomousPetSupport
             }).ToArray() ?? [];
             activeCount = active.Length;
             activeLevels = active.Sum(brain => (int)brain.Body.Level);
+            healerOut = active.Any(brain => MinionType(brain.Body) == BdSubPet.SubPetType.Healer);
         }
 
         int slotsToFill = Math.Min(desiredCount, commander.SubPetCapacity) - activeCount;
@@ -2077,7 +2079,7 @@ public static class AutonomousPetSupport
         // its first member: two strong pets or three weaker pets, with the
         // resulting level sum as close to 75 as the learned ranks permit.
         void Search(int depth, int total, int preferred, int rankScore,
-            (Spell Spell, SpellLine Line) first)
+            (Spell Spell, SpellLine Line) first, bool healerFirstSlot)
         {
             if (depth == slotsToFill)
             {
@@ -2096,18 +2098,35 @@ public static class AutonomousPetSupport
 
             foreach (var candidate in candidates)
             {
+                if (depth == 0 && healerFirstSlot && !IsHealerMinion(candidate.Spell))
+                    continue;
                 int nextTotal = total + candidate.PetLevel;
                 if (nextTotal > remainingBudget)
                     continue;
                 Search(depth + 1, nextTotal, preferred + (candidate.Preferred ? 1 : 0),
                     rankScore + candidate.Spell.Level,
-                    depth == 0 ? (candidate.Spell, candidate.Line) : first);
+                    depth == 0 ? (candidate.Spell, candidate.Line) : first, healerFirstSlot);
             }
         }
 
-        Search(0, 0, 0, 0, default);
+        // Q17 (veteran review 2026-11-11; Prima: the Bonedancer's healer minion keeps the commander alive): with no
+        // healer minion out, the first slot is a healer when one fits the budget; the rest follow the build as before.
+        bool healerFirst = BonedancerHealerFirst(healerOut, candidates.Any(entry => IsHealerMinion(entry.Spell)));
+        if (healerFirst)
+        {
+            Search(0, 0, 0, 0, default, true);
+            if (best.Spell != null)
+                return best;
+        }
+        Search(0, 0, 0, 0, default, false);
         return best;
     }
+
+    /// <summary>Pure (Q17): the next minion is a healer while none is out and one is known.</summary>
+    public static bool BonedancerHealerFirst(bool healerOut, bool healerKnown) => !healerOut && healerKnown;
+
+    private static bool IsHealerMinion(Spell spell) =>
+        spell?.SpellType == eSpellType.SummonMinion && (BdSubPet.SubPetType)spell.DamageType == BdSubPet.SubPetType.Healer;
 
     /// <summary>
     /// A hired Bonedancer's sub-pet plan (CompanionOptions165, owner 2026-11-05): the first planned kind not yet out
