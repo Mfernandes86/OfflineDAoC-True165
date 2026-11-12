@@ -8,6 +8,13 @@ namespace DOL.GS
     /// </summary>
     public static class BardBotCrowdControlPolicy
     {
+        /// <summary>
+        /// Pure (Q26, veteran review 2026-11-11; Prima: a Bard's group role is to mez every add): the area mez is worth
+        /// its cast when it would catch two or more safe adds, and nothing the group is killing is near the blast.
+        /// </summary>
+        public static bool AreaMezWorthwhile(int safeAddsInRadius, bool killTargetNearBlast, bool blastVetoed) =>
+            safeAddsInRadius >= 2 && !killTargetNearBlast && !blastVetoed;
+
         public static bool HasGroupForPveAdd(int? memberCount) => memberCount >= 2;
 
         public static bool AllowsOrdinaryOffense(eCharacterClass characterClass, eSpellType spellType) =>

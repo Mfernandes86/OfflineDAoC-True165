@@ -64,7 +64,13 @@ namespace DOL.AI.Brain
                 .Where(spell => spell != null && spell.SpellType == eSpellType.Mesmerize &&
                     spell.Target == eSpellTarget.ENEMY && spell.Radius <= 0 && spell.Level <= bard.Level)
                 .OrderByDescending(spell => spell.Level).ToArray();
-            if (singleTargetMezzes.Length == 0)
+            // Q26: the Music area mez (Captivate Audience ... Legions) on clustered adds, through the safe area-mez rule
+            Spell[] areaMezzes = bard.CrowdControlSpells
+                .Where(spell => spell != null && spell.SpellType == eSpellType.Mesmerize &&
+                    spell.Target == eSpellTarget.ENEMY && spell.Radius > 0 && spell.Level <= bard.Level &&
+                    !BotControlSpells.IsLongReuse(spell))
+                .OrderByDescending(spell => spell.Level).ToArray();
+            if (singleTargetMezzes.Length == 0 && areaMezzes.Length == 0)
                 return false;
 
             List<GameNPC> nearby = bard.GetNPCsInRadius(1800);
@@ -93,6 +99,9 @@ namespace DOL.AI.Brain
             bool castTimeBlocked = bard.IsBeingInterruptedByOther ||
                 !Array.Exists(singleTargetMezzes, spell => spell.CastTime > 0 && !BotControlSpells.IsLongReuse(spell) &&
                     bard.GetSkillDisabledDuration(spell) <= 0 && bard.Mana >= bard.PowerCost(spell));
+
+            if (safeAdds.Count >= 2 && TryBardAreaMez(bard, safeAdds, areaMezzes, activeTargets, selectedTargets, now))
+                return true;
 
             foreach (GameNPC add in safeAdds)
             {
@@ -136,6 +145,53 @@ namespace DOL.AI.Brain
                 }
             }
 
+            return false;
+        }
+
+        private bool TryBardAreaMez(GameBot bard, List<GameNPC> safeAdds, Spell[] areaMezzes,
+            HashSet<GameLiving> activeTargets, HashSet<GameLiving> selectedTargets, long now)
+        {
+            foreach (Spell spell in areaMezzes)
+            {
+                if (bard.Mana < bard.PowerCost(spell) || bard.GetSkillDisabledDuration(spell) > 0 ||
+                    spell.CastTime > 0 && bard.IsBeingInterruptedByOther)
+                    continue;
+                foreach (GameNPC add in safeAdds)
+                {
+                    int caught = 0;
+                    foreach (GameNPC other in safeAdds)
+                        if (add.IsWithinRadius(other, spell.Radius))
+                            caught++;
+                    if (caught < 2)
+                        continue;
+                    bool killNear = activeTargets.Concat(selectedTargets).Any(target =>
+                        target is GameObject kill && add.IsWithinRadius(kill, spell.Radius + BotAoePolicy.SafetyMargin));
+                    if (killNear || !bard.IsWithinRadius(add, spell.CalculateEffectiveRange(bard)) ||
+                        !NeedsOffensiveSpellApplication(add, spell) || !BotGroupSupport.HasCorpseLineOfSight(bard, add))
+                        continue;
+                    if (!BardBotCrowdControlPolicy.AreaMezWorthwhile(caught, false, EvaluateBlast(add, spell).Vetoed))
+                        continue;
+                    foreach (GameNPC other in safeAdds)
+                        if (add.IsWithinRadius(other, spell.Radius))
+                            _bardPveMezRetryUntil[other] = now + AddControlRetryMilliseconds(spell.CastTime);
+                    GameObject previous = bard.TargetObject;
+                    bard.TargetObject = add;
+                    try
+                    {
+                        if (spell.CastTime > 0)
+                        {
+                            bard.StopMovingOnPath();
+                            bard.StopMoving();
+                        }
+                        if (CheckOffensiveSpells(spell))
+                            return true;
+                    }
+                    finally
+                    {
+                        bard.TargetObject = previous;
+                    }
+                }
+            }
             return false;
         }
     }
