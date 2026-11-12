@@ -72,8 +72,10 @@ public class UT_RealmExpeditionAttendance
             Assert.That(AutonomousRealmRaid.GetTravelView(bots[7]),Is.SameAs(final));
             bots[7].Alive=false;
             Assert.That(AutonomousBotGroupCoordinator.PveCorpseRecovery(bots[7]),Is.EqualTo(AutonomousBotGroupCoordinator.PveCorpseDisposition.HoldForResurrection));
-            var since=(Dictionary<long,long>)party.GetType().GetField("CorpseSince").GetValue(party);
-            since[bots[7].DatabaseID]=GameLoop.GameLoopTime-90_001;
+            // the corpse's wait is a small record now (sh-bosses L6: the wait follows who is in sight); age it past every wait
+            var watch=((IDictionary)party.GetType().GetField("CorpseSince").GetValue(party))[bots[7].DatabaseID];
+            watch.GetType().GetField("Since").SetValue(watch,GameLoop.GameLoopTime-240_001);
+            watch.GetType().GetField("NextCheck").SetValue(watch,0L);
             Assert.That(AutonomousBotGroupCoordinator.PveCorpseRecovery(bots[7]),Is.EqualTo(AutonomousBotGroupCoordinator.PveCorpseDisposition.ReleaseAndRejoin));
             Assert.That(AutonomousRealmRaid.GetView(group),Is.Not.Null,"Corpse timeout must preserve expedition membership");
             Assert.That(group.MemberCount,Is.EqualTo(8));
