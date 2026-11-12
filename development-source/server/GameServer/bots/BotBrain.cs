@@ -5183,7 +5183,8 @@ namespace DOL.AI.Brain
         /// A ranged damage caster lets the tank or its own pet take the monster before it nukes (period forums: Theurgist,
         /// "wait for the tank's hits/taunts, start nuking at ~50-75% mob health"; Enchanter, "send pet, start nuking at
         /// ~85%"; Spiritmaster, "pet takes aggro, SM nukes"). Holds damage spells (debuffs and control still go) until the
-        /// monster is on the group's tank (or a player) under 75% health, or on its own pet under 85%; never when the
+        /// monster is on the group's tank (or a player) under 75% health, or on its own pet under 85% (a Spiritmaster's
+        /// under 75%, as Prima says: O10); never when the
         /// monster is on the caster, never solo without a pet, never against players, and at most 8 seconds per target so
         /// a fight with nobody holding the monster is not stalled.
         /// </summary>
@@ -5208,7 +5209,8 @@ namespace DOL.AI.Brain
             if (holder == null)
                 return tankInGroup;   // a pet caster opens itself (the pet goes in with it); a group waits for its tank's pull
             if (pet != null && holder == pet)
-                return target.HealthPercent > 85;
+                return target.HealthPercent > BotClassAbilities165.PetHoldsDamageAbovePercent(
+                    (eCharacterClass)(BotBody?.CharacterClass?.ID ?? 0));
             if (!tankInGroup)
                 return false;
             bool tankHolds = holder != null && holder != Body && Body.Group?.IsInTheGroup(holder) == true &&
