@@ -26,23 +26,8 @@ public sealed partial class RealmExchangeBroker : GameNPC, IGameInventoryObject
     private const string ListingsPageProperty = "OfflineRealmExchange.ListingsPage";
     private const string SortProperty = "OfflineRealmExchange.Sort";
 
-    /// <summary>A search's results in the order the player chose by clicking a column (name, level, quality, price).</summary>
-    private static List<DbInventoryItem> Sorted(List<DbInventoryItem> items, string sort)
-    {
-        string[] parts = (sort ?? string.Empty).Split(' ');
-        if (parts.Length != 2) return items;
-        bool down = parts[1] == "desc";
-        Func<DbInventoryItem, IComparable> key = parts[0] switch
-        {
-            "name" => item => item.Name ?? string.Empty,
-            "level" => item => item.Level,
-            "quality" => item => item.Quality,
-            "price" => item => item.SellPrice,
-            _ => null,
-        };
-        if (key == null) return items;
-        return (down ? items.OrderByDescending(key) : items.OrderBy(key)).ThenBy(item => item.SellPrice).ToList();
-    }
+    /// <summary>The player's last search, run again after a purchase so the bought row goes at once.</summary>
+    private const string LastSearchProperty = "OfflineRealmExchange.LastSearch";
     private const string ProceedsKeyPrefix = "RealmExchange.Proceeds.";
     private const int PageSize = 20;
     /// <summary>Each player's one listing chest (owner 2026-11-06: "100 slot cap for players").</summary>
@@ -108,7 +93,7 @@ public sealed partial class RealmExchangeBroker : GameNPC, IGameInventoryObject
             return true;
         }
         // The new client (owner 2026-11-05, reset-day S38 / C16): "sort <name|level|quality|price> <asc|desc>" orders
-        // every following search; "duration <chest slot 0-99> <12|24|48>" sets a priced listing's time.
+        // every following search (2026-11-11 plan, phase 6: also "newest" and "fit"; no column chosen is fit); "duration <chest slot 0-99> <12|24|48>" sets a priced listing's time.
         string[] words = command.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (words.Length == 3 && words[0] == "sort")
         {
@@ -275,27 +260,48 @@ public sealed partial class RealmExchangeBroker : GameNPC, IGameInventoryObject
             .ToDictionary(group => group.Key + offset, group => group.First());
     }
 
-    public bool SearchInventory(GamePlayer player, MarketSearch.SearchData searchData)
+    public bool SearchInventory(GamePlayer player, MarketSearch.SearchData searchData) => Search(player, searchData, false);
+
+    /// <summary>
+    /// A player's search (2026-11-11 exchange plan, phase 6, RealmExchangeBrowse): one row per item with its copy count
+    /// unless the client asks for every copy, only usable items when it asks, ordered by the chosen column or else by fit
+    /// to the player's level. A refresh (after a purchase) sends the page again without the status line.
+    /// </summary>
+    private bool Search(GamePlayer player, MarketSearch.SearchData searchData, bool refresh)
     {
         if (!CanUseExchange(player) || player.ActiveInventoryObject != this)
             return false;
+        player.TempProperties.SetProperty(LastSearchProperty, searchData);
         List<DbInventoryItem> all = new MarketSearch(player).FindExchangeItems(searchData, ExchangeOwnerLot);
-        all = Sorted(all, player.TempProperties.GetProperty<string>(SortProperty));
+        if ((searchData.flags & RealmExchangeBrowse.FlagUsableOnly) != 0)
+            all = all.Where(item => item.Template != null && player.HasAbilityToUseItem(item.Template)).ToList();
+        bool grouped = (searchData.flags & RealmExchangeBrowse.FlagEveryCopy) == 0;
+        RealmExchangeBrowse.View view = RealmExchangeBrowse.Build(all, grouped, player.InternalID, DateTime.UtcNow);
+        List<RealmExchangeBrowse.Row> rows = RealmExchangeBrowse.Order(view.Rows,
+            player.TempProperties.GetProperty<string>(SortProperty), player.Level);
 
         // The legacy protocol has one-byte page numbers; never wrap page 256
         // back to zero. Narrower filters expose any matching listing.
-        int maxPage = Math.Min(byte.MaxValue, Math.Max(0, (all.Count - 1) / PageSize));
+        int maxPage = Math.Min(byte.MaxValue, Math.Max(0, (rows.Count - 1) / PageSize));
         int page = Math.Min(searchData.page, maxPage);
-        List<DbInventoryItem> pageItems = all.Skip(page * PageSize).Take(PageSize).ToList();
+        List<RealmExchangeBrowse.Row> pageRows = rows.Skip(page * PageSize).Take(PageSize).ToList();
+        List<DbInventoryItem> pageItems = pageRows.Select(row => row.Item).ToList();
 
         player.TempProperties.SetProperty(BrowseListProperty, pageItems);
         player.TempProperties.SetProperty(MarketExplorer.EXPLORER_ITEM_LIST, pageItems);
-        player.Out.SendMarketExplorerWindow(pageItems, (byte)page, (byte)maxPage);
-        if (searchData.page == 0)
-            player.Out.SendMessage($"Realm Exchange returned {all.Count} real listing(s).", eChatType.CT_Important, eChatLoc.CL_SystemWindow);
-        if (all.Count > PageSize * (byte.MaxValue + 1))
+        player.Out.SendMarketExplorerWindow(pageItems, (byte)page, (byte)maxPage, RealmExchangeBrowse.Lots(pageRows, view.Grouped));
+        if (searchData.page == 0 && !refresh)
+            player.Out.SendMessage(RealmExchangeBrowse.Status(view.Listings, view.Distinct, view.Fresh), eChatType.CT_Important, eChatLoc.CL_SystemWindow);
+        if (rows.Count > PageSize * (byte.MaxValue + 1) && !refresh)
             player.Out.SendMessage("This client can display 5,120 matches per search. Narrow the name, level, armor or bonus filters to find additional items.", eChatType.CT_Important, eChatLoc.CL_SystemWindow);
         return true;
+    }
+
+    /// <summary>Runs the player's last search again (after a purchase), so the bought row disappears at once.</summary>
+    private void RefreshBrowse(GamePlayer player)
+    {
+        if (player.TempProperties.GetProperty<object>(LastSearchProperty) is MarketSearch.SearchData last)
+            Search(player, last, true);
     }
 
     public bool CanHandleMove(GamePlayer player, eInventorySlot fromClientSlot, eInventorySlot toClientSlot)
@@ -380,6 +386,7 @@ public sealed partial class RealmExchangeBroker : GameNPC, IGameInventoryObject
             }
 
             BuyItem(player, items[index]);
+            RefreshBrowse(player);
             return true;
         }
 
