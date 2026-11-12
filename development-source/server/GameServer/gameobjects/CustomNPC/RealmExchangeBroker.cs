@@ -413,6 +413,7 @@ public sealed partial class RealmExchangeBroker : GameNPC, IGameInventoryObject
     public bool OnRemoveItem(GamePlayer player, DbInventoryItem item, int previousSlot)
     {
         MarketCache.RemoveItem(item);
+        RealmExchangeExpiry.ForgetHours(item);
         item.OwnerLot = 0;
         item.SellPrice = 0;
         return true;
@@ -445,9 +446,13 @@ public sealed partial class RealmExchangeBroker : GameNPC, IGameInventoryObject
         }
 
         int price = sellPrice > int.MaxValue ? int.MaxValue : (int)sellPrice;
-        MarketCache.UpdateItem(item, static (listedItem, value) => listedItem.SellPrice = value, price);
-        // its listing time runs from now (RealmExchangeExpiry: 12/24/48 h, 48 unless chosen); unpriced, it never runs out
-        item.RealmExchangeListedUtc = price > 0 ? DateTime.UtcNow.ToString("O") : string.Empty;
+        // its listing time runs from now (RealmExchangeExpiry: 12/24/48 h, 48 unless chosen); unpriced, it never runs out.
+        // Both change inside the update so the exchange index reads the new expiry.
+        MarketCache.UpdateItem(item, static (listedItem, value) =>
+        {
+            listedItem.SellPrice = value;
+            listedItem.RealmExchangeListedUtc = value > 0 ? DateTime.UtcNow.ToString("O") : string.Empty;
+        }, price);
         GameServer.Database.SaveObject(item);
         player.Out.SendMessage(price > 0 ? $"{item.Name} is listed for {Money.GetString(price)} for {RealmExchangeExpiry.PlayerListingHours(item)} hours." : $"{item.Name} is stored but not offered for sale.", eChatType.CT_Merchant, eChatLoc.CL_ChatWindow);
         SendTimeLeft(player);
@@ -456,9 +461,13 @@ public sealed partial class RealmExchangeBroker : GameNPC, IGameInventoryObject
 
     private void BuyItem(GamePlayer buyer, DbInventoryItem item)
     {
-        lock (TransactionLock)
-        lock (typeof(AutonomousBotEconomy))
-        lock (AutonomousBotStatusPersistence.DatabaseWriteLock)
+        // a player waits at most 50 ms for the exchange (2026-11-11 plan: no blocking lock on a packet or game-loop thread)
+        if (!RealmExchangeLocks.TryEnter(RealmExchangeLocks.PlayerWaitMilliseconds, true, out RealmExchangeLocks.Scope scope))
+        {
+            ChatUtil.SendErrorMessage(buyer, "The exchange is busy, try again.");
+            return;
+        }
+        using (scope)
         {
             if (!CanUseExchange(buyer) || !IsAvailableListing(item, Realm))
             {
@@ -513,11 +522,16 @@ public sealed partial class RealmExchangeBroker : GameNPC, IGameInventoryObject
 
             payment.Apply();
             SetWallet(wallet, buyer.GetCurrentMoney());
+            // the sold item's relist and listing-hours rows go in the same transaction (2026-11-11 audit: they leaked)
+            OfflineTrue165RelistRecord relist = Exchange165.TakeForSale(item);
+            OfflineTrue165ListingHours hours = RealmExchangeExpiry.TakeHoursForSale(item.ObjectId, sellerId);
             var sale = new RealmExchangeSaleLedger.Sale((int)Realm, item.Name, item.Count, price,
                 sellerId, payment.SellerName, buyer.InternalID, buyer.Name, DateTime.UtcNow);
-            if (!RealmExchangeSaleLedger.CommitSale(GameServer.Database, sale, item, buyer.DBCharacter, wallet, payment.Row))
+            if (!RealmExchangeSaleLedger.CommitSale(GameServer.Database, sale, [item, buyer.DBCharacter, wallet, payment.Row],
+                    AutonomousBotEconomy.SaleDeletes(relist, hours)))
             {
                 payment.Restore();
+                Exchange165.RestoreAfterFailedSale(relist);
                 buyer.Inventory.RemoveItemWithoutDbDeletion(item);
                 item.OwnerID = sellerId;
                 item.SlotPosition = sellerSlot;
@@ -530,6 +544,8 @@ public sealed partial class RealmExchangeBroker : GameNPC, IGameInventoryObject
                 return;
             }
 
+            MarketCache.NoteSale(Realm, item, price);
+            RealmExchangeStats.Note(Realm, RealmExchangeStats.Counter.Sold);
             InventoryLogging.LogInventoryAction(buyer, this, eInventoryActionType.Merchant, price);
             buyer.Out.SendMessage($"You bought {item.GetName(1, false)} for {Money.GetString(price)}.", eChatType.CT_Merchant, eChatLoc.CL_ChatWindow);
         }

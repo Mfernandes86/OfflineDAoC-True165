@@ -199,19 +199,21 @@ namespace DOL.GS
             product.Creator = bot.Name;
             if (!template.IsStackable)
                 product.Quality = Util.Chance(2) ? 100 : 94 + Util.Random(5);
-            return product;
-        }
-
-        /// <summary>
-        /// The end of a session (veteran-bots review 2026-11-11, economy G2): the best product goes on the Realm Exchange
-        /// (enchanted first when the realm's enchanter bots can), the rest are salvaged or sold, whichever pays
-        /// (DisposalValue) - 93% of products already went to a merchant because a bot has 3 listings, and listing the
-        /// first ones made instead of the best put the same middling pieces up again and again.
-        /// </summary>
-        private static void FinishSession(GameBot bot, OfflineWorldBotRecord record, eCraftingSkill craft, List<Made> products)
-        {
-            int best = BestProductIndex(products.Select(m => (m.Template.IsStackable, m.Item.Quality)).ToList());
-            for (int i = 0; i < products.Count; i++)
+            // the realm's spellcrafter / alchemist bots may enchant it first, paid by this crafter (owner 2026-11-08)
+            BotEnchant165.Result enchant = BotEnchant165.TryEnchant(bot, product);
+            eInventorySlot slot = bot.Inventory.FindFirstEmptySlot(eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack);
+            if (slot == eInventorySlot.Invalid || !bot.Inventory.AddItem(slot, product))
+                return;
+            AutonomousBotEconomy.MarkInventoryChanged(bot);
+            // 2026-11-11 exchange plan: the product is listed only when worth a slot - its two crafted-only slots, a free
+            // general one, or replacing the weakest listing it may replace by 1.5 x its gain - at a fair ask (at least
+            // 1.1 x its materials) that undercuts the copies already listed; otherwise a merchant buys it, as before
+            long materials = recipe.MaterialCost + (enchant.Done ? enchant.Cost : 0);
+            AutonomousBotEconomy.ListingCandidate plan = AutonomousBotEconomy.PlanCraftedListing(bot, product, materials, ItemValue165.RollMood());
+            // (an enchanted piece's materials include the enchant: gems, tincture and fees are not given away)
+            int price = plan?.PriceCopper ?? 0;
+            bool listed = plan != null && AutonomousBotEconomy.TryListPlanned(bot, plan, price, out _);
+            if (!listed)
             {
                 Made made = products[i];
                 DbInventoryItem product = made.Item;
@@ -414,9 +416,34 @@ namespace DOL.GS
             }
         }
 
-        /// <summary>The recipes of a craft for a realm (loaded once per craft and realm), easiest first.</summary>
-        public static Recipe[] RecipesOf(eCraftingSkill craft, eRealm realm) =>
-            Recipes.GetOrAdd((craft, realm), key => LoadRecipes(key.Item1, key.Item2));
+        // the ingredients of each craft's recipes (a crafter keeps and buys only these)
+        private static readonly ConcurrentDictionary<eCraftingSkill, HashSet<string>> Ingredients = new();
+
+        /// <summary>Whether this template is an ingredient of one of the craft's recipes (built once per craft).</summary>
+        public static bool UsesIngredient(eCraftingSkill craft, string templateId) =>
+            craft != eCraftingSkill.NoCrafting && !string.IsNullOrEmpty(templateId) &&
+            Ingredients.GetOrAdd(craft, LoadIngredients).Contains(templateId);
+
+        private static HashSet<string> LoadIngredients(eCraftingSkill craft)
+        {
+            var ids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            try
+            {
+                var products = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (DbCraftedItem crafted in DOLDB<DbCraftedItem>.SelectObjects(DB.Column("CraftingSkillType").IsEqualTo((int)craft)) ?? [])
+                    if (!string.IsNullOrEmpty(crafted?.Id_nb))
+                        products.Add(crafted.Id_nb);
+                if (products.Count > 0)
+                    foreach (DbCraftedXItem part in GameServer.Database.SelectAllObjects<DbCraftedXItem>() ?? [])
+                        if (part != null && !string.IsNullOrEmpty(part.IngredientId_nb) && products.Contains(part.CraftedItemId_nb ?? string.Empty))
+                            ids.Add(part.IngredientId_nb);
+            }
+            catch (Exception)
+            {
+                // no database (tests): no ingredients known
+            }
+            return ids;
+        }
 
         /// <summary>The recipes of a craft with their material cost (each ingredient's template price x count).</summary>
         // Only recipes whose product is of the crafter's realm or of none (a player of that realm crafts only those).

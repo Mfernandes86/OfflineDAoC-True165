@@ -33,7 +33,17 @@ namespace DOL.GS;
             public eWorldServiceKind? CachedService;
         }
         private static readonly ConcurrentDictionary<long, ServiceDecisionState> ServiceDecisions = new();
-        public sealed record ListingCandidate(DbInventoryItem Item, int PriceCopper);
+        /// <summary>A listing plan: the bag item and its ask, its gain over a merchant, the dearest copy it bumps at a name's
+        /// copy limit, and the bot's own weakest listing it replaces when its slots are full.</summary>
+        public sealed record ListingCandidate(DbInventoryItem Item, int PriceCopper)
+        {
+            public long Gain { get; init; }
+            public MarketBook.Listing Bump { get; init; }
+            public MarketBook.Listing Replace { get; init; }
+            public bool OwnCrafted { get; init; }
+            /// <summary>The cheapest copy of this name another seller lists (0: none).</summary>
+            public long CheapestOther { get; init; }
+        }
     public sealed record PurchaseCandidate(DbInventoryItem Item, int Utility, eInventorySlot EquipSlot, bool IsEquipmentUpgrade, bool IsPlayerListing);
 
     public static string GetOwnerId(long botId) => $"{OwnerPrefix}{botId}";
@@ -171,90 +181,343 @@ namespace DOL.GS;
 
         ushort lot = RealmExchangeBroker.GetOwnerLot(bot.Realm);
         long money = GetMoney(bot.DatabaseID);
-        ItemQuery query = new() { Realm = bot.Realm };
-        return MarketCache.SearchItems(query)
-            .Where(item => item.OwnerLot == lot && item.IsTradable && item.SellPrice > 0 && item.SellPrice <= money &&
-                item.OwnerID != GetOwnerId(bot.DatabaseID) && !RealmExchangeExpiry.IsExpired(item, DateTime.UtcNow))
-            .OrderBy(item => item.SellPrice)
-            .Take(maximumResults)
-            .ToArray();
+        string ownerId = GetOwnerId(bot.DatabaseID);
+        DateTime now = DateTime.UtcNow;
+        var found = new List<DbInventoryItem>();
+        MarketCache.ForEach(new ItemQuery { Realm = bot.Realm }, item =>
+        {
+            if (item.OwnerLot == lot && item.IsTradable && item.SellPrice > 0 && item.SellPrice <= money &&
+                item.OwnerID != ownerId && !RealmExchangeExpiry.IsExpired(item, now))
+                found.Add(item);
+        });
+        return found.OrderBy(item => item.SellPrice).Take(maximumResults).ToArray();
     }
 
+    /// <summary>Most listings a bot scores in full at the broker (the rest are ranked by a cheap value guess first).</summary>
+    public const int FullyScoredListings = 8;
+    /// <summary>The exchange sells gear up to two levels above the bot (vendors one): higher gear is left to bots that
+    /// can use its bonuses.</summary>
+    public const int PurchaseLevelsAbove = 2;
+
+    /// <summary>
+    /// Copper a bot may spend at the exchange: its coin less the same reserve merchant shopping keeps for repairs, arrows
+    /// and Constitution (2026-11-11 audit: 30 of the last 50 exchange buyers were left under 5,000 copper).
+    /// </summary>
+    public static long PurchaseBudget(GameBot bot) =>
+        bot == null ? 0 : GetMoney(bot.DatabaseID) - AutonomousWorldBotController.ShoppingReserve(bot.Level);
+
+    /// <summary>
+    /// Pure rule: the share of its spare coin a bot pays for an upgrade - about a quarter for a small one, up to 80% for
+    /// an empty slot or a big jump.
+    /// </summary>
+    public static bool PurseAllows(long budget, long price, int improvement, bool emptySlot)
+    {
+        if (budget <= 0 || price > budget)
+            return false;
+        double share = emptySlot || improvement >= 60 ? 0.80 : 0.25 + 0.55 * Math.Clamp(improvement - MinimumEquipmentUpgrade, 0, 52) / 52d;
+        return price <= budget * share;
+    }
+
+    /// <summary>
+    /// The best purchase for this bot at its realm's broker (2026-11-11 exchange plan, section 2.5). Instead of copying,
+    /// sorting and scoring the whole realm every 3-7 s, the bot reads only the slot buckets it can wear within its level
+    /// band (MarketBook), ranks those by a cheap value guess against what it wears there (its wish list, worked out only
+    /// when its gear or level changes), and fully scores at most <see cref="FullyScoredListings"/>. Archers, assassins and
+    /// crafters also look at their own supplies (ammunition, poisons, their recipes' materials).
+    /// </summary>
     public static PurchaseCandidate FindBestUsefulExchangePurchase(GameBot bot, int maximumResults = 48)
     {
         if (bot?.Inventory == null || bot.DatabaseID <= 0)
             return null;
-
-        bool hasCraft = !string.IsNullOrWhiteSpace(bot.PersistentRecord?.SerializedCraftingSkills);
-        // Appraise matching goods before limiting results. Cheap unusable bot
-        // wares must not hide a useful player listing beyond the first 48 rows.
-        return FindAffordableExchangeItems(bot, int.MaxValue)
-            .Select(item => ScorePurchase(bot, item, hasCraft))
-            .Where(candidate => candidate != null && candidate.Utility > 0)
-            .OrderByDescending(candidate => candidate.Utility)
-            .ThenBy(candidate => candidate.Item.SellPrice)
-            .FirstOrDefault();
+        long start = System.Diagnostics.Stopwatch.GetTimestamp();
+        try
+        {
+            long budget = PurchaseBudget(bot);
+            if (budget <= 0)
+                return null;
+            string ownerId = GetOwnerId(bot.DatabaseID);
+            DateTime now = DateTime.UtcNow;
+            ushort lot = RealmExchangeBroker.GetOwnerLot(bot.Realm);
+            List<(DbInventoryItem Item, int Guess)> gear = GearCandidates(bot, budget, ownerId, lot, now);
+            PurchaseCandidate best = null;
+            foreach ((DbInventoryItem item, _) in gear.OrderByDescending(entry => entry.Guess).Take(FullyScoredListings))
+                best = Better(best, ScorePurchase(bot, item, budget));
+            foreach (DbInventoryItem item in SupplyCandidates(bot, budget, ownerId, lot, now))
+                best = Better(best, ScorePurchase(bot, item, budget));
+            return best;
+        }
+        finally
+        {
+            RealmExchangeStats.NoteScan(System.Diagnostics.Stopwatch.GetTimestamp() - start);
+        }
     }
 
-        private static PurchaseCandidate ScorePurchase(GameBot bot, DbInventoryItem item, bool hasCraft)
-        {
-            if (item == null || item.Template == null || item.LevelRequirement > bot.Level ||
-                !BotWeaponStats.HasFunctionalMeleeStats(item) ||
-                (BotWeaponStats.IsMeleeWeapon((eObjectType)item.Object_Type) &&
-                 !BotWeaponStats.IsConfiguredMeleeWeapon(bot, item.Template)) ||
-                !GameServer.ServerRules.CheckAbilityToUseItem(bot, item.Template))
-                return null;
+    /// <summary>The old full scan with the same scoring (tests compare the wish-list probe with it).</summary>
+    public static PurchaseCandidate FindBestUsefulExchangePurchaseFullScan(GameBot bot)
+    {
+        if (bot?.Inventory == null || bot.DatabaseID <= 0)
+            return null;
+        long budget = PurchaseBudget(bot);
+        PurchaseCandidate best = null;
+        foreach (DbInventoryItem item in FindAffordableExchangeItems(bot, int.MaxValue))
+            best = Better(best, ScorePurchase(bot, item, budget));
+        return best;
+    }
 
-        eInventorySlot equipSlot = ResolveEquipmentSlot(bot, item);
-        bool isPlayerListing = IsPlayerListing(item.OwnerID);
-        // Bots prefer a player's goods over another bot's when the price is fair (owner 2026-11-05, reset-day S26): within
-        // 25% of what a bot would ask for it. A player's listing at three times that or more is not bought at all, so
-        // nobody can dump an item on the bots for a fortune.
-        int fairPrice = isPlayerListing ? RecommendListingPrice(item) : 0;
-        if (isPlayerListing && item.SellPrice > fairPrice * 3L)
-            return null;
-        int playerPreference = isPlayerListing && item.SellPrice <= fairPrice * 1.25 ? 650 : 0;
-        // never a slot its class keeps empty (2026-11-11 audit)
-        if (equipSlot != eInventorySlot.Invalid && KeepsSlotForOtherUse(bot, item, equipSlot))
-            return null;
-        if (equipSlot != eInventorySlot.Invalid && (eObjectType)item.Object_Type == eObjectType.Instrument)
+    private static PurchaseCandidate Better(PurchaseCandidate best, PurchaseCandidate candidate)
+    {
+        if (candidate == null || candidate.Utility <= 0)
+            return best;
+        if (best == null || candidate.Utility > best.Utility ||
+            candidate.Utility == best.Utility && candidate.Item.SellPrice < best.Item.SellPrice)
+            return candidate;
+        return best;
+    }
+
+    // ---- the wish list: what the bot wears per exchange slot bucket, worked out only when its gear or level changes
+
+    private sealed class WishList
+    {
+        public int Revision = -1;
+        public int Level = -1;
+        public readonly Dictionary<int, (eInventorySlot Slot, int Worn)> Buckets = new();
+    }
+
+    private static readonly ConcurrentDictionary<long, WishList> WishLists = new();
+
+    // exchange client-slot buckets (MarketSearchEngine.GetClientSlot) and the equipment slot each fills
+    private static readonly (int Bucket, eInventorySlot Slot)[] WishBuckets =
+    [
+        (1, eInventorySlot.HeadArmor), (2, eInventorySlot.HandsArmor), (3, eInventorySlot.FeetArmor), (5, eInventorySlot.TorsoArmor),
+        (7, eInventorySlot.LegsArmor), (8, eInventorySlot.ArmsArmor), (9, eInventorySlot.Neck), (6, eInventorySlot.Cloak),
+        (4, eInventorySlot.Jewelry), (12, eInventorySlot.Waist), (13, eInventorySlot.LeftBracer), (15, eInventorySlot.LeftRing),
+        (100, eInventorySlot.RightHandWeapon), (101, eInventorySlot.LeftHandWeapon), (102, eInventorySlot.TwoHandWeapon),
+        (103, eInventorySlot.DistanceWeapon), (104, eInventorySlot.DistanceWeapon), (105, eInventorySlot.LeftHandWeapon),
+    ];
+
+    private static WishList WishOf(GameBot bot)
+    {
+        int revision = ServiceDecisions.TryGetValue(bot.DatabaseID, out ServiceDecisionState state) ? Volatile.Read(ref state.Revision) : 0;
+        WishList wish = WishLists.GetOrAdd(bot.DatabaseID, _ => new WishList());
+        lock (wish)
         {
-            // an instrument is compared with the bot's own of that kind, not with whatever a song left in the slot
-            int gain = InstrumentGain(bot, item, equipSlot);
-            return gain > MinimumEquipmentUpgrade
-                ? new PurchaseCandidate(item, 1_000 + gain + playerPreference, equipSlot, true, isPlayerListing)
-                : null;
-        }
-        if (equipSlot != eInventorySlot.Invalid)
-        {
-            DbInventoryItem equipped = bot.Inventory.GetItem(equipSlot);
-            int improvement = FitValue(bot, item, equipSlot) - FitValue(bot, equipped, equipSlot);
-            if (bot.CharacterClass?.ID == (int)eCharacterClass.Savage &&
-                BotWeaponStats.IsMeleeWeapon((eObjectType)item.Object_Type))
+            if (wish.Revision == revision && wish.Level == bot.Level)
+                return wish;
+            wish.Buckets.Clear();
+            foreach ((int bucket, eInventorySlot slot) in WishBuckets)
             {
-                double gain = SavageBotWeaponPolicy.UpgradeGain(bot, item, equipSlot);
-                if (gain > 0 && !OwnsSpareAsGood(bot, item, equipSlot))
-                    return new PurchaseCandidate(item,
-                        1_000 + (int)Math.Clamp(Math.Ceiling(gain * 100), 1, int.MaxValue - 1_000),
-                        equipSlot, true, isPlayerListing);
-                return null;
+                int worn = slot switch
+                {
+                    eInventorySlot.LeftRing => Math.Min(FitValue(bot, bot.Inventory.GetItem(eInventorySlot.LeftRing), slot),
+                        FitValue(bot, bot.Inventory.GetItem(eInventorySlot.RightRing), eInventorySlot.RightRing)),
+                    eInventorySlot.LeftBracer => Math.Min(FitValue(bot, bot.Inventory.GetItem(eInventorySlot.LeftBracer), slot),
+                        FitValue(bot, bot.Inventory.GetItem(eInventorySlot.RightBracer), eInventorySlot.RightBracer)),
+                    _ => FitValue(bot, bot.Inventory.GetItem(slot), slot),
+                };
+                wish.Buckets[bucket] = (slot, worn);
             }
-            if (equipped == null)
-                improvement += 250;
-            // ... and nothing it already has as good in its bag or vault (checked last: it walks the inventory)
-            if (improvement > 8)
-                return OwnsSpareAsGood(bot, item, equipSlot)
-                    ? null
-                    : new PurchaseCandidate(item, 1_000 + improvement + playerPreference, equipSlot, true, isPlayerListing);
+            wish.Revision = revision;
+            wish.Level = bot.Level;
+            if (WishLists.Count > 16_384)
+                WishLists.Clear();
+            return wish;
         }
+    }
 
-        // Stackable world goods are the server's practical crafting-material
-        // signal. Only trained crafters buy them, and they remain real backpack
-        // inventory until an actual recipe consumes them.
-        if (hasCraft && item.IsStackable && item.Count > 0)
-            return new PurchaseCandidate(item, 300 + Math.Min(150, item.Count * 3) + playerPreference, eInventorySlot.Invalid, false, isPlayerListing);
+    /// <summary>Listings in the bot's wearable slot buckets and level band, with a cheap value guess against what it wears.</summary>
+    private static List<(DbInventoryItem Item, int Guess)> GearCandidates(GameBot bot, long budget, string ownerId, ushort lot, DateTime now)
+    {
+        WishList wish = WishOf(bot);
+        int bandLow = MarketBook.BandOf(Math.Max(0, bot.Level - 15));
+        int bandHigh = MarketBook.BandOf(bot.Level + PurchaseLevelsAbove);
+        long maxPrice = (long)(budget * 0.80);
+        var result = new List<(DbInventoryItem, int)>();
+        foreach ((int bucket, (eInventorySlot slot, int worn)) in wish.Buckets)
+        {
+            List<MarketBook.Listing> listings = MarketCache.ReadBook(book => book.Probe(bot.Realm, bucket, bandLow, bandHigh, maxPrice, ownerId));
+            foreach (MarketBook.Listing listing in listings)
+            {
+                DbInventoryItem item = listing.Item;
+                if (item.OwnerLot != lot || item.Level > bot.Level + PurchaseLevelsAbove || item.LevelRequirement > bot.Level ||
+                    !item.IsTradable || RealmExchangeExpiry.IsExpired(item, now))
+                    continue;
+                int guess = EquipmentValue(item) + WeaponSpecBonus(bot, item.Object_Type, slot) - worn;
+                if (worn == 0)
+                    guess += 250;
+                if (guess > MinimumEquipmentUpgrade)
+                    result.Add((item, guess));
+            }
+        }
+        return result;
+    }
 
-        return null;
+    /// <summary>The bot's own supplies on the exchange: an archer's ammunition, an assassin's poisons, a crafter's
+    /// recipe materials (each only while it is short of them).</summary>
+    private static List<DbInventoryItem> SupplyCandidates(GameBot bot, long budget, string ownerId, ushort lot, DateTime now)
+    {
+        var result = new List<DbInventoryItem>();
+        bool ammo = WantsAmmo(bot), poison = WantsPoison(bot);
+        eCraftingSkill craft = CraftOf(bot);
+        if (!ammo && !poison && craft == eCraftingSkill.NoCrafting)
+            return result;
+        int bandHigh = MarketBook.BandOf(bot.Level + PurchaseLevelsAbove);
+        foreach (int bucket in new[] { 0, 106 })
+        {
+            List<MarketBook.Listing> listings = MarketCache.ReadBook(book => book.Probe(bot.Realm, bucket, 0, bandHigh, budget, ownerId));
+            foreach (MarketBook.Listing listing in listings)
+            {
+                DbInventoryItem item = listing.Item;
+                if (item.OwnerLot != lot || !item.IsTradable || RealmExchangeExpiry.IsExpired(item, now))
+                    continue;
+                eObjectType type = (eObjectType)item.Object_Type;
+                if (ammo && type is eObjectType.Arrow or eObjectType.Bolt && IsOwnSupply(bot, item) ||
+                    poison && type == eObjectType.Poison ||
+                    craft != eCraftingSkill.NoCrafting && CrafterBots165.UsesIngredient(craft, item.Id_nb))
+                    result.Add(item);
+                if (result.Count >= 24)
+                    return result;
+            }
+        }
+        return result;
+    }
+
+    private static eCraftingSkill CraftOf(GameBot bot) =>
+        Classic165Mode.IsOn && bot?.PersistentRecord != null ? CrafterBots165.CraftOf(bot.PersistentRecord) : eCraftingSkill.NoCrafting;
+
+    private static bool WantsAmmo(GameBot bot)
+    {
+        if (bot?.Inventory == null || Supplies165.AmmoType(bot.Inventory.GetItem(eInventorySlot.DistanceWeapon)) is not { } type)
+            return false;
+        return Supplies165.AmmoCount(bot, type) < Supplies165.KeepFor(bot);
+    }
+
+    /// <summary>Vials an assassin bot keeps; below this it buys poisons on the exchange when they are cheap.</summary>
+    public const int PoisonVialsKept = 10;
+
+    private static bool WantsPoison(GameBot bot)
+    {
+        if (bot?.CharacterClass == null || bot.Inventory == null || !BotPoisonSupply.IsAssassin((eCharacterClass)bot.CharacterClass.ID))
+            return false;
+        int vials = 0;
+        for (eInventorySlot slot = eInventorySlot.FirstBackpack; slot <= eInventorySlot.LastBackpack; slot++)
+            if (bot.Inventory.GetItem(slot) is { } item && item.Object_Type == (int)eObjectType.Poison)
+                vials += Math.Max(1, item.Count);
+        return vials < PoisonVialsKept;
+    }
+
+    /// <summary>
+    /// One rule for "should I buy it" (2026-11-11 exchange plan, section 2.5): gear must pass the same check the equip
+    /// step makes (TryGetEquipmentUpgrade: proficiency, a usable ranged weapon, shield/offhand, a slot its class keeps for
+    /// another use) and beat every spare it owns; it must be at most two levels above the bot, priced at most 1.5 x its
+    /// fair value (3 x for a player's listing, owner rule S26) and within the share of the bot's spare coin the upgrade
+    /// earns. A bargain (asked below fair) ranks higher; a fairly priced player listing ranks highest.
+    /// </summary>
+    private static PurchaseCandidate ScorePurchase(GameBot bot, DbInventoryItem item, long budget)
+    {
+        if (item?.Template == null || item.SellPrice <= 0 || item.SellPrice > budget ||
+            item.Level > bot.Level + PurchaseLevelsAbove || item.LevelRequirement > bot.Level)
+            return null;
+        bool isPlayerListing = IsPlayerListing(item.OwnerID);
+        long fair = ItemValue165.Fair(item);
+        // Bots prefer a player's goods over another bot's when the price is fair (owner 2026-11-05, reset-day S26): within
+        // 25% of the fair value. A player's listing at three times that or more is not bought at all, so nobody can dump
+        // an item on the bots for a fortune; a bot's listing above 1.5 x fair is not bought either.
+        if (item.SellPrice > (isPlayerListing ? fair * 3L : fair * 3L / 2))
+            return null;
+        int bargain = fair > 0 ? (int)Math.Clamp(200 * (fair - item.SellPrice) / fair, 0, 200) : 0;
+        int playerPreference = isPlayerListing && item.SellPrice <= fair * 1.25 ? 650 : 0;
+
+        int supply = SupplyUtility(bot, item, fair);
+        if (supply > 0)
+            return new PurchaseCandidate(item, supply + bargain + playerPreference, eInventorySlot.Invalid, false, isPlayerListing);
+
+        if (!TryGetEquipmentUpgrade(bot, item, out eInventorySlot equipSlot))
+            return null;
+        DbInventoryItem equipped = bot.Inventory.GetItem(equipSlot);
+        int improvement;
+        if ((eObjectType)item.Object_Type == eObjectType.Instrument)
+            improvement = InstrumentGain(bot, item, equipSlot);
+        else if (bot.CharacterClass?.ID == (int)eCharacterClass.Savage && BotWeaponStats.IsMeleeWeapon((eObjectType)item.Object_Type))
+            improvement = (int)Math.Clamp(Math.Ceiling(SavageBotWeaponPolicy.UpgradeGain(bot, item, equipSlot) * 100), 1, int.MaxValue - 10_000);
+        else
+            improvement = FitValue(bot, item, equipSlot) - FitValue(bot, equipped, equipSlot) + (equipped == null ? 250 : 0);
+        if (improvement <= MinimumEquipmentUpgrade || !PurseAllows(budget, item.SellPrice, improvement, equipped == null))
+            return null;
+        // ... and nothing it already has as good in its bag or vault (checked last: it walks the inventory)
+        return OwnsSpareAsGood(bot, item, equipSlot)
+            ? null
+            : new PurchaseCandidate(item, 1_000 + improvement + bargain + playerPreference, equipSlot, true, isPlayerListing);
+    }
+
+    /// <summary>
+    /// A bot's own supplies bought from the exchange, only when cheaper than at a merchant: an archer its ammunition type
+    /// while short of it, an assassin poisons up to its level while short of them, a crafter its own recipes'
+    /// materials (CrafterBots165.CraftOf, not the empty SerializedCraftingSkills that kept every stack unsold).
+    /// </summary>
+    private static int SupplyUtility(GameBot bot, DbInventoryItem item, long fair)
+    {
+        eObjectType type = (eObjectType)item.Object_Type;
+        long shelf = ItemValue165.Shelf(item);
+        bool cheap = item.SellPrice <= (shelf > 0 ? shelf : fair);
+        if (!cheap)
+            return 0;
+        if (type is eObjectType.Arrow or eObjectType.Bolt)
+            return IsOwnSupply(bot, item) && WantsAmmo(bot) ? 400 : 0;
+        if (type == eObjectType.Poison)
+            return item.Level <= bot.Level && WantsPoison(bot) ? 350 : 0;
+        eCraftingSkill craft = CraftOf(bot);
+        if (craft != eCraftingSkill.NoCrafting && item.Count > 0 && CrafterBots165.UsesIngredient(craft, item.Id_nb) &&
+            bot.Inventory.CountItemTemplate(item.Id_nb, eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack) < 2 * Math.Max(1, item.MaxCount))
+            return 300 + Math.Min(150, item.Count * 3);
+        return 0;
+    }
+
+    // ---- window shopping (2026-11-11 exchange plan, section 2.5)
+
+    private static readonly ConcurrentDictionary<long, (int Level, int Boundaries)> WindowShopping = new();
+    /// <summary>Task boundaries between window-shopping checks when the bot has not levelled.</summary>
+    public const int WindowShoppingEvery = 4;
+    /// <summary>Most listings a window-shopping check looks at.</summary>
+    public const int WindowShoppingLookups = 20;
+
+    /// <summary>
+    /// At a task boundary, after a level-up or every few boundaries, a bot with coin above its reserve looks for an
+    /// upgrade on the exchange it can wear and afford (at most <see cref="WindowShoppingLookups"/> listings, no full
+    /// scoring). True sends it on the town errand that already exists - no new timer.
+    /// </summary>
+    public static bool WantsWindowShopping(GameBot bot)
+    {
+        if (bot?.IsAutonomousWorldBot != true || bot.IsTemporaryGroupHelper || bot.Inventory == null || bot.DatabaseID <= 0 ||
+            !CanBuyOnExchange(bot) || HiredCompanions165.IsHired(bot))
+            return false;
+        (int level, int boundaries) = WindowShopping.GetValueOrDefault(bot.DatabaseID, (-1, 0));
+        bool due = level != bot.Level || boundaries + 1 >= WindowShoppingEvery;
+        if (WindowShopping.Count > 16_384)
+            WindowShopping.Clear();
+        WindowShopping[bot.DatabaseID] = due ? (bot.Level, 0) : (level, boundaries + 1);
+        if (!due || IsBackpackFull(bot))
+            return false;
+        long budget = PurchaseBudget(bot);
+        if (budget <= 0)
+            return false;
+        long start = System.Diagnostics.Stopwatch.GetTimestamp();
+        try
+        {
+            int looked = 0;
+            foreach ((DbInventoryItem item, int guess) in GearCandidates(bot, budget, GetOwnerId(bot.DatabaseID),
+                         RealmExchangeBroker.GetOwnerLot(bot.Realm), DateTime.UtcNow).OrderByDescending(entry => entry.Guess))
+            {
+                if (++looked > WindowShoppingLookups)
+                    break;
+                if (PurseAllows(budget, item.SellPrice, guess, false) || guess >= 250 && PurseAllows(budget, item.SellPrice, guess, true))
+                    return true;
+            }
+            return false;
+        }
+        finally
+        {
+            RealmExchangeStats.NoteScan(System.Diagnostics.Stopwatch.GetTimestamp() - start);
+        }
     }
 
         public static int EquipmentValue(DbInventoryItem item)
@@ -437,22 +700,27 @@ namespace DOL.GS;
                 : 0;
 
         /// <summary>EquipmentValue plus, for a melee weapon, what the bot's training in its line is worth in that hand, less
-        /// the focus bonuses for spell lines the bot does not have (they do nothing for it), with each bonus weighed for the
-        /// bot's class and counted only up to its cap, and level and DPS/AF only up to what the bot can use
-        /// (BotGearValue165, veteran-bots review 2026-11-11).</summary>
-        public static int FitValue(GameBot bot, DbInventoryItem item, eInventorySlot slot)
+        /// the focus bonuses for spell lines the bot does not have (they do nothing for it).</summary>
+        public static int FitValue(GameBot bot, DbInventoryItem item, eInventorySlot slot) =>
+            item == null ? 0 : EquipmentValue(item) + WeaponSpecBonus(bot, item.Object_Type, slot) - 3 * WastedFocus(bot, item);
+
+        /// <summary>As <see cref="WastedFocus(GameBot, (int Type, int Value)[])"/> for an item, without allocating (it runs
+        /// in every appraisal).</summary>
+        public static int WastedFocus(GameBot bot, DbInventoryItem item)
         {
-            if (item == null)
+            if (bot == null || item == null)
                 return 0;
-            (int Type, int Value)[] bonuses = BotGearValue165.Bonuses(item);
-            int equipment = EquipmentValue(item);
-            int value = equipment + WeaponSpecBonus(bot, item.Object_Type, slot) - 3 * WastedFocus(bot, bonuses);
-            // EquipmentValue is 0 for a melee weapon without working stats: nothing to adjust
-            if (equipment == 0 || bot?.Inventory == null)
-                return value;
-            DbInventoryItem current = slot == eInventorySlot.Invalid ? null : bot.Inventory.GetItem(slot);
-            return value + BotGearValue165.Adjustment(bot, item.Level, item.DPS_AF, item.Object_Type, bonuses, current);
+            return Wasted(bot, item.Bonus1Type, item.Bonus1) + Wasted(bot, item.Bonus2Type, item.Bonus2) +
+                   Wasted(bot, item.Bonus3Type, item.Bonus3) + Wasted(bot, item.Bonus4Type, item.Bonus4) +
+                   Wasted(bot, item.Bonus5Type, item.Bonus5) + Wasted(bot, item.Bonus6Type, item.Bonus6) +
+                   Wasted(bot, item.Bonus7Type, item.Bonus7) + Wasted(bot, item.Bonus8Type, item.Bonus8) +
+                   Wasted(bot, item.Bonus9Type, item.Bonus9) + Wasted(bot, item.Bonus10Type, item.Bonus10) +
+                   Wasted(bot, item.ExtraBonusType, item.ExtraBonus);
         }
+
+        private static int Wasted(GameBot bot, int type, int value) =>
+            value == 0 || type == 0 || SkillBase.FocusToSpec((eProperty)type) is not string spec ||
+            (bot.GetSpecializationByName(spec)?.Level ?? 0) > 0 ? 0 : Math.Abs(value);
 
         /// <summary>
         /// The focus bonus points (a staff's "+N to Darkness", ...) for spell lines the bot does not have. Item values add
@@ -605,10 +873,11 @@ namespace DOL.GS;
             // occupied, finish clearing every disposable item before shopping.
             // True 1.65 Mode keeps its brokers at the traveler's inns, some in dangerous country (West Svealand's is
             // ringed by level-11 sveawolves): a bot below level 10 sells to a vendor instead (owner 2026-10-31 run).
-            bool exchangeOpen = (!Classic165Mode.IsOn || bot.Level >= 10) &&
-                // owner 2026-11-08: no broker in reach for this bot right now - sell at a merchant instead of waiting
-                !AutonomousServiceFallback.IsExchangeUnreachable(bot.DatabaseID, GameLoop.GameLoopTime);
-            if (exchangeOpen && HasListingSpace(bot) && FindValuableListingCandidate(bot) != null)
+            // owner 2026-11-08: no broker in reach for this bot right now - sell at a merchant instead of waiting.
+            // 2026-11-11 exchange plan: the broker is worth the trip with a free slot or a swap worth making (a capped bot
+            // with good loot keeps it for the exchange); bots buy from level 5 (owner call), sell from level 10.
+            bool canBuy = CanBuyOnExchange(bot);
+            if (CanSellOnExchange(bot) && FindValuableListingCandidate(bot) != null)
                 return eWorldServiceKind.RealmExchange;
 
             if (FindVendorTrashCandidate(bot) != null)
@@ -624,7 +893,7 @@ namespace DOL.GS;
             // The vendor phase has now made room. If the bot arrived with its
             // one listing slot already occupied, it naturally skipped the first
             // branch and reaches this realm-local upgrade appraisal directly.
-            if (exchangeOpen && !IsBackpackFull(bot) && FindBestUsefulExchangePurchase(bot) != null)
+            if (canBuy && !IsBackpackFull(bot) && FindBestUsefulExchangePurchase(bot) != null)
                 return eWorldServiceKind.RealmExchange;
 
             // True 1.65 Mode: worn gear to repair, arrows to buy, a crafting session due (TownErrands165).
@@ -683,7 +952,7 @@ namespace DOL.GS;
             if (!arrivedAtMerchant || bot?.IsAutonomousWorldBot != true || bot.IsTemporaryGroupHelper ||
                 bot.IsPlayerLedGroup || bot.Inventory == null || bot.DatabaseID <= 0 ||
                 !IsBackpackFull(bot) || FindVendorTrashCandidate(bot) != null ||
-                HasListingSpace(bot) && FindValuableListingCandidate(bot) != null)
+                FindValuableListingCandidate(bot) != null)
                 return false;
 
             DbInventoryItem[] backpack = bot.Inventory.AllItems
@@ -700,7 +969,10 @@ namespace DOL.GS;
                          !operationalLoadout.Contains(item) && !TryGetEquipmentUpgrade(bot, item, out _)))
             {
                 if (bot.Inventory.RemoveItem(item))
+                {
+                    Exchange165.Forget(item);
                     removed++;
+                }
             }
             if (removed == 0)
                 return false;
@@ -954,38 +1226,294 @@ namespace DOL.GS;
         return EquipmentValue(firstItem) <= EquipmentValue(secondItem) ? first : second;
     }
 
-        public static ListingCandidate FindValuableListingCandidate(GameBot bot)
+    // ---- smart selling (2026-11-11 exchange plan, section 2.2): a veteran player's rules
+
+    /// <summary>A realm holds at most this many bot copies of one item (players are never capped).</summary>
+    public const int MaxRealmBotCopies = 6;
+    /// <summary>One bot lists at most this many copies of the same item.</summary>
+    public const int MaxBotCopiesPerName = 2;
+    /// <summary>Above this many bot listings in a realm, a bot may only replace one of its own listings, never add one.</summary>
+    public const int RealmSoftCeiling = 3_000;
+    /// <summary>A crafter's extra listing slots, for its own crafted products only (owner call 2026-11-11).</summary>
+    public const int CrafterExtraSlots = 2;
+    /// <summary>A bag item replaces the bot's weakest listing when its gain is at least this many times that listing's.</summary>
+    public const double SwapGainRatio = 1.5;
+    /// <summary>A listing must have been up this long before it can be replaced.</summary>
+    public static readonly TimeSpan SwapMinimumAge = TimeSpan.FromHours(2);
+
+    /// <summary>A bot's listings by level (owner call 2026-11-11): 3 below 20, 4 at 20-34, 5 at 35+.</summary>
+    public static int ListingCap(int level) => level >= 35 ? 5 : level >= 20 ? 4 : MaxBotRealmExchangeListings;
+
+    /// <summary>The bot's own crafted products get its extra crafter slots.</summary>
+    public static bool IsOwnCrafted(GameBot bot, DbInventoryItem item) =>
+        bot != null && item != null && item.IsCrafted && !string.IsNullOrEmpty(item.Creator) &&
+        string.Equals(item.Creator, bot.Name, StringComparison.Ordinal);
+
+    public static int CraftedSlots(GameBot bot) => CraftOf(bot) != eCraftingSkill.NoCrafting ? CrafterExtraSlots : 0;
+
+    /// <summary>A bot's listing room: general slots by level, plus crafted-only slots for a crafter's own products (its own
+    /// crafted listings fill those first).</summary>
+    public readonly record struct ListingRoom(int General, int Crafted, int GeneralUsed, int CraftedUsed)
     {
-        if (bot?.Inventory == null || bot.DatabaseID <= 0 ||
+        public bool HasGeneral => GeneralUsed < General;
+        public bool HasCrafted => CraftedUsed < Crafted;
+        public bool For(bool ownCrafted) => HasGeneral || ownCrafted && HasCrafted;
+        public int Free => Math.Max(0, General - GeneralUsed) + Math.Max(0, Crafted - CraftedUsed);
+    }
+
+    public static ListingRoom RoomOf(GameBot bot, MarketBook.Listing[] own)
+    {
+        int ownCrafted = 0;
+        foreach (MarketBook.Listing listing in own)
+            if (IsOwnCrafted(bot, listing.Item))
+                ownCrafted++;
+        int craftedSlots = CraftedSlots(bot);
+        int craftedUsed = Math.Min(ownCrafted, craftedSlots);
+        return new ListingRoom(ListingCap(bot.Level), craftedSlots, own.Length - craftedUsed, craftedUsed);
+    }
+
+    /// <summary>In True 1.65 Mode a bot sells on the exchange from level 10 (its brokers stand in dangerous country).</summary>
+    public static bool CanSellOnExchange(GameBot bot) =>
+        bot != null && (!Classic165Mode.IsOn || bot.Level >= 10) &&
+        !AutonomousServiceFallback.IsExchangeUnreachable(bot.DatabaseID, GameLoop.GameLoopTime);
+
+    /// <summary>Owner call 2026-11-11: bots buy from level 5 (selling stays level 10+), so the low-level stock new bots keep
+    /// producing has buyers.</summary>
+    public static bool CanBuyOnExchange(GameBot bot) =>
+        bot != null && (!Classic165Mode.IsOn || bot.Level >= 5) &&
+        !AutonomousServiceFallback.IsExchangeUnreachable(bot.DatabaseID, GameLoop.GameLoopTime);
+
+    /// <summary>The crafter keeps the materials of its own recipes; they are never listed or sold.</summary>
+    public static bool IsOwnCraftMaterial(GameBot bot, DbInventoryItem item)
+    {
+        eCraftingSkill craft = CraftOf(bot);
+        return craft != eCraftingSkill.NoCrafting && item != null && CrafterBots165.UsesIngredient(craft, item.Id_nb);
+    }
+
+    // a bot swaps at most one listing per exchange visit (its between-task errand)
+    private static readonly ConcurrentDictionary<long, string> SwapVisits = new();
+
+    private static string VisitKey(GameBot bot) => bot?.PersistentRecord?.ObjectiveAssignmentId ?? string.Empty;
+
+    public static bool SwappedThisVisit(GameBot bot) =>
+        bot != null && SwapVisits.TryGetValue(bot.DatabaseID, out string visit) && visit == VisitKey(bot);
+
+    private static void NoteSwap(GameBot bot)
+    {
+        if (SwapVisits.Count > 16_384)
+            SwapVisits.Clear();
+        SwapVisits[bot.DatabaseID] = VisitKey(bot);
+    }
+
+    /// <summary>What the bot knows about its own listings and its bag when it decides what to list or keep.</summary>
+    private sealed class SellContext
+    {
+        public string Owner;
+        public MarketBook.Listing[] Own = Array.Empty<MarketBook.Listing>();
+        public ListingRoom Room;
+        public bool CeilingReached;
+        public readonly List<ListingCandidate> Ranked = new();
+    }
+
+    /// <summary>A bag item a bot would list: never its own supplies or craft materials, never merchant stock asked at 90%
+    /// of the merchant's price or more, never a small gain over the merchant, never grey loot unless its gain is high,
+    /// never an item that already failed to sell.</summary>
+    private static bool IsListable(GameBot bot, DbInventoryItem item, HashSet<DbInventoryItem> operationalLoadout)
+    {
+        if (item == null || !item.IsTradable || string.IsNullOrWhiteSpace(item.Name) || item.OwnerLot != 0 ||
+            item.SlotPosition < (int)eInventorySlot.FirstBackpack || item.SlotPosition > (int)eInventorySlot.LastBackpack ||
+            operationalLoadout.Contains(item) || BotSiegeRuntime.IsSupply(item.Id_nb) || item is GameInventoryRelic)
+            return false;
+        if (Classic165Mode.IsOn && !HasRealUse(item))
+            return false;
+        if (IsOwnSupply(bot, item) || IsOwnCraftMaterial(bot, item) || IsSealCurrency(item.Id_nb) || Exchange165.HasFailed(item))
+            return false;
+        if (!ItemValue165.WorthListing(item, bot.Level))
+            return false;
+        return !TryGetEquipmentUpgrade(bot, item, out _);
+    }
+
+    /// <summary>
+    /// The candidate for one bag item against the market: copy limits (a realm's 6 bot copies, a bot's own 2) and the
+    /// ask, undercutting the cheapest other copy. At the realm's copy limit it is listed only when it undercuts the dearest
+    /// bot copy, which then goes back to its owner. Null when it should go to a merchant instead.
+    /// </summary>
+    private static ListingCandidate Appraise(GameBot bot, DbInventoryItem item, string owner, long materialCost, double mood)
+    {
+        MarketBook.NameStats stats = MarketCache.ReadBook(book => book.Name(bot.Realm, item.Name, owner));
+        if (stats.OwnCopies >= MaxBotCopiesPerName)
+            return null;
+        long ask = ItemValue165.Ask(item, mood, stats.CheapestOther, materialCost);
+        MarketBook.Listing bump = null;
+        if (stats.BotCopies >= MaxRealmBotCopies)
+        {
+            if (stats.DearestOtherBot == null || ask >= stats.DearestOtherBot.Price)
+                return null;
+            bump = stats.DearestOtherBot;
+        }
+        long gain = Math.Max(0, ask - ItemValue165.Floor(item));
+        return new ListingCandidate(item, (int)Math.Clamp(ask, 1, int.MaxValue))
+        {
+            Gain = gain, Bump = bump, OwnCrafted = IsOwnCrafted(bot, item), CheapestOther = stats.CheapestOther,
+        };
+    }
+
+    private static SellContext BuildSellContext(GameBot bot, HashSet<DbInventoryItem> operationalLoadout)
+    {
+        var context = new SellContext { Owner = GetOwnerId(bot.DatabaseID) };
+        context.Own = MarketCache.ReadBook(book => book.OwnerListings(context.Owner));
+        context.Room = RoomOf(bot, context.Own);
+        context.CeilingReached = MarketCache.ReadBook(book => book.BotListings(bot.Realm)) >= RealmSoftCeiling;
+        foreach (DbInventoryItem item in bot.Inventory.AllItems)
+        {
+            if (!IsListable(bot, item, operationalLoadout))
+                continue;
+            ListingCandidate candidate = Appraise(bot, item, context.Owner, 0, 0);
+            if (candidate != null)
+                context.Ranked.Add(candidate);
+        }
+        context.Ranked.Sort((a, b) => b.Gain != a.Gain ? b.Gain.CompareTo(a.Gain) : b.PriceCopper.CompareTo(a.PriceCopper));
+        return context;
+    }
+
+    /// <summary>
+    /// The bot's weakest listing this candidate may replace: one up at least two hours (an unknown age counts as old), and
+    /// a slot the candidate may hold (a crafter's crafted-only slots take only its own products). Null when none.
+    /// </summary>
+    private static MarketBook.Listing WeakestReplaceable(GameBot bot, SellContext context, bool ownCrafted, DateTime utcNow)
+    {
+        int ownCraftedListed = 0;
+        foreach (MarketBook.Listing listing in context.Own)
+            if (IsOwnCrafted(bot, listing.Item))
+                ownCraftedListed++;
+        MarketBook.Listing weakest = null;
+        foreach (MarketBook.Listing listing in context.Own)
+        {
+            if (listing.ListedTicks > 0 && utcNow.Ticks - listing.ListedTicks < SwapMinimumAge.Ticks)
+                continue;
+            // a non-crafted item may only take a crafted listing's slot when crafted listings overflow into general slots
+            if (!ownCrafted && IsOwnCrafted(bot, listing.Item) && ownCraftedListed <= context.Room.Crafted)
+                continue;
+            if (weakest == null || listing.Gain < weakest.Gain)
+                weakest = listing;
+        }
+        return weakest;
+    }
+
+    /// <summary>The listing plan for this context: list the best candidate that has room, else replace the weakest
+    /// listing with the best candidate whose gain is at least 1.5 x its own (one swap per visit).</summary>
+    private static ListingCandidate Plan(GameBot bot, SellContext context)
+    {
+        if (context.Ranked.Count == 0)
+            return null;
+        if (!context.CeilingReached)
+            foreach (ListingCandidate candidate in context.Ranked)
+                if (context.Room.For(candidate.OwnCrafted))
+                    return candidate;
+        if (SwappedThisVisit(bot))
+            return null;
+        DateTime now = DateTime.UtcNow;
+        foreach (ListingCandidate candidate in context.Ranked)
+        {
+            MarketBook.Listing weakest = WeakestReplaceable(bot, context, candidate.OwnCrafted, now);
+            if (weakest != null && candidate.Gain >= SwapGainRatio * Math.Max(1, weakest.Gain))
+                return candidate with { Replace = weakest };
+        }
+        return null;
+    }
+
+    public static ListingCandidate FindValuableListingCandidate(GameBot bot)
+    {
+        if (bot?.Inventory == null || bot.DatabaseID <= 0 || !CanSellOnExchange(bot) ||
             (!IsBackpackFull(bot) && !AutonomousObjectiveAssignments.IsBetweenPveTasks(bot)))
             return null;
+        return Plan(bot, BuildSellContext(bot, FindOperationalLoadoutItems(bot)));
+    }
 
-            HashSet<DbInventoryItem> operationalLoadout = FindOperationalLoadoutItems(bot);
-            return bot.Inventory.AllItems
-            .Where(item => item != null && item.IsTradable && !string.IsNullOrWhiteSpace(item.Name) &&
-                           item.OwnerLot == 0 && item.SlotPosition >= (int)eInventorySlot.FirstBackpack &&
-                           item.SlotPosition <= (int)eInventorySlot.LastBackpack &&
-                           !operationalLoadout.Contains(item) &&
-                           !TryGetEquipmentUpgrade(bot, item, out _) &&
-                           (!Classic165Mode.IsOn || HasRealUse(item)))
-            .Select(item => new ListingCandidate(item, RecommendListingPrice(item)))
-            .Where(candidate => candidate.PriceCopper >= Math.Max(50, candidate.Item.Level * candidate.Item.Level * 4))
-            .OrderByDescending(candidate => candidate.PriceCopper)
-            .FirstOrDefault();
+    /// <summary>
+    /// The bag items kept for the exchange (the vendor phase sells the rest): the best candidates by gain, as many as the
+    /// bot can list - its free room, one more when a swap would be worth it - plus one for its next visit. The choice and
+    /// the sale use this same rule (owner 2026-10-31 run: 339 bots stood at vendors whose sale refused the item the choice
+    /// had picked). A capped bot with good loot therefore keeps it for a swap instead of selling it to a merchant; with
+    /// no room and no swap worth making, everything goes to the merchant.
+    /// </summary>
+    private static HashSet<DbInventoryItem> KeptForExchange(GameBot bot, HashSet<DbInventoryItem> operationalLoadout)
+    {
+        var kept = new HashSet<DbInventoryItem>();
+        if (bot?.Inventory == null || bot.DatabaseID <= 0 || !CanSellOnExchange(bot))
+            return kept;
+        SellContext context = BuildSellContext(bot, operationalLoadout);
+        ListingCandidate plan = Plan(bot, context);
+        // one more for the next visit only while it still has room; a capped bot with no swap worth making sells
+        int free = context.CeilingReached ? 0 : context.Room.Free;
+        int keep = free + (plan?.Replace != null ? 1 : 0) + (free > 0 ? 1 : 0);
+        if (plan != null)
+            kept.Add(plan.Item);
+        foreach (ListingCandidate candidate in context.Ranked)
+        {
+            if (kept.Count >= keep)
+                break;
+            kept.Add(candidate.Item);
         }
+        return kept;
+    }
 
-        /// <summary>Whether the bot keeps valuable loot for the Realm Exchange: it has a free listing and, in True 1.65 Mode,
-        /// is level 10 or more (below that it vendors it; the choice and the sale use the same rule, owner 2026-10-31 run:
-        /// 339 bots stood at vendors whose sale refused the item the choice had picked).</summary>
-        public static bool CanListOnExchange(GameBot bot) => HasListingSpace(bot) && (!Classic165Mode.IsOn || bot.Level >= 10);
+    /// <summary>Whether the bot has listing room at all (and the level to sell): BotEnchant165 asks before enchanting.</summary>
+    public static bool CanListOnExchange(GameBot bot)
+    {
+        if (bot == null || bot.DatabaseID <= 0 || Classic165Mode.IsOn && bot.Level < 10)
+            return false;
+        ListingRoom room = RoomOf(bot, MarketCache.ReadBook(book => book.OwnerListings(GetOwnerId(bot.DatabaseID))));
+        return room.HasGeneral || room.HasCrafted;
+    }
 
-        /// <summary>Whether the vendor phase keeps items worth listing: as <see cref="CanListOnExchange"/>, except that a bot
-        /// with no broker in reach sells them too while its bag is nearly full (owner 2026-11-08, AutonomousServiceFallback).
-        /// The choice and the sale use this same rule.</summary>
-        private static bool KeepsForExchange(GameBot bot) =>
-            AutonomousServiceFallback.KeepsForExchange(CanListOnExchange(bot),
-                AutonomousServiceFallback.IsExchangeUnreachable(bot.DatabaseID, GameLoop.GameLoopTime),
-                IsBackpackNearlyFull(bot));
+    /// <summary>The items the vendor phase keeps for the exchange: as <see cref="KeptForExchange"/>, except that a bot with
+    /// no broker in reach sells them too while its bag is nearly full (owner 2026-11-08, AutonomousServiceFallback).</summary>
+    private static HashSet<DbInventoryItem> KeepsForExchange(GameBot bot, HashSet<DbInventoryItem> operationalLoadout)
+    {
+        bool unreachable = AutonomousServiceFallback.IsExchangeUnreachable(bot.DatabaseID, GameLoop.GameLoopTime);
+        if (!AutonomousServiceFallback.KeepsForExchange(true, unreachable, IsBackpackNearlyFull(bot)))
+            return new HashSet<DbInventoryItem>();
+        // the level rule applies, the reach rule above already decided (a bot that can't reach a broker keeps its loot
+        // while the bag has room)
+        if (bot == null || Classic165Mode.IsOn && bot.Level < 10)
+            return new HashSet<DbInventoryItem>();
+        if (unreachable)
+        {
+            var all = new HashSet<DbInventoryItem>();
+            foreach (DbInventoryItem item in bot.Inventory.AllItems)
+                if (IsListable(bot, item, operationalLoadout))
+                    all.Add(item);
+            return all;
+        }
+        return KeptForExchange(bot, operationalLoadout);
+    }
+
+    /// <summary>
+    /// A crafter's new product (2026-11-11 exchange plan, section 2.3): listed (remotely, as before) when it is worth a
+    /// slot and has room - its 2 crafted-only slots or a general one - or when it beats the weakest listing it may replace
+    /// by 1.5 x; otherwise null and it goes to a merchant as today.
+    /// </summary>
+    public static ListingCandidate PlanCraftedListing(GameBot bot, DbInventoryItem product, long materialCost, double mood)
+    {
+        if (bot?.Inventory == null || product == null || bot.DatabaseID <= 0 || Classic165Mode.IsOn && bot.Level < 10 ||
+            !product.IsTradable || !ItemValue165.WorthListing(product, bot.Level, materialCost))
+            return null;
+        var context = new SellContext { Owner = GetOwnerId(bot.DatabaseID) };
+        context.Own = MarketCache.ReadBook(book => book.OwnerListings(context.Owner));
+        context.Room = RoomOf(bot, context.Own);
+        context.CeilingReached = MarketCache.ReadBook(book => book.BotListings(bot.Realm)) >= RealmSoftCeiling;
+        ListingCandidate candidate = Appraise(bot, product, context.Owner, materialCost, mood);
+        if (candidate == null)
+            return null;
+        candidate = candidate with { Gain = Math.Max(0, ItemValue165.Fair(product, materialCost) - ItemValue165.Floor(product)) };
+        if (!context.CeilingReached && context.Room.For(candidate.OwnCrafted))
+            return candidate;
+        if (SwappedThisVisit(bot))
+            return null;
+        MarketBook.Listing weakest = WeakestReplaceable(bot, context, candidate.OwnCrafted, DateTime.UtcNow);
+        return weakest != null && candidate.Gain >= SwapGainRatio * Math.Max(1, weakest.Gain) ? candidate with { Replace = weakest } : null;
+    }
 
         // owner 2026-11-08: when a gamebot's backpack first refused loot (AUTONOMOUS_LOOT_REJECTED backpack_full) since its
         // last unload. Cleared by an unload (a vendor sale, the end of the between-task errands) or when the bag has room
@@ -1042,14 +1570,13 @@ namespace DOL.GS;
             if (bot?.Inventory == null)
                 return null;
 
-            bool trainedCrafter = !string.IsNullOrWhiteSpace(bot.PersistentRecord?.SerializedCraftingSkills);
-            bool canList = KeepsForExchange(bot);
             HashSet<DbInventoryItem> operationalLoadout = FindOperationalLoadoutItems(bot);
+            HashSet<DbInventoryItem> kept = KeepsForExchange(bot, operationalLoadout);
             return bot.Inventory.AllItems
                 .Where(item => item != null && item.IsDropable && item.OwnerLot == 0 &&
                                item.SlotPosition >= (int)eInventorySlot.FirstBackpack &&
                                item.SlotPosition <= (int)eInventorySlot.LastBackpack)
-                .Where(item => !IsProtectedFromVendor(bot, item, trainedCrafter, canList, operationalLoadout))
+                .Where(item => !IsProtectedFromVendor(bot, item, kept, operationalLoadout))
                 .Where(item => CalculateStandardVendorSaleCopper(item) > 0)
                 .OrderBy(item => EquipmentValue(item))
                 .ThenBy(item => item.Price)
@@ -1077,8 +1604,8 @@ namespace DOL.GS;
             string.Equals(itemId, "SapphireSeal", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(itemId, "DiamondSeal", StringComparison.OrdinalIgnoreCase);
 
-        private static bool IsProtectedFromVendor(GameBot bot, DbInventoryItem item, bool trainedCrafter,
-            bool canList, HashSet<DbInventoryItem> operationalLoadout)
+        private static bool IsProtectedFromVendor(GameBot bot, DbInventoryItem item,
+            HashSet<DbInventoryItem> keptForExchange, HashSet<DbInventoryItem> operationalLoadout)
         {
             if (item is GameInventoryRelic || BotSiegeRuntime.IsSupply(item.Id_nb) ||
                 operationalLoadout.Contains(item))
@@ -1094,13 +1621,14 @@ namespace DOL.GS;
                 return true;
             if (TryGetEquipmentUpgrade(bot, item, out _))
                 return true;
-            if (trainedCrafter && item.IsStackable && item.Count > 0)
+            // a crafter keeps its own recipes' materials (CrafterBots165.CraftOf; the old SerializedCraftingSkills test was
+            // empty for every bot)
+            if (IsOwnCraftMaterial(bot, item))
                 return true;
-            // If the bot's single listing slot is occupied, unwanted gear can
-            // still be sold normally. Never vendor an equippable upgrade.
-            // True 1.65 Mode: only an item with a real use is kept for the Realm Exchange; vendor trash is sold
-            return canList && item.IsTradable && (!Classic165Mode.IsOn || HasRealUse(item)) &&
-                RecommendListingPrice(item) >= Math.Max(50, item.Level * item.Level * 4);
+            // Only what the bot would list next is kept for the Realm Exchange (KeptForExchange: its best candidates by
+            // gain, as many as it can list or swap); everything else, failed listings included, is sold. Never vendor an
+            // equippable upgrade.
+            return keptForExchange.Contains(item);
         }
 
         /// <summary>
@@ -1178,10 +1706,10 @@ namespace DOL.GS;
                 !merchant.IsWithinRadius(bot, GS.ServerProperties.Properties.WORLD_PICKUP_DISTANCE))
                 return false;
 
-            bool trainedCrafter = !string.IsNullOrWhiteSpace(bot.PersistentRecord?.SerializedCraftingSkills);
-            if (IsProtectedFromVendor(bot, item, trainedCrafter, KeepsForExchange(bot),
-                    FindOperationalLoadoutItems(bot)))
+            HashSet<DbInventoryItem> operationalLoadout = FindOperationalLoadoutItems(bot);
+            if (IsProtectedFromVendor(bot, item, KeepsForExchange(bot, operationalLoadout), operationalLoadout))
                 return false;
+            bool failedListing = Exchange165.RelistOf(item) != null;
 
             copper = CalculateStandardVendorSaleCopper(item);
             int originalSlot = item.SlotPosition;
@@ -1201,6 +1729,12 @@ namespace DOL.GS;
                 return false;
             }
 
+            // a pulled-back listing is gone to the merchant: its relist row goes too
+            if (failedListing)
+            {
+                Exchange165.Forget(item);
+                RealmExchangeStats.Note(bot.Realm, RealmExchangeStats.Counter.Vendored);
+            }
             bot.MarkAutonomousStateDirty();
             MarkInventoryChanged(bot);
             ClearBackpackFull(bot.DatabaseID);   // owner 2026-11-08: an unload restarts the full-bag clock
@@ -1437,39 +1971,58 @@ namespace DOL.GS;
         return true;
     }
 
-    public static int RollListingPrice(DbInventoryItem item) => RecommendListingPrice(item, -0.35 + Random.Shared.NextDouble() * 0.85);
+    /// <summary>A seller's ask with its mood roll (-5%/+15%) against the copies already listed (ItemValue165).</summary>
+    public static int RollListingPrice(DbInventoryItem item) => RecommendListingPrice(item, ItemValue165.RollMood());
 
-        public static int RecommendListingPrice(DbInventoryItem item, double sellerDisposition = 0)
+    /// <summary>The ask for this item: its fair value x (1 + disposition), kept between 1.25 x the merchant value and
+    /// 90% of a merchant's own price (ItemValue165). Listing plans also undercut the copies already listed.</summary>
+    public static int RecommendListingPrice(DbInventoryItem item, double sellerDisposition = 0) =>
+        item == null ? 0 : (int)Math.Clamp(ItemValue165.Ask(item, sellerDisposition), 1, int.MaxValue);
+
+    /// <summary>A plan's ask with the seller's mood roll (-5%/+15%), still undercutting the cheapest other copy and, at a
+    /// name's copy limit, under the copy it bumps.</summary>
+    public static int RollPlannedPrice(ListingCandidate plan)
     {
-        if (item == null)
+        if (plan?.Item == null)
             return 0;
-        int utility = Math.Abs(item.Bonus) + Math.Abs(item.ExtraBonus) + Math.Abs(item.Bonus1) + Math.Abs(item.Bonus2) +
-                      Math.Abs(item.Bonus3) + Math.Abs(item.Bonus4) + Math.Abs(item.Bonus5) + Math.Abs(item.Bonus6) +
-                      Math.Abs(item.Bonus7) + Math.Abs(item.Bonus8) + Math.Abs(item.Bonus9) + Math.Abs(item.Bonus10);
-        double rarity = Math.Clamp((item.Quality - 85) / 3d + (item.IsROG ? 2 : 0) + (item.IsCrafted ? 1 : 0) +
-                                   Math.Min(3, utility / 20d), 0, 10);
-        var facts = new AutonomousAuctionValuation.ItemFacts(
-            Math.Max(1, item.Level), Math.Max(1, item.Count), Math.Max(1, item.Quality),
-            Math.Max(1, (int)item.ConditionPercent), rarity, utility, item.MaxCount > 1 || item.Count > 1);
-        long price = AutonomousAuctionValuation.Recommend(facts, sellerDisposition).BuyoutCopper;
-        long price165 = Exchange165.Price(item, sellerDisposition);   // True 1.65 Mode: valuable items ask more
-        if (price165 > 0)
-            price = price165;
-        return (int)Math.Clamp(price, 1, int.MaxValue);
+        long ask = ItemValue165.Ask(plan.Item, ItemValue165.RollMood(), plan.CheapestOther);
+        if (plan.Bump != null && ask >= plan.Bump.Price)
+            ask = plan.PriceCopper;
+        return (int)Math.Clamp(ask, 1, int.MaxValue);
     }
 
-    public static bool TryList(GameBot bot, DbInventoryItem item, int priceCopper)
+    public static bool TryList(GameBot bot, DbInventoryItem item, int priceCopper) => TryList(bot, item, priceCopper, out _);
+
+    /// <summary>
+    /// Lists one backpack item. Never waits for the exchange locks (2026-11-11 plan, phase 0): when they are busy it
+    /// returns false with <paramref name="busy"/> set, and the bot tries again at its next broker check - a busy exchange
+    /// is not a fruitless check.
+    /// </summary>
+    public static bool TryList(GameBot bot, DbInventoryItem item, int priceCopper, out bool busy)
     {
+        busy = false;
         if (bot?.IsAutonomousWorldBot != true || bot.IsTemporaryGroupHelper || bot.DatabaseID <= 0 ||
             item == null || !item.IsTradable || priceCopper <= 0 || item.OwnerLot != 0 || BotSiegeRuntime.IsSupply(item.Id_nb) ||
             item.SlotPosition is < (int)eInventorySlot.FirstBackpack or > (int)eInventorySlot.LastBackpack)
             return false;
-
-        lock (RealmExchangeBroker.TransactionLock)
-        lock (AutonomousBotStatusPersistence.DatabaseWriteLock)
+        if (!RealmExchangeLocks.TryEnter(0, true, out RealmExchangeLocks.Scope scope))
         {
+            busy = true;
+            return false;
+        }
+        using (scope)
+        {
+            if (MarketCache.ReadBook(book => book.BotListings(bot.Realm)) >= RealmSoftCeiling)
+                return false;
+            return TryListCore(bot, item, priceCopper, FindFreeListingSlot(bot, item));
+        }
+    }
+
+    /// <summary>The listing write itself; the caller holds the exchange locks and chose the consignment slot.</summary>
+    private static bool TryListCore(GameBot bot, DbInventoryItem item, int priceCopper, int slot)
+    {
         string ownerId = GetOwnerId(bot.DatabaseID);
-        if (!bot.Inventory.AllItems.Contains(item))
+        if (slot < 0 || !bot.Inventory.AllItems.Contains(item))
             return false;
 
         // A retained inventory instance can carry a stale persistence flag.
@@ -1489,9 +2042,8 @@ namespace DOL.GS;
             }
         }
 
-        int slot = FindFreeListingSlot(ownerId);
         int originalSlot = item.SlotPosition;
-        if (slot < 0 || !bot.Inventory.RemoveItemWithoutDbDeletion(item))
+        if (!bot.Inventory.RemoveItemWithoutDbDeletion(item))
             return false;
 
         item.OwnerID = ownerId;
@@ -1510,7 +2062,118 @@ namespace DOL.GS;
         }
         MarketCache.AddItem(item);
         MarkInventoryChanged(bot);
+        RealmExchangeStats.Note(bot.Realm, RealmExchangeStats.Counter.Listed);
         return true;
+    }
+
+    /// <summary>
+    /// Carries out a listing plan from <see cref="FindValuableListingCandidate"/> or <see cref="PlanCraftedListing"/>: a
+    /// plain listing, a listing that bumps the dearest copy of a full name back to its owner, or a swap that pulls the
+    /// bot's weakest listing back to its bag (marked to be sold to a merchant) and lists the better item in its place.
+    /// Never waits for the exchange locks (<paramref name="busy"/>).
+    /// </summary>
+    public static bool TryListPlanned(GameBot bot, ListingCandidate plan, int priceCopper, out bool busy)
+    {
+        busy = false;
+        if (plan?.Item == null || bot?.IsAutonomousWorldBot != true || bot.IsTemporaryGroupHelper || bot.DatabaseID <= 0 ||
+            priceCopper <= 0 || plan.Item.OwnerLot != 0 || !plan.Item.IsTradable || BotSiegeRuntime.IsSupply(plan.Item.Id_nb) ||
+            plan.Item.SlotPosition is < (int)eInventorySlot.FirstBackpack or > (int)eInventorySlot.LastBackpack)
+            return false;
+        if (!RealmExchangeLocks.TryEnter(0, true, out RealmExchangeLocks.Scope scope))
+        {
+            busy = true;
+            return false;
+        }
+        using (scope)
+        {
+            string ownerId = GetOwnerId(bot.DatabaseID);
+            // the market may have moved since the plan: a name now at its copy limit needs a cheaper ask than its dearest copy
+            MarketBook.NameStats stats = MarketCache.ReadBook(book => book.Name(bot.Realm, plan.Item.Name, ownerId));
+            if (stats.OwnCopies >= MaxBotCopiesPerName)
+                return false;
+            MarketBook.Listing bump = null;
+            if (stats.BotCopies >= MaxRealmBotCopies)
+            {
+                bump = stats.DearestOtherBot;
+                if (bump == null)
+                    return false;
+                if (priceCopper >= bump.Price)
+                    priceCopper = (int)Math.Max(ItemValue165.AskFloor(plan.Item), bump.Price - 1);
+                if (priceCopper >= bump.Price)
+                    return false;
+            }
+            bool listed;
+            if (plan.Replace != null)
+                listed = TrySwapCore(bot, plan.Item, priceCopper, plan.Replace.Item, ownerId);
+            else
+            {
+                listed = MarketCache.ReadBook(book => book.BotListings(bot.Realm)) < RealmSoftCeiling &&
+                         TryListCore(bot, plan.Item, priceCopper, FindFreeListingSlot(bot, plan.Item));
+            }
+            if (listed && bump?.BotId > 0 && MarketCache.Contains(bump.Item) &&
+                Exchange165.Pull(bump.Item, bump.BotId, (int)bump.Price, RealmExchangeStats.Counter.Bumped))
+                MarkEconomyChanged(bump.BotId);
+            return listed;
+        }
+    }
+
+    /// <summary>The swap: the new item leaves the bag, the weak listing comes back into that bag slot (marked failed: it
+    /// is sold to a merchant on this trip) and the new item takes the weak listing's consignment slot.</summary>
+    private static bool TrySwapCore(GameBot bot, DbInventoryItem item, int priceCopper, DbInventoryItem weak, string ownerId)
+    {
+        if (weak == null || weak.OwnerID != ownerId || !MarketCache.Contains(weak) || !bot.Inventory.AllItems.Contains(item) ||
+            SwappedThisVisit(bot))
+            return false;
+        int bagSlot = item.SlotPosition;
+        int listingSlot = weak.SlotPosition;
+        int weakPrice = weak.SellPrice;
+        ushort lot = weak.OwnerLot;
+        string weakListed = weak.RealmExchangeListedUtc;
+        if (!bot.Inventory.RemoveItemWithoutDbDeletion(item))
+            return false;
+        MarketCache.RemoveItem(weak);
+        weak.OwnerLot = 0;
+        weak.SellPrice = 0;
+        weak.RealmExchangeListedUtc = string.Empty;
+        if (!bot.Inventory.AddItem((eInventorySlot)bagSlot, weak))
+        {
+            Restore();
+            return false;
+        }
+        item.OwnerID = ownerId;
+        item.OwnerLot = lot;
+        item.SlotPosition = listingSlot;
+        item.SellPrice = priceCopper;
+        item.RealmExchangeListedUtc = DateTime.UtcNow.ToString("O");
+        bool saved = item.IsPersisted ? GameServer.Database.SaveObject(item) : GameServer.Database.AddObject(item);
+        if (!saved)
+        {
+            bot.Inventory.RemoveItemWithoutDbDeletion(weak);
+            item.OwnerLot = 0;
+            item.SellPrice = 0;
+            item.RealmExchangeListedUtc = string.Empty;
+            Restore();
+            return false;
+        }
+        MarketCache.AddItem(item);
+        Exchange165.MarkFailed(weak, weakPrice);
+        NoteSwap(bot);
+        MarkInventoryChanged(bot);
+        bot.MarkAutonomousStateDirty();
+        AutonomousBotStatusPersistence.Queue(bot, true);
+        RealmExchangeStats.Note(bot.Realm, RealmExchangeStats.Counter.Swapped);
+        RealmExchangeStats.Note(bot.Realm, RealmExchangeStats.Counter.Listed);
+        return true;
+
+        void Restore()
+        {
+            weak.OwnerID = ownerId;
+            weak.OwnerLot = lot;
+            weak.SlotPosition = listingSlot;
+            weak.SellPrice = weakPrice;
+            weak.RealmExchangeListedUtc = weakListed;
+            MarketCache.AddItem(weak);
+            bot.Inventory.AddItem((eInventorySlot)bagSlot, item);
         }
     }
 
@@ -1520,23 +2183,37 @@ namespace DOL.GS;
         stored.SlotPosition >= (int)eInventorySlot.FirstBackpack && stored.SlotPosition <= (int)eInventorySlot.LastBackpack &&
         item.ITemplate_Id == stored.ITemplate_Id && item.UTemplate_Id == stored.UTemplate_Id && item.Count == stored.Count;
 
-    public static int FindFreeListingSlot(string ownerId)
+    /// <summary>A free consignment slot for an owner holding fewer than <paramref name="cap"/> listings (default: the base
+    /// cap of 3), or -1. O(1) from the MarketBook's owner bitmap.</summary>
+    public static int FindFreeListingSlot(string ownerId, int cap = MaxBotRealmExchangeListings) =>
+        MarketCache.ReadBook(book => book.OwnerCount(ownerId) >= cap ? -1 : book.FreeSlot(ownerId));
+
+    /// <summary>A free consignment slot when this bot has room for this item (its level's cap, plus a crafter's
+    /// crafted-only slots for its own products), or -1.</summary>
+    public static int FindFreeListingSlot(GameBot bot, DbInventoryItem item)
     {
-        var used = MarketCache.SearchItems(new ItemQuery { Owner = ownerId })
-            .Where(item => RealmExchangeBroker.IsExchangeOwnerLot(item.OwnerLot)).Select(item => item.SlotPosition).ToHashSet();
-        if (used.Count >= MaxBotRealmExchangeListings) return -1;
-        for (int slot = (int)eInventorySlot.Consignment_First; slot <= (int)eInventorySlot.Consignment_Last; slot++)
-            if (!used.Contains(slot)) return slot;
-        return -1;
+        if (bot == null)
+            return -1;
+        string ownerId = GetOwnerId(bot.DatabaseID);
+        MarketBook.Listing[] own = MarketCache.ReadBook(book => book.OwnerListings(ownerId));
+        if (!RoomOf(bot, own).For(IsOwnCrafted(bot, item)))
+            return -1;
+        return MarketCache.ReadBook(book => book.FreeSlot(ownerId));
     }
 
-    private static bool HasListingSpace(GameBot bot) => FindFreeListingSlot(GetOwnerId(bot.DatabaseID)) >= 0;
+    public static bool TryBuy(GameBot bot, DbInventoryItem item) => TryBuy(bot, item, out _);
 
-    public static bool TryBuy(GameBot bot, DbInventoryItem item)
+    /// <summary>Buys a listing for a bot. Never waits for the exchange locks (<paramref name="busy"/>; the bot tries again
+    /// at its next check). The sold item's relist and listing-hours rows are deleted in the sale transaction.</summary>
+    public static bool TryBuy(GameBot bot, DbInventoryItem item, out bool busy)
     {
-        lock (RealmExchangeBroker.TransactionLock)
-        lock (typeof(AutonomousBotEconomy))
-        lock (AutonomousBotStatusPersistence.DatabaseWriteLock)
+        busy = false;
+        if (!RealmExchangeLocks.TryEnter(0, true, out RealmExchangeLocks.Scope scope))
+        {
+            busy = true;
+            return false;
+        }
+        using (scope)
         {
             if (bot?.IsAutonomousWorldBot != true || bot.IsTemporaryGroupHelper || bot.PersistentRecord == null ||
                 bot.DatabaseID <= 0 || !RealmExchangeBroker.IsAvailableListing(item, bot.Realm) ||
@@ -1572,11 +2249,15 @@ namespace DOL.GS;
 
             item.OwnerID = GetOwnerId(bot.DatabaseID);
             payment.Apply();
+            OfflineTrue165RelistRecord relist = Exchange165.TakeForSale(item);
+            OfflineTrue165ListingHours hours = RealmExchangeExpiry.TakeHoursForSale(item.ObjectId, sellerId);
             var sale = new RealmExchangeSaleLedger.Sale((int)bot.Realm, item.Name, item.Count, price,
                 sellerId, payment.SellerName, GetOwnerId(bot.DatabaseID), bot.Name, DateTime.UtcNow);
-            if (!RealmExchangeSaleLedger.CommitSale(GameServer.Database, sale, item, bot.PersistentRecord, payment.Row))
+            if (!RealmExchangeSaleLedger.CommitSale(GameServer.Database, sale, [item, bot.PersistentRecord, payment.Row],
+                    SaleDeletes(relist, hours)))
             {
                 payment.Restore();
+                Exchange165.RestoreAfterFailedSale(relist);
                 bot.Inventory.RemoveItemWithoutDbDeletion(item);
                 item.OwnerID = sellerId;
                 item.SlotPosition = sellerSlot;
@@ -1587,9 +2268,23 @@ namespace DOL.GS;
                 bot.PersistentRecord.Dirty = true;
                 return false;
             }
+            MarketCache.NoteSale(bot.Realm, item, price);
+            RealmExchangeStats.Note(bot.Realm, RealmExchangeStats.Counter.Sold);
+            RealmExchangeStats.Note(bot.Realm, RealmExchangeStats.Counter.Bought);
             MarkInventoryChanged(bot);
             return true;
         }
+    }
+
+    /// <summary>The bookkeeping rows a sale deletes in its own transaction (only rows that exist).</summary>
+    internal static DataObject[] SaleDeletes(OfflineTrue165RelistRecord relist, OfflineTrue165ListingHours hours)
+    {
+        var rows = new List<DataObject>(2);
+        if (relist?.IsPersisted == true)
+            rows.Add(relist);
+        if (hours != null)
+            rows.Add(hours);
+        return rows.ToArray();
     }
 
     public static bool TryEquipPurchasedUpgrade(GameBot bot, PurchaseCandidate purchase)
@@ -1611,7 +2306,10 @@ namespace DOL.GS;
             eInventorySlot.DistanceWeapon => BotRangedCombat.CanUse(bot, purchase.Item),
             _ => true,
         };
-        if (!legal)
+        // the same slot rules as the buying check (2026-11-11 exchange plan: the scorer and the equip step agree): never a
+        // slot its class keeps for another use, never a shield over a weapon it wields in the left hand
+        if (!legal || KeepsSlotForOtherUse(bot, purchase.Item, purchase.EquipSlot) ||
+            DisplacesOffhandWeapon(purchase.Item, bot.Inventory.GetItem(purchase.EquipSlot)))
             return false;
 
         eInventorySlot backpackSlot = (eInventorySlot)purchase.Item.SlotPosition;

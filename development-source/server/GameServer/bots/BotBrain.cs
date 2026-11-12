@@ -693,6 +693,7 @@ namespace DOL.AI.Brain
         private GameMerchant _nextMerchantServiceFor;
         private long _pendingExchangeListTick;
         private DbInventoryItem _pendingExchangeItem;
+        private AutonomousBotEconomy.ListingCandidate _pendingExchangePlan;
         private int _pendingExchangePrice;
         private AutonomousWorldBotController _autonomousWorldController;
         private long _nextFidelityCheckTick;
@@ -2138,6 +2139,7 @@ namespace DOL.AI.Brain
                 AutonomousObjectiveAssignments.BetweenTaskServiceExpired(bot))
             {
                 _pendingExchangeItem = null;
+                _pendingExchangePlan = null;
                 _pendingExchangePrice = 0;
                 _pendingExchangeListTick = 0;
                 _fruitlessExchangeChecks = 0;
@@ -2162,11 +2164,25 @@ namespace DOL.AI.Brain
                 }
 
                 DbInventoryItem item = _pendingExchangeItem;
+                AutonomousBotEconomy.ListingCandidate plan = _pendingExchangePlan;
                 int price = _pendingExchangePrice;
                 _pendingExchangeItem = null;
+                _pendingExchangePlan = null;
                 _pendingExchangePrice = 0;
                 _pendingExchangeListTick = 0;
-                bool listed = AutonomousBotEconomy.TryList(bot, item, price);
+                bool busy = false;
+                bool listed = plan != null
+                    ? AutonomousBotEconomy.TryListPlanned(bot, plan, price, out busy)
+                    : AutonomousBotEconomy.TryList(bot, item, price, out busy);
+                if (busy)
+                {
+                    // the exchange was busy: the same plan is tried again at the next check, not counted as fruitless
+                    _pendingExchangeItem = item;
+                    _pendingExchangePlan = plan;
+                    _pendingExchangePrice = price;
+                    _pendingExchangeListTick = now + 3_000 + Random.Shared.Next(4_001);
+                    return true;
+                }
                 SetExchangeStatus(bot, listed
                     ? $"Listed {item.Name} on the Realm Exchange"
                     : $"Kept {item.Name} after its listing failed",
@@ -2190,17 +2206,20 @@ namespace DOL.AI.Brain
             // 40-slot backpack—not a partially vendored remainder—determines
             // the listing. The world controller routes to a vendor after this
             // slot is occupied and returns here for upgrades only after clearing.
+            // 2026-11-11 exchange plan: the plan is a free slot or a swap of the bot's weakest listing; its ask undercuts
+            // the copies already listed, with a small mood roll on top (never above the plan's own ask band).
             AutonomousBotEconomy.ListingCandidate candidate = AutonomousBotEconomy.FindValuableListingCandidate(bot);
-            if (candidate != null &&
-                AutonomousBotEconomy.FindFreeListingSlot(AutonomousBotEconomy.GetOwnerId(bot.DatabaseID)) >= 0)
+            if (candidate != null)
             {
-                int listingPrice = AutonomousBotEconomy.RollListingPrice(candidate.Item);
+                int listingPrice = AutonomousBotEconomy.RollPlannedPrice(candidate);
 
                 bool advertised = Random.Shared.NextDouble() < 0.70 &&
                                   AutonomousBotChatCoordinator.TryAdvertiseExchangeItem(bot, candidate.Item.Name);
                 if (!advertised)
                 {
-                    bool listed = AutonomousBotEconomy.TryList(bot, candidate.Item, listingPrice);
+                    bool listed = AutonomousBotEconomy.TryListPlanned(bot, candidate, listingPrice, out bool busy);
+                    if (busy)
+                        return true;   // tried again at the next check; a busy exchange is not a fruitless check
                     if (listed)
                     {
                         _fruitlessExchangeChecks = 0;
@@ -2214,6 +2233,7 @@ namespace DOL.AI.Brain
                 }
 
                 _pendingExchangeItem = candidate.Item;
+                _pendingExchangePlan = candidate;
                 _pendingExchangePrice = listingPrice;
                 _pendingExchangeListTick = now + 7_000 + Random.Shared.Next(4_001);
                 // Owner 2026-11-10 (review): no reset here; only a real listing or purchase resets the count, so a
@@ -2229,7 +2249,10 @@ namespace DOL.AI.Brain
             if (purchase != null)
             {
                 int paidCopper = purchase.Item.SellPrice;
-                if (AutonomousBotEconomy.TryBuy(bot, purchase.Item))
+                bool bought = AutonomousBotEconomy.TryBuy(bot, purchase.Item, out bool busy);
+                if (busy)
+                    return true;   // tried again at the next check; a busy exchange is not a fruitless check
+                if (bought)
                 {
                     bool equipped = AutonomousBotEconomy.TryEquipPurchasedUpgrade(bot, purchase);
                     SetExchangeStatus(bot,
