@@ -272,6 +272,20 @@ namespace DOL.GS
         public static bool SlamSwapEnds(bool targetStunned, bool slamSwung, long elapsedMilliseconds) =>
             targetStunned || slamSwung || elapsedMilliseconds >= SlamSwapMilliseconds;
 
+        // ---- A caster under attack walks to the tank (M7, G12)
+
+        /// <summary>How near a tank must be for a caster to walk to it, and how close counts as "at its side".</summary>
+        public const int CasterToTankReach = 1_000, CasterBesideTank = 150;
+
+        /// <summary>
+        /// Pure (G12; period: a caster with a monster on it steps back to the tank so the tank can taunt or protect): a pure
+        /// caster hit in melee walks once per attacker to a living groupmate tank within 1,000 units, unless it already
+        /// stands at the tank's side; otherwise (no tank, already walked, cornered) it fights back with its staff as before.
+        /// </summary>
+        public static bool CasterWalksToTank(bool pureCaster, bool tankAlive, int tankDistance, bool alreadyWalkedFromThisAttacker) =>
+            pureCaster && tankAlive && !alreadyWalkedFromThisAttacker &&
+            tankDistance > CasterBesideTank && tankDistance <= CasterToTankReach;
+
         /// <summary>Whether this companion's add control runs now (its own choice, and no Main CC to leave it to).</summary>
         public static bool AddControlRuns(GameBot bot)
         {

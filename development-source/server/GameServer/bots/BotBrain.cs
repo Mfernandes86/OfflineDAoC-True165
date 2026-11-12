@@ -4529,6 +4529,10 @@ namespace DOL.AI.Brain
             if (!actuallyUnderAttack)
                 return false;
 
+            // M7 / G12: a pure caster first walks once to the group's tank, so the tank can taunt or protect it
+            if (TryWalkToTankUnderAttack(target))
+                return true;
+
             // A player cannot repeatedly begin an interruptible cast while a mob
             // is standing on them. Stop the failed cast loop and defend with the
             // class-appropriate melee weapon until range is opened again.
@@ -4549,6 +4553,51 @@ namespace DOL.AI.Brain
 
             if (!Body.attackComponent.AttackState)
                 Body.StartAttack(target);
+            return true;
+        }
+
+        private GameLiving _walkedToTankFrom;
+        private long _walkToTankUntil;
+
+        /// <summary>
+        /// M7 / G12: a pure caster (Wizard, Sorcerer, Eldritch, Runemaster ...) hit in melee walks to the side of a living
+        /// tank of its group within 1,000 units - once per attacker (one path order, no repeats) - instead of staff-meleeing
+        /// at once. Already beside the tank, with no tank near, or after that one walk, it fights back as before.
+        /// </summary>
+        private bool TryWalkToTankUnderAttack(GameLiving attacker)
+        {
+            GameBot bot = BotBody;
+            // the one walk under way: let it finish (up to 3 s) before anything else turns the caster round
+            if (_walkedToTankFrom == attacker)
+                return GameLoop.GameLoopTime < _walkToTankUntil && Body.IsMoving;
+            if (bot?.CharacterClass == null || bot.Group == null ||
+                !CompanionSpellOptions165.IsCasterClass((eCharacterClass)bot.CharacterClass.ID))
+                return false;
+            GameLiving tank = null;
+            int tankDistance = int.MaxValue;
+            foreach (GameLiving member in bot.Group.GetMembersInTheGroup())
+            {
+                if (member == null || member == bot || !member.IsAlive || member.CurrentRegionID != bot.CurrentRegionID ||
+                    !BotHealTriage165.IsTank(member))
+                    continue;
+                int distance = (int)bot.GetDistanceTo(member);
+                if (distance < tankDistance)
+                {
+                    tank = member;
+                    tankDistance = distance;
+                }
+            }
+            if (!CompanionControls165.CasterWalksToTank(true, tank != null, tankDistance, false))
+                return false;
+            _walkedToTankFrom = attacker;
+            _walkToTankUntil = GameLoop.GameLoopTime + 3_000;
+            if (Body.IsCasting)
+                Body.StopCurrentSpellcast();
+            // the tank's side facing the caster, a little in front of it
+            Point2D side = tank.GetPointFromHeading(tank.GetHeading(Body), 80);
+            Body.StopAttack();
+            Body.StopFollowing();
+            Body.PathTo(new Vector3(side.X, side.Y, tank.Z), Body.MaxSpeed);
             return true;
         }
 
