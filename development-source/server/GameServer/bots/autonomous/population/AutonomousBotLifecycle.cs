@@ -358,6 +358,7 @@ namespace DOL.GS
             {
                 AutonomousBotDyes.Forget(bot.DatabaseID);   // per-bot dye rest leaves with the bot (owner 2026-11-10)
                 CraftOrders165.Forget(bot.DatabaseID);      // its milestone set plan leaves with it (orders lapse on their own)
+                BotPotions165.Forget(bot.DatabaseID);       // and its potion timers
             }
             if (bot == null || HiredCompanions165.IsHired(bot) || bot.IsTemporaryGroupHelper)
                 return;

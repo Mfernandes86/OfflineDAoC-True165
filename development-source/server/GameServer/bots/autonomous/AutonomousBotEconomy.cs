@@ -1064,6 +1064,10 @@ namespace DOL.GS;
                 return Supplies165.AmmoType(bot.Inventory.GetItem(eInventorySlot.DistanceWeapon)) == (eObjectType)item.Object_Type;
             if ((eObjectType)item.Object_Type == eObjectType.Poison)
                 return bot.CharacterClass != null && BotPoisonSupply.IsAssassin((eCharacterClass)bot.CharacterClass.ID);
+            // a heal, power or endurance draught the bot drinks (BotPotions165, veteran-bots review 2026-11-11 / O13)
+            if (BotPotions165.IsPotion(item) && SkillBase.GetSpellLine(GlobalSpellsLines.Potions_Effects) is { } line &&
+                SkillBase.FindSpell(item.SpellID, line) is { } spell)
+                return BotPotions165.KindOf(spell.SpellType.ToString()) != BotPotions165.Kind.None;
             return false;
         }
 

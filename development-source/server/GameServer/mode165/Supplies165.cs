@@ -111,6 +111,8 @@ namespace DOL.GS
         {
             if (!Classic165Mode.IsOn || bot?.Inventory == null || HiredCompanions165.IsHired(bot))
                 return;
+            // a rich gamebot of level 20+ keeps a heal draught (BotPotions165, owner decision O13)
+            BotPotions165.RestockHealDraughts(bot, at);
             DbInventoryItem weapon = bot.Inventory.GetItem(eInventorySlot.DistanceWeapon);
             if (weapon != null && (eObjectType)weapon.Object_Type == eObjectType.Thrown)
             {

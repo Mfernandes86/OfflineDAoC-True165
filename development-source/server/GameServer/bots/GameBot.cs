@@ -129,6 +129,16 @@ namespace DOL.GS
             if (IsRidingProtectedCompanion)
                 return;
             base.TakeDamage(source, damageType, damageAmount, criticalAmount);
+            // True 1.65 Mode: an emergency heal draught (BotPotions165: one health comparison unless it is low)
+            if (HealthPercent <= BotPotions165.HealWhenHitPercent)
+                BotPotions165.OnDamaged(this);
+        }
+
+        public override void EnemyKilled(GameLiving enemy)
+        {
+            base.EnemyKilled(enemy);
+            // True 1.65 Mode: a draught between a kill and the add still on the bot (BotPotions165)
+            BotPotions165.AfterKill(this);
         }
         public string StableRouteDestination { get; private set; } = string.Empty;
         private DateTime _stableRouteExpectedArrivalUtc;
