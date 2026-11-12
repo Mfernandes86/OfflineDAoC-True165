@@ -690,17 +690,29 @@ public static class AutonomousPetSupport
             // a hired Theurgist calls the elementals its player chose (AI Options pet row), else its own choice
             (Spell Spell, SpellLine Line) theurgistPet = default;
             bool periodTheurgistHolds = false;
-            if (owner is GameBot elementalist && CompanionOptions165.PetLine(elementalist) is string elementLine)
+            // M8 (veteran review 2026-11-11): Prima's three pets, then nukes until that wave is gone (gamebots and
+            // companions alike, the player's chosen line included)
+            TheurgistElement? nextElement = Classic165Mode.IsOn && characterClass == eCharacterClass.Theurgist &&
+                owner is GameBot waveCaster ? TheurgistWaveNext(waveCaster) : TheurgistElement.Earth;
+            if (nextElement == null)
+                periodTheurgistHolds = true;
+            else if (owner is GameBot elementalist && CompanionOptions165.PetLine(elementalist) is string elementLine)
                 theurgistPet = ChooseCastableByRank(owner,
                     LearnedPetSummons(elementalist).Where(entry => IsChosenPet(entry, elementLine)).ToList(),
                     eSpellType.SummonTheurgistPet, true);
             else if (Classic165Mode.IsOn && characterClass == eCharacterClass.Theurgist && owner is GameBot theurgist)
             {
                 // True 1.65 (period Theurgists): with a tank in a full group, pets are the last resort - only when a
-                // monster is on the caster or loose on the group; otherwise earth elementals first, they take the aggro
+                // monster is on the caster or loose on the group; otherwise an earth elemental first (it takes the
+                // aggro), then the Theurgist's own spec line (ice pets nuke, air pets stun)
                 periodTheurgistHolds = TheurgistHoldsPets(theurgist);
                 if (!periodTheurgistHolds)
-                    theurgistPet = BestCastableEarthSummon(owner, TheurgistSummons(theurgist));
+                {
+                    var summons = TheurgistSummons(theurgist);
+                    theurgistPet = BestCastableSummon(owner, summons, nextElement.Value);
+                    if (theurgistPet.Spell == null)
+                        theurgistPet = BestCastableEarthSummon(owner, summons);
+                }
             }
             if (theurgistPet.Spell == null && !periodTheurgistHolds)
                 theurgistPet = ChooseCastableByRank(owner, spells, eSpellType.SummonTheurgistPet,
@@ -1836,6 +1848,97 @@ public static class AutonomousPetSupport
                 member.attackComponent?.AttackerTracker?.Count > 0)
                 return true;
         return false;
+    }
+
+    public enum TheurgistElement { Earth, Ice, Air }
+
+    /// <summary>Pets a Theurgist calls in one wave before it nukes (Prima: "three pets, step back, three more").</summary>
+    public const int TheurgistPetWave = 3;
+
+    /// <summary>
+    /// Pure (M8): the next elemental of a wave, or null while the wave is up. The first pet is earth (it holds the
+    /// aggro), then the Theurgist's own spec line; with a monster on the Theurgist only the earth pet is called. Once
+    /// <see cref="TheurgistPetWave"/> pets were up, none is called again until the whole wave is gone.
+    /// </summary>
+    public static TheurgistElement? TheurgistNextSummon(int petsUp, bool waveFull, bool monsterOnTheurgist, TheurgistElement specElement)
+    {
+        if (waveFull || petsUp >= TheurgistPetWave)
+            return null;
+        if (petsUp == 0)
+            return TheurgistElement.Earth;
+        return monsterOnTheurgist ? null : specElement;
+    }
+
+    /// <summary>Pure: the wave stays full from the third pet until the last one is gone.</summary>
+    public static bool TheurgistWaveFull(bool wasFull, int petsUp) =>
+        petsUp >= TheurgistPetWave || wasFull && petsUp > 0;
+
+    private sealed class TheurgistWaveState { public bool Full; }
+    private static readonly ConditionalWeakTable<GameBot, TheurgistWaveState> TheurgistWaves = new();
+
+    /// <summary>The bot's next elemental (null: the wave is up, nuke instead). Reads only the pet count and the
+    /// bot's own attacker list.</summary>
+    public static TheurgistElement? TheurgistWaveNext(GameBot theurgist)
+    {
+        TheurgistWaveState state = TheurgistWaves.GetOrCreateValue(theurgist);
+        int petsUp = theurgist.PetCount;
+        state.Full = TheurgistWaveFull(state.Full, petsUp);
+        bool monsterOnMe = false;
+        foreach (GameLiving attacker in theurgist.attackComponent.AttackerTracker.Attackers)
+            if (attacker.IsAlive && attacker.TargetObject == theurgist)
+            {
+                monsterOnMe = true;
+                break;
+            }
+        return TheurgistNextSummon(petsUp, state.Full, monsterOnMe, TheurgistSpecElement(theurgist));
+    }
+
+    /// <summary>True while a Theurgist's pet wave is up (its spell rotation then skips the summons too).</summary>
+    public static bool TheurgistWaveUp(GameBot bot) =>
+        Classic165Mode.IsOn && bot?.CharacterClass?.ID == (int)eCharacterClass.Theurgist && TheurgistWaveNext(bot) == null;
+
+    /// <summary>The Theurgist's own line: its build (Air, Ice, Earth), else its highest trained element.</summary>
+    public static TheurgistElement TheurgistSpecElement(GameBot bot)
+    {
+        switch (bot.BotSpec?.SpecType)
+        {
+            case eSpecType.AirTheur: return TheurgistElement.Air;
+            case eSpecType.IceTheur: return TheurgistElement.Ice;
+            case eSpecType.EarthTheur: return TheurgistElement.Earth;
+        }
+        int earth = bot.GetBaseSpecLevel(Specs.Earth_Magic), ice = bot.GetBaseSpecLevel(Specs.Cold_Magic),
+            air = bot.GetBaseSpecLevel(Specs.Wind_Magic);
+        return air > earth && air >= ice ? TheurgistElement.Air : ice > earth ? TheurgistElement.Ice : TheurgistElement.Earth;
+    }
+
+    /// <summary>The element of a Theurgist summon: its line's spec, else its name.</summary>
+    public static TheurgistElement? ElementOf((Spell Spell, SpellLine Line) entry)
+    {
+        if (entry.Spell?.SpellType != eSpellType.SummonTheurgistPet)
+            return null;
+        string spec = entry.Line?.Spec;
+        if (spec == Specs.Earth_Magic || entry.Line?.KeyName == "Abrasion") return TheurgistElement.Earth;
+        if (spec == Specs.Cold_Magic) return TheurgistElement.Ice;
+        if (spec == Specs.Wind_Magic) return TheurgistElement.Air;
+        string name = entry.Spell.Name ?? string.Empty;
+        if (name.Contains("Earth", StringComparison.OrdinalIgnoreCase)) return TheurgistElement.Earth;
+        if (name.Contains("Ice", StringComparison.OrdinalIgnoreCase) || name.Contains("Cold", StringComparison.OrdinalIgnoreCase))
+            return TheurgistElement.Ice;
+        if (name.Contains("Air", StringComparison.OrdinalIgnoreCase) || name.Contains("Wind", StringComparison.OrdinalIgnoreCase))
+            return TheurgistElement.Air;
+        return null;
+    }
+
+    /// <summary>The highest castable summon of one element, or none.</summary>
+    private static (Spell Spell, SpellLine Line) BestCastableSummon(GameLiving owner,
+        IReadOnlyList<(Spell Spell, SpellLine Line)> summons, TheurgistElement element)
+    {
+        (Spell Spell, SpellLine Line) best = default;
+        foreach (var entry in summons)
+            if (ElementOf(entry) == element && (best.Spell == null || entry.Spell.Level > best.Spell.Level) &&
+                CanCast(owner, entry.Spell))
+                best = entry;
+        return best;
     }
 
     /// <summary>An earth elemental summon (Abrasion): the pet that draws aggro off the caster.</summary>
