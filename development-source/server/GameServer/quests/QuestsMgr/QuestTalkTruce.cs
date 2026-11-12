@@ -24,6 +24,10 @@ namespace DOL.GS.Quests
                 !_questNpcNames.Value.Contains(npc.Name) && !ClassicQuests.IsTalkTargetName(npc.Name))
                 return false;
 
+            // A hostile monster that only shares its name with a realm quest NPC of its region (QuestRealmImpostors).
+            if (QuestRealmImpostors.IsMarked(npc))
+                return false;
+
             foreach (var pair in player.QuestList) // not .Keys: that copies the keys on every aggro check
             {
                 if (pair.Key is not DataQuest dataQuest)

@@ -792,6 +792,11 @@ namespace DOL.GS
 				if (!QuestNames.Same(quest.StartName, obj.Name))
 					return;
 
+				// A hostile realm-0 monster named like a realm quest NPC of its region gives no data quests (quest audit
+				// 2026-11-11: the Moon Lake Trackers, the Prima boss Tethra).
+				if (QuestRealmImpostors.SkipQuestsFor(obj))
+					return;
+
 				DataQuest dq = new(quest, obj);
 				obj.AddDataQuest(dq);
 
