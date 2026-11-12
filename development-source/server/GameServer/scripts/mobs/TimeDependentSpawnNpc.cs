@@ -18,8 +18,24 @@ namespace DOL.GS
 
         public override bool AddToWorld()
         {
-            SetOwnBrain(CreateBrain());
+            // The spawn's own brain replaces the one LoadFromDatabase made, and that one carried the aggression of the
+            // Mob row or its NPC template. Without the hand-over every night and day spawn came up with aggro 0 and
+            // stood passive whatever its row said (owner 2026-11-11: "fix them" - 486 of the 547 night spawns have an
+            // aggressive row: disturbed presences, giant skeletons, deamhan aeir, drowned souls, the Undead Patrol).
+            // While it is hidden the spawn has the PEACE flag (Flags above), so it attacks nobody then.
+            ABrain fresh = CreateBrain();
+            CarryAggro(base.Brain as IOldAggressiveBrain, fresh as IOldAggressiveBrain);
+            SetOwnBrain(fresh);
             return base.AddToWorld();
+        }
+
+        /// <summary>The new brain takes over the old brain's aggro level and range (nothing when either is missing).</summary>
+        public static void CarryAggro(IOldAggressiveBrain from, IOldAggressiveBrain to)
+        {
+            if (from == null || to == null || ReferenceEquals(from, to))
+                return;
+            to.AggroLevel = from.AggroLevel;
+            to.AggroRange = from.AggroRange;
         }
 
         protected virtual ABrain CreateBrain()
