@@ -208,6 +208,9 @@ public sealed partial class AutonomousWorldBotController
             _nextScoutReportTick = GameLoop.GameLoopTime + 30_000;
             ReportScoutSighting(bot, visibleTargets);
         }
+        // a stealther reports what it sees: "~20 mids inc near Ben" (ScoutReports165; reuses this scan)
+        if (stalker && visibleTargets.Length >= ScoutReports165.MinimumEnemies)
+            ScoutReports165.Observe(bot, visibleTargets);
         GameLiving enemy = stalker
             ? AutonomousRvrAssist.Pick(visibleTargets, operatorThreats.Contains, GameRelic.IsPlayerCarryingRelic,
                 target => AutonomousRvrStealthers.Vulnerability(target) * 5 + AutonomousRvrAssist.KillOrderRank(AutonomousRvrAssist.ClassOf(target)),
