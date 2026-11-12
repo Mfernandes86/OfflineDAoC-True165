@@ -1860,6 +1860,11 @@ GM ONLY COMMANDS
   /zonepoint add <id> <realm> <class>
   Handler: DOL.GS.Commands.ZonepointCommandHandler
 
+/dfowner
+  Changes the Realm owning access to Darkness Falls
+  /dfowner <0-3 | none | alb | mid | hib>
+  Handler: DOL.GS.Commands.DFOwnerCommandHandler
+
 ADMIN ONLY COMMANDS
 ===================
 
@@ -1895,11 +1900,6 @@ ADMIN ONLY COMMANDS
   Executes custom code!
   /code <codesnippet>
   Handler: DOL.GS.Commands.DynCodeCommandHandler
-
-/dfowner
-  Changes the Realm owning access to Darkness Falls
-  &dfowner <Realm>
-  Handler: DOL.GS.Commands.DFOwnerCommandHandler
 
 /fixnpcspawn
   Fix NPC positions and spawn points using navmesh.
