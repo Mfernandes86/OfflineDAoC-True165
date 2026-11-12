@@ -133,6 +133,8 @@ public class UT_QuestFix07
         Assert.That(QuestGuide.IsAnotherPartsGuide(43, 43, levels), Is.False);
         Assert.That(QuestGuide.IsAnotherPartsGuide(null, 47, levels), Is.False, "no level: as before");
         Assert.That(QuestGuide.IsAnotherPartsGuide(45, 30, new[] { 30 }), Is.False, "a level no row of the name has");
+        Assert.That(QuestGuide.NoGuideNote(true, 43), Does.Contain("level 43 part").And.Not.Contain("belongs to this server"));
+        Assert.That(QuestGuide.NoGuideNote(false, null), Does.Contain("belongs to this server"));
     }
 
     [TestCase("\"Level\": 7", 7)]

@@ -178,20 +178,27 @@ namespace DOL.GS.Quests
             yield return $"{realmName}|{name}|{minLevel}";
         }
 
+        /// <summary>
+        /// Pure: the line shown when a quest has no walkthrough of its own. A later part of a period chain whose parts
+        /// share a name (quest verify 2026-11-11) is a period quest: it is not called one of this server's own.
+        /// </summary>
+        public static string NoGuideNote(bool anotherPartsGuide, int? guideLevel) =>
+            anotherPartsGuide
+                ? $"The period walkthrough on record is for the level {guideLevel} part of this quest. None is recorded for this part; your journal has its steps."
+                : "This quest belongs to this server (it is not one of the period quests), so Allakhazam has no walkthrough for it.";
+
         private static List<List<string>> Pages(GamePlayer player, AbstractQuest quest)
         {
             if (quest is DataQuest row && row.DBDataQuest != null &&
                 FindForRow(player.Realm, row.ID, row.DBDataQuest.Name, row.DBDataQuest.MinLevel) is { } exact)
                 return Paginate(GuideLines(quest.Name, exact));
             Guide guide = Find(player.Realm, quest.Name);
-            if (guide != null && string.Equals(guide.Name, quest.Name, StringComparison.OrdinalIgnoreCase) &&
-                !(quest is DataQuest part && part.DBDataQuest != null && IsAnotherPartsGuide(guide, part.DBDataQuest.Name, part.DBDataQuest.MinLevel)))
+            bool sameName = guide != null && string.Equals(guide.Name, quest.Name, StringComparison.OrdinalIgnoreCase);
+            bool anotherParts = sameName && quest is DataQuest part && part.DBDataQuest != null &&
+                IsAnotherPartsGuide(guide, part.DBDataQuest.Name, part.DBDataQuest.MinLevel);
+            if (sameName && !anotherParts)
                 return Paginate(GuideLines(quest.Name, guide));
-            var lines = new List<string>
-            {
-                "This quest belongs to this server (it is not one of the period quests), so Allakhazam has no walkthrough for it.",
-                " "
-            };
+            var lines = new List<string> { NoGuideNote(anotherParts, guide?.Level), " " };
             if (!string.IsNullOrWhiteSpace(quest.Description)) lines.Add(quest.Description);
             return Paginate(lines);
         }
