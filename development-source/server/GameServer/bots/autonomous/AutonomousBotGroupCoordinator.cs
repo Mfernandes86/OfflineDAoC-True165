@@ -91,6 +91,9 @@ public static partial class AutonomousBotGroupCoordinator
 
     private sealed class Session
     {
+        /// <summary>Veteran review M4: when the session was last updated, and for which members.</summary>
+        public long LastUpdateTick;
+        public long LastUpdateMemberKey;
         public required Group Group { get; init; }
         // Keep one authoritative leader while the actor is alive and still in
         // this party. Group.LivingLeader can change transiently while persistent
@@ -212,6 +215,25 @@ public static partial class AutonomousBotGroupCoordinator
         }
     }
 
+    [DOL.GS.ServerProperties.ServerProperty("bots", "bot_group_shared_pulse",
+        "Veteran review M4 (2026-11-11): a gamebot party's shared state is updated at most once per 0.75 s, however many members pulse (a changed member list updates at once).", true)]
+    public static bool SharedPulseEnabled = true;
+
+    public const int SessionUpdateMilliseconds = 750;
+
+    /// <summary>Pure rule: the party's session was updated recently enough to share.</summary>
+    public static bool SessionUpdateFresh(long lastUpdateTick, long now) =>
+        lastUpdateTick > 0 && now >= lastUpdateTick && now - lastUpdateTick < SessionUpdateMilliseconds;
+
+    /// <summary>An order-independent key of the members (count and ids), so any join or leave updates at once.</summary>
+    public static long PulseMemberKey(IReadOnlyList<GameBot> members)
+    {
+        long key = members.Count;
+        foreach (GameBot member in members)
+            key += unchecked((member?.ObjectID ?? 0) * 1_000_003L) ^ (member?.IsAlive == true ? 1L : 2L);
+        return key;
+    }
+
     public static Directive Pulse(GameBot bot)
     {
         if (bot?.IsAutonomousWorldBot != true || bot.IsTemporaryGroupHelper)
@@ -274,9 +296,20 @@ public static partial class AutonomousBotGroupCoordinator
                 Sessions[group] = session;
             }
 
-            if (!UpdateSession(session, members))
-                return null;
-            members = BotMembers(session.Group);
+            // veteran review M4: one session update per party per 0.75 s (every member pulses every 1.5-2 s, so an
+            // 8-man party ran it ~5 times a second under the global lock). A changed member list updates at once, and
+            // the directive itself is still built fresh for every member from the live session.
+            long pulseNow = GameLoop.GameLoopTime;
+            long memberKey = PulseMemberKey(members);
+            if (!SharedPulseEnabled || !SessionUpdateFresh(session.LastUpdateTick, pulseNow) ||
+                session.LastUpdateMemberKey != memberKey)
+            {
+                if (!UpdateSession(session, members))
+                    return null;
+                members = BotMembers(session.Group);
+                session.LastUpdateTick = pulseNow;
+                session.LastUpdateMemberKey = PulseMemberKey(members);
+            }
             if (bot.Group != session.Group || members.Length == 0)
                 return null;
             return BuildDirective(session, members);
