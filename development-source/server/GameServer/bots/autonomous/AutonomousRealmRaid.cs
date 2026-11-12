@@ -100,9 +100,16 @@ namespace DOL.GS
             public View View;
             public View DestinationView;
             public readonly HashSet<long> CatchingUp = new();
-            public readonly Dictionary<long, long> CorpseSince = new();
+            public readonly Dictionary<long, CorpseWatch> CorpseSince = new();
             /// <summary>The party size when it joined; released members are replaced up to it.</summary>
             public int Target;
+        }
+        /// <summary>A dead raider's wait: since when, and how long it may wait (rechecked every 15 s).</summary>
+        private sealed class CorpseWatch
+        {
+            public long Since;
+            public long NextCheck;
+            public long Wait;
         }
         private static readonly Logging.Logger Log = Logging.LoggerManager.Create(typeof(AutonomousRealmRaid));
         private static readonly object Sync = new();
@@ -1222,11 +1229,26 @@ namespace DOL.GS
                     !raid.Parties.TryGetValue(group, out var party))
                     return AutonomousBotGroupCoordinator.PveCorpseDisposition.NotManaged;
                 long now = GameLoop.GameLoopTime;
-                if (!party.CorpseSince.TryGetValue(bot.DatabaseID, out long since))
-                    party.CorpseSince[bot.DatabaseID] = since = now;
-                // Bounded per-corpse wait, even during an endless nearby fight.
-                // Shared resurrection claims still select one safe caster.
-                long deadline = since + 90_000;
+                if (!party.CorpseSince.TryGetValue(bot.DatabaseID, out CorpseWatch watch))
+                    party.CorpseSince[bot.DatabaseID] = watch = new CorpseWatch { Since = now };
+                // Bounded per-corpse wait, even during an endless nearby fight. Shared resurrection claims still select one
+                // safe caster. sh-bosses L6: a fixed 90 s held corpses nobody could raise and released corpses a resurrector
+                // was about to reach; the wait now follows who is in sight (rechecked every 15 s, one roster pass).
+                if (now >= watch.NextCheck)
+                {
+                    bool raider = false, resurrector = false;
+                    foreach (GameLiving member in raid.Support)
+                    {
+                        if (member == bot || !member.IsAlive || member.CurrentRegionID != bot.CurrentRegionID ||
+                            !member.IsWithinRadius(bot, WorldMgr.VISIBILITY_DISTANCE)) continue;
+                        raider = true;
+                        if (member is GameBot b && b.ResurrectionSpell != null && b.Mana >= b.PowerCost(b.ResurrectionSpell))
+                        { resurrector = true; break; }
+                    }
+                    watch.Wait = RaidCorpseWaitMilliseconds(raider, resurrector);
+                    watch.NextCheck = now + CorpseRecheckMilliseconds;
+                }
+                long deadline = watch.Since + watch.Wait;
                 bool casting = raid.Support.OfType<GameBot>().Any(b => b.IsAlive && b.IsCasting &&
                     b.castingComponent.SpellHandler is { } cast && cast.Target == bot &&
                     cast.Spell.SpellType == eSpellType.Resurrect &&
@@ -1237,6 +1259,14 @@ namespace DOL.GS
                 return AutonomousBotGroupCoordinator.PveCorpseDisposition.ReleaseAndRejoin;
             }
         }
+
+        public const long CorpseRecheckMilliseconds = 15_000;
+
+        /// <summary>How long a dead raider waits before it releases: 240 s while a living raid resurrector with the power for
+        /// it is in sight (as a siege corpse waits), 90 s while only other raiders are in sight, 20 s when nobody of the raid
+        /// is in sight to raise or defend it (a dead bot's usual wait with nobody to raise it).</summary>
+        public static long RaidCorpseWaitMilliseconds(bool raiderInSight, bool resurrectorInSight) =>
+            resurrectorInSight ? GameBot.SiegeCorpseWaitMilliseconds : raiderInSight ? 90_000 : GameBot.NoRaiserReleaseMilliseconds;
 
         public static object SupportScope(GameBot bot)
         {

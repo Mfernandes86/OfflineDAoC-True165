@@ -153,4 +153,12 @@ public class UT_HornRaidLifecycle
         Assert.That(AutonomousRealmRaid.BattleHold(true, false, false), Is.False, "grounded beyond 2,000: keep fighting");
         Assert.That(AutonomousRealmRaid.BattleHold(true, false, true), Is.True, "in the air: hold");
     }
+
+    [Test]
+    public void ADeadRaiderWaitsLongerWithAResurrectorInSightAndReleasesSoonWithNobody()
+    {
+        Assert.That(AutonomousRealmRaid.RaidCorpseWaitMilliseconds(true, true), Is.EqualTo(240_000));
+        Assert.That(AutonomousRealmRaid.RaidCorpseWaitMilliseconds(true, false), Is.EqualTo(90_000), "as before");
+        Assert.That(AutonomousRealmRaid.RaidCorpseWaitMilliseconds(false, false), Is.EqualTo(20_000), "nobody of the raid in sight");
+    }
 }
