@@ -437,6 +437,9 @@ public static class AutonomousBotStatusPersistence
     {
         int saved = 0;
         int stalledAttempts = 0;
+        // the Realm Exchange write queue too, even when no bot save waits (review 2026-11-11: the last second of
+        // reprices, relists and failed markers was lost at shutdown)
+        DrainExchangeQueue();
         while (Volatile.Read(ref _flushing) != 0 || PendingCount > 0)
         {
             if (Volatile.Read(ref _flushing) != 0)
@@ -463,6 +466,29 @@ public static class AutonomousBotStatusPersistence
             }
         }
 
+        DrainExchangeQueue();
         return saved;
+    }
+
+    /// <summary>Shutdown: writes the Realm Exchange queue until it is empty or a flush makes no progress.</summary>
+    private static void DrainExchangeQueue()
+    {
+        int stalled = 0;
+        for (int attempt = 0; attempt < 50 && RealmExchangeWriteQueue.Count > 0; attempt++)
+        {
+            int before = RealmExchangeWriteQueue.Count;
+            RealmExchangeWriteQueue.Flush();
+            if (RealmExchangeWriteQueue.Count < before)
+            {
+                stalled = 0;
+                continue;
+            }
+            if (++stalled >= 3)
+            {
+                Log.Error($"Realm Exchange shutdown writes stopped after three failed flushes; {RealmExchangeWriteQueue.Count} rows remain queued.");
+                return;
+            }
+            Thread.Sleep(50);
+        }
     }
 }
