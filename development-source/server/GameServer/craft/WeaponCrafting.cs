@@ -93,7 +93,7 @@ namespace DOL.GS
 		{
 			if (Util.Chance(CalculateChanceToGainPoint(player, recipe.Level)))
 			{
-				player.GainCraftingSkill(eCraftingSkill.WeaponCrafting, 1);
+				GainRatedPoints(player, eCraftingSkill.WeaponCrafting);
 				base.GainCraftingSkillPoints(player, recipe);
 				player.Out.SendUpdateCraftingSkills();
 			}

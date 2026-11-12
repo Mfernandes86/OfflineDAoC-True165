@@ -87,10 +87,10 @@ namespace DOL.GS
 		{
 			if (Util.Chance(CalculateChanceToGainPoint(player, recipe.Level)))
 			{
-				player.GainCraftingSkill(eCraftingSkill.SpellCrafting, 1);
+				GainRatedPoints(player, eCraftingSkill.SpellCrafting);
 
 				if (player.GetCraftingSkillValue(eCraftingSkill.GemCutting) < subSkillCap)
-	                player.GainCraftingSkill(eCraftingSkill.GemCutting, 1);
+	                GainRatedPoints(player, eCraftingSkill.GemCutting, subSkillCap);
 
 				player.Out.SendUpdateCraftingSkills();
 			}

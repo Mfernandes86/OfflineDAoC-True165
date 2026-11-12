@@ -11672,9 +11672,11 @@ namespace DOL.GS
                     CraftingProgressMgr.TrackChange(this, m_craftingSkills);
                     Out.SendMessage(LanguageMgr.GetTranslation(Client.Account.Language, "GamePlayer.GainCraftingSkill.GainSkill", craftingSkill.Name, m_craftingSkills[skill]), eChatType.CT_Important, eChatLoc.CL_SystemWindow);
                     int currentSkillLevel = GetCraftingSkillValue(skill);
-                    if (HasPlayerReachedNewCraftingTitle(currentSkillLevel))
+                    // a gain of several points (the launcher's crafting skill rate) reaches a title it steps over too
+                    foreach (int title in CraftingRate165.TitlesReached(currentSkillLevel - count, currentSkillLevel))
                     {
-                        GameEventMgr.Notify(GamePlayerEvent.NextCraftingTierReached, this,new NextCraftingTierReachedEventArgs(skill,currentSkillLevel) );
+                        if (HasPlayerReachedNewCraftingTitle(title))
+                            GameEventMgr.Notify(GamePlayerEvent.NextCraftingTierReached, this,new NextCraftingTierReachedEventArgs(skill,title) );
                     }
                     if (GameServer.ServerRules.CanGenerateNews(this) && currentSkillLevel >= 1000 && currentSkillLevel - count < 1000)
                     {

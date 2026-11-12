@@ -93,7 +93,7 @@ namespace DOL.GS
 		{
 			if (Util.Chance(CalculateChanceToGainPoint(player, recipe.Level)))
 			{
-				player.GainCraftingSkill(eCraftingSkill.Fletching, 1);
+				GainRatedPoints(player, eCraftingSkill.Fletching);
 				base.GainCraftingSkillPoints(player, recipe);
 				player.Out.SendUpdateCraftingSkills();
 			}

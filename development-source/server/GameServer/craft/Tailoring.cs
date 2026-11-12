@@ -92,7 +92,7 @@ namespace DOL.GS
         {
             if (Util.Chance(CalculateChanceToGainPoint(player, recipe.Level)))
             {
-                player.GainCraftingSkill(eCraftingSkill.Tailoring, 1);
+                GainRatedPoints(player, eCraftingSkill.Tailoring);
                 base.GainCraftingSkillPoints(player, recipe);
                 player.Out.SendUpdateCraftingSkills();
             }

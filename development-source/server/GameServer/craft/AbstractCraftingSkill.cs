@@ -354,6 +354,17 @@ namespace DOL.GS
 		#endregion
 
 		#region Gain points
+		/// <summary>
+		/// One skill gain of a craft: the launcher's crafting skill rate in points (1 = the original single point), never past
+		/// cap (subSkillCap for the secondary skills). Callers keep their own gain conditions (chance, grey, cap checks).
+		/// </summary>
+		protected static void GainRatedPoints(GamePlayer player, eCraftingSkill skill, int cap = CraftingRate165.NoCap)
+		{
+			int points = CraftingRate165.Points(player.GetCraftingSkillValue(skill), CraftingRate165.PlayerRate, cap);
+			if (points > 0)
+				player.GainCraftingSkill(skill, points);
+		}
+
 		public virtual void GainCraftingSkillPoints(GamePlayer player, Recipe recipe)
 		{
 			foreach (var ingredient in recipe.Ingredients)
@@ -367,7 +378,7 @@ namespace DOL.GS
 						{
 							if (player.GetCraftingSkillValue(eCraftingSkill.ClothWorking) < subSkillCap)
 							{
-								player.GainCraftingSkill(eCraftingSkill.ClothWorking, 1);
+								GainRatedPoints(player, eCraftingSkill.ClothWorking, subSkillCap);
 							}
 							break;
 						}
@@ -376,7 +387,7 @@ namespace DOL.GS
 						{
 							if (player.GetCraftingSkillValue(eCraftingSkill.LeatherCrafting) < subSkillCap)
 							{
-								player.GainCraftingSkill(eCraftingSkill.LeatherCrafting, 1);
+								GainRatedPoints(player, eCraftingSkill.LeatherCrafting, subSkillCap);
 							}
 							break;
 						}
@@ -385,7 +396,7 @@ namespace DOL.GS
 						{
 							if (player.GetCraftingSkillValue(eCraftingSkill.MetalWorking) < subSkillCap)
 							{
-								player.GainCraftingSkill(eCraftingSkill.MetalWorking, 1);
+								GainRatedPoints(player, eCraftingSkill.MetalWorking, subSkillCap);
 							}
 							break;
 						}
@@ -394,7 +405,7 @@ namespace DOL.GS
 						{
 							if (player.GetCraftingSkillValue(eCraftingSkill.WoodWorking) < subSkillCap)
 							{
-								player.GainCraftingSkill(eCraftingSkill.WoodWorking, 1);
+								GainRatedPoints(player, eCraftingSkill.WoodWorking, subSkillCap);
 							}
 							break;
 						}

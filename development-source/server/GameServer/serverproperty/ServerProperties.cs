@@ -2359,6 +2359,12 @@ namespace DOL.GS.ServerProperties
 		public static double CRAFTING_SPEED;
 
 		/// <summary>
+		/// The crafting skill rate (launcher option, owner 2026-11-12): a crafting skill gain gives this many points (whole points, 1 = original)
+		/// </summary>
+		[ServerProperty("craft", "crafting_skill_rate", "Crafting Skill Rate - each time a player gains a crafting skill point, they gain this many instead (whole points; 1 is the original rate; caps still apply)", 1.0)]
+		public static double CRAFTING_SKILL_RATE;
+
+		/// <summary>
 		/// Crafting skill gain bonus in capital cities
 		/// </summary>
 		[ServerProperty("craft", "capital_city_crafting_skill_gain_bonus", "Crafting skill gain bonus % in capital cities; 5 = 5%", 5)]
