@@ -4630,11 +4630,41 @@ namespace DOL.AI.Brain
             return HasAggro;
         }
 
+        /// <summary>Q10 (veteran review 2026-11-11): how long one protection answer is kept.</summary>
+        public const int ProtectionSearchIntervalMs = 750;
+        /// <summary>... and how often the 2,600-unit area search still runs, for a monster running at a groupmate that
+        /// has not hit anyone yet (the attacker lists only know it after its first blow).</summary>
+        public const int ProtectionAreaScanIntervalMs = 3000;
+        private long _nextProtectionSearchTick;
+        private long _nextProtectionAreaScanTick;
+        private GameLiving _lastProtectionTarget;
+
+        /// <summary>Pure: may the cached protection answer be reused at <paramref name="now"/>?</summary>
+        public static bool ReuseProtectionAnswer(long now, long nextSearchTick, bool cachedStillValid) =>
+            now < nextSearchTick && cachedStillValid;
+
         private GameLiving FindProtectionTarget()
         {
             if (!IsTankClass || Body?.Group == null)
                 return null;
 
+            // Q10: two 2,600-unit area searches ran on every combat think of every grouped tank. The answer is now kept
+            // for 0.75 s (while it still points at a living groupmate), candidates come from the attacker lists the game
+            // already keeps, and the area search runs at most once every 3 s.
+            long now = GameLoop.GameLoopTime;
+            GameLiving cached = _lastProtectionTarget;
+            bool cachedValid = cached == null ||
+                cached.IsAlive && cached.ObjectState == GameObject.eObjectState.Active &&
+                cached.TargetObject is GameLiving cachedVictim && cachedVictim.IsAlive && Body.Group.IsInTheGroup(cachedVictim);
+            if (ReuseProtectionAnswer(now, _nextProtectionSearchTick, cachedValid))
+                return cached;
+            _nextProtectionSearchTick = now + ProtectionSearchIntervalMs;
+            _lastProtectionTarget = SearchProtectionTarget(now);
+            return _lastProtectionTarget;
+        }
+
+        private GameLiving SearchProtectionTarget(long now)
+        {
             GamePlayer leader = AssistedPlayer;
             HashSet<GameLiving> protectedMembers = Body.Group.GetMembersInTheGroup()
                 .Where(member => member?.IsAlive == true && member.CurrentRegionID == Body.CurrentRegionID &&
@@ -4643,10 +4673,18 @@ namespace DOL.AI.Brain
             if (protectedMembers.Count == 0)
                 return null;
 
-            IEnumerable<GameLiving> candidates = AggroList.Keys
-                .Concat(Body.GetNPCsInRadius(2600).Cast<GameLiving>())
-                .Concat(Body.GetPlayersInRadius(2600).Cast<GameLiving>())
-                .Distinct();
+            List<GameLiving> pool = new(AggroList.Keys);
+            foreach (GameLiving member in protectedMembers)
+                if (member.attackComponent != null)
+                    pool.AddRange(member.attackComponent.AttackerTracker.Attackers);
+            if (now >= _nextProtectionAreaScanTick)
+            {
+                _nextProtectionAreaScanTick = now + ProtectionAreaScanIntervalMs;
+                pool.AddRange(Body.GetNPCsInRadius(2600).Cast<GameLiving>());
+                pool.AddRange(Body.GetPlayersInRadius(2600).Cast<GameLiving>());
+            }
+            IEnumerable<GameLiving> candidates = pool.Where(candidate =>
+                    candidate != null && Body.IsWithinRadius(candidate, 2600)).Distinct();
             // A mesmerized monster still points at its last victim: never protect against it (that broke the mez).
             // True 1.65 Mode: nor against a monster on the player who is the main tank (BotMeleeStylePolicy.MayTaunt).
             GamePlayer mainTankRules = BotMeleeStylePolicy.TauntRulesPlayer(BotBody);
