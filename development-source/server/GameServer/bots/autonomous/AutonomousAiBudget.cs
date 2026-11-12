@@ -108,24 +108,37 @@ public static class AutonomousAiBudget
         _recentNpcTickMilliseconds = Smooth(_recentNpcTickMilliseconds, elapsed);
     }
 
-    /// <summary>A gamebot that is not fighting takes one decision from this tick's allowance; false = think again soon.</summary>
-    public static bool TryTakeDecision()
+    /// <summary>
+    /// Pure rule (performance review 2026-11-11): a decision goes ahead when the allowance had one left, or when the bot
+    /// was deferred on its last think - its priority pass. Each decision is deferred at most once, so under overload a
+    /// deferred bot costs one extra think prefix, not a retry every few ticks that kept the service slow and the cap on.
+    /// </summary>
+    public static bool DecisionAllowed(bool priority, int leftAfterTaking) => priority || leftAfterTaking >= 0;
+
+    /// <summary>
+    /// A gamebot that is not fighting takes one decision from this tick's allowance; false = think again soon.
+    /// <paramref name="priority"/>: it was deferred last time, so it goes ahead now (still counted against the allowance).
+    /// </summary>
+    public static bool TryTakeDecision(bool priority = false)
     {
         // nothing is capped until the NPC service runs ticks (tools and unit tests drive bots directly)
-        if (!TickBudgetEnabled || _npcTickStartTimestamp == 0 || Interlocked.Decrement(ref _decisionsLeft) >= 0)
+        if (!TickBudgetEnabled || _npcTickStartTimestamp == 0 || DecisionAllowed(priority, Interlocked.Decrement(ref _decisionsLeft)))
             return true;
         Interlocked.Increment(ref _deferredDecisions);
         return false;
     }
 
-    /// <summary>A new route plan may start this tick; false = keep the current movement order and plan next think.</summary>
-    public static bool TryBeginRoutePlan()
+    /// <summary>
+    /// A new route plan may start this tick; false = keep the current movement order and plan next think.
+    /// <paramref name="priority"/>: its plan was deferred last time, so it starts now (still counted against the budget).
+    /// </summary>
+    public static bool TryBeginRoutePlan(bool priority = false)
     {
         if (!TickBudgetEnabled || _npcTickStartTimestamp == 0)
             return true;
         int started = Interlocked.Increment(ref _routePlansStarted) - 1;
         double used = Stopwatch.GetElapsedTime(0, Volatile.Read(ref _routePlanTimestampTicks)).TotalMilliseconds;
-        if (RoutePlanAllowed(started, used))
+        if (priority || RoutePlanAllowed(started, used))
             return true;
         Interlocked.Increment(ref _deferredRoutePlans);
         return false;

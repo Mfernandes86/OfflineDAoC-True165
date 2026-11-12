@@ -36,6 +36,17 @@ public sealed class UT_ScaleGuards
     }
 
     [Test]
+    public void ADecisionIsDeferredAtMostOnce()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(AutonomousAiBudget.DecisionAllowed(false, 0), Is.True, "the last one of the allowance");
+            Assert.That(AutonomousAiBudget.DecisionAllowed(false, -1), Is.False, "allowance used: deferred");
+            Assert.That(AutonomousAiBudget.DecisionAllowed(true, -50), Is.True, "deferred last time: its priority pass");
+        });
+    }
+
+    [Test]
     public void DeferredBotsThinkAgainWithinAFewTicks()
     {
         foreach (long id in new[] { 0L, 1, 66, 67, 12345, -9, long.MaxValue })

@@ -296,14 +296,19 @@ namespace DOL.GS
             if (bot?.IsAutonomousWorldBot != true || bot.IsTemporaryGroupHelper || bot.IsPlayerLedGroup)
                 return false;
             // veteran review M4: a gamebot that is not fighting takes one decision from this tick's allowance; with none
-            // left it keeps its current movement and thinks again in a few ticks (combat is never capped)
-            if (!brain.HasAggro && !bot.InCombat && !AutonomousAiBudget.TryTakeDecision())
+            // left it keeps its current movement and thinks again in a few ticks (combat is never capped). A bot deferred
+            // last time goes ahead on its next think, so each decision waits at most once.
+            if (!brain.HasAggro && !bot.InCombat && !AutonomousAiBudget.TryTakeDecision(_decisionDeferred))
             {
+                _decisionDeferred = true;
                 brain.ThinkInterval = AutonomousAiBudget.DeferredThinkMilliseconds(bot.ObjectID);
                 return true;
             }
+            _decisionDeferred = false;
+            _routePlanPriority = _routePlanDeferred;
             _routePlanDeferred = false;
             bool handled = TickDecision(brain, bot);
+            _routePlanPriority = false;
             // a route plan this turn waited for the next tick's budget: think again soon instead of after the full interval
             if (_routePlanDeferred && !brain.HasAggro)
                 brain.ThinkInterval = Math.Min(brain.ThinkInterval, AutonomousAiBudget.DeferredThinkMilliseconds(bot.ObjectID));
@@ -312,6 +317,10 @@ namespace DOL.GS
 
         /// <summary>Veteran review M4: set when IssuePath kept the current order because this tick's plan budget was used.</summary>
         private bool _routePlanDeferred;
+        /// <summary>This think follows a deferred route plan: its next plan starts whatever the budget says (once).</summary>
+        private bool _routePlanPriority;
+        /// <summary>The last think's decision was deferred by the tick allowance: this one goes ahead.</summary>
+        private bool _decisionDeferred;
 
         private bool TickDecision(BotBrain brain, GameBot bot)
         {
@@ -5526,12 +5535,13 @@ namespace DOL.GS
             }
             // veteran review M4: new route plans share a per-tick budget (route planning caused the long AI turns); with
             // the budget used the current order stays and the plan is made on the next think, a few ticks later
-            if (!AutonomousAiBudget.TryBeginRoutePlan())
+            if (!AutonomousAiBudget.TryBeginRoutePlan(_routePlanPriority))
             {
                 _nextMoveOrderTick = 0;
                 _routePlanDeferred = true;
                 return true;
             }
+            _routePlanPriority = false;   // one priority plan per deferral
             long routePlanStart = System.Diagnostics.Stopwatch.GetTimestamp();
             try
             {
