@@ -302,7 +302,80 @@ namespace DOL.GS
         /// encounter must then be a short proven leg from that approach (nearest proofs first).
         /// </summary>
         private bool TryDarknessFallsChain(IPathfindingMgr nav, Zone zone, Vector3 encounter, out Vector3[] chain) =>
-            TryDarknessFallsChain(nav, zone, _realm, encounter, out chain);
+            TryDarknessFallsEncounterChain(nav, zone, _realm, encounter, out chain);
+
+        /// <summary>
+        /// Search order for certified approaches to a point: distance across plus four times the height difference. Darkness
+        /// Falls is stacked; by straight 3D distance all eight approaches tried for five named encounters were on another
+        /// floor, 23,000-55,000 units away on foot, while one 5,700-11,500 away on foot ranked 47th to 307th, so from an
+        /// entrance only Prince Ba'alorien and High Lord Saeor had a chain (df-routes M1).
+        /// </summary>
+        public static float ApproachSearchKey(Vector3 approach, Vector3 encounter) =>
+            Vector2.Distance(new(approach.X, approach.Y), new(encounter.X, encounter.Y)) + ApproachFloorWeight * MathF.Abs(approach.Z - encounter.Z);
+        public const float ApproachFloorWeight = 4f;
+        /// <summary>A named encounter's last leg may be as long as the longest certified leg (12,400 walking units).</summary>
+        public const float DarknessFallsEncounterReach = 13_000f;
+        public const int EncounterApproachProbes = 16;
+        public const int EncounterApproachKeep = 3;
+        public const long EncounterChainFailureMemoryMilliseconds = 10 * 60_000;
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<(eRealm, ushort, int, int, int, long), (Vector3[] Chain, long Until)>
+            EncounterChains = new();
+
+        /// <summary>
+        /// The certified chain to a named encounter, chosen once per realm, encounter and mesh revision: of the certified
+        /// approach floors nearest in <see cref="ApproachSearchKey"/> order (16 at most), the first three with a proven last
+        /// leg are measured on foot and the shortest leg wins. Kept for the life of the mesh; a failure is retried after
+        /// 10 minutes. About 16 approach checks and 3 path queries once, nothing per pulse.
+        /// </summary>
+        public static bool TryDarknessFallsEncounterChain(IPathfindingMgr nav, Zone zone, eRealm realm, Vector3 encounter, out Vector3[] chain)
+        {
+            chain = null;
+            if (realm == eRealm.None || zone == null) return false;
+            long now = GameLoop.GameLoopTime;
+            var key = (realm, zone.ID, (int)encounter.X >> 6, (int)encounter.Y >> 6, (int)encounter.Z >> 6, NavigationGeometryRevision.Read(zone));
+            if (EncounterChains.TryGetValue(key, out var known) && (known.Chain != null || now < known.Until))
+            {
+                chain = known.Chain;
+                return chain != null;
+            }
+            float bestLeg = float.MaxValue;
+            int kept = 0;
+            foreach (var item in AutonomousDarknessFallsNavigation.CertifiedApproaches(realm)
+                         .Where(a => a.InWaypoints is { Length: >= 2 } &&
+                                     Vector3.DistanceSquared(a.Approach, encounter) <= DarknessFallsEncounterReach * DarknessFallsEncounterReach)
+                         .OrderBy(a => ApproachSearchKey(a.Approach, encounter))
+                         .Take(EncounterApproachProbes))
+            {
+                if (!AutonomousZonePointApproach.TryResolve(nav, zone, item.Approach, encounter, 220, out Vector3 final, maxCandidates: 4))
+                    continue;
+                float leg = WalkingLength(nav, zone, item.Approach, final);
+                if (leg < bestLeg)
+                {
+                    bestLeg = leg;
+                    chain = item.InWaypoints.Append(final).ToArray();
+                }
+                if (++kept >= EncounterApproachKeep) break;
+            }
+            if (EncounterChains.Count > 1_024) EncounterChains.Clear();
+            EncounterChains[key] = (chain, chain != null ? long.MaxValue : now + EncounterChainFailureMemoryMilliseconds);
+            if (chain != null)
+                log.Info($"REALM_EXPEDITION_CHAIN_CHOSEN realm={realm} at={(int)encounter.X},{(int)encounter.Y},{(int)encounter.Z} " +
+                         $"waypoints={chain.Length} lastLeg={(int)bestLeg}");
+            return chain != null;
+        }
+
+        /// <summary>Walking length of a straight path (float.MaxValue when there is none; a partial path adds the rest in a line).</summary>
+        private static float WalkingLength(IPathfindingMgr nav, Zone zone, Vector3 from, Vector3 to)
+        {
+            Span<WrappedPathfindingNode> nodes = stackalloc WrappedPathfindingNode[256];
+            PathfindingResult path = nav.GetPathStraight(zone, from, to, nav.DefaultFilters, nodes);
+            if (path.Status != PathfindingStatus.PathFound && path.Status != PathfindingStatus.PartialPathFound)
+                return float.MaxValue;
+            float length = 0;
+            Vector3 last = from;
+            for (int i = 0; i < path.NodeCount; i++) { length += Vector3.Distance(last, nodes[i].Position); last = nodes[i].Position; }
+            return length + Vector3.Distance(last, to);
+        }
 
         /// <summary>The same certified chain for one realm's member (late raid members walk it to their post).</summary>
         public static bool TryDarknessFallsChain(IPathfindingMgr nav, Zone zone, eRealm realm, Vector3 encounter, out Vector3[] chain)
@@ -355,18 +428,17 @@ namespace DOL.GS
             chain = null;
             var _realm = realm;
             if (_realm == eRealm.None) return false;
-            var nearest = AutonomousDarknessFallsNavigation.SnapshotCertifiedProofs()
-                .Where(proof => proof.Approach is { Length: 3 } && proof.Routes != null)
-                .Select(proof => (Proof: proof, Approach: new Vector3(proof.Approach[0], proof.Approach[1], proof.Approach[2]),
-                    Route: proof.Routes.FirstOrDefault(route => route.Realm == _realm && route.InWaypoints is { Length: >= 2 })))
-                .Where(item => item.Route != null && Vector3.DistanceSquared(item.Approach, encounter) <=
+            // Every certified approach floor, also those whose spawn is gone (their legs are still proven floor), in
+            // floor-aware order instead of straight 3D distance (see ApproachSearchKey).
+            var nearest = AutonomousDarknessFallsNavigation.CertifiedApproaches(_realm)
+                .Where(item => item.InWaypoints is { Length: >= 2 } && Vector3.DistanceSquared(item.Approach, encounter) <=
                     DarknessFallsChainReach * DarknessFallsChainReach)
-                .OrderBy(item => Vector3.DistanceSquared(item.Approach, encounter))
+                .OrderBy(item => ApproachSearchKey(item.Approach, encounter))
                 .Take(8);
-            foreach (var (_, approach, route) in nearest)
+            foreach (var item in nearest)
             {
-                if (!AutonomousZonePointApproach.TryResolve(nav, zone, approach, encounter, 220, out Vector3 final)) continue;
-                chain = route.InWaypoints.Select(point => new Vector3(point[0], point[1], point[2])).Append(final).ToArray();
+                if (!AutonomousZonePointApproach.TryResolve(nav, zone, item.Approach, encounter, 220, out Vector3 final)) continue;
+                chain = item.InWaypoints.Append(final).ToArray();
                 return true;
             }
             return false;

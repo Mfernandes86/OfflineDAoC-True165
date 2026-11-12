@@ -101,6 +101,18 @@ namespace DOL.UnitTests
         public void EverySetAsideTargetSendsTheRaidToTheFinal(long[] retryUntil, long now, bool setAside) =>
             Assert.That(RealmRaidDungeonRoute.EverySetAside(retryUntil, now), Is.EqualTo(setAside));
 
+        // Darkness Falls is stacked: an approach on the encounter's floor is tried before a nearer one on another floor.
+        [Test]
+        public void ChainApproachesOnTheEncountersFloorComeFirst()
+        {
+            Vector3 encounter = new(30000, 30000, 15000);
+            Vector3 sameFloor = new(35700, 30000, 15050);     // 5,700 across, same floor
+            Vector3 floorAbove = new(31500, 30000, 17500);    // 2,900 in 3D, a floor above
+            Assert.That(Vector3.Distance(floorAbove, encounter), Is.LessThan(Vector3.Distance(sameFloor, encounter)));
+            Assert.That(RealmRaidDungeonRoute.ApproachSearchKey(sameFloor, encounter),
+                Is.LessThan(RealmRaidDungeonRoute.ApproachSearchKey(floorAbove, encounter)));
+        }
+
         [Test]
         public void MusterPostsNeverLandInsideTheKeepOutCircle()
         {
