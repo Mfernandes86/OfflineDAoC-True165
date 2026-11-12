@@ -47,4 +47,53 @@ public sealed class UT_RelicLaneFixes
             Assert.That(AutonomousRelicShrine.RaidCanPlace(eRealm.Albion, [afterRaid[1]], afterRaid, Room), Is.False, "already Albion's");
         });
     }
+
+    private static AutonomousRvrEventLayer.RelicCandidate Keep(string id, int sentinels, int withoutLord = 0, bool retake = false) =>
+        new(id, sentinels, withoutLord, retake);
+
+    [Test]
+    public void AnOpenRelicKeepIsTheNextSiegeOwnLostRelicFirst()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(AutonomousRvrEventLayer.RelicKeepOpen(2), Is.True);
+            Assert.That(AutonomousRvrEventLayer.RelicKeepOpen(3), Is.False);
+            Assert.That(AutonomousRvrEventLayer.ChooseOpenRelic([Keep("a", 4), Keep("b", 3)]), Is.Null, "none open");
+            Assert.That(AutonomousRvrEventLayer.ChooseOpenRelic([Keep("a", 4), Keep("b", 2)]), Is.EqualTo("b"), "taken at once, no 12 % roll");
+            Assert.That(AutonomousRvrEventLayer.ChooseOpenRelic([Keep("a", 0), Keep("b", 2, retake: true)]), Is.EqualTo("b"), "own relic first");
+            Assert.That(AutonomousRvrEventLayer.ChooseOpenRelic([Keep("b", 2), Keep("a", 1)]), Is.EqualTo("a"), "then the fewest sentinels");
+        });
+    }
+
+    [Test]
+    public void ARealmAimsAtTheRelicKeepItCanOpenWithTheFewestSentinelKeepsLeft()
+    {
+        Assert.Multiple(() =>
+        {
+            // Today's world (relic audit B1): Castle Excalibur has 6 sentinel keeps, 5 of them without a lord: it cannot open.
+            Assert.That(AutonomousRvrEventLayer.RelicKeepOpenable(6, 5), Is.False);
+            // Dun Lamfhota: 6 held, nGed and Crauchon have no lord: 4 can fall, 2 stay: it can open.
+            Assert.That(AutonomousRvrEventLayer.RelicKeepOpenable(6, 2), Is.True);
+            Assert.That(AutonomousRvrEventLayer.ChooseRelicAim([Keep("excalibur", 6, 5), Keep("lamfhota", 6, 2), Keep("dagda", 6, 3)]),
+                Is.EqualTo("lamfhota"));
+            // Once the garrisons are restored every keep has a lord: the fewest sentinel keeps left wins, a retake first.
+            Assert.That(AutonomousRvrEventLayer.ChooseRelicAim([Keep("a", 6), Keep("b", 4)]), Is.EqualTo("b"));
+            Assert.That(AutonomousRvrEventLayer.ChooseRelicAim([Keep("a", 6, retake: true), Keep("b", 4)]), Is.EqualTo("a"));
+            // An open keep is no aim (it is sieged at once).
+            Assert.That(AutonomousRvrEventLayer.ChooseRelicAim([Keep("a", 2)]), Is.Null);
+            Assert.That(AutonomousRvrEventLayer.ChooseRelicAim([]), Is.Null);
+        });
+    }
+
+    [Test]
+    public void ASentinelKeepStepCountsAsTakenOnlyWhenItChangedHands()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(AutonomousRvrEventLayer.RelicStepTaken(eRealm.Hibernia, eRealm.Albion), Is.True);
+            Assert.That(AutonomousRvrEventLayer.RelicStepTaken(eRealm.Hibernia, eRealm.Midgard), Is.True, "the third realm took it: still a sentinel down");
+            Assert.That(AutonomousRvrEventLayer.RelicStepTaken(eRealm.Hibernia, eRealm.Hibernia), Is.False);
+            Assert.That(AutonomousRvrEventLayer.RelicStepTaken(eRealm.Hibernia, eRealm.None), Is.False);
+        });
+    }
 }

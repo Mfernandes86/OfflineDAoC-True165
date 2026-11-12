@@ -63,7 +63,10 @@ public static partial class AutonomousRvrEventLayer
     /// <summary>The live keep behind a "rvr-keep-N" objective id, or null (other ids, no keep manager in tests).</summary>
     private static DOL.GS.Keeps.AbstractGameKeep KeepOfObjective(string id) =>
         id != null && id.StartsWith("rvr-keep-", StringComparison.Ordinal) && int.TryParse(id["rvr-keep-".Length..], out int keepId)
-            ? GameServer.KeepManager?.GetKeepByID(keepId) : null;
+            ? LiveKeeps?.GetKeepByID(keepId) : null;
+
+    /// <summary>The keep manager, or null when no server runs (unit tests: GameServer.KeepManager throws there).</summary>
+    private static DOL.GS.Keeps.IKeepManager LiveKeeps => GameServer.Instance == null ? null : GameServer.KeepManager;
 
     /// <summary>Whether a relic raid by this realm on this relic keep could place its prize on its own pad (L3).</summary>
     private static bool RelicRaidCanPlace(LiveObjective relicKeep, eRealm attacker) =>
@@ -88,6 +91,188 @@ public static partial class AutonomousRvrEventLayer
             if (log.IsInfoEnabled) log.Info($"RVR_RELIC_CAMPAIGN_ENDED relic={target.Id} attacker={attacker} reason=\"no relic there this realm may lift\"");
         }
         return true;
+    }
+
+    // ---- automatic relic raids (relic audit B3) ----------------------------------------------------------------------
+    // The automatic path had no memory: it picked one enemy relic keep at random, dropped it when it was not open, sent the
+    // next siege to one of its sentinel keeps only 12 % of the time and took an open relic keep only 12 % of the time. A
+    // realm now plans as a veteran realm did: an open relic keep it can raid is its next siege; otherwise it picks the relic
+    // keep it can open with the fewest sentinel keeps left (its "aim"), sends its sieges to those keeps one by one, and keeps
+    // at it until the relic siege starts, the aim makes no progress, or nothing there can be lifted any more. All of it is
+    // decided in ChooseCore, at the realm's own siege decision, behind the existing once-a-minute start roll, the one
+    // attack per realm and the cooldowns. A launcher campaign (ForceStart) for the realm leads instead of an aim.
+
+    /// <summary>One relic keep as the planner ranks it.</summary>
+    public readonly record struct RelicCandidate(string Id, int Sentinels, int SentinelsWithoutLord, bool Retake);
+
+    /// <summary>Pure rule: a relic siege may start once at most <see cref="MaxSentinelsForRelicAssault"/> sentinel keeps stand.</summary>
+    public static bool RelicKeepOpen(int sentinels) => sentinels <= MaxSentinelsForRelicAssault;
+
+    /// <summary>Pure rule: a relic keep can be opened when the sentinel keeps that cannot change hands (no lord) are few
+    /// enough on their own; every other held sentinel keep can be taken.</summary>
+    public static bool RelicKeepOpenable(int sentinels, int sentinelsWithoutLord) =>
+        Math.Min(sentinels, sentinelsWithoutLord) <= MaxSentinelsForRelicAssault;
+
+    /// <summary>Pure rule: among open relic keeps, the realm's own lost relic first, then the fewest sentinels.</summary>
+    public static string ChooseOpenRelic(IEnumerable<RelicCandidate> open) =>
+        (open ?? []).Where(c => RelicKeepOpen(c.Sentinels))
+            .OrderByDescending(c => c.Retake).ThenBy(c => c.Sentinels).ThenBy(c => c.Id, StringComparer.Ordinal)
+            .Select(c => c.Id).FirstOrDefault();
+
+    /// <summary>Pure rule: the relic keep a realm sets out to open: one that can be opened and is not yet open, its own lost
+    /// relic first, then the fewest sentinel keeps left.</summary>
+    public static string ChooseRelicAim(IEnumerable<RelicCandidate> candidates) =>
+        (candidates ?? []).Where(c => !RelicKeepOpen(c.Sentinels) && RelicKeepOpenable(c.Sentinels, c.SentinelsWithoutLord))
+            .OrderByDescending(c => c.Retake).ThenBy(c => c.Sentinels).ThenBy(c => c.Id, StringComparer.Ordinal)
+            .Select(c => c.Id).FirstOrDefault();
+
+    /// <summary>Pure rule: how a sentinel-keep step ended: taken when the keep is no longer its defender's.</summary>
+    public static bool RelicStepTaken(eRealm defenderWhenOpened, eRealm ownerNow) =>
+        ownerNow != eRealm.None && ownerNow != defenderWhenOpened;
+
+    private sealed class RelicAim
+    {
+        public required string RelicId;
+        public required string RelicName;
+        public long DeadlineTick;
+        public int StepsWithoutProgress;
+        /// <summary>The sentinel keep whose siege this aim opened last, and who held it then.</summary>
+        public string StepId;
+        public eRealm StepDefender;
+        /// <summary>The sentinel keep ChooseRelicSiege last named; it becomes the step once its siege really opens.</summary>
+        public string PendingStepId;
+        /// <summary>Sentinel keeps whose siege ended without a capture: not tried again for this aim (T3).</summary>
+        public readonly HashSet<string> Skipped = new(StringComparer.Ordinal);
+    }
+    private static readonly Dictionary<eRealm, RelicAim> RelicAims = new();
+    /// <summary>An aim that ended without its relic siege is not taken up again by that realm for a while.</summary>
+    private static readonly Dictionary<(eRealm Realm, string RelicId), long> RelicAimCooldowns = new();
+    /// <summary>Whether a keep has a lord (and so can change hands), cached for a minute per keep.</summary>
+    private static readonly Dictionary<int, (bool HasLord, long Until)> KeepLordCache = new();
+    public const long KeepLordCacheMilliseconds = 60_000;
+
+    private static bool KeepCanChangeHands(DOL.GS.Keeps.AbstractGameKeep keep, long nowTick)
+    {
+        if (keep == null) return false;
+        if (KeepLordCache.TryGetValue(keep.KeepID, out var cached) && cached.Until > nowTick && cached.Until - nowTick <= KeepLordCacheMilliseconds)
+            return cached.HasLord;
+        bool hasLord = keep.Guards.Values.OfType<DOL.GS.Keeps.GuardLord>().Any();
+        KeepLordCache[keep.KeepID] = (hasLord, nowTick + KeepLordCacheMilliseconds);
+        return hasLord;
+    }
+
+    private static int SentinelKeepsWithoutLord(int[] held, long nowTick) =>
+        LiveKeeps is not { } keeps ? 0 : held.Count(id => !KeepCanChangeHands(keeps.GetKeepByID(id), nowTick));
+
+    /// <summary>
+    /// Called under Sync from ChooseCore once a realm with no attack under way may open a siege. Returns the relic keep to
+    /// assault now (open, and one whose relic this realm may lift and place), or null; with an aim it may replace
+    /// <paramref name="keep"/> (the ordinary keep choice) by the aim's next sentinel keep.
+    /// </summary>
+    private static LiveObjective ChooseRelicSiege(Force force, IReadOnlyCollection<LiveObjective> objectives, long nowTick, ref LiveObjective keep)
+    {
+        if (force == null || objectives == null) return null;
+        var relicKeeps = objectives.Where(o => o.Kind == Intent.AssaultRelicKeep && o.IsRelicKeep && o.OwningRealm != force.Realm &&
+                                               o.OwningRealm != eRealm.None)
+            .Select(o => (Objective: o, Held: HeldSentinelKeeps(o), CanPlace: RelicRaidCanPlace(o, force.Realm)))
+            .ToArray();
+        // 1. An open relic keep is the reason the sentinel keeps were taken: it is the next siege.
+        string openId = ChooseOpenRelic(relicKeeps
+            .Where(r => r.CanPlace && !Events.ContainsKey(r.Objective.Id) && !OnCooldown(r.Objective.Id, nowTick))
+            .Select(r => new RelicCandidate(r.Objective.Id, r.Held.Length, 0, HoldsRelicOf(r.Objective, force.Realm))));
+        if (openId != null)
+            return relicKeeps.First(r => r.Objective.Id == openId).Objective;
+        // 2. Otherwise the realm's aim names the next sentinel keep.
+        RelicAim aim = CurrentRelicAim(force.Realm, relicKeeps.Select(r => (r.Objective, r.Held, r.CanPlace)).ToArray(), nowTick);
+        if (aim == null) return null;
+        var target = relicKeeps.First(r => r.Objective.Id == aim.RelicId);
+        LiveObjective step = objectives
+            .Where(o => o.Kind == Intent.AssaultKeep && !o.IsRelicKeep && o.OwningRealm == target.Objective.OwningRealm &&
+                        !Events.ContainsKey(o.Id) && !OnCooldown(o.Id, nowTick) && !aim.Skipped.Contains(o.Id) &&
+                        target.Held.Any(id => o.Id == $"rvr-keep-{id}") &&
+                        (LiveKeeps == null || KeepCanChangeHands(KeepOfObjective(o.Id), nowTick)))
+            .OrderBy(o => (long)(o.X - target.Objective.X) * (o.X - target.Objective.X) + (long)(o.Y - target.Objective.Y) * (o.Y - target.Objective.Y))
+            .FirstOrDefault();
+        aim.PendingStepId = step?.Id;
+        if (step != null) keep = step;
+        return null;
+    }
+
+    /// <summary>The realm's relic aim after judging its last step, ending it or taking a new one up (under Sync).</summary>
+    private static RelicAim CurrentRelicAim(eRealm realm, (LiveObjective Objective, int[] Held, bool CanPlace)[] relicKeeps, long nowTick)
+    {
+        var log = DOL.Logging.LoggerManager.Create(typeof(AutonomousRvrEventLayer));
+        foreach (var expired in RelicAimCooldowns.Where(pair => pair.Value <= nowTick).Select(pair => pair.Key).ToArray())
+            RelicAimCooldowns.Remove(expired);
+        if (RelicAims.TryGetValue(realm, out RelicAim aim))
+        {
+            var target = relicKeeps.FirstOrDefault(r => r.Objective.Id == aim.RelicId);
+            string end = target.Objective == null ? "relic keep not available" : !target.CanPlace ? "no relic there this realm may lift" : null;
+            // Judge the step this aim opened last; its siege has ended (the realm has no attack under way).
+            if (end == null && aim.StepId != null && !Events.ContainsKey(aim.StepId))
+            {
+                var stepKeep = KeepOfObjective(aim.StepId);
+                if (stepKeep != null && RelicStepTaken(aim.StepDefender, stepKeep.Realm))
+                {
+                    aim.StepsWithoutProgress = 0;
+                    aim.DeadlineTick = nowTick + CampaignIdleMilliseconds;
+                    if (log.IsInfoEnabled) log.Info($"RVR_RELIC_AIM_PROGRESS realm={realm} relic={aim.RelicId} step={aim.StepId} sentinels={target.Held.Length}");
+                }
+                else
+                {
+                    aim.StepsWithoutProgress++;
+                    aim.Skipped.Add(aim.StepId);
+                    if (log.IsInfoEnabled) log.Info($"RVR_RELIC_AIM_STEP_FAILED realm={realm} relic={aim.RelicId} step={aim.StepId} " +
+                        $"failedSteps={aim.StepsWithoutProgress} sentinels={target.Held.Length}");
+                }
+                aim.StepId = null;
+            }
+            if (end == null && nowTick > aim.DeadlineTick) end = $"no progress for {CampaignIdleMilliseconds / 3_600_000d:0.#} hours";
+            if (end == null && aim.StepsWithoutProgress >= CampaignMaxStepsWithoutProgress) end = $"no sentinel keep taken in {aim.StepsWithoutProgress} steps";
+            if (end == null && !RelicKeepOpenable(target.Held.Length, SentinelKeepsWithoutLord(target.Held, nowTick)))
+                end = "too many sentinel keeps cannot change hands";
+            if (end == null) return aim;
+            RelicAims.Remove(realm);
+            RelicAimCooldowns[(realm, aim.RelicId)] = nowTick + CampaignIdleMilliseconds;
+            if (log.IsInfoEnabled) log.Info($"RVR_RELIC_AIM_ENDED realm={realm} relic={aim.RelicId} reason=\"{end}\"");
+        }
+        // A launcher campaign of this realm leads; no second plan beside it.
+        if (Campaigns.Values.Any(campaign => campaign.Attacker == realm)) return null;
+        var candidates = relicKeeps
+            .Where(r => r.CanPlace && !Events.ContainsKey(r.Objective.Id) && !Campaigns.ContainsKey(r.Objective.Id) &&
+                        !RelicAimCooldowns.ContainsKey((realm, r.Objective.Id)) && !RelicKeepOpen(r.Held.Length))
+            .Select(r => new RelicCandidate(r.Objective.Id, r.Held.Length, SentinelKeepsWithoutLord(r.Held, nowTick), HoldsRelicOf(r.Objective, realm)))
+            .ToArray();
+        string id = ChooseRelicAim(candidates);
+        if (id == null) return null;
+        var chosen = relicKeeps.First(r => r.Objective.Id == id);
+        RelicAims[realm] = aim = new RelicAim { RelicId = id, RelicName = chosen.Objective.Name, DeadlineTick = nowTick + CampaignIdleMilliseconds };
+        if (log.IsInfoEnabled) log.Info($"RVR_RELIC_AIM realm={realm} relic={id} (\"{chosen.Objective.Name}\") sentinels={chosen.Held.Length} " +
+            $"withoutLord={candidates.First(c => c.Id == id).SentinelsWithoutLord}");
+        return aim;
+    }
+
+    /// <summary>Called under Sync from ChooseCore when it opened an automatic siege: the aim's step, or the aim fulfilled.</summary>
+    private static void NoteRelicSiegeOpened(eRealm realm, LiveObjective selected, long nowTick)
+    {
+        if (selected == null || !RelicAims.TryGetValue(realm, out RelicAim aim)) return;
+        if (selected.Id == aim.RelicId)
+        {
+            RelicAims.Remove(realm);
+            var log = DOL.Logging.LoggerManager.Create(typeof(AutonomousRvrEventLayer));
+            if (log.IsInfoEnabled) log.Info($"RVR_RELIC_AIM_SIEGE realm={realm} relic={aim.RelicId} (\"{aim.RelicName}\")");
+            return;
+        }
+        if (selected.Id != aim.PendingStepId) return;
+        aim.PendingStepId = null;
+        aim.StepId = selected.Id;
+        aim.StepDefender = selected.OwningRealm;
+    }
+
+    /// <summary>The relic keep a realm's automatic plan is working toward, or null (tests, dashboard).</summary>
+    public static string RelicAimOf(eRealm realm)
+    {
+        lock (Sync) return RelicAims.TryGetValue(realm, out RelicAim aim) ? aim.RelicId : null;
     }
 
     /// <summary>Whether a relic campaign for this relic keep is open (tests, dashboard).</summary>
