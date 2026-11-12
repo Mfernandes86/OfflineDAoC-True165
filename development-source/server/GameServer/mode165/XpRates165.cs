@@ -11,9 +11,12 @@ namespace DOL.GS
         /// (XpRateSettings.Parse; owner 2026-11-10).</summary>
         public static double Sanitize(double rate) => double.IsFinite(rate) && rate > 0 ? rate : 1.0;
 
-        /// <summary>The player's kill XP multiplier: the RvR rate replaces the player rate in RvR zones.</summary>
+        /// <summary>The player's kill XP multiplier: the launcher's Player XP rate everywhere. In the frontier zones, the
+        /// battlegrounds, Darkness Falls, Summoner's Hall and the frontier dungeons the RvR rate (1x by default) multiplies
+        /// it, as it does for gamebots. Until 2026-11-12 the RvR rate REPLACED the player rate there, so a 5x setting gave
+        /// 1x in Darkness Falls (owner, GitHub #51: "make these areas count for the player and bot xp rate").</summary>
         public static double PlayerMultiplier(bool isRvR, double playerRate, double rvrRate) =>
-            isRvR ? Sanitize(rvrRate) : Sanitize(playerRate);
+            Sanitize(playerRate) * (isRvR ? Sanitize(rvrRate) : 1.0);
 
         /// <summary>
         /// A gamebot's kill XP multiplier. An autonomous bot uses the gamebot rate (times the RvR rate in RvR zones,

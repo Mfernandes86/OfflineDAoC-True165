@@ -4393,10 +4393,9 @@ namespace DOL.GS
                     }
                 }
 
-                if (CurrentRegion.IsRvR || CurrentZone.IsRvR)
-                    baseXp = (long) (baseXp * Properties.RvR_XP_RATE);
-                else
-                    baseXp = (long) (baseXp * Classic165Mode.PlayerXpRate);
+                // The launcher's Player XP rate counts everywhere; RvR zones multiply it by the RvR rate (GitHub #51).
+                baseXp = (long) (baseXp * XpRates165.PlayerMultiplier(CurrentRegion.IsRvR || CurrentZone.IsRvR,
+                    Classic165Mode.PlayerXpRate, Properties.RvR_XP_RATE));
 
                 long xpBonus = GetModified(eProperty.XpPoints);
 

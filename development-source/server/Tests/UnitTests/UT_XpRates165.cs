@@ -61,8 +61,13 @@ namespace DOL.UnitTests
         public void HiredCompanionFollowsPlayerRate()
         {
             Assert.That(XpRates165.BotMultiplier(true, false, 5, 1, 2), Is.EqualTo(5));
-            // In RvR the player's rate is the RvR rate, and so is the companion's.
-            Assert.That(XpRates165.BotMultiplier(true, true, 5, 1, 2), Is.EqualTo(2));
+            // In RvR zones (frontiers, battlegrounds, Darkness Falls) the player's rate still counts, times the RvR
+            // rate, and so does the companion's (GitHub #51: it used to be the RvR rate alone).
+            Assert.That(XpRates165.BotMultiplier(true, true, 5, 1, 2), Is.EqualTo(10));
+            Assert.That(XpRates165.BotMultiplier(true, true, 5, 1, 1), Is.EqualTo(5));
+            Assert.That(XpRates165.PlayerMultiplier(true, 5, 1), Is.EqualTo(5), "5x in Darkness Falls at the default RvR rate");
+            Assert.That(XpRates165.PlayerMultiplier(true, 10, 1), Is.EqualTo(10));
+            Assert.That(XpRates165.PlayerMultiplier(false, 5, 3), Is.EqualTo(5), "the RvR rate does nothing outside RvR zones");
         }
 
         [TestCase(double.NaN)]
