@@ -64,6 +64,14 @@ public class UT_BotMoneyLedger165
     }
 
     [Test]
+    public void KillTaskRewardsHaveTheirOwnKind()
+    {
+        BotMoneyLedger165.Sink = _ => { };
+        BotMoneyLedger165.Credit(BotMoneyLedger165.Kind.KillTask, 120);
+        Assert.That(BotMoneyLedger165.Flush(60_000), Does.Contain("in_killtask=120/1"), "not mixed into Other");
+    }
+
+    [Test]
     public void FlushResetsTheSums()
     {
         var lines = new List<string>();

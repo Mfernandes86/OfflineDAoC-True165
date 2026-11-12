@@ -26,7 +26,7 @@ namespace DOL.GS
                 long money = BotKillTasks165.Money(bot.Level);
                 long xp = BotKillTasks165.Experience(bot.Level);
                 if (money > 0)
-                    AutonomousBotEconomy.AddMoney(bot.DatabaseID, money);
+                    AutonomousBotEconomy.AddMoney(bot.DatabaseID, money, BotMoneyLedger165.Kind.KillTask);
                 if (xp > 0)
                     bot.GainExperience(eXPSource.Task, xp);
                 Log.Info($"BOT_KILL_TASK_DONE bot={bot.Name} id={bot.DatabaseID} level={bot.Level} guard=\"{done.GuardName}\" " +

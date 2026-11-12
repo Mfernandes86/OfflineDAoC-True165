@@ -42,6 +42,8 @@ namespace DOL.GS
             Travel,
             Siege,
             Guild,
+            /// <summary>The O5 kill-task reward (BotKillTasks165), a coin source of its own.</summary>
+            KillTask,
         }
 
         private static readonly int KindCount = Enum.GetValues<Kind>().Length;
