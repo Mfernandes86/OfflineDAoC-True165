@@ -30,10 +30,17 @@ namespace DOL.GS
         public PathfindingStatus Status { get; }
         public int NodeCount { get; }
 
-        public PathfindingResult(PathfindingStatus status, int nodeCount)
+        /// <summary>
+        /// owner 2026-11-12: the point buffer filled before the path's end (Detour then reports success without the partial
+        /// flag). The path is whole as far as it goes; a caller that needs the end continues from its last point.
+        /// </summary>
+        public bool Truncated { get; }
+
+        public PathfindingResult(PathfindingStatus status, int nodeCount, bool truncated = false)
         {
             Status = status;
             NodeCount = nodeCount;
+            Truncated = truncated;
         }
     }
 

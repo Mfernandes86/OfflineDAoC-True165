@@ -828,7 +828,7 @@ namespace DOL.GS
                     // A verified winding corridor may briefly move away from
                     // its goal or finish a short segment. Detect actual stalls
                     // and cycles instead of imposing straight-line progress.
-                    if (result.Status != PathfindingStatus.PartialPathFound) return false;
+                    if (!ContinuesCorridor(result)) return false;
                     for (int i = 0; i < visitedCount; i++)
                         if (Vector3.DistanceSquared(visited[i], last) < 1) return false;
                     visited[visitedCount++] = last;
@@ -838,6 +838,14 @@ namespace DOL.GS
             }
             finally { ArrayPool<WrappedPathfindingNode>.Shared.Return(nodes); }
         }
+
+        /// <summary>
+        /// owner 2026-11-12 (Summoner's Hall audit, defect 6): a path that stops short of its end is followed on from its last
+        /// point when Detour says partial, or when the point buffer filled first (a whole path cut at 256 points). Any other
+        /// path that ends away from the goal is no corridor.
+        /// </summary>
+        public static bool ContinuesCorridor(PathfindingResult result) =>
+            result.Status == PathfindingStatus.PartialPathFound || result.Status == PathfindingStatus.PathFound && result.Truncated;
 
         /// <summary>
         /// A partial path that stops within 48 units of its end counts as complete only when nothing but open floor

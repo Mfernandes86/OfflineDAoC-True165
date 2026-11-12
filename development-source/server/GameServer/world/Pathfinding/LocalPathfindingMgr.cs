@@ -471,8 +471,9 @@ namespace DOL.GS
                     destination[i] = new(new(buffer[i * 3 + 0] * INV_FACTOR, buffer[i * 3 + 2] * INV_FACTOR, buffer[i * 3 + 1] * INV_FACTOR), flags[i]);
                 int kept = MergeCoincidentNodes(destination, numNodes);
 
-                PathfindingStatus pathfindingStatus = (status & EDtStatus.DT_PARTIAL_RESULT) != 0 ? PathfindingStatus.PartialPathFound : PathfindingStatus.PathFound;
-                return new(pathfindingStatus, kept);
+                bool partial = (status & EDtStatus.DT_PARTIAL_RESULT) != 0;
+                PathfindingStatus pathfindingStatus = partial ? PathfindingStatus.PartialPathFound : PathfindingStatus.PathFound;
+                return new(pathfindingStatus, kept, IsTruncated(numNodes, MAX_POLY, partial));
             }
             finally
             {
@@ -480,6 +481,15 @@ namespace DOL.GS
                 ArrayPool<EDtPolyFlags>.Shared.Return(rentedFlags);
             }
         }
+
+        /// <summary>
+        /// owner 2026-11-12 (Summoner's Hall audit, defect 6): ALL_CROSSINGS writes one point per polygon edge, so a whole
+        /// path of about 200-255 polygons can fill the 256-point buffer before its end. The native call then returns plain
+        /// success (findStraightPath's buffer flag is not passed on), and the corridor check took the cut path as a path
+        /// that stops short: "no corridor" on Albion's Snowdonia leg. A full buffer without the partial flag is reported as
+        /// truncated; the status stays as it was, so movement and every other caller behave exactly as before.
+        /// </summary>
+        public static bool IsTruncated(int pointCount, int capacity, bool partial) => !partial && pointCount >= capacity;
 
         [LibraryImport("lib/Detour")]
         [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
