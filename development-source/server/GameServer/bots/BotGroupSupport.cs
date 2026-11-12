@@ -242,12 +242,14 @@ namespace DOL.GS
             // Q5: every bot party shares heal claims, not only raids (two healers of an 8-man landed on the same target)
             if (!sharedSupport && !(bot.Group?.MemberCount > 1))
                 return preferred;
+            // an ordinary party's scope is its group (what SupportScope returns without a raid or warband): no raid lock
+            // per heal cast (performance review 2026-11-11)
+            if (!sharedSupport)
+                return bot.Group is { } party ? ReserveOrdinaryHeal(bot, spell, preferred, States.GetOrCreateValue(party), party) : preferred;
             object scope = Scope(bot);
             if (scope == null)
                 return preferred;
             State state = States.GetOrCreateValue(scope);
-            if (!sharedSupport)
-                return ReserveOrdinaryHeal(bot, spell, preferred, state, scope);
             int range = bot.castingComponent.CalculateSpellRange(spell);
             var candidates = AutonomousRealmRaid.SupportMembers(bot).Concat(AutonomousRealmRaid.SupportPets(bot, range)).Concat(
                 TemporaryCompanionPetHealing.TriageTargets(bot, range).Cast<GameLiving>()).Distinct().ToArray();
@@ -286,13 +288,13 @@ namespace DOL.GS
 
         /// <summary>The ordinary party's split (ChooseOrdinaryHealSplit): the bot's own triage target unless another
         /// healer's heal already covers it. The preferred target may be out of range (the healer walks to it).</summary>
-        private static GameLiving ReserveOrdinaryHeal(GameBot bot, Spell spell, GameLiving preferred, State state, object scope)
+        private static GameLiving ReserveOrdinaryHeal(GameBot bot, Spell spell, GameLiving preferred, State state, Group group)
         {
             lock (state.Sync)
             {
                 long now = GameLoop.GameLoopTime;
                 foreach (var entry in state.Heals.ToArray())
-                    if (entry.Value.Expires <= now || !entry.Key.IsAlive || !ReferenceEquals(AutonomousRealmRaid.SupportScope(entry.Key), scope) ||
+                    if (entry.Value.Expires <= now || !entry.Key.IsAlive || entry.Key.Group != group ||
                         now - entry.Value.Started > 500 && entry.Key.castingComponent.SpellHandler?.Spell != entry.Value.Spell)
                         state.Heals.Remove(entry.Key);
                 state.Heals.Remove(bot);
@@ -311,7 +313,7 @@ namespace DOL.GS
                     OrdinaryHealSplit.Preferred)
                 {
                     int range = bot.castingComponent.CalculateSpellRange(spell);
-                    foreach (GameLiving member in AutonomousRealmRaid.SupportMembers(bot))
+                    foreach (GameLiving member in group.GetMembersInTheGroup())
                     {
                         if (member == null || member == preferred || !member.IsAlive ||
                             member.CurrentRegionID != bot.CurrentRegionID || member.HealthPercent >= 80 ||
