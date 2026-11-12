@@ -804,12 +804,19 @@ public static class AutonomousPetSupport
             petBrain.Body.ObjectState is not GameObject.eObjectState.Active)
             return;
 
-        // Q25 (veteran review 2026-11-11, the Theurgist rule): a Spiritmaster grouped with a tank (four or more) keeps
-        // its pet off the monster the tanks hold and sends it only at an add - a monster on itself or a non-tank
-        // M7: the Pet row's Take adds does the same for any pet class; Attack my target sends it at the fight's target
-        if (owner is GameBot spiritmaster &&
-            CompanionControls165.PetTakesAdds(CompanionControls165.PetJob(spiritmaster), SpiritmasterHoldsPet(spiritmaster)))
-            combatTarget = SpiritmasterAddTarget(spiritmaster);
+        // M7: the Pet row's Take adds sends a pet only at adds (a monster on its owner or on a non-tank; none: it stays
+        // back); Attack my target sends it at the fight's target.
+        // Owner 2026-11-11 (replaces Q25's "held for adds"): on Automatic a grouped Spiritmaster's pet fights the group's
+        // target with it, and when an add heads for the Spiritmaster, a healer or a caster the pet picks that add up -
+        // before its first blow, read from the group's fight board - then goes back to the main target.
+        if (owner is GameBot spiritmaster)
+        {
+            int job = CompanionControls165.PetJob(spiritmaster);
+            if (CompanionControls165.PetTakesAdds(job, false))
+                combatTarget = SpiritmasterAddTarget(spiritmaster);
+            else if (job == CompanionControls165.PetAutomatic && SpiritmasterPetGuardsCasters(spiritmaster))
+                combatTarget = PetTargetWithAddPickup(combatTarget, IncomingAddOnCasters(spiritmaster, combatTarget));
+        }
 
         // Q15 (veteran review 2026-11-11): a Hunter keeps its pet at heel while it draws the Critical Shot opener on an
         // idle monster (sent first, the pet put the monster in combat and the opener never happened)
@@ -1804,14 +1811,57 @@ public static class AutonomousPetSupport
         CompanionOptions165.PetLine(bot) == null &&
         !TheurgistMaySummon(bot.Group?.MemberCount >= 4 && BotMeleeStylePolicy.HasTankPartner(bot), TheurgistPetsNeeded(bot));
 
-    /// <summary>Pure (Q25): a grouped pet caster with a tank in a group of four or more holds its pet for adds.</summary>
-    public static bool HoldsPetForAdds(bool classic165, bool groupOfFourOrMore, bool tankPartner) =>
-        classic165 && groupOfFourOrMore && tankPartner;
+    /// <summary>Pure (owner 2026-11-11): a pet caster grouped with a tank uses its pet to pick adds up off the casters and
+    /// healers. Solo, or with no tank, the pet is its tank and stays on its target.</summary>
+    public static bool PetGuardsCasters(bool classic165, bool grouped, bool tankPartner) =>
+        classic165 && grouped && tankPartner;
 
-    /// <summary>Q25: a Spiritmaster grouped with a tank (four or more members) keeps its pet for adds.</summary>
-    public static bool SpiritmasterHoldsPet(GameBot bot) =>
+    /// <summary>A Spiritmaster grouped with a tank: its pet fights the group's target and picks up adds.</summary>
+    public static bool SpiritmasterPetGuardsCasters(GameBot bot) =>
         bot?.CharacterClass?.ID == (int)eCharacterClass.Spiritmaster &&
-        HoldsPetForAdds(Classic165Mode.IsOn, bot.Group?.MemberCount >= 4, BotMeleeStylePolicy.HasTankPartner(bot));
+        PetGuardsCasters(Classic165Mode.IsOn, bot.Group?.MemberCount > 1, BotMeleeStylePolicy.HasTankPartner(bot));
+
+    /// <summary>Pure (owner 2026-11-11): the pet's target - the add heading for a caster or healer when there is one,
+    /// else the fight's target (it assists by default).</summary>
+    public static GameLiving PetTargetWithAddPickup(GameLiving fightTarget, GameLiving incomingAdd) => incomingAdd ?? fightTarget;
+
+    /// <summary>
+    /// The add a guarding pet picks up: a monster whose target is the pet's owner or a groupmate who is no tank (a healer,
+    /// a caster), other than the group's own kill and not one held by a mez or root. Read from the group's fight board,
+    /// which knows a monster running at a member before its first blow; the nearest to the owner. No area search here.
+    /// </summary>
+    public static GameLiving IncomingAddOnCasters(GameBot bot, GameLiving fightTarget)
+    {
+        GroupFightBoard board = BotBrain.GetFightBoard(bot);
+        if (board == null)
+            return SpiritmasterAddTarget(bot);
+        GameLiving best = null;
+        int bestDistance = int.MaxValue;
+        foreach (GameNPC npc in board.NpcsOnGroup)
+        {
+            if (npc == null || npc == fightTarget || !npc.IsAlive || npc is GameBot || npc.Realm != eRealm.None ||
+                npc.TargetObject is not GameLiving victim || !board.MemberSet.Contains(victim) ||
+                victim != bot && BotHealTriage165.IsTank(victim) ||
+                npc.IsMezzed || BotBrain.IsBreakablyControlled(npc) || board.SelectedTargets.Contains(npc) && victim != bot &&
+                AttackedByATank(board, npc))
+                continue;
+            int distance = (int)bot.GetDistanceTo(npc);
+            if (distance > 2000 || distance >= bestDistance)
+                continue;
+            best = npc;
+            bestDistance = distance;
+        }
+        return best;
+    }
+
+    /// <summary>A tank of the group already has this monster as its target (it is picking the add up itself).</summary>
+    private static bool AttackedByATank(GroupFightBoard board, GameLiving monster)
+    {
+        foreach (GameLiving member in board.Members)
+            if (member.TargetObject == monster && BotHealTriage165.IsTank(member))
+                return true;
+        return false;
+    }
 
     /// <summary>Q25: the add for a held pet - a monster hitting the Spiritmaster, else one hitting a groupmate who is no
     /// tank (read from the attacker lists); null when the tanks hold everything. M7: the Pet row's Take adds uses it for
