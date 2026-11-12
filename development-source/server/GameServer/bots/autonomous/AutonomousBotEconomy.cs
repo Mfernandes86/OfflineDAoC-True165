@@ -437,13 +437,22 @@ namespace DOL.GS;
                 : 0;
 
         /// <summary>EquipmentValue plus, for a melee weapon, what the bot's training in its line is worth in that hand, less
-        /// the focus bonuses for spell lines the bot does not have (they do nothing for it).</summary>
-        public static int FitValue(GameBot bot, DbInventoryItem item, eInventorySlot slot) =>
-            item == null ? 0 : EquipmentValue(item) + WeaponSpecBonus(bot, item.Object_Type, slot) - 3 * WastedFocus(bot,
-                [(item.Bonus1Type, item.Bonus1), (item.Bonus2Type, item.Bonus2), (item.Bonus3Type, item.Bonus3),
-                 (item.Bonus4Type, item.Bonus4), (item.Bonus5Type, item.Bonus5), (item.Bonus6Type, item.Bonus6),
-                 (item.Bonus7Type, item.Bonus7), (item.Bonus8Type, item.Bonus8), (item.Bonus9Type, item.Bonus9),
-                 (item.Bonus10Type, item.Bonus10), (item.ExtraBonusType, item.ExtraBonus)]);
+        /// the focus bonuses for spell lines the bot does not have (they do nothing for it), with each bonus weighed for the
+        /// bot's class and counted only up to its cap, and level and DPS/AF only up to what the bot can use
+        /// (BotGearValue165, veteran-bots review 2026-11-11).</summary>
+        public static int FitValue(GameBot bot, DbInventoryItem item, eInventorySlot slot)
+        {
+            if (item == null)
+                return 0;
+            (int Type, int Value)[] bonuses = BotGearValue165.Bonuses(item);
+            int equipment = EquipmentValue(item);
+            int value = equipment + WeaponSpecBonus(bot, item.Object_Type, slot) - 3 * WastedFocus(bot, bonuses);
+            // EquipmentValue is 0 for a melee weapon without working stats: nothing to adjust
+            if (equipment == 0 || bot?.Inventory == null)
+                return value;
+            DbInventoryItem current = slot == eInventorySlot.Invalid ? null : bot.Inventory.GetItem(slot);
+            return value + BotGearValue165.Adjustment(bot, item.Level, item.DPS_AF, item.Object_Type, bonuses, current);
+        }
 
         /// <summary>
         /// The focus bonus points (a staff's "+N to Darkness", ...) for spell lines the bot does not have. Item values add

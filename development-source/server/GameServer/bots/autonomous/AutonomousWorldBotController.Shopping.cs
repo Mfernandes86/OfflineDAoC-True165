@@ -179,7 +179,8 @@ namespace DOL.GS
                             int slot = SlotKey(t.Item_Type);
                             if (!equippedValue.TryGetValue(slot, out int worn))
                                 equippedValue[slot] = worn = WornValue(bot, t.Item_Type);
-                            gain = TemplateValue(t) - 3 * AutonomousBotEconomy.WastedFocus(bot, t) - worn;
+                            gain = TemplateValue(t) - 3 * AutonomousBotEconomy.WastedFocus(bot, t) +
+                                   ClassAdjustment(bot, t, (eInventorySlot)t.Item_Type) - worn;
                         }
                         if (gain <= AutonomousBotEconomy.MinimumEquipmentUpgrade || !MightWear(bot, t))
                             continue;
@@ -238,7 +239,8 @@ namespace DOL.GS
                 return Math.Min(AutonomousBotEconomy.EquipmentValue(bot.Inventory.GetItem(eInventorySlot.LeftBracer)),
                     AutonomousBotEconomy.EquipmentValue(bot.Inventory.GetItem(eInventorySlot.RightBracer)));
             // Weapons can go to either hand: TryGetEquipmentUpgrade settles the real slot for the final candidates.
-            return AutonomousBotEconomy.EquipmentValue(bot.Inventory.GetItem((eInventorySlot)itemType));
+            // The worn piece is weighed as the final check weighs it (class weights and caps, AutonomousBotEconomy.FitValue).
+            return AutonomousBotEconomy.FitValue(bot, bot.Inventory.GetItem((eInventorySlot)itemType), (eInventorySlot)itemType);
         }
 
         /// <summary>
@@ -251,9 +253,14 @@ namespace DOL.GS
         private static int WeaponGain(GameBot bot, DbItemTemplate t)
         {
             eInventorySlot hand = t.Item_Type == Slot.TWOHAND ? eInventorySlot.TwoHandWeapon : eInventorySlot.RightHandWeapon;
-            return TemplateValue(t) - 3 * AutonomousBotEconomy.WastedFocus(bot, t) + AutonomousBotEconomy.WeaponSpecBonus(bot, t.Object_Type, hand) -
-                   AutonomousBotEconomy.FitValue(bot, bot.Inventory.GetItem(hand), hand);
+            return TemplateValue(t) - 3 * AutonomousBotEconomy.WastedFocus(bot, t) + AutonomousBotEconomy.WeaponSpecBonus(bot, t.Object_Type, hand) +
+                   ClassAdjustment(bot, t, hand) - AutonomousBotEconomy.FitValue(bot, bot.Inventory.GetItem(hand), hand);
         }
+
+        /// <summary>BotGearValue165's class-and-cap correction for a vendor template, against the piece now in that slot.</summary>
+        private static int ClassAdjustment(GameBot bot, DbItemTemplate t, eInventorySlot slot) =>
+            !BotWeaponStats.HasFunctionalMeleeStats(t) ? 0 : BotGearValue165.Adjustment(bot, t.Level, t.DPS_AF, t.Object_Type,
+                BotGearValue165.Bonuses(t), slot is >= eInventorySlot.MinEquipable and <= eInventorySlot.MaxEquipable ? bot.Inventory.GetItem(slot) : null);
 
         /// <summary>AutonomousBotEconomy.EquipmentValue for a vendor template (no item made per bot and template).</summary>
         private static int TemplateValue(DbItemTemplate t)
