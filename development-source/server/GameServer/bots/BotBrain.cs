@@ -793,7 +793,7 @@ namespace DOL.AI.Brain
                 ClearAggroList();
                 Body.StopAttack();
                 Body.TargetObject = null;
-                if (!UsesDefensiveOnlyPet)
+                if (SupportCallsPetOff)
                     Body.ControlledBrain?.Disengage();
                 FSM.SetCurrentState(eFSMStateType.FOLLOW);
                 return false;
@@ -877,6 +877,13 @@ namespace DOL.AI.Brain
             CompanionControls165.BrainHoldsPetOffTarget(CompanionControls165.PetJob(BotBody),
                 AutonomousPetSupport.IsDefensiveOnlyPetClass((eCharacterClass)BotBody.CharacterClass.ID, BotBody.Group?.MemberCount > 1,
                     BotBody.CharacterClass.ID == (int)eCharacterClass.Druid && AutonomousPetSupport.IsNatureDruid(BotBody)));
+
+        // A support companion sitting a fight out calls its pet off - but never a companion Druid's pet, which she sends
+        // at the group's target herself while she heals (TryCommandCompanionDruidPet). On "Attack my target", and for a
+        // Nature Druid on Automatic, the call-off undid that order every pulse: the pet ran out and came back (owner
+        // 2026-11-12)
+        private bool SupportCallsPetOff => CompanionControls165.SupportCallsPetOff(UsesDefensiveOnlyPet,
+            CompanionFollowPolicy.SendsDruidPet(BotBody));
 
         // Class role, not pet ownership: includes Runemaster/Wizard as well as
         // summoners. Melee hybrids and archers retain their own combat policy.
@@ -1910,6 +1917,13 @@ namespace DOL.AI.Brain
             GameLiving petCombatTarget = UsesDefensiveOnlyPet || closingOnPullTarget
                 ? null
                 : ResolvePetCombatTarget(orderedPullTarget ?? Body?.TargetObject as GameLiving ?? ownedPetTarget);
+            // A healing companion Druid has no target of her own, so the pet service saw "no fight" and called the pet
+            // back from the target she had just sent it at. Her pet keeps the order she gave it while that target lives.
+            if (petCombatTarget == null && !UsesDefensiveOnlyPet && !closingOnPullTarget &&
+                CompanionFollowPolicy.SendsDruidPet(BotBody) &&
+                Body.ControlledBrain is ControlledMobBrain { OrderedAttackTarget: { IsAlive: true } druidPetTarget } &&
+                CanAggroTarget(druidPetTarget) && CompanionEngagementMode.Allows(Body, druidPetTarget))
+                petCombatTarget = druidPetTarget;
             bool archerCombatOwnsPetUpkeep = BotBody?.CharacterClass != null &&
                 BotRangedCombat.CombatOwnsArcherPetUpkeep(
                     (eCharacterClass)BotBody.CharacterClass.ID,
@@ -5036,7 +5050,7 @@ namespace DOL.AI.Brain
         private void HoldSupportCombat()
         {
             Body.StopAttack();
-            if (!UsesDefensiveOnlyPet) Body.ControlledBrain?.Disengage();
+            if (SupportCallsPetOff) Body.ControlledBrain?.Disengage();
             // A mez or stun on an add (TryPveAddControl) is a support action and finishes.
             if (Body.IsCasting && Body.castingComponent?.SpellHandler?.Spell is { IsHarmful: true } casting &&
                 !IsAddControlSpell(casting))
@@ -5111,7 +5125,8 @@ namespace DOL.AI.Brain
             // M7 Pet row: Guard me keeps the Druid's pet back, Take adds sends it only at an add
             int petJob = CompanionControls165.PetJob(BotBody);
             if (petJob == CompanionControls165.PetGuardMe) return;
-            if (petJob == CompanionControls165.PetTakeAdds) target = AutonomousPetSupport.SpiritmasterAddTarget(BotBody);
+            if (petJob == CompanionControls165.PetTakeAdds)
+                target = AutonomousPetSupport.TakeAddsTarget(BotBody, Body.ControlledBrain);
             if (!CompanionFollowPolicy.SendsDruidPet(BotBody) || target?.IsAlive != true ||
                 !CanAggroTarget(target) || !CompanionEngagementMode.Allows(Body, target) ||
                 !Body.IsWithinRadius(target, GROUP_DEFENSE_ASSIST_RADIUS) ||

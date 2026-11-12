@@ -533,10 +533,18 @@ public static class AutonomousPetSupport
             // owner and pet in combat forever, so the owner never resumed its
             // route or formation. Clear only a genuinely dead/empty pet target
             // while the owner itself is idle; live retaliation is preserved.
-            ClearStalePetCombat(owner, petBrain, combatTarget, defensiveOnlyPet);
-            // M7 Take adds: only a monster on the owner or on a groupmate who is no tank (none: the pet stays back)
-            if (petJob == CompanionControls165.PetTakeAdds && owner is GameBot addOwner && !independentOwnerCombat)
-                combatTarget = SpiritmasterAddTarget(addOwner);
+            // M7 Take adds: only a monster on the owner or on a groupmate who is no tank (none: the pet stays back). The
+            // add is chosen BEFORE the stale-combat check: an idle owner (a healing Druid between casts) with no target
+            // of its own had its pet disengaged from the add on every pulse and sent again (owner 2026-11-12)
+            if (petJob == CompanionControls165.PetTakeAdds && owner is GameBot addOwner)
+            {
+                GameLiving add = TakeAddsTarget(addOwner, petBrain);
+                ClearStalePetCombat(owner, petBrain, add, defensiveOnlyPet);
+                if (!independentOwnerCombat)
+                    combatTarget = add;
+            }
+            else
+                ClearStalePetCombat(owner, petBrain, combatTarget, defensiveOnlyPet);
 
             if (independentOwnerCombat)
                 SynchronizeIndependentPet(owner, petBrain, combatTarget);
@@ -813,7 +821,7 @@ public static class AutonomousPetSupport
         {
             int job = CompanionControls165.PetJob(spiritmaster);
             if (CompanionControls165.PetTakesAdds(job, false))
-                combatTarget = SpiritmasterAddTarget(spiritmaster);
+                combatTarget = TakeAddsTarget(spiritmaster, petBrain);
             else if (job == CompanionControls165.PetAutomatic && SpiritmasterPetGuardsCasters(spiritmaster))
                 combatTarget = PetTargetWithAddPickup(combatTarget, IncomingAddOnCasters(spiritmaster, combatTarget));
         }
@@ -1884,6 +1892,33 @@ public static class AutonomousPetSupport
                     return attacker;
         }
         return null;
+    }
+
+    /// <summary>How far from its owner a Take adds pet keeps the add it took.</summary>
+    public const int TakeAddsKeepRange = 2500;
+
+    /// <summary>
+    /// The Pet row's Take adds target (CompanionControls165.TakeAddsChoice): the add the pet already took while it lives
+    /// and stays in reach, else a new add on the owner or a non-tank groupmate, else a monster hitting the pet itself.
+    /// </summary>
+    public static GameLiving TakeAddsTarget(GameBot owner, IControlledBrain petBrain)
+    {
+        if (owner == null)
+            return null;
+        GameNPC pet = petBrain?.Body;
+        GameLiving held = (petBrain as ControlledMobBrain)?.OrderedAttackTarget;
+        bool heldValid = held is { IsAlive: true, ObjectState: GameObject.eObjectState.Active } &&
+                         held.CurrentRegion == owner.CurrentRegion && owner.IsWithinRadius(held, TakeAddsKeepRange) &&
+                         GameServer.ServerRules.IsAllowedToAttack(owner, held, true);
+        GameLiving onPet = null;
+        if (pet?.attackComponent != null)
+            foreach (GameLiving attacker in pet.attackComponent.AttackerTracker.Attackers)
+                if (attacker.IsAlive && attacker.TargetObject == pet)
+                {
+                    onPet = attacker;
+                    break;
+                }
+        return CompanionControls165.TakeAddsChoice(held, heldValid, SpiritmasterAddTarget(owner), onPet);
     }
 
     /// <summary>A monster on the Theurgist, or on a group member who is not a tank (an add the tanks do not hold).</summary>

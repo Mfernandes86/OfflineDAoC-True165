@@ -184,6 +184,24 @@ namespace DOL.GS
             _ => automatic,
         };
 
+        /// <summary>
+        /// Pure (owner 2026-11-12: a healing Druid companion's lynx ran at the target and came back, over and over): does
+        /// a support companion that sits a fight out call its pet off? Not when the pet is held anyway (Guard me, Take
+        /// adds, a defence-only class), and not when it is a companion Druid's pet: the Druid sends that one at the
+        /// group's target herself while she heals, and the call-off undid her order on every pulse.
+        /// </summary>
+        public static bool SupportCallsPetOff(bool brainHoldsPetOffTarget, bool druidSendsPet) =>
+            !brainHoldsPetOffTarget && !druidSendsPet;
+
+        /// <summary>
+        /// Pure: the monster a Take adds pet works on. The add it already took stays its job until that add is dead or
+        /// out of reach - the monster turning on the pet is the point of the order, and it stopped being "an add on a
+        /// groupmate" the moment it did, so the pet was called back and sent again. Else a new add on its owner or on a
+        /// groupmate who is no tank; else a monster hitting the pet itself (it defends itself); else nothing.
+        /// </summary>
+        public static T TakeAddsChoice<T>(T held, bool heldStillValid, T addOnGroup, T attackerOfPet) where T : class =>
+            heldStillValid && held != null ? held : addOnGroup ?? attackerOfPet;
+
         /// <summary>Pure: the pet goes only at adds - Take adds, or Automatic for a pet class that holds its pet for adds
         /// (the Spiritmaster grouped with a tank, Q25); Attack never.</summary>
         public static bool PetTakesAdds(int job, bool automaticHoldsForAdds) =>
