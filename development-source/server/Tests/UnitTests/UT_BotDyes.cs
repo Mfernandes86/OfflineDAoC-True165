@@ -189,6 +189,15 @@ public class UT_BotDyes
         Assert.That(picks.Count, Is.EqualTo(palette.Length), "bots spread over the colours");
     }
 
+    [Test]
+    public void OnlyADyedColourIsTheBotsOwn() => Assert.Multiple(() =>
+    {
+        Assert.That(AutonomousBotDyes.IsDyedColour(43, 0), Is.True, "dyed an undyed piece");
+        Assert.That(AutonomousBotDyes.IsDyedColour(43, 12), Is.True, "dyed over its template colour");
+        Assert.That(AutonomousBotDyes.IsDyedColour(36, 36), Is.False, "a colour built into the loot template");
+        Assert.That(AutonomousBotDyes.IsDyedColour(0, 0), Is.False);
+    });
+
     [TestCase(30, 27, false, eInventorySlot.TorsoArmor, true)]
     [TestCase(30, 26, false, eInventorySlot.TorsoArmor, false)]   // vendor gear due for replacement
     [TestCase(30, 15, true, eInventorySlot.TorsoArmor, true)]     // crafted

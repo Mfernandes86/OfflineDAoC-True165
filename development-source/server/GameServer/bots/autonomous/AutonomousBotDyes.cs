@@ -199,8 +199,6 @@ namespace DOL.GS
                 DbInventoryItem item = bot.Inventory.GetItem(slot);
                 if (item == null)
                     continue;
-                if (item.Color > 0)
-                    wornColours.Add(item.Color);
                 if (slot == eInventorySlot.LeftHandWeapon && item.Object_Type != (int)eObjectType.Shield)
                     continue;   // an off-hand weapon is no shield
                 if (SkipForEmblem(item.Emblem, IsEmblemSlot(slot, item.Object_Type), guildEmblem) ||
@@ -208,6 +206,10 @@ namespace DOL.GS
                     !KeptLongEnoughToDye(bot.Level, item.Level, item.IsCrafted, slot))
                     continue;
                 pieces.Add(item);
+                // only a colour the piece was dyed (not one built into its template) is the bot's colour, and only on a
+                // piece it would dye: one coloured loot drop no longer blocks dyeing where that colour isn't sold
+                if (IsDyedColour(item.Color, item.Template?.Color ?? 0))
+                    wornColours.Add(item.Color);
             }
             if (pieces.Count == 0)
                 return false;
@@ -265,6 +267,13 @@ namespace DOL.GS
         /// it is the same one visit after visit at the same merchant. 0 when the colour it wears is not on offer here
         /// (it waits for a merchant that has it) or nothing is offered.
         /// </summary>
+        /// <summary>
+        /// Pure (world review 2026-11-11): a piece's colour counts as one the bot wears by choice only when it was dyed -
+        /// different from the colour its item template already has (about 9% of armour templates carry one, some never
+        /// sold as dyes).
+        /// </summary>
+        public static bool IsDyedColour(int colour, int templateColour) => colour > 0 && colour != templateColour;
+
         public static int SignatureColour(long botId, IReadOnlyList<int> palette, IReadOnlyCollection<int> wornColours)
         {
             if (palette == null || palette.Count == 0)
