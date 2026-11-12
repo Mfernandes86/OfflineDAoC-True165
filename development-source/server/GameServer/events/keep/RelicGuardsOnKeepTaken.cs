@@ -132,6 +132,19 @@ namespace DOL.GS.GameEvents
         private static bool IsStanding(GuardFighterRK guard) => guard.IsAlive && guard.ObjectState == GameObject.eObjectState.Active;
 
         /// <summary>
+        /// Sentinels standing at a relic keep (alive and in the world). They are spawned by this manager, not loaded with the
+        /// keep, so keep.Guards never holds them and the bots' guard strength of a relic keep read zero (relic audit M3).
+        /// </summary>
+        public static int StandingSentinelsAt(eRealm realm, ushort region, int x, int y, int radius = 5000)
+        {
+            if (!_guards.TryGetValue(realm, out List<GuardPair> pairs))
+                return 0;
+            lock (_lock)
+                return pairs.SelectMany(pair => new[] { pair.Guard1, pair.Guard2 })
+                    .Count(g => g != null && g.CurrentRegionID == region && Math.Abs(g.X - x) <= radius && Math.Abs(g.Y - y) <= radius && IsStanding(g));
+        }
+
+        /// <summary>
         /// Sentinels of one realm in the world or respawning: what the added-guard counter is meant to hold. A sentinel that
         /// died with no respawn was deleted without the counter going down, so the cap drifted (relic audit 2026-10-31, L8).
         /// </summary>

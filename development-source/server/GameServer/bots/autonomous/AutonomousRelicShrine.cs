@@ -144,6 +144,10 @@ public static class AutonomousRelicShrine
         return false;
     }
 
+    /// <summary>The sentinels standing at a relic keep (M3: they are not in keep.Guards); 0 for any other keep.</summary>
+    public static int StandingSentinels(AbstractGameKeep keep) =>
+        keep?.IsRelic == true ? DOL.GS.GameEvents.RelicGuardManager.StandingSentinelsAt(keep.Realm, keep.Region, keep.X, keep.Y) : 0;
+
     /// <summary>One relic as the raid planner sees it.</summary>
     public readonly record struct RelicFact(eRealm Holder, eRealm Original, eRelicType Type, bool Mounted);
 
