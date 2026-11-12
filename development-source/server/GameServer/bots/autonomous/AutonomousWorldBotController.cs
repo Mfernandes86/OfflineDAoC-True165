@@ -3421,7 +3421,7 @@ namespace DOL.GS
             if (Classic165Mode.IsOn && restToFull && bot.Group == null)
             {
                 (bot.RestStandHealthPercent, bot.RestStandPowerPercent) =
-                    AutonomousRestPolicy.StandTargetForNextPull(_lastEngagedCon);
+                    AutonomousRestPolicy.StandTargetForNextPull(_lastEngagedCon, AutonomousRestPolicy.StandEarlyForEasyPulls);
                 fullyRecovered = AutonomousRestPolicy.EnoughForNextPull(bot.HealthPercent, bot.ManaPercent,
                     bot.EndurancePercent, usesPower, bot.RestStandHealthPercent, bot.RestStandPowerPercent);
             }

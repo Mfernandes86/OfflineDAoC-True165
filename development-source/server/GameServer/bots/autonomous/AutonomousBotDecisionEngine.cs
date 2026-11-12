@@ -428,7 +428,21 @@ public static class AutonomousRestPolicy
     /// the next pull of the same kind - green (or grey) 65% health / 45% power, blue 80% / 65%. Yellow or harder, or an
     /// unknown con (no pull yet, or after a death), keeps rest-to-full. Endurance always counts as full at 90%.
     /// </summary>
-    public static (byte Health, byte Power) StandTargetForNextPull(ConColor? nextPullCon) => nextPullCon switch
+    public static (byte Health, byte Power) StandTargetForNextPull(ConColor? nextPullCon) => StandTargetForNextPull(nextPullCon, true);
+
+    /// <summary>
+    /// The early stand-up is OFF by default (2026-11-12). Two two-hour runs with it on, against the build before at the
+    /// same level mix: solo deaths per 100 kills went from 10.5 to 18.7 and solo kills per bot-hour from 27.9 to 21.7.
+    /// 56% of camp rests ended under 95% health (none before), and a bot that stood at 65-79% health was dead within two
+    /// minutes 17.7% of the time, against 4.6% for one that stood up full. Off: a solo bot rests to full, as before 0.7
+    /// (endurance still counts as full at 90%).
+    /// </summary>
+    [DOL.GS.ServerProperties.ServerProperty("bots", "bot_rest_for_next_pull",
+        "Does a solo gamebot stand up from its camp rest early when its last monster was green (65% health, 45% power) or blue (80%, 65%)? Off: it rests to full, as before 0.7.", false)]
+    public static bool StandEarlyForEasyPulls = false;
+
+    /// <summary>The stand-up target with the switch given (pure, for tests): off rests to full whatever the con.</summary>
+    public static (byte Health, byte Power) StandTargetForNextPull(ConColor? nextPullCon, bool standEarly) => (standEarly ? nextPullCon : null) switch
     {
         ConColor.GREY or ConColor.GREEN => (65, 45),
         ConColor.BLUE => (80, 65),

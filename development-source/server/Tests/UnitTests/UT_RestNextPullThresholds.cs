@@ -21,6 +21,15 @@ namespace DOL.UnitTests
         }
 
         [Test]
+        public void TheEarlyStandUpIsOffUnlessSwitchedOn()
+        {
+            Assert.That(AutonomousRestPolicy.StandEarlyForEasyPulls, Is.False, "solo deaths per kill doubled with it on (runs of 2026-11-12)");
+            Assert.That(AutonomousRestPolicy.StandTargetForNextPull(ConColor.GREEN, false), Is.EqualTo(((byte)100, (byte)100)));
+            Assert.That(AutonomousRestPolicy.StandTargetForNextPull(ConColor.BLUE, false), Is.EqualTo(((byte)100, (byte)100)));
+            Assert.That(AutonomousRestPolicy.StandTargetForNextPull(ConColor.GREEN, true), Is.EqualTo(((byte)65, (byte)45)));
+        }
+
+        [Test]
         public void NoPullYetOrAfterADeathRestsToFull()
         {
             Assert.That(AutonomousRestPolicy.StandTargetForNextPull(null), Is.EqualTo(((byte)100, (byte)100)));
