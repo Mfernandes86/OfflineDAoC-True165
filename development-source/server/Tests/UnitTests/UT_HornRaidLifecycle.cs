@@ -123,4 +123,25 @@ public class UT_HornRaidLifecycle
         var caerSidi = System.Array.Find(AutonomousRealmRaid.Definitions, d => d.Id == "epic-albion");
         Assert.That(AutonomousRealmRaid.StandingFinals(caerSidi), Is.EqualTo(new[] { "ApocInitializator" }), "Apocalypse appears in the fight");
     }
+
+    [Test]
+    public void RaidTimeRespawnFloorCoversEpicTrashButNoBossNamedMonsterOrScriptedAdd()
+    {
+        Assert.That(AutonomousRealmRaid.IsRaidTrash(typeof(GameEpicNPC), "grey noble", false), Is.True, "epic sidhe trash");
+        Assert.That(AutonomousRealmRaid.IsRaidTrash(typeof(GameEpicDungeonNPC), "custodian", true), Is.True);
+        Assert.That(AutonomousRealmRaid.IsRaidTrash(typeof(GameEpicNPC), "Duke Sallis", true), Is.False, "a named monster keeps its timer");
+        Assert.That(AutonomousRealmRaid.IsRaidTrash(typeof(GameEpicBoss), "legion", true), Is.False, "a boss never");
+        Assert.That(AutonomousRealmRaid.IsRaidTrash(typeof(DOL.GS.Scripts.Legion), "Legion", true), Is.False);
+        Assert.That(AutonomousRealmRaid.IsRaidTrash(typeof(GameNPC), "essence shredder", true), Is.True, "as before");
+        Assert.That(AutonomousRealmRaid.IsRaidTrash(typeof(GameNPC), "Aidon the Archwizard", false), Is.False,
+            "a named monster in an approach dungeon keeps its timer");
+        Assert.That(AutonomousRealmRaid.IsRaidTrash(typeof(GameNPC), "phantom huscarl", false), Is.True, "approach dungeon trash");
+        Assert.That(AutonomousRealmRaid.IsRaidTrash(typeof(GameNPC), "Phantom Huscarl", false, repeatedName: true), Is.True,
+            "capitalised trash shared by many spawns");
+        Assert.That(AutonomousRealmRaid.RepeatedNames(new[] { "Phantom Huscarl", "Phantom Huscarl", "Phantom Huscarl", "Aidon the Archwizard",
+            "Summoned Guardian", "Summoned Guardian" }), Is.EquivalentTo(new[] { "Phantom Huscarl" }));
+        Assert.That(AutonomousRealmRaid.IsRaidTrash(typeof(GameSummonedPet), "wolf", true), Is.False);
+        Assert.That(AutonomousRealmRaid.RaidInsideRegions(248, 246), Is.EqualTo(new ushort[] { 248, 246 }), "Summoner's Hall via Dodens Gruva");
+        Assert.That(AutonomousRealmRaid.RaidInsideRegions(160, 160), Is.EqualTo(new ushort[] { 160 }));
+    }
 }

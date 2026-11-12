@@ -123,20 +123,58 @@ namespace DOL.GS
         /// <summary>
         /// Run 8 (2026-10-14): the Albion raid in Darkness Falls stood 6,000-10,000 units short of Prince Ba'alorien
         /// for forty minutes, fighting essence shredders, naburite drinkers and succubi that came back every 100-180
-        /// seconds (263 essence shredders alone), and skipped him untouched. While a bot raid is inside Darkness
-        /// Falls, Summoner's Hall, Caer Sidi or Galladoria, the ordinary monsters there stay down for ten minutes;
-        /// bosses, epic encounters and scripted adds keep their own timers, and nothing changes once the raid ends.
+        /// seconds (263 essence shredders alone), and skipped him untouched. While a bot raid is inside its dungeon (and
+        /// the approach dungeon it walks through: Hall of the Corrupt, Dodens Gruva, Marfach Caverns for Summoner's Hall),
+        /// the trash there stays down at least ten minutes. Bosses, named monsters and scripted adds keep their own
+        /// timers, a longer respawn is never shortened, and nothing changes once the raid ends.
+        /// Realm event audit 2026-11-12: the rule skipped every epic-class monster, and Summoner's Hall has 107 epic sidhe
+        /// trash spawns at 3 minutes on the door-to-boss legs; Tuscaran and the approach dungeons were not covered, and
+        /// Caer Sidi and Galladoria never matched (the old test read the neutral-dungeon destination list only).
         /// </summary>
         public const int RaidTrashRespawnMilliseconds = 10 * 60_000;
+        // the dungeons where the rule applied before; there it still covers every ordinary (non-epic) monster
         public static readonly ushort[] SlowRespawnRegions = [249, 248, 60, 191];
+        // regions with a started dungeon raid inside (its dungeon and its approach dungeon), rebuilt each raid pulse
+        private static volatile ushort[] _raidInsideRegions = [];
+        // per raid region, the monster names shared by three or more spawns (worked out once when a raid first goes in)
+        private static volatile Dictionary<ushort, HashSet<string>> _repeatedNames = new();
+        public const int RepeatedNameSpawns = 3;
 
         public static int RaidRespawnInterval(GameNPC npc, int interval)
         {
-            if (interval <= 0 || interval >= RaidTrashRespawnMilliseconds || npc is IGameEpicNpc or GameSummonedPet or GameBot ||
-                npc.Realm != eRealm.None || Array.IndexOf(SlowRespawnRegions, npc.CurrentRegionID) < 0 || !HasActiveRaidIn(npc.CurrentRegionID))
+            if (interval <= 0 || interval >= RaidTrashRespawnMilliseconds || npc.Realm != eRealm.None ||
+                Array.IndexOf(_raidInsideRegions, npc.CurrentRegionID) < 0)
                 return interval;
-            return RaidTrashRespawnMilliseconds;
+            bool repeated = _repeatedNames.TryGetValue(npc.CurrentRegionID, out var names) && npc.Name != null && names.Contains(npc.Name);
+            return IsRaidTrash(npc.GetType(), npc.Name, Array.IndexOf(SlowRespawnRegions, npc.CurrentRegionID) >= 0, repeated)
+                ? RaidTrashRespawnMilliseconds : interval;
         }
+
+        /// <summary>Names shared by at least <see cref="RepeatedNameSpawns"/> monsters: trash, even when capitalised
+        /// ("Phantom Huscarl" x80 in Dodens Gruva); a named monster is one of a kind.</summary>
+        public static HashSet<string> RepeatedNames(IEnumerable<string> names) =>
+            names.Where(n => !string.IsNullOrEmpty(n)).GroupBy(n => n).Where(g => g.Count() >= RepeatedNameSpawns)
+                .Select(g => g.Key).ToHashSet();
+
+        /// <summary>
+        /// Trash for the raid-time respawn floor: an ordinary monster or a plain epic-class monster (exactly GameEpicNPC or
+        /// GameEpicDungeonNPC, never a scripted subclass, a boss, a pet or a bot) with a common name: lower-case, or shared
+        /// by three or more spawns of the region (a named monster is capitalised and one of a kind). In the raid dungeons
+        /// the rule always covered every ordinary monster, so it still does.
+        /// </summary>
+        public static bool IsRaidTrash(Type type, string name, bool raidDungeon, bool repeatedName = false)
+        {
+            bool commonName = repeatedName || !string.IsNullOrEmpty(name) && char.IsLower(name[0]);
+            if (type == typeof(GameEpicNPC) || type == typeof(GameEpicDungeonNPC)) return commonName;
+            if (typeof(IGameEpicNpc).IsAssignableFrom(type) || typeof(GameSummonedPet).IsAssignableFrom(type) ||
+                typeof(GameBot).IsAssignableFrom(type) || !typeof(GameNPC).IsAssignableFrom(type))
+                return false;
+            return raidDungeon || type == typeof(GameNPC) && commonName;
+        }
+
+        /// <summary>The raid's own dungeon and, for Summoner's Hall, the approach dungeon its entrance leads through.</summary>
+        public static ushort[] RaidInsideRegions(ushort dungeon, ushort entranceTarget) =>
+            entranceTarget == 0 || entranceTarget == dungeon ? [dungeon] : [dungeon, entranceTarget];
 
         public static bool IsActiveRaidDestination(ushort region, int x, int y)
         {
@@ -343,6 +381,15 @@ namespace DOL.GS
                              .Select(p => p.Key).ToArray())
                     RecentDestinations.Remove(key);
                 _raidDestinations = RecentDestinations.Keys.ToArray();
+                _raidInsideRegions = Raids.Values.Where(r => r.Started && r.DungeonRoute != null)
+                    .SelectMany(r => RaidInsideRegions(r.Definition.Region, r.DungeonRoute.Entrance.TargetRegion)).Distinct().ToArray();
+                foreach (ushort inside in _raidInsideRegions.Where(r => !_repeatedNames.ContainsKey(r)).ToArray())
+                {
+                    // one scan of the region's monsters, once per server session
+                    var names = RepeatedNames(WorldMgr.GetRegion(inside)?.Objects.OfType<GameNPC>()
+                        .Where(n => n.Realm == eRealm.None && n is not GameBot).Select(n => n.Name) ?? []);
+                    _repeatedNames = new Dictionary<ushort, HashSet<string>>(_repeatedNames) { [inside] = names };
+                }
             }
         }
 
