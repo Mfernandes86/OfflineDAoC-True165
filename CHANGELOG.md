@@ -40,9 +40,12 @@ hold). Its changelog has the history of everything this version inherits.
   target, Bonedancer healer minion first, Theurgist pet waves, Spiritmaster and Druid pets, Blademaster Triple
   Wield and Flurry, Ranger Rapid Fire, Paladin chants by situation, assassin poisons for RvR, Skald and Minstrel
   songs that fit the group. Realm abilities follow the spec, and Albion class actives are bought and used.
-- Gamebots: solo bots keep a hunting ground, take kill tasks from named guards at levels 4-19, rest only as long
-  as the next pull needs, and skip a horse landing where their level band keeps dying. New Midgard bots follow the
-  period spec mix.
+- Gamebots: solo bots keep a hunting ground, take kill tasks from named guards at levels 4-19, and skip a horse
+  landing where their level band keeps dying. New Midgard bots follow the period spec mix.
+- Gamebots: standing up early from a rest after an easy pull (65% health and 45% power after a green monster, 80%
+  and 65% after a blue one) is built in but off by default (server property `bot_rest_for_next_pull`). In two-hour
+  test runs it cost about 13% more solo deaths and brought no more kills. Solo bots rest to full, as in 0.6;
+  endurance counts as full at 90%.
 - Gamebots: night and day spawns keep the aggression their data gives them. About 490 night spawns that stood
   passive attack again.
 - Gamebots no longer stand on merchants, healers, stable masters or the Realm Exchange. Each takes its own spot
