@@ -4604,11 +4604,11 @@ namespace DOL.AI.Brain
             if (Classic165Mode.IsOn && AddControlBeforeHeals(true, LowestGroupHealthPercent()))
             {
                 if (!TryPvpCrowdControl() && !TryPveAddControl() && !CheckHeals() && !TryHealerOpeningStun() &&
-                    !TryGroupCelerity())
+                    !TryShedAggroInSupport() && !TryGroupCelerity())
                     CheckSpells(eCheckSpellType.Defensive);
             }
             else if (!CheckHeals() && !TryPvpCrowdControl() && !TryPveAddControl() && !TryHealerOpeningStun() &&
-                     !TryGroupCelerity())
+                     !TryShedAggroInSupport() && !TryGroupCelerity())
                 CheckSpells(eCheckSpellType.Defensive);
             if (BotBody.IsPlayerLedGroup)
             {

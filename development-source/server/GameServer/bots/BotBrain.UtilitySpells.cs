@@ -48,7 +48,47 @@ namespace DOL.AI.Brain
                 bot.castingComponent?.HasPendingSkillRequests == true || bot.IsIncapacitated)
                 return false;
             _nextUtilitySpellLook = now + 1_000;
-            return TryLifeTransfer() || TryAmnesiaForPet() || TryPvpUtility();
+            return TryLifeTransfer() || TryAmnesiaForPet() || TryShedAggro() || TryPvpUtility();
+        }
+
+        private long _nextShedAggroLook;
+
+        /// <summary>Q27: a support healer (which never reaches the offensive spell turn) sheds aggro from its support turn.</summary>
+        private bool TryShedAggroInSupport() =>
+            Classic165Mode.IsOn && BotBody != null && !BotBody.IsIncapacitated &&
+            BotBody.castingComponent?.HasPendingSkillRequests != true && TryShedAggro();
+
+        /// <summary>
+        /// Pure (Q27, veteran review 2026-11-11; Prima, Healer: Amnesia makes a monster forget you and go back to the
+        /// tank; Runemaster Confusion "does work" on monsters): a grouped non-tank with a living tank sheds a monster that
+        /// turned on it - Amnesia first, else Confusion.
+        /// </summary>
+        public static bool ShedsAggro(bool grouped, bool selfIsTank, bool tankAlive, bool monsterOnMe, bool playerLikeAttacker) =>
+            grouped && !selfIsTank && tankAlive && monsterOnMe && !playerLikeAttacker;
+
+        /// <summary>Q27: Amnesia (unless the player switched it off) or Confusion on a monster hitting this bot while a tank
+        /// is there to take it back. From its own attacker list; at most once a second.</summary>
+        private bool TryShedAggro()
+        {
+            long now = GameLoop.GameLoopTime;
+            if (now < _nextShedAggroLook || Body.Group == null || Body.IsCasting)
+                return false;
+            _nextShedAggroLook = now + 1_000;
+            if (BotPartyRoles.IsTank(BotBody) || !BotMeleeStylePolicy.HasTankPartner(BotBody))
+                return false;
+            GameLiving onMe = null;
+            foreach (GameLiving attacker in Body.attackComponent.AttackerTracker.Attackers)
+                if (attacker.IsAlive && attacker.TargetObject == Body && attacker is GameNPC && !BotPvpCrowdControl.PlayerLike(attacker))
+                {
+                    onMe = attacker;
+                    break;
+                }
+            if (!ShedsAggro(true, false, true, onMe != null, false))
+                return false;
+            // a Confusion that may turn the monster on its own kind (negative value) could pull its neighbours: not that one
+            Spell shed = (CompanionOptions165.Choice(BotBody, "amnesia") != 1 ? ReadySpell(eSpellType.Amnesia) : null) ??
+                         (ReadySpell(eSpellType.Confusion) is { Value: >= 0 } confusion ? confusion : null);
+            return shed != null && !LivingHasEffect(onMe, shed) && CastOn(shed, onMe);
         }
 
         private bool TryLifeTransfer()
