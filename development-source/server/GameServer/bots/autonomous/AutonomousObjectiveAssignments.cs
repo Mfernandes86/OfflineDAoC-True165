@@ -744,7 +744,10 @@ public static class AutonomousObjectiveAssignments
         bool backpackNearlyFull = AutonomousBotEconomy.IsBackpackNearlyFull(bot);
         BetweenTaskPlan plan = RollBetweenTaskPlan(bot.HasSpendableAutonomousTrainingPoints,
             backpackNearlyFull || TownErrands165.Reason(bot) != null ||
-            AutonomousWorldBotController.ShoppingPlanFor(bot) != null || DeathPenalty165.WantsHealerTrip(bot),
+            AutonomousWorldBotController.ShoppingPlanFor(bot) != null || DeathPenalty165.WantsHealer(bot) ||
+            // 2026-11-11 exchange plan: after a level-up or every few boundaries, an upgrade on the exchange it can
+            // afford above its reserve sends the bot on the same town errand (no new timer)
+            AutonomousBotEconomy.WantsWindowShopping(bot),
             Random.Shared.NextDouble(),
             // owner 2026-11-08: a bag that refused loot is always unloaded (no 5% chance of hunting on with it full)
             backpackNearlyFull && AutonomousBotEconomy.FullBackpackSince(bot) != null ? 0 : Random.Shared.NextDouble());
