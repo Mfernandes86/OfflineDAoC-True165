@@ -52,6 +52,10 @@ namespace DOL.GS.Quests.Hibernia
 		private int _GreenMawAddKilled = 0;
 
 		private static GameNPC Ainrebh = null; // Start NPC
+
+		/// <summary>True 1.65 Mode: the period Unnatural Powers (level 50), Allakhazam quest 650: after the level 47 part, kill the Green Maw in the Cursed Forest and return its key to Ainrebh in Caille for the armour (the script's own steps).</summary>
+		private const string Line165 = "Unnatural Powers";
+		private static readonly string Title165 = Epics165.FinaleTitle(Line165);
 		private static GreenMaw GreenMaw = null; // Mob to kill
 
 		private static DbItemTemplate GreenMaw_key = null; //ball of flame
@@ -1260,6 +1264,12 @@ namespace DOL.GS.Quests.Hibernia
 
 			#endregion
 
+			if (Classic165Mode.IsOn)
+			{
+				Load165();
+				return;
+			}
+
 			GameEventMgr.AddHandler(GamePlayerEvent.AcceptQuest, new DOLEventHandler(SubscribeQuest));
 			GameEventMgr.AddHandler(GamePlayerEvent.DeclineQuest, new DOLEventHandler(SubscribeQuest));
 
@@ -1276,6 +1286,11 @@ namespace DOL.GS.Quests.Hibernia
 		[ScriptUnloadedEvent]
 		public static void ScriptUnloaded(DOLEvent e, object sender, EventArgs args)
 		{
+			if (Classic165Mode.IsOn)
+			{
+				Unload165();
+				return;
+			}
 			//if not loaded, don't worry
 			if (Ainrebh == null)
 				return;
@@ -1289,6 +1304,53 @@ namespace DOL.GS.Quests.Hibernia
 			/* Now we remove to Ainrebh the possibility to give this quest to players */
 			Ainrebh.RemoveQuestToGive(typeof (Focus_50));
 		}
+
+		#region True 1.65 Mode: Unnatural Powers (level 50), after the line's level 47 part
+
+		private static void Load165()
+		{
+			if (Ainrebh == null)
+			{
+				log.Warn("True 1.65 Mode: Ainrebh not found, \"" + Title165 + "\" not loaded");
+				return;
+			}
+			GameEventMgr.AddHandler(GamePlayerEvent.AcceptQuest, new DOLEventHandler(SubscribeQuest));
+			GameEventMgr.AddHandler(GamePlayerEvent.DeclineQuest, new DOLEventHandler(SubscribeQuest));
+			GameEventMgr.AddHandler(Ainrebh, GameObjectEvent.Interact, new DOLEventHandler(TalkToAinrebh165));
+			Ainrebh.AddQuestToGive(typeof(Focus_50));
+			if (log.IsInfoEnabled)
+				log.Info("Quest \"" + Title165 + "\" initialized (True 1.65 Mode, starts with Ainrebh)");
+		}
+
+		private static void Unload165()
+		{
+			if (Ainrebh == null)
+				return;
+			GameEventMgr.RemoveHandler(GamePlayerEvent.AcceptQuest, new DOLEventHandler(SubscribeQuest));
+			GameEventMgr.RemoveHandler(GamePlayerEvent.DeclineQuest, new DOLEventHandler(SubscribeQuest));
+			GameEventMgr.RemoveHandler(Ainrebh, GameObjectEvent.Interact, new DOLEventHandler(TalkToAinrebh165));
+			Ainrebh.RemoveQuestToGive(typeof(Focus_50));
+		}
+
+		/// <summary>No recorded period speech for the offer: the quest window itself makes the offer.</summary>
+		private static void TalkToAinrebh165(DOLEvent e, object sender, EventArgs args)
+		{
+			GamePlayer player = ((SourceEventArgs) args).Source as GamePlayer;
+			if (player == null || player.IsDoingQuest(typeof(Focus_50)) != null || Ainrebh.CanGiveQuest(typeof(Focus_50), player) <= 0)
+				return;
+			player.Out.SendQuestSubscribeCommand(Ainrebh, QuestMgr.GetIDForQuestType(typeof(Focus_50)),
+				Title165 + ": slay the Green Maw in the Cursed Forest and bring its key to Ainrebh in Caille.");
+		}
+
+		private static void Accept165(GamePlayer player, byte response)
+		{
+			if (response == 0x00 || Ainrebh == null || player.IsDoingQuest(typeof(Focus_50)) != null ||
+			    Ainrebh.CanGiveQuest(typeof(Focus_50), player) <= 0)
+				return;
+			Ainrebh.GiveQuest(typeof(Focus_50), player, 1);
+		}
+
+		#endregion
 
 		protected static void TalkToAinrebh(DOLEvent e, object sender, EventArgs args)
 		{
@@ -1410,6 +1472,11 @@ namespace DOL.GS.Quests.Hibernia
 			if (player.Level < minimumLevel || player.Level > maximumLevel)
 				return false;
 
+			// True 1.65 Mode: the finale follows the line's level 47 part (quest audit 2026-11-11, P03-E1: the
+			// prerequisite was commented out, so any level 50 of the class could take it without parts 43/45/47).
+			if (Classic165Mode.IsOn && !Epics165.FinishedLastPart(player, Line165))
+				return false;
+
 			return true;
 		}
 
@@ -1453,6 +1520,12 @@ namespace DOL.GS.Quests.Hibernia
 
 		private static void CheckPlayerAcceptQuest(GamePlayer player, byte response)
 		{
+			if (Classic165Mode.IsOn)
+			{
+				Accept165(player, response);
+				return;
+			}
+
 			if(Ainrebh.CanGiveQuest(typeof (Focus_50), player)  <= 0)
 				return;
 
@@ -1475,7 +1548,7 @@ namespace DOL.GS.Quests.Hibernia
 		//Set quest name
 		public override string Name
 		{
-			get { return "Unnatural Powers (Level 50 Path of Focus Epic)"; }
+			get { return Classic165Mode.IsOn ? Title165 : "Unnatural Powers (Level 50 Path of Focus Epic)"; }
 		}
 
 		// Define Steps
