@@ -329,11 +329,20 @@ namespace DOL.GS
                 return 103;
             }
 
-            if ((eObjectType) item.Object_Type is eObjectType.GenericItem)
-                return 106;
-
-            return 0;
+            // 2026-11-11 exchange plan (phase 6): arrows, bolts, poisons and gems matched no slot filter (22-32% of each
+            // market showed only under ANY SLOT). They get their own categories, and every other item no slot names is
+            // OTHER ITEMS. An older client never sends 107-109 and still finds them under ANY SLOT.
+            return (eObjectType) item.Object_Type switch
+            {
+                eObjectType.Arrow or eObjectType.Bolt => AmmunitionSlot,
+                eObjectType.Poison => PoisonSlot,
+                eObjectType.SpellcraftGem or eObjectType.AlchemyTincture => GemSlot,
+                _ => OtherSlot,
+            };
         }
+
+        /// <summary>Exchange search categories past the equipment slots (the client's slot byte).</summary>
+        public const int OtherSlot = 106, AmmunitionSlot = 107, PoisonSlot = 108, GemSlot = 109;
 
         private List<HashSet<DbInventoryItem>> GetMatchingSets(in ItemQuery query)
         {

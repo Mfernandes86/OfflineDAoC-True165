@@ -361,7 +361,8 @@ namespace DOL.GS;
         if (!ammo && !poison && craft == eCraftingSkill.NoCrafting)
             return result;
         int bandHigh = MarketBook.BandOf(bot.Level + PurchaseLevelsAbove);
-        foreach (int bucket in new[] { 0, 106 })
+        // only the categories it wants (MarketSearchEngine.GetClientSlot): ammunition, poisons, materials and gems
+        foreach (int bucket in SupplyBuckets(ammo, poison, craft != eCraftingSkill.NoCrafting))
         {
             List<MarketBook.Listing> listings = MarketCache.ReadBook(book => book.Probe(bot.Realm, bucket, 0, bandHigh, budget, ownerId));
             foreach (MarketBook.Listing listing in listings)
@@ -379,6 +380,19 @@ namespace DOL.GS;
             }
         }
         return result;
+    }
+
+    private static IEnumerable<int> SupplyBuckets(bool ammo, bool poison, bool crafter)
+    {
+        if (ammo)
+            yield return MarketSearchEngine.AmmunitionSlot;
+        if (poison)
+            yield return MarketSearchEngine.PoisonSlot;
+        if (crafter)
+        {
+            yield return MarketSearchEngine.OtherSlot;
+            yield return MarketSearchEngine.GemSlot;
+        }
     }
 
     private static eCraftingSkill CraftOf(GameBot bot) =>
