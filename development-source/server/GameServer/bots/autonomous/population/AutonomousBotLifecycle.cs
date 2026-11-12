@@ -268,6 +268,7 @@ namespace DOL.GS
                         bot.StopMoving();
                         bot.BeginRecoveryRest();   // sits down in True 1.65 Mode
                         intent.Phase = LogoutPhase.Sit;
+                        AutonomousBotGuilds.SayGoodbye(bot);   // now and then a "gn guild" (rvr-social G9)
                         intent.SitUntilTick = now + Random.Shared.Next(10_000, 30_001);
                     }
                     else if (now - intent.PhaseStartTick > 5 * 60_000)

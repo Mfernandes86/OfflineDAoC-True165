@@ -128,7 +128,38 @@ namespace DOL.GS
         }
 
         public const double HelloChance = 0.3;
+        public const double ByeChance = 0.3;
         private static readonly string[] HelloLines = ["hi all", "evening guild", "o/", "hey guild", "hi everyone", "heya"];
+        private static readonly string[] ByeLines = ["gn guild", "gn all", "night all", "off to bed, gn", "cya all", "logging, cya tomorrow", "gn"];
+
+        /// <summary>A goodbye line for a bot's planned logout.</summary>
+        public static string ByeLine(Random random) => ByeLines[(random ?? Random.Shared).Next(ByeLines.Length)];
+
+        /// <summary>
+        /// A gamebot guildmate sat down at its bind to log off (the population lifecycle's planned logout): 30% of the time it
+        /// says "gn guild" (or similar) in guild chat a moment later, when a player of its guild is online (veteran-bots
+        /// review 2026-11-11, rvr-social G9). Event-driven; one timer per goodbye said.
+        /// </summary>
+        public static void SayGoodbye(GameBot bot)
+        {
+            try
+            {
+                if (bot == null || !bot.IsAutonomousWorldBot || HiredCompanions165.IsHired(bot) || Random.Shared.NextDouble() >= ByeChance)
+                    return;
+                Guild guild = GuildOf(bot.DatabaseID);
+                if (guild == null || guild.GetListOfOnlineMembers().Count == 0)
+                    return;
+                string line = ByeLine(Random.Shared);
+                _ = new ECSGameTimer(bot, _ =>
+                {
+                    if (bot.IsAlive && bot.ObjectState == GameObject.eObjectState.Active && GuildOf(bot.DatabaseID) == guild &&
+                        guild.GetListOfOnlineMembers().Count > 0)
+                        SpeakInGuild(bot, guild, line);
+                    return 0;
+                }, 1_000 + Random.Shared.Next(3_000));
+            }
+            catch (Exception) { }
+        }
         private static readonly string[] GratzLines = ["gratz!", "grats", "gz", "gratz {name}!", "grats on {level}!", "gz {name}"];
         private static readonly ConcurrentDictionary<string, int> LastGratz = new();
 

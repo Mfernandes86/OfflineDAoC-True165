@@ -56,4 +56,22 @@ public class UT_BotGuildGratz165
         Assert.That(AutonomousBotGuilds.HelloChance, Is.EqualTo(0.3));
         Assert.That(AutonomousBotChatCoordinator.AdviceAnswerLevel, Is.EqualTo(20));
     }
+
+/// <summary>Guild goodbye lines on a planned logout (veteran-bots review M10 / rvr-social G9).</summary>
+[TestFixture]
+public class UT_BotGuildBye165
+{
+    [Test]
+    public void AThirdOfPlannedLogoutsSayGoodnightInGuildChat()
+    {
+        Assert.That(AutonomousBotGuilds.ByeChance, Is.EqualTo(0.3));
+        for (int seed = 0; seed < 30; seed++)
+        {
+            string line = AutonomousBotGuilds.ByeLine(new System.Random(seed));
+            Assert.That(line, Is.Not.Empty);
+            Assert.That(line, Does.Not.Contain("{"));
+        }
+        Assert.DoesNotThrow(() => AutonomousBotGuilds.SayGoodbye(null));
+    }
+}
 }
