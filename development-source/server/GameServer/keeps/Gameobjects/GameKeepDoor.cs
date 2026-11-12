@@ -607,8 +607,9 @@ namespace DOL.GS.Keeps
 
         private const int ENEMIES_NEAR_RADIUS = 3000;
 
-        /// <summary>A living enemy player or bot (companions included) of another realm than the keep's, near the door.</summary>
-        private bool EnemiesNear()
+        /// <summary>A living enemy player or bot (companions included) of another realm than the keep's, near the door. Also
+        /// asked by the gamebot door repair (KeepDoorRepair165): nobody repairs a gate with the enemy in it or at it.</summary>
+        public bool EnemiesNear()
         {
             eRealm owner = Component.Keep.Realm;
             foreach (GamePlayer player in GetPlayersInRadius(ENEMIES_NEAR_RADIUS))

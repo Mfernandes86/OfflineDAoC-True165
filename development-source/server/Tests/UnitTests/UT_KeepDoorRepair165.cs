@@ -35,5 +35,7 @@ public class UT_KeepDoorRepair165
         Assert.That(KeepDoorRepair165.NeedsRepair(60, eRealm.Albion, true, false), Is.False, "under attack");
         Assert.That(KeepDoorRepair165.NeedsRepair(60, eRealm.None, false, false), Is.False, "nobody holds it");
         Assert.That(KeepDoorRepair165.NeedsRepair(60, eRealm.Albion, false, true), Is.False, "portal keep");
+        Assert.That(KeepDoorRepair165.NeedsRepair(60, eRealm.Albion, false, false, enemiesNear: true), Is.False,
+            "the raid is in the gateway or inside: nobody repairs and shuts the gate behind it (keeps L3)");
     }
 }

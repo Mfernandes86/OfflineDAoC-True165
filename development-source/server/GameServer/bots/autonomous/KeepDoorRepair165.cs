@@ -17,7 +17,12 @@ namespace DOL.GS
     /// siegecrafter - the crafts that carry woodworking), the player's success roll skill / ((door level + 1) * 50), 5% of
     /// the door a successful repair, the door level's wood for one repair (the /repair table) paid at the merchant price
     /// of rowan boards only on success (a player loses no wood on a failed repair). At most 8 doors a pulse.
-    /// Cost: a walk over the keeps every 20 s and a radius query only at a damaged door.
+    /// Keeps audit 2026-11-11 (L3): no repair while an enemy stands within 3,000 of the door, the test the door's own
+    /// passive repair already makes. "Not under attack" alone meant five quiet minutes after the last hit on a door or the
+    /// lord: with both gates down and the raid fighting guards inside, two woodworkers could bring a gate back over the
+    /// 15% line, it shut behind the raid and the lord was shielded again. A player could not stand and hammer a gate for
+    /// 20 seconds with the enemy army in the gateway either.
+    /// Cost: a walk over the keeps every 20 s and two radius queries only at a damaged door.
     /// </summary>
     public static class KeepDoorRepair165
     {
@@ -37,9 +42,10 @@ namespace DOL.GS
         /// <summary>A player needs woodworking skill 1 or more to repair (RepairCommandHandler.PreFireChecks).</summary>
         public static bool CanRepair(int woodworkingSkill) => woodworkingSkill >= 1;
 
-        /// <summary>Whether a door is worth a repair now: below full, part of a held keep that is not under attack.</summary>
-        public static bool NeedsRepair(int healthPercent, eRealm keepRealm, bool keepInCombat, bool portalKeep) =>
-            healthPercent < 100 && keepRealm != eRealm.None && !keepInCombat && !portalKeep;
+        /// <summary>Whether a door is worth a repair now: below full, part of a held keep that is not under attack and has
+        /// no enemy at the door.</summary>
+        public static bool NeedsRepair(int healthPercent, eRealm keepRealm, bool keepInCombat, bool portalKeep, bool enemiesNear = false) =>
+            healthPercent < 100 && keepRealm != eRealm.None && !keepInCombat && !portalKeep && !enemiesNear;
 
         private static long WoodUnitCopper()
         {
@@ -72,7 +78,8 @@ namespace DOL.GS
                         continue;
                     foreach (GameKeepDoor door in keep.Doors.Values)
                     {
-                        if (door == null || door.ObjectState != GameObject.eObjectState.Active || door.HealthPercent >= 100)
+                        if (door == null || door.ObjectState != GameObject.eObjectState.Active || door.HealthPercent >= 100 ||
+                            !NeedsRepair(door.HealthPercent, keep.Realm, keep.InCombat, keep.IsPortalKeep, door.EnemiesNear()))
                             continue;
                         RepairDoor(keep, door);
                         if (++doors >= MaxDoorsPerPulse)
