@@ -29,7 +29,8 @@ To get a game you can run from your clone:
    `win-x64/`) and `runtime/`.
 3. **Navigation meshes:** the full set (`runtime/server/navmesh`, 2.1 GB) comes from the release download. You can
    also rebuild it with `development-source/tools/OpenDAoC-BuildNav` from a DAoC client's zone data. The True 1.65
-   inn zones' meshes are already in `runtime/server/navmesh-165`.
+   inn zones' meshes are already in `runtime/server/navmesh-165`; its other zone meshes (the frontier keeps rebuilt
+   from the 1.64 client) come with the release download.
 4. **Client:** the new client's content (about 37 GB) comes from the release download, or from its pipeline. See its
    README.
 5. **.NET 10:** the runtimes `Microsoft.NETCore.App`, `Microsoft.WindowsDesktop.App` and `Microsoft.AspNetCore.App`,

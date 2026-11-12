@@ -37,7 +37,7 @@ The repository mirrors the development folders, so the tools find their files as
 | `development-source/tools/OpenDAoC-BuildNav` | The navigation mesh builder. |
 | `tools/claude-version/true165` | The Python generators that build the True 1.65 content files. |
 | `runtime/true165` | The True 1.65 content (JSON) that the launcher writes into the world database at START SERVER. |
-| `runtime/server` | Server settings and content files, and `navmesh-165` (the inn zones' meshes). |
+| `runtime/server` | Server settings and content files, and `navmesh-165` (the True 1.65 zone meshes: three in git, the rest in the release download). |
 | `database` | The clean world database (zipped) and the scripts that make and unpack it. |
 | `source/new-client` | The new client: the Godot project (`godot/`), its C# network client and the content pipeline (`pipeline/`). |
 | `docs` | Player and developer guides. |
