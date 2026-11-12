@@ -54,6 +54,14 @@ public class UT_QuestFix07
         Assert.That(ClassicQuests.ClassMayHave(allowed, classId), Is.EqualTo(mayHave));
     }
 
+    [Test]
+    public void ChooseAndTradeTargetsAreTalkTargets()
+    {
+        var names = ClassicQuests.TalkTargetsOf(Parse(TwoChooseSteps));
+        Assert.That(names.Contains("edric") && names.Contains("Vismer"), Is.True, "case does not matter, as for NPC names");
+        Assert.That(ClassicQuests.TalkTargetsOf(Parse("""{ "Quests": { "1": { "Steps": [ null, { "Custom": { "Kind": "travel", "Target": "x" } } ] } } }""")), Is.Empty);
+    }
+
     [TestCase(0, false)]
     [TestCase(3, true)]
     [TestCase(35, true)]

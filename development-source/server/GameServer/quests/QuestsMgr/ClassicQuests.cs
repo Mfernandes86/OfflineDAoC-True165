@@ -875,6 +875,32 @@ namespace DOL.GS.Quests
         public static bool IsQuestMonsterId(string mobId) =>
             !string.IsNullOrEmpty(mobId) && _config.QuestMonsterIds.Contains(mobId);
 
+        private static HashSet<string> _talkTargets = new(StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>The NPCs of every choose and trade step: the player talks to them (whispers for a reward, hands an
+        /// item in) whatever the step's DataQuest StepType says.</summary>
+        public static HashSet<string> TalkTargetsOf(Config config)
+        {
+            var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (QuestInfo info in config?.Quests?.Values ?? Enumerable.Empty<QuestInfo>())
+                foreach (StepInfo step in info?.Steps ?? new List<StepInfo>())
+                    if (step?.Custom is { Kind: "choose" or "trade" } custom && !string.IsNullOrWhiteSpace(custom.Target))
+                        names.Add(custom.Target);
+            return names;
+        }
+
+        /// <summary>Is this NPC the target of some choose or trade step (QuestTalkTruce's name filter)?</summary>
+        public static bool IsTalkTargetName(string npcName) => !string.IsNullOrEmpty(npcName) && _talkTargets.Contains(npcName);
+
+        /// <summary>Is the quest's current step a choose or trade step at this NPC?</summary>
+        public static bool IsTalkStep(int questId, int step, string npcName)
+        {
+            if (string.IsNullOrEmpty(npcName) || !_config.Quests.TryGetValue(questId, out QuestInfo info) || step <= 0 || step >= info.Steps.Count)
+                return false;
+            return info.Steps[step]?.Custom is { Kind: "choose" or "trade" } custom &&
+                   string.Equals(custom.Target, npcName, StringComparison.OrdinalIgnoreCase);
+        }
+
         public static void Reload()
         {
             try
@@ -888,6 +914,7 @@ namespace DOL.GS.Quests
                 if (config == null) return;
                 config.QuestMonsterIds = new HashSet<string>(config.QuestMonsterIds ?? new(), StringComparer.Ordinal);
                 config.Fellows = new Dictionary<string, string>(config.Fellows ?? new(), StringComparer.Ordinal);
+                _talkTargets = TalkTargetsOf(config);
                 _config = config;
                 _loadedWrite = write;
                 if (Log.IsInfoEnabled)

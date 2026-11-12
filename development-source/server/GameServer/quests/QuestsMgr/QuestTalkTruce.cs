@@ -20,13 +20,20 @@ namespace DOL.GS.Quests
         /// <summary>Called from mob aggro checks: cheap for every NPC that is not a data quest's talk target.</summary>
         public static bool Holds(GameNPC npc, GamePlayer player)
         {
-            if (npc == null || player == null || npc.Realm != eRealm.None || !_questNpcNames.Value.Contains(npc.Name))
+            if (npc == null || player == null || npc.Realm != eRealm.None ||
+                !_questNpcNames.Value.Contains(npc.Name) && !ClassicQuests.IsTalkTargetName(npc.Name))
                 return false;
 
             foreach (var pair in player.QuestList) // not .Keys: that copies the keys on every aggro check
             {
-                if (pair.Key is DataQuest dataQuest && TalksTo(dataQuest.StepType) &&
+                if (pair.Key is not DataQuest dataQuest)
+                    continue;
+                if (TalksTo(dataQuest.StepType) &&
                     QuestNames.Same(dataQuest.TargetName, npc.Name) && (dataQuest.TargetRegion == 0 || dataQuest.TargetRegion == npc.CurrentRegionID))
+                    return true;
+                // A choose or trade step is a talk step whatever its StepType (96 choose steps are SearchFinish): an
+                // aggressive NPC attacked the player whispering for a reward (quest audit 2026-11-11, P07).
+                if (ClassicQuests.IsTalkStep(dataQuest.ID, dataQuest.Step, npc.Name))
                     return true;
             }
 
