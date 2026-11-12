@@ -210,13 +210,14 @@ public sealed partial class AutonomousWorldBotController
         // Reuse the camp we just finished when possible. That approach floor
         // has an explicitly certified return tail, so it avoids a global scan.
         if (!string.IsNullOrWhiteSpace(_darknessFallsLastProofId) &&
-            AutonomousDarknessFallsNavigation.TryGetProof(_darknessFallsLastProofId, out var previous) &&
+            AutonomousDarknessFallsNavigation.TryGetRouteProof(_darknessFallsLastProofId, out var previous) &&
             TryStartExitProof(bot, key, previous, current, nav, zone)) return true;
 
         // After a restart, the controller has no previous camp. Search the
         // nearest certified out-anchors, not a geometrically nearest other
         // realm portal. Each candidate still needs a full strict native leg.
-        var candidates = AutonomousDarknessFallsNavigation.SnapshotCertifiedProofs()
+        // Every proof's return tail is proven floor, also when its spawn is gone.
+        var candidates = AutonomousDarknessFallsNavigation.RouteProofs
             .Select(proof => (Proof: proof,
                 Route: proof.Routes?.SingleOrDefault(route => route.Realm == bot.Realm)))
             .Where(item => item.Route?.OutWaypoints is { Length: >= 2 })

@@ -12,10 +12,15 @@ namespace DOL.GS;
 /// Ordinary DF grinds and raid/event encounters have different owners. The
 /// 85 raid/event rows are frozen by exact Mob_ID and original DB attributes,
 /// never inferred from a name, level, or ClassType during goal selection.
-/// A changed baseline closes the ordinary-goal certificate for re-audit.
+/// A changed raid/event row closes the certificate for re-audit; ordinary rows
+/// are judged one by one (AutonomousDarknessFallsNavigation.EvaluateCombatCoverage).
 /// </summary>
 public static class AutonomousDarknessFallsGoalScope
 {
+    // The row counts of the world the certificate was audited against (manifest
+    // header check only). The live world may differ: the 2026-11-11 spawn trim
+    // (GitHub #39) and later period fixes changed region 249, and an exact count
+    // here closed Darkness Falls to every gamebot and every horn event.
     public const int TotalCombatRows = 2460;
     public const int RaidEventRows = 85;
     public const int OrdinaryCombatRows = 2375;
@@ -64,6 +69,10 @@ public static class AutonomousDarknessFallsGoalScope
 
     public const string ClassicQuestPackage = "ClassicQuest";
 
+    /// <summary>The region's ordinary (non raid/event) combat rows, whatever their
+    /// number. False only when the exact raid/event manifest no longer matches or a
+    /// row has no usable id: those close the certificate. Added, removed or changed
+    /// ordinary rows are judged per row by the navigation certificate.</summary>
     public static bool TryGetOrdinaryCombatRows(IEnumerable<DbMob> databaseRows, out DbMob[] ordinary)
     {
         ordinary = [];
@@ -73,12 +82,11 @@ public static class AutonomousDarknessFallsGoalScope
         DbMob[] combat = databaseRows.Where(mob => mob != null &&
             mob.Region == AutonomousDarknessFallsPolicy.RegionId && mob.Realm == 0 && mob.Level > 0 &&
             !string.Equals(mob.PackageID, ClassicQuestPackage, StringComparison.Ordinal)).ToArray();
-        if (combat.Length != TotalCombatRows ||
-            combat.Any(mob => string.IsNullOrWhiteSpace(mob.ObjectId)) ||
-            combat.Select(mob => mob.ObjectId).Distinct(StringComparer.Ordinal).Count() != TotalCombatRows ||
+        if (combat.Any(mob => string.IsNullOrWhiteSpace(mob.ObjectId)) ||
+            combat.Select(mob => mob.ObjectId).Distinct(StringComparer.Ordinal).Count() != combat.Length ||
             !HasExactRaidEventRows(combat, Data.Value.Rows)) return false;
         ordinary = combat.Where(mob => !RaidIds.Value.Contains(mob.ObjectId)).ToArray();
-        return ordinary.Length == OrdinaryCombatRows;
+        return true;
     }
 
     public static bool HasExactRaidEventRows(IEnumerable<DbMob> combatRows, IEnumerable<RaidEventSpawn> expectedRows)

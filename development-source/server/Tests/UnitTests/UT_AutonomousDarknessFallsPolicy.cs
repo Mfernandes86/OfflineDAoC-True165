@@ -163,123 +163,207 @@ public class UT_AutonomousDarknessFallsPolicy
         });
     }
 
-    [Test]
-    public void NavigationCertificate_FailsClosedUntilEveryCombatSpawnIsProven()
+    private const string TestMeshHash = "ABCDEF0123";
+
+    private static AutonomousDarknessFallsNavigation.SpawnProof ProofFor(DbMob mob) => new()
     {
-        DbMob[] ordinary = Enumerable.Range(0, AutonomousDarknessFallsNavigation.RequiredCombatSpawns)
+        Id = mob.ObjectId, Name = mob.Name, Level = mob.Level,
+        ClassType = mob.ClassType, Model = mob.Model, Flags = mob.Flags,
+        Spawn = [mob.X, mob.Y, mob.Z], Approach = [mob.X, mob.Y, mob.Z],
+        AttackableFromApproach = true,
+        Routes = new[] { eRealm.Albion, eRealm.Midgard, eRealm.Hibernia }
+            .Select(realm => new AutonomousDarknessFallsNavigation.RouteProof
+            {
+                Realm = realm, DistanceFromEntrance = 100 + mob.X, DistanceToOwnExit = 100,
+                ExitZonePointId = AutonomousDarknessFallsPolicy.HomeExitZonePointId(realm),
+                ExitTargetRegion = AutonomousDarknessFallsPolicy.HomeRegion(realm),
+                Exit = [1, 2, 3],
+                InWaypoints = [[1, 2, 3], [mob.X, mob.Y, mob.Z]],
+                OutWaypoints = [[mob.X, mob.Y, mob.Z], [1, 2, 3]]
+            }).ToArray()
+    };
+
+    private static AutonomousDarknessFallsNavigation.ExcludedOrdinarySpawn ExclusionFor(DbMob mob, string reason) => new()
+    {
+        Id = mob.ObjectId, Name = mob.Name, Level = mob.Level, ClassType = mob.ClassType,
+        Model = mob.Model, Flags = mob.Flags, Spawn = [mob.X, mob.Y, mob.Z], Reason = reason
+    };
+
+    /// <summary>The audited world: 2,375 ordinary rows (the first 2,000 proven, the rest excluded) and the 85
+    /// raid/event rows, plus a certificate and the three real exit rows that match it.</summary>
+    private static (DbMob[] Ordinary, DbMob[] Raid, AutonomousDarknessFallsNavigation.Certificate Certificate,
+        DbZonePoint[] Exits) AuditedWorld()
+    {
+        DbMob[] ordinary = Enumerable.Range(0, AutonomousDarknessFallsNavigation.BaselineOrdinaryCombatRows)
             .Select(index => new DbMob
             {
                 ObjectId = $"df-{index}", Name = "test monster", Region = 249,
                 Realm = 0, Level = 25, X = index, Y = 100, Z = 200
             }).ToArray();
-        AutonomousDarknessFallsGoalScope.RaidEventSpawn[] raid = AutonomousDarknessFallsGoalScope.SnapshotRaidEventRows();
-        Assert.That(raid, Has.Length.EqualTo(AutonomousDarknessFallsGoalScope.RaidEventRows));
-        DbMob[] raidRows = raid.Select(row => new DbMob
+        DbMob[] raid = AutonomousDarknessFallsGoalScope.SnapshotRaidEventRows().Select(row => new DbMob
         {
             ObjectId = row.Id, Name = row.Name, Level = (byte)row.Level,
             ClassType = row.ClassType, Region = 249, Realm = 0,
             X = row.Spawn[0], Y = row.Spawn[1], Z = row.Spawn[2]
         }).ToArray();
-        DbMob[] mobs = ordinary.Concat(raidRows).ToArray();
-        AutonomousDarknessFallsNavigation.SpawnProof[] proofs = ordinary.Select(mob => new
-            AutonomousDarknessFallsNavigation.SpawnProof
-            {
-                Id = mob.ObjectId, Name = mob.Name, Level = mob.Level,
-                ClassType = mob.ClassType, Model = mob.Model, Flags = mob.Flags,
-                Spawn = [mob.X, mob.Y, mob.Z], Approach = [mob.X, mob.Y, mob.Z],
-                AttackableFromApproach = true,
-                Routes = new[] { eRealm.Albion, eRealm.Midgard, eRealm.Hibernia }
-                    .Select(realm => new AutonomousDarknessFallsNavigation.RouteProof
-                    {
-                        Realm = realm, DistanceFromEntrance = 100, DistanceToOwnExit = 100,
-                        ExitZonePointId = AutonomousDarknessFallsPolicy.HomeExitZonePointId(realm),
-                        ExitTargetRegion = AutonomousDarknessFallsPolicy.HomeRegion(realm),
-                        Exit = [1, 2, 3],
-                        InWaypoints = [[1, 2, 3], [mob.X, mob.Y, mob.Z]],
-                        OutWaypoints = [[mob.X, mob.Y, mob.Z], [1, 2, 3]]
-                    }).ToArray()
-            }).ToArray();
+        var certificate = new AutonomousDarknessFallsNavigation.Certificate
+        {
+            NavSha256 = TestMeshHash,
+            Spawns = ordinary.Take(2000).Select(ProofFor).ToArray(),
+            ExcludedOrdinarySpawns = ordinary.Skip(2000).Select(mob => ExclusionFor(mob, "UnverifiedRoute")).ToArray(),
+            TraversalLinks = [new() { Kind = "Climb", Start = [0, 0, 0], End = [10, 0, 50], Bidirectional = true }]
+        };
+        DbZonePoint[] exits = new[] { eRealm.Albion, eRealm.Midgard, eRealm.Hibernia }.Select(realm => new DbZonePoint
+        {
+            Id = AutonomousDarknessFallsPolicy.HomeExitZonePointId(realm), Realm = (ushort)realm,
+            SourceRegion = 249, SourceX = 1, SourceY = 2, SourceZ = 3,
+            TargetRegion = AutonomousDarknessFallsPolicy.HomeRegion(realm)
+        }).ToArray();
+        return (ordinary, raid, certificate, exits);
+    }
 
+    [Test]
+    public void NavigationCertificate_AuditedWorld_OpensWithEveryProofAsGoal()
+    {
+        var (ordinary, raid, certificate, exits) = AuditedWorld();
+        Assert.That(raid, Has.Length.EqualTo(AutonomousDarknessFallsGoalScope.RaidEventRows));
+        string closed = AutonomousDarknessFallsNavigation.Judge(certificate, TestMeshHash.ToLowerInvariant(),
+            ordinary.Concat(raid), exits, out var coverage);
         Assert.Multiple(() =>
         {
-            Assert.That(AutonomousDarknessFallsNavigation.HasFullCombatCoverage(mobs, proofs), Is.True);
-            Assert.That(AutonomousDarknessFallsNavigation.HasFullCombatCoverage(mobs, proofs.Skip(1)), Is.False);
-            Assert.That(AutonomousDarknessFallsNavigation.HasFullCombatCoverage(mobs, proofs.Append(proofs[0])), Is.False);
+            Assert.That(closed, Is.Null);
+            Assert.That(coverage.ProofsMatched, Is.EqualTo(2000));
+            Assert.That(coverage.ProofsRowGone + coverage.ProofsRowChanged, Is.Zero);
+            Assert.That(coverage.RowsWithoutProof, Is.EqualTo(375));
+            Assert.That(coverage.RowsUnknown, Is.Zero);
+            Assert.That(coverage.CombatRows, Is.EqualTo(AutonomousDarknessFallsGoalScope.TotalCombatRows));
         });
-        DbMob oro = raidRows.Single(mob => mob.ObjectId == "504d573f-deab-4cb2-9dbc-d9d053d7af2f");
+    }
+
+    [Test]
+    public void NavigationCertificate_ChangedWorld_StaysOpenAndKeepsOnlyMatchingProofsAsGoals()
+    {
+        var (ordinary, raid, certificate, exits) = AuditedWorld();
+        // As the 2026-11-11 spawn trim and the later period fixes did: rows removed (proven and
+        // excluded ones), rows added, levels changed.
+        var live = ordinary.Where((mob, index) => index % 10 != 0).ToList();   // 238 gone: 200 proven, 38 excluded
+        live.Single(mob => mob.ObjectId == "df-1").Level = 26;                  // a proven row changed level
+        live.Single(mob => mob.ObjectId == "df-2").Z += 5;                      // a proven row moved
+        live.Single(mob => mob.ObjectId == "df-2001").Level = 61;               // an excluded row changed level
+        live.Add(new DbMob { ObjectId = "added-1", Name = "Hopeless Soul", Region = 249, Level = 31, X = 5, Y = 5, Z = 5 });
+        live.Add(new DbMob { ObjectId = "added-2", Name = "Commander Abgar", Region = 249, Level = 61, X = 6, Y = 6, Z = 6 });
+
+        string closed = AutonomousDarknessFallsNavigation.Judge(certificate, TestMeshHash,
+            live.Concat(raid), exits, out var coverage);
+        Assert.Multiple(() =>
+        {
+            Assert.That(closed, Is.Null, "Removed, added and changed ordinary rows never close Darkness Falls.");
+            Assert.That(coverage.ProofsMatched, Is.EqualTo(2000 - 200 - 2));
+            Assert.That(coverage.ProofsRowGone, Is.EqualTo(200));
+            Assert.That(coverage.ProofsRowChanged, Is.EqualTo(2));
+            Assert.That(coverage.RowsWithoutProof, Is.EqualTo(2 + (375 - 38) + 2));
+            Assert.That(coverage.RowsUnknown, Is.EqualTo(2));
+            Assert.That(coverage.OrdinaryRows, Is.EqualTo(live.Count));
+            Assert.That(coverage.GoalIds, Does.Contain("df-3"));
+            Assert.That(coverage.GoalIds, Does.Not.Contain("df-0"), "A proof whose row is gone is no goal.");
+            Assert.That(coverage.GoalIds, Does.Not.Contain("df-1"), "A level-changed row is no goal.");
+            Assert.That(coverage.GoalIds, Does.Not.Contain("df-2"), "A moved row is no goal.");
+            Assert.That(coverage.GoalIds, Does.Not.Contain("added-1"), "A row without a proof is never a goal.");
+            Assert.That(coverage.GoalIds, Does.Not.Contain("df-2001"), "An excluded row stays excluded.");
+        });
+
+        // A gone spawn's proof stays route geometry: its approach is still a chain waypoint.
+        var goals = AutonomousDarknessFallsNavigation.SelectGoals(certificate.Spawns, coverage.GoalIds);
+        var approaches = AutonomousDarknessFallsNavigation.BuildApproaches(certificate.Spawns, eRealm.Midgard);
+        Assert.Multiple(() =>
+        {
+            Assert.That(goals, Has.Length.EqualTo(coverage.ProofsMatched));
+            Assert.That(goals.Select(proof => proof.Id), Does.Not.Contain("df-0"));
+            Assert.That(approaches, Has.Length.EqualTo(2000));
+            Assert.That(approaches.Select(approach => approach.ProofId), Does.Contain("df-0"));
+            Assert.That(approaches[0].ProofId, Is.EqualTo("df-0"), "Nearest to the entrance first.");
+            Assert.That(approaches[0].InWaypoints, Has.Length.EqualTo(2));
+        });
+
+        // A proof whose id has since become a raid/event row is no ordinary goal either.
+        string raidId = raid[0].ObjectId;
+        live.RemoveAll(mob => mob.ObjectId == "df-3");
+        certificate.Spawns[3].Id = raidId;
+        Assert.That(AutonomousDarknessFallsNavigation.Judge(certificate, TestMeshHash, live.Concat(raid), exits,
+            out coverage), Is.Null);
+        Assert.That(coverage.GoalIds, Does.Not.Contain(raidId));
+    }
+
+    [Test]
+    public void NavigationCertificate_ClosesOnMeshLinksExitsRaidManifestOrMalformedFile()
+    {
+        var (ordinary, raid, certificate, exits) = AuditedWorld();
+        DbMob[] world = ordinary.Concat(raid).ToArray();
+        string Judge() => AutonomousDarknessFallsNavigation.Judge(certificate, TestMeshHash, world, exits, out _);
+        Assert.That(Judge(), Is.Null);
+
+        Assert.That(AutonomousDarknessFallsNavigation.Judge(certificate, "0000", world, exits, out _),
+            Is.Not.Null, "A changed mesh closes the certificate.");
+        Assert.That(AutonomousDarknessFallsNavigation.Judge(certificate, null, world, exits, out _),
+            Is.Not.Null, "A missing mesh closes it.");
+
+        DbMob named = raid.First();
+        named.X++;
+        Assert.That(Judge(), Is.Not.Null, "A moved raid/event encounter closes it.");
+        named.X--;
+        world = world.Where(mob => mob != named).ToArray();
+        Assert.That(Judge(), Is.Not.Null, "A missing named encounter closes it.");
+        world = world.Append(named).ToArray();
+        DbMob oro = raid.Single(mob => mob.ObjectId == "504d573f-deab-4cb2-9dbc-d9d053d7af2f");
+        byte oroLevel = oro.Level;
         oro.Level = 68;
-        Assert.That(AutonomousDarknessFallsNavigation.HasFullCombatCoverage(mobs, proofs), Is.True,
-            "A normal startup roll of Oro's 65-70 template must not close every ordinary DF goal.");
+        Assert.That(Judge(), Is.Null, "A normal startup roll of Oro's 65-70 template must not close Darkness Falls.");
         oro.Level = 71;
-        Assert.That(AutonomousDarknessFallsNavigation.HasFullCombatCoverage(mobs, proofs), Is.False);
-        oro.Level = 67;
-        proofs[0].Spawn[2]++;
-        Assert.That(AutonomousDarknessFallsNavigation.HasFullCombatCoverage(mobs, proofs), Is.False,
-            "A moved spawn invalidates the complete certificate.");
-        proofs[0].Spawn[2]--;
+        Assert.That(Judge(), Is.Not.Null);
+        oro.Level = oroLevel;
+        Assert.That(Judge(), Is.Null);
+
+        Assert.That(AutonomousDarknessFallsNavigation.Judge(certificate, TestMeshHash, world, [], out _),
+            Is.Not.Null, "Every proven route must end at a real realm exit row.");
+
+        var links = certificate.TraversalLinks;
+        certificate.TraversalLinks = [];
+        Assert.That(Judge(), Is.Not.Null, "No traversal links: closed.");
+        certificate.TraversalLinks = [new() { Kind = "Fall", Start = [0, 0, 0], End = [0, 0, 500] }];
+        Assert.That(Judge(), Is.Not.Null, "A malformed traversal link: closed.");
+        certificate.TraversalLinks = links;
+
+        var proofs = certificate.Spawns;
+        certificate.Spawns = proofs.Append(proofs[0]).ToArray();
+        Assert.That(Judge(), Is.Not.Null, "A duplicate proof: closed.");
+        certificate.Spawns = proofs;
         proofs[0].Routes[1].DistanceToOwnExit = 0;
-        Assert.That(AutonomousDarknessFallsNavigation.HasFullCombatCoverage(mobs, proofs), Is.False,
-            "Every realm needs a proven return to its own portal.");
+        Assert.That(Judge(), Is.Not.Null, "Every realm needs a proven return to its own portal.");
         proofs[0].Routes[1].DistanceToOwnExit = 100;
         proofs[0].Routes[0].OutWaypoints = [[ordinary[0].X, ordinary[0].Y, ordinary[0].Z]];
-        Assert.That(AutonomousDarknessFallsNavigation.HasFullCombatCoverage(mobs, proofs), Is.False,
-            "A route needs independently auditable adjacent return legs.");
+        Assert.That(Judge(), Is.Not.Null, "A route needs independently auditable adjacent return legs.");
         proofs[0].Routes[0].OutWaypoints = [[ordinary[0].X, ordinary[0].Y, ordinary[0].Z], [1, 2, 3]];
-        raidRows[0].X++;
-        Assert.That(AutonomousDarknessFallsNavigation.HasFullCombatCoverage(mobs, proofs), Is.False,
-            "Moving an excluded raid encounter invalidates the ordinary-goal baseline too.");
-        raidRows[0].X--;
-        Assert.That(AutonomousDarknessFallsNavigation.HasFullCombatCoverage(mobs, proofs), Is.True);
-
-        // The staged rollout may certify only safe floor targets, provided
-        // every other ordinary spawn is accounted for by exact ID and DB
-        // attributes. Exclusions do not delete or change those monsters.
-        var omitted = new AutonomousDarknessFallsNavigation.ExcludedOrdinarySpawn
-        {
-            Id = ordinary[0].ObjectId, Name = ordinary[0].Name, Level = ordinary[0].Level,
-            ClassType = ordinary[0].ClassType, Model = ordinary[0].Model,
-            Flags = ordinary[0].Flags, Spawn = [ordinary[0].X, ordinary[0].Y, ordinary[0].Z],
-            Reason = "UnverifiedRoute"
-        };
-        Assert.That(AutonomousDarknessFallsNavigation.HasFullCombatCoverage(
-            mobs, proofs.Skip(1), [omitted]), Is.True);
-        omitted.Spawn[0]++;
-        Assert.That(AutonomousDarknessFallsNavigation.HasFullCombatCoverage(
-            mobs, proofs.Skip(1), [omitted]), Is.False,
-            "An excluded spawn that moves also invalidates the whole DB snapshot.");
-        omitted.Spawn[0]--;
-        ordinary[0].Flags = (uint)GameNPC.eFlags.FLYING;
-        omitted.Flags = ordinary[0].Flags;
-        omitted.Reason = "FlyingOrPerched";
-        Assert.That(AutonomousDarknessFallsNavigation.HasFullCombatCoverage(
-            mobs, proofs.Skip(1), [omitted]), Is.True,
-            "A flying mob remains in the world but cannot be a grind goal.");
-        proofs[0].Flags = ordinary[0].Flags;
-        Assert.That(AutonomousDarknessFallsNavigation.HasFullCombatCoverage(mobs, proofs), Is.False,
-            "A flagged flying mob cannot enter the certified goal subset.");
-        ordinary[0].Flags = 0;
-        ordinary[0].Level = 61;
-        omitted.Flags = 0;
-        omitted.Level = 61;
-        omitted.Reason = "AboveLevel60";
-        Assert.That(AutonomousDarknessFallsNavigation.HasFullCombatCoverage(
-            mobs, proofs.Skip(1), [omitted]), Is.True,
-            "Above-level-60 content belongs outside ordinary group goals.");
-        ordinary[0].Flags = (uint)GameNPC.eFlags.FLYING;
-        omitted.Flags = ordinary[0].Flags;
-        omitted.Reason = "FlyingOrPerched";
-        Assert.That(AutonomousDarknessFallsNavigation.HasFullCombatCoverage(
-            mobs, proofs.Skip(1), [omitted]), Is.True,
-            "Flying monsters remain permanently ineligible even when also above level 60.");
-        omitted.Reason = "UnverifiedRoute";
-        Assert.That(AutonomousDarknessFallsNavigation.HasFullCombatCoverage(
-            mobs, proofs.Skip(1), [omitted]), Is.False,
-            "A flying monster cannot be disguised as an ordinary deferred route.");
+        proofs[0].Flags = (uint)GameNPC.eFlags.FLYING;
+        Assert.That(Judge(), Is.Not.Null, "A flagged flying mob cannot enter the certified goal subset.");
         proofs[0].Flags = 0;
         proofs[0].Level = 61;
-        Assert.That(AutonomousDarknessFallsNavigation.HasFullCombatCoverage(mobs, proofs), Is.False);
-        Assert.That(AutonomousDarknessFallsGoalScope.IsRaidEventId(raid[0].Id), Is.True);
-        Assert.That(AutonomousDarknessFallsGoalScope.IsOrdinaryCatalogId(raid[0].Id), Is.False);
+        Assert.That(Judge(), Is.Not.Null, "No proof above level 60.");
+        proofs[0].Level = 25;
+        Assert.That(Judge(), Is.Null);
+
+        var excluded = certificate.ExcludedOrdinarySpawns;
+        certificate.ExcludedOrdinarySpawns = excluded.Append(ExclusionFor(ordinary[0], "UnverifiedRoute")).ToArray();
+        Assert.That(Judge(), Is.Not.Null, "A row cannot be both proven and excluded.");
+        DbMob flyer = ordinary[2100];
+        flyer.Flags = (uint)GameNPC.eFlags.FLYING;
+        certificate.ExcludedOrdinarySpawns = excluded.Select(item => item.Id == flyer.ObjectId
+            ? ExclusionFor(flyer, "UnverifiedRoute") : item).ToArray();
+        Assert.That(Judge(), Is.Not.Null, "A flying monster cannot be disguised as an ordinary deferred route.");
+        certificate.ExcludedOrdinarySpawns = excluded;
+        Assert.That(Judge(), Is.Null, "A row that no longer matches its exclusion is simply no goal.");
+
+        Assert.That(AutonomousDarknessFallsGoalScope.IsRaidEventId(raid[0].ObjectId), Is.True);
+        Assert.That(AutonomousDarknessFallsGoalScope.IsOrdinaryCatalogId(raid[0].ObjectId), Is.False);
     }
 
     [Test]

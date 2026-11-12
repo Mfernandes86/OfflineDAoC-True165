@@ -7,30 +7,65 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text.Json;
 using DOL.Database;
+using DOL.Logging;
 
 namespace DOL.GS;
 
 /// <summary>
-/// Fail-closed navigation certificate for Darkness Falls. A compatible
-/// certificate contains only the rebuilt-mesh, source-audited, floor-reachable,
-/// level-60-or-lower staged goal subset. It stays closed if the installed
-/// mesh or live database differs from that exact audit.
-/// Every other ordinary spawn must be named in the exact exclusion snapshot;
-/// flying/perched mobs are never silently admitted as goals.
+/// Fail-closed navigation certificate for Darkness Falls. The geometry
+/// authority is the installed mesh hash, the exact traversal links and the
+/// real realm exits; the raid/event manifest must match exactly. Those close it.
+/// Ordinary spawns are judged one by one, once, at start-up: a proof is a goal
+/// only while its Mob row still matches it exactly; a proof whose row is gone or
+/// changed is no goal, but its proven legs stay valid route geometry; a combat
+/// row without a proof is never a goal. Flying/perched mobs are never goals.
 /// </summary>
 public static class AutonomousDarknessFallsNavigation
 {
-    // Only ordinary grind targets belong to the random goal certificate.
-    // The separate exact-ID raid/event manifest validates the other 85 rows.
-    // This is the full ordinary DB baseline, not the number of eligible goals.
-    public const int RequiredCombatSpawns = AutonomousDarknessFallsGoalScope.OrdinaryCombatRows;
+    private static readonly Logger Log = LoggerManager.Create(typeof(AutonomousDarknessFallsNavigation));
+    // The ordinary row count of the audited world (2,375). Not a gate any more:
+    // the live world may hold more or fewer rows (EvaluateCombatCoverage).
+    public const int BaselineOrdinaryCombatRows = AutonomousDarknessFallsGoalScope.OrdinaryCombatRows;
     private const string ResourceSuffix = "darkness_falls_navigation_proofs.json";
-    private static readonly Lazy<Certificate> CertificateData = new(LoadCertificate, true);
-    private static readonly Lazy<Dictionary<string, SpawnProof>> ProofIndex = new(() =>
-        CertificateData.Value?.Spawns.ToDictionary(proof => proof.Id, StringComparer.Ordinal) ??
-        new Dictionary<string, SpawnProof>(StringComparer.Ordinal), true);
+    private static readonly Lazy<LoadedCertificate> CertificateData = new(LoadCertificate, true);
+
+    /// <summary>What start-up worked out once; nothing here changes afterwards.</summary>
+    private sealed class LoadedCertificate
+    {
+        public Certificate Data;
+        public SpawnProof[] Goals;
+        public Dictionary<string, SpawnProof> GoalIndex;
+        public Dictionary<string, SpawnProof> RouteIndex;
+        public Dictionary<eRealm, CertifiedApproach[]> Approaches;
+    }
+
+    /// <summary>One proven approach floor and this realm's proven legs from its
+    /// entrance to it. Geometry only: the spawn it was proven for may be gone.</summary>
+    public sealed record CertifiedApproach(string ProofId, Vector3 Approach, Vector3[] InWaypoints,
+        float DistanceFromEntrance);
+
+    public sealed class CoverageResult
+    {
+        public bool Ready { get; init; }
+        public string Reason { get; init; }
+        public int CombatRows { get; init; }
+        public int OrdinaryRows { get; init; }
+        /// <summary>Proofs whose row still matches exactly: the goal pool.</summary>
+        public int ProofsMatched { get; init; }
+        /// <summary>Proofs whose row is gone (or is now a raid/event row).</summary>
+        public int ProofsRowGone { get; init; }
+        /// <summary>Proofs whose row is still there but changed (level, place...).</summary>
+        public int ProofsRowChanged { get; init; }
+        /// <summary>Ordinary rows without a matching proof (never goals).</summary>
+        public int RowsWithoutProof { get; init; }
+        /// <summary>Of those, rows the certificate names in no proof and no exclusion (added since the audit).</summary>
+        public int RowsUnknown { get; init; }
+        public IReadOnlyCollection<string> GoalIds { get; init; } = Array.Empty<string>();
+    }
+
+    // Camp entries are looked up by a goal's approach, so only goal proofs matter here.
     private static readonly Lazy<Dictionary<(int X, int Y, eRealm Realm), Vector3[]>> EntranceIndex = new(() =>
-        CertificateData.Value?.Spawns.SelectMany(proof => proof.Routes.Select(route =>
+        CertificateData.Value?.Goals.SelectMany(proof => proof.Routes.Select(route =>
                 (Key: ((int)Math.Round(proof.Approach[0]), (int)Math.Round(proof.Approach[1]), route.Realm),
                     Point: new Vector3(route.InWaypoints[0][0], route.InWaypoints[0][1],
                         route.InWaypoints[0][2]))))
@@ -103,8 +138,9 @@ public static class AutonomousDarknessFallsNavigation
         public bool Bidirectional { get; set; }
     }
 
-    /// <summary>Only an exact installed-mesh + full database snapshot opens
-    /// the staged goal pool. Unknown added/deleted/moved combat mobs close it.</summary>
+    /// <summary>The installed mesh, the traversal links, the realm exits and the
+    /// exact raid/event manifest open the certificate (routes, corridors, the
+    /// dungeon itself). Ordinary goals are the proofs whose rows still match.</summary>
     // Do not touch the Lazy during early world startup; a missing database at
     // that instant must not cache a permanent false after initialization.
     public static bool IsReady => ReadyWhen(GameServer.Instance != null && GameServer.Database != null,
@@ -113,14 +149,35 @@ public static class AutonomousDarknessFallsNavigation
     public static bool ReadyWhen(bool databaseReady, Func<bool> certificateAvailable) =>
         databaseReady && certificateAvailable?.Invoke() == true;
 
+    /// <summary>A usable ordinary goal: the proof exists and its Mob row still matches it.</summary>
     public static bool TryGetProof(string id, out SpawnProof proof)
     {
         proof = null;
-        return IsReady && !string.IsNullOrWhiteSpace(id) && ProofIndex.Value.TryGetValue(id, out proof);
+        return IsReady && !string.IsNullOrWhiteSpace(id) && CertificateData.Value.GoalIndex.TryGetValue(id, out proof);
     }
 
+    /// <summary>Any certified proof, goal or not, for its proven legs (exit tails,
+    /// chains). Never use it to pick a monster to hunt.</summary>
+    public static bool TryGetRouteProof(string id, out SpawnProof proof)
+    {
+        proof = null;
+        return IsReady && !string.IsNullOrWhiteSpace(id) && CertificateData.Value.RouteIndex.TryGetValue(id, out proof);
+    }
+
+    /// <summary>The goal pool (proofs whose rows still match). A copy.</summary>
     public static SpawnProof[] SnapshotCertifiedProofs() =>
-        IsReady ? CertificateData.Value.Spawns.ToArray() : [];
+        IsReady ? CertificateData.Value.Goals.ToArray() : [];
+
+    /// <summary>Every certified proof, goal or not: route geometry only. Shared, not a copy; do not modify.</summary>
+    public static IReadOnlyList<SpawnProof> RouteProofs =>
+        IsReady ? CertificateData.Value.Data.Spawns : Array.Empty<SpawnProof>();
+
+    /// <summary>This realm's certified approach floors with their proven legs from
+    /// its entrance, one per distinct approach, built once at start-up. Chains to
+    /// named encounters may use any of them (a gone spawn's floor is still floor).</summary>
+    public static IReadOnlyList<CertifiedApproach> CertifiedApproaches(eRealm realm) =>
+        IsReady && CertificateData.Value.Approaches.TryGetValue(realm, out CertifiedApproach[] approaches)
+            ? approaches : Array.Empty<CertifiedApproach>();
 
     /// <summary>The old general dungeon-point file contains only three DF
     /// samples. Authorize entry for a selected camp from the certificate's
@@ -156,39 +213,70 @@ public static class AutonomousDarknessFallsNavigation
         Vector2.Distance(new(entry.X, entry.Y), new(edge.TargetX, edge.TargetY)) <= 4 &&
         Math.Abs(entry.Z - edge.TargetZ) <= 32;
 
-    public static bool HasFullCombatCoverage(IEnumerable<DbMob> combatMobs,
-        IEnumerable<SpawnProof> proofs) => HasFullCombatCoverage(combatMobs, proofs, []);
+    public static CoverageResult EvaluateCombatCoverage(IEnumerable<DbMob> regionRows,
+        IEnumerable<SpawnProof> proofs) => EvaluateCombatCoverage(regionRows, proofs, []);
 
-    public static bool HasFullCombatCoverage(IEnumerable<DbMob> combatMobs,
+    /// <summary>
+    /// Judges the live region-249 rows against the certificate, row by row. Closed
+    /// (Ready false) only when the certificate file itself is malformed (a bad or
+    /// duplicate proof or exclusion, a proof id that is also an exclusion, no proof
+    /// at all) or the exact raid/event manifest no longer matches. Otherwise open:
+    /// a proof is a goal only when exactly its row is there and matches its
+    /// snapshot (name, level, class, model, flags, spawn point); a proof whose row
+    /// is gone or changed is dropped as a goal; an ordinary row without a matching
+    /// proof is never a goal. Pure; run once at start-up.
+    /// </summary>
+    public static CoverageResult EvaluateCombatCoverage(IEnumerable<DbMob> regionRows,
         IEnumerable<SpawnProof> proofs, IEnumerable<ExcludedOrdinarySpawn> exclusions)
     {
-        if (combatMobs == null || proofs == null || exclusions == null) return false;
-        if (!AutonomousDarknessFallsGoalScope.TryGetOrdinaryCombatRows(combatMobs, out DbMob[] required))
-            return false;
+        if (regionRows == null || proofs == null || exclusions == null)
+            return new() { Reason = "missing input" };
         SpawnProof[] certified = proofs.ToArray();
         ExcludedOrdinarySpawn[] excluded = exclusions.ToArray();
-        if (required.Length != RequiredCombatSpawns || certified.Length < 1 ||
-            certified.Length + excluded.Length != required.Length ||
-            required.Select(mob => mob.ObjectId).Distinct(StringComparer.Ordinal).Count() != required.Length ||
-            certified.Any(proof => !ValidProof(proof)) ||
-            excluded.Any(item => !ValidExclusion(item))) return false;
-        var byId = certified.GroupBy(proof => proof.Id, StringComparer.Ordinal)
-            .ToDictionary(group => group.Key, group => group.ToArray(), StringComparer.Ordinal);
-        var excludedById = excluded.GroupBy(item => item.Id, StringComparer.Ordinal)
-            .ToDictionary(group => group.Key, group => group.ToArray(), StringComparer.Ordinal);
-        return byId.Count == certified.Length && excludedById.Count == excluded.Length &&
-            required.All(mob =>
+        if (certified.Length < 1) return new() { Reason = "no proofs" };
+        if (certified.Any(proof => !ValidProof(proof))) return new() { Reason = "malformed proof" };
+        if (excluded.Any(item => !ValidExclusion(item))) return new() { Reason = "malformed exclusion" };
+        var byId = new Dictionary<string, SpawnProof>(certified.Length, StringComparer.Ordinal);
+        foreach (SpawnProof proof in certified)
+            if (!byId.TryAdd(proof.Id, proof)) return new() { Reason = "duplicate proof" };
+        var excludedIds = new HashSet<string>(StringComparer.Ordinal);
+        foreach (ExcludedOrdinarySpawn item in excluded)
+            if (!excludedIds.Add(item.Id) || byId.ContainsKey(item.Id))
+                return new() { Reason = "duplicate exclusion" };
+        DbMob[] rows = regionRows.Where(mob => mob != null).ToArray();
+        if (!AutonomousDarknessFallsGoalScope.TryGetOrdinaryCombatRows(rows, out DbMob[] ordinary))
+            return new() { Reason = "raid/event manifest or row ids differ" };
+
+        var goals = new HashSet<string>(StringComparer.Ordinal);
+        int changed = 0, withoutProof = 0, unknown = 0;
+        foreach (DbMob mob in ordinary)
+        {
+            if (byId.TryGetValue(mob.ObjectId, out SpawnProof proof))
             {
-                bool proved = byId.TryGetValue(mob.ObjectId, out SpawnProof[] matching);
-                bool omitted = excludedById.TryGetValue(mob.ObjectId, out ExcludedOrdinarySpawn[] skipped);
-                return proved != omitted && (proved
-                    ? matching.Length == 1 && MatchesSnapshot(mob, matching[0].Name,
-                        matching[0].Level, matching[0].ClassType, matching[0].Model,
-                        matching[0].Flags, matching[0].Spawn)
-                    : skipped.Length == 1 && MatchesSnapshot(mob, skipped[0].Name,
-                        skipped[0].Level, skipped[0].ClassType, skipped[0].Model,
-                        skipped[0].Flags, skipped[0].Spawn));
-            });
+                if (MatchesSnapshot(mob, proof.Name, proof.Level, proof.ClassType, proof.Model,
+                        proof.Flags, proof.Spawn))
+                {
+                    goals.Add(mob.ObjectId);
+                    continue;
+                }
+                changed++;
+            }
+            else if (!excludedIds.Contains(mob.ObjectId)) unknown++;
+            withoutProof++;
+        }
+        return new()
+        {
+            Ready = true,
+            Reason = "ok",
+            CombatRows = ordinary.Length + AutonomousDarknessFallsGoalScope.RaidEventRows,
+            OrdinaryRows = ordinary.Length,
+            ProofsMatched = goals.Count,
+            ProofsRowChanged = changed,
+            ProofsRowGone = certified.Length - goals.Count - changed,
+            RowsWithoutProof = withoutProof,
+            RowsUnknown = unknown,
+            GoalIds = goals,
+        };
     }
 
     private static bool MatchesSnapshot(DbMob mob, string name, int level,
@@ -258,8 +346,9 @@ public static class AutonomousDarknessFallsNavigation
                 Math.Abs(point.SourceZ - route.Exit[2]) <= 64));
     }
 
-    private static Certificate LoadCertificate()
+    private static LoadedCertificate LoadCertificate()
     {
+        string closed;
         try
         {
             Assembly assembly = typeof(AutonomousDarknessFallsNavigation).Assembly;
@@ -269,29 +358,100 @@ public static class AutonomousDarknessFallsNavigation
             using Stream stream = assembly.GetManifestResourceStream(name);
             Certificate certificate = JsonSerializer.Deserialize<Certificate>(stream,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            if (certificate?.Spawns == null || certificate.ExcludedOrdinarySpawns == null ||
-                certificate.TraversalLinks?.Length is not > 0 ||
-                certificate.TraversalLinks.Any(link => !ValidTraversalLink(link)) || !HasFullCombatCoverage(
-                    DOLDB<DbMob>.SelectObjects(DB.Column("Region").IsEqualTo(
-                        AutonomousDarknessFallsPolicy.RegionId)), certificate.Spawns,
-                    certificate.ExcludedOrdinarySpawns) ||
-                !HasAuthoritativeRealmExits(certificate.Spawns,
-                    GameServer.Database.SelectAllObjects<DbZonePoint>())) return null;
-            string path = Path.GetFullPath(Path.Combine("navmesh", "zone249.nav"));
-            if (!File.Exists(path)) path = Path.GetFullPath(Path.Combine("pathing", "zone249.nav"));
-            if (!File.Exists(path) || string.IsNullOrWhiteSpace(certificate.NavSha256)) return null;
-            using Stream nav = File.OpenRead(path);
-            string actualHash = Convert.ToHexString(SHA256.HashData(nav));
-            return string.Equals(actualHash, certificate.NavSha256, StringComparison.OrdinalIgnoreCase)
-                ? certificate : null;
+            closed = Judge(certificate, InstalledMeshSha256(),
+                DOLDB<DbMob>.SelectObjects(DB.Column("Region").IsEqualTo(AutonomousDarknessFallsPolicy.RegionId)),
+                GameServer.Database.SelectAllObjects<DbZonePoint>(), out CoverageResult coverage);
+            if (closed == null)
+            {
+                LoadedCertificate loaded = Build(certificate, coverage.GoalIds);
+                Log.Info($"DF_NAV_CERT ready=True goals={coverage.ProofsMatched} proofs={certificate.Spawns.Length} " +
+                    $"droppedRowGone={coverage.ProofsRowGone} droppedRowChanged={coverage.ProofsRowChanged} " +
+                    $"combatRows={coverage.CombatRows} rowsWithoutProof={coverage.RowsWithoutProof} " +
+                    $"rowsUnknown={coverage.RowsUnknown}");
+                return loaded;
+            }
         }
-        catch
+        catch (Exception e)
         {
-            // No proof, a malformed proof, or a different mesh must never
-            // create a random PvE objective in a disconnected DF wing.
-            return null;
+            closed = "error " + e.GetType().Name;
         }
+        // No proof, a malformed proof, a changed raid manifest or a different
+        // mesh must never create a PvE objective in a disconnected DF wing.
+        Log.Warn($"DF_NAV_CERT ready=False reason=\"{closed}\" (no gamebot enters Darkness Falls)");
+        return null;
     }
+
+    /// <summary>
+    /// Whether the certificate opens for this world: null when open, otherwise the
+    /// reason it stays closed. The geometry authority is the mesh hash, the
+    /// traversal links and the real realm exits; the raid/event manifest must match
+    /// exactly. Ordinary rows never close it (see EvaluateCombatCoverage). Pure.
+    /// </summary>
+    public static string Judge(Certificate certificate, string installedMeshSha256,
+        IEnumerable<DbMob> regionRows, IEnumerable<DbZonePoint> zonePoints, out CoverageResult coverage)
+    {
+        coverage = null;
+        if (certificate?.Spawns == null || certificate.ExcludedOrdinarySpawns == null)
+            return "certificate file unreadable";
+        if (string.IsNullOrWhiteSpace(certificate.NavSha256) || string.IsNullOrWhiteSpace(installedMeshSha256) ||
+            !string.Equals(installedMeshSha256, certificate.NavSha256, StringComparison.OrdinalIgnoreCase))
+            return "zone249.nav differs from the audited mesh";
+        if (certificate.TraversalLinks?.Length is not > 0 ||
+            certificate.TraversalLinks.Any(link => !ValidTraversalLink(link)))
+            return "traversal links invalid";
+        coverage = EvaluateCombatCoverage(regionRows, certificate.Spawns, certificate.ExcludedOrdinarySpawns);
+        if (!coverage.Ready) return coverage.Reason;
+        if (!HasAuthoritativeRealmExits(certificate.Spawns, zonePoints)) return "realm exits differ";
+        return null;
+    }
+
+    private static string InstalledMeshSha256()
+    {
+        string path = Path.GetFullPath(Path.Combine("navmesh", "zone249.nav"));
+        if (!File.Exists(path)) path = Path.GetFullPath(Path.Combine("pathing", "zone249.nav"));
+        if (!File.Exists(path)) return null;
+        using Stream nav = File.OpenRead(path);
+        return Convert.ToHexString(SHA256.HashData(nav));
+    }
+
+    private static LoadedCertificate Build(Certificate certificate, IReadOnlyCollection<string> goalIds)
+    {
+        SpawnProof[] goals = SelectGoals(certificate.Spawns, goalIds);
+        return new()
+        {
+            Data = certificate,
+            Goals = goals,
+            GoalIndex = goals.ToDictionary(proof => proof.Id, StringComparer.Ordinal),
+            RouteIndex = certificate.Spawns.ToDictionary(proof => proof.Id, StringComparer.Ordinal),
+            Approaches = new[] { eRealm.Albion, eRealm.Midgard, eRealm.Hibernia }
+                .ToDictionary(realm => realm, realm => BuildApproaches(certificate.Spawns, realm)),
+        };
+    }
+
+    /// <summary>The goal pool in certificate order: the proofs named in goalIds.</summary>
+    public static SpawnProof[] SelectGoals(IEnumerable<SpawnProof> proofs, IReadOnlyCollection<string> goalIds)
+    {
+        if (proofs == null || goalIds == null || goalIds.Count == 0) return [];
+        var set = goalIds as HashSet<string> ?? new HashSet<string>(goalIds, StringComparer.Ordinal);
+        return proofs.Where(proof => proof != null && set.Contains(proof.Id)).ToArray();
+    }
+
+    /// <summary>One entry per distinct approach floor with this realm's proven
+    /// incoming legs, nearest to the entrance first. Pure; built once.</summary>
+    public static CertifiedApproach[] BuildApproaches(IEnumerable<SpawnProof> proofs, eRealm realm) =>
+        (proofs ?? []).Where(proof => proof?.Approach is { Length: 3 } && proof.Routes != null)
+            .Select(proof => (Proof: proof,
+                Route: proof.Routes.FirstOrDefault(route => route?.Realm == realm &&
+                    route.InWaypoints is { Length: >= 2 })))
+            .Where(item => item.Route != null)
+            .Select(item => new CertifiedApproach(item.Proof.Id,
+                new Vector3(item.Proof.Approach[0], item.Proof.Approach[1], item.Proof.Approach[2]),
+                item.Route.InWaypoints.Select(point => new Vector3(point[0], point[1], point[2])).ToArray(),
+                item.Route.DistanceFromEntrance))
+            .GroupBy(item => item.Approach)
+            .Select(group => group.OrderBy(item => item.DistanceFromEntrance).First())
+            .OrderBy(item => item.DistanceFromEntrance)
+            .ToArray();
 
     public static bool IsStrictSegment(PathfindingResult result, ReadOnlySpan<WrappedPathfindingNode> nodes,
         Vector3 start, Vector3 destination, IReadOnlyList<TraversalLink> approvedLinks = null)
@@ -338,7 +498,7 @@ public static class AutonomousDarknessFallsNavigation
     public static bool MayQueueRuntimePath(PathfindingResult result, ReadOnlySpan<WrappedPathfindingNode> nodes,
         Vector3 start, Vector3 destination) =>
         MayQueuePath(true, AutonomousDarknessFallsPolicy.RegionId, IsReady,
-            result, nodes, start, destination, IsReady ? CertificateData.Value.TraversalLinks : null);
+            result, nodes, start, destination, IsReady ? CertificateData.Value.Data.TraversalLinks : null);
 
     /// <summary>Evacuation is independent of ordinary-goal readiness. Only a
     /// complete walk-only corridor to the physical home exit is allowed when
@@ -411,7 +571,7 @@ public static class AutonomousDarknessFallsNavigation
         if (!IsReady || zone?.ZoneRegion?.ID != AutonomousDarknessFallsPolicy.RegionId || nav == null) return false;
         Span<WrappedPathfindingNode> nodes = stackalloc WrappedPathfindingNode[256];
         PathfindingResult result = nav.GetPathStraight(zone, start, destination, nav.DefaultFilters, nodes);
-        return IsStrictSegment(result, nodes, start, destination, CertificateData.Value.TraversalLinks);
+        return IsStrictSegment(result, nodes, start, destination, CertificateData.Value.Data.TraversalLinks);
     }
 
     public static bool HasStrictDirectedChain(IPathfindingMgr nav, Zone zone, IReadOnlyList<Vector3> anchors)
@@ -425,7 +585,7 @@ public static class AutonomousDarknessFallsNavigation
     public static bool TryGetCertifiedFall(Vector3 actor, Vector3 nextNode, out Vector3 air, out Vector3 landing)
     {
         air = landing = default;
-        return IsReady && TryResolveFall(actor, nextNode, CertificateData.Value.TraversalLinks,
+        return IsReady && TryResolveFall(actor, nextNode, CertificateData.Value.Data.TraversalLinks,
             out air, out landing);
     }
 
