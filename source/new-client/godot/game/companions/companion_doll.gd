@@ -150,12 +150,18 @@ func _fit() -> void:
 		_pivot.position.y = -lo * k
 
 
-## An item from your backpack dropped on the figure: put on where it fits (the server's equip picks the slot).
+## An item from your backpack dropped on the figure: put on where it fits (the server's equip picks the slot). One from
+## its own bag (issue #50): the same, by the server's "move ... wear" (an item it already wears is not taken).
 func _can_drop_data(_p: Vector2, data: Variant) -> bool:
+	if window != null and SrvCompanionWindow.is_own_item(data, row):
+		return SrvCompanionWindow.own_move_command(row, int(data.slot), SrvCompanionWindow.ONTO_FIGURE) != ""
 	return window != null and InventorySheet.is_item(data) and int(data.slot) >= 40 and int(data.slot) <= 79
 
 
 func _drop_data(_p: Vector2, data: Variant) -> void:
+	if SrvCompanionWindow.is_own_item(data, row):
+		window.call("move_own", int(data.slot), SrvCompanionWindow.ONTO_FIGURE)
+		return
 	window.call("equip_from", int(data.slot), 0, false)
 
 

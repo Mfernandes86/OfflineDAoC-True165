@@ -7,7 +7,7 @@ extends ClassicWindow
 ##          name and condition on the line under the figure; the bag's 10 rows all in view. Drag an item from your
 ##          backpack onto a slot (or the figure) to put it on
 ##          (/companionui equip, or swap when the slot is taken), right-click or double-click one to take it back
-##          (unequip). REPAIR repairs it all at a smith (the server asks the price first).
+##          (unequip); drag one of its own items between its bag, its slots and the figure (move, issue #50). REPAIR repairs it all at a smith (the server asks the price first).
 ##   TRAIN  its spec lines, points, the next level's cost and what each level gives (op 8 / 9): TRAIN, and RESPEC (free)
 ##   STATS  level and XP bubbles, its stats, health / power / endurance, armour, resists, money, realm points (op 10)
 ##   REALM  its realm rank and abilities (op 11): BUY the next level
@@ -325,6 +325,34 @@ func unequip(slot: int) -> void:
 	net.command("unequip %d %d" % [row, slot])
 
 
+## Its own items move inside its gear and bag too (issue #50: "Companions can't equip items when dragged from their own
+## bag to the rag doll"): the server's "move <row> <from> <to>", to a slot, "wear" (the figure) or "bag" (the bag panel).
+const ONTO_FIGURE := -1
+const ONTO_BAG := -2
+
+
+## One of this companion's own items, dragged from a slot of this window (GearSlot._get_drag_data).
+static func is_own_item(data: Variant, for_row: int) -> bool:
+	return data is Dictionary and String(data.get("kind", "")) == "companion_item" and data.has("slot") \
+			and int(data.get("row", -1)) == for_row
+
+
+## The command for one of its items dropped onto a slot (or ONTO_FIGURE / ONTO_BAG); "" when the drop does nothing (the
+## same slot, a bag item on the bag, a worn item on the figure). The server decides the rest (what it can wear, swaps).
+static func own_move_command(for_row: int, from: int, onto: int) -> String:
+	var from_bag := from >= BAG_FIRST and from < BAG_FIRST + BAG_SLOTS
+	if from == onto or (onto == ONTO_BAG and from_bag) or (onto == ONTO_FIGURE and not from_bag):
+		return ""
+	var to := "wear" if onto == ONTO_FIGURE else ("bag" if onto == ONTO_BAG else str(onto))
+	return "move %d %d %s" % [for_row, from, to]
+
+
+func move_own(from: int, onto: int) -> void:
+	var c := own_move_command(row, from, onto)
+	if c != "":
+		net.command(c)
+
+
 ## The bag list as a drop target: an item from your backpack put into the bag (the server's equip puts what it can't
 ## wear into the bag).
 class BagDrop extends Control:
@@ -334,9 +362,14 @@ class BagDrop extends Control:
 		mouse_filter = Control.MOUSE_FILTER_PASS
 
 	func _can_drop_data(_p: Vector2, data: Variant) -> bool:
+		if SrvCompanionWindow.is_own_item(data, window.row):
+			return SrvCompanionWindow.own_move_command(window.row, int(data.slot), SrvCompanionWindow.ONTO_BAG) != ""
 		return InventorySheet.is_item(data) and int(data.slot) >= 40 and int(data.slot) <= 79
 
 	func _drop_data(_p: Vector2, data: Variant) -> void:
+		if SrvCompanionWindow.is_own_item(data, window.row):
+			window.move_own(int(data.slot), SrvCompanionWindow.ONTO_BAG)
+			return
 		window.equip_from(int(data.slot), -1, false)
 
 
@@ -407,6 +440,8 @@ class GearSlot extends Control:
 
 	func _can_drop_data(_p: Vector2, data: Variant) -> bool:
 		var ok := InventorySheet.is_item(data) and int(data.slot) >= 40 and int(data.slot) <= 79
+		if SrvCompanionWindow.is_own_item(data, window.row):
+			ok = SrvCompanionWindow.own_move_command(window.row, int(data.slot), slot) != ""
 		if _hi != ok:
 			_hi = ok
 			queue_redraw()
@@ -415,6 +450,9 @@ class GearSlot extends Control:
 	func _drop_data(_p: Vector2, data: Variant) -> void:
 		_hi = false
 		queue_redraw()
+		if SrvCompanionWindow.is_own_item(data, window.row):
+			window.move_own(int(data.slot), slot)
+			return
 		window.equip_from(int(data.slot), slot, not item.is_empty())
 
 	func _notification(what: int) -> void:
@@ -454,7 +492,8 @@ class GearSlot extends Control:
 		prev.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		prev.size = Vector2(32, 32) * get_global_transform().get_scale()
 		set_drag_preview(prev)
-		return {"kind": "companion_item", "slot": slot, "name": String(item.name), "take": window.unequip.bind(slot)}
+		return {"kind": "companion_item", "slot": slot, "row": window.row, "name": String(item.name),
+				"take": window.unequip.bind(slot)}
 
 	func _gui_input(event: InputEvent) -> void:
 		if item.is_empty() or not event is InputEventMouseButton or not event.pressed:
