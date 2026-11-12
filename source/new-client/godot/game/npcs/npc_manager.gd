@@ -749,12 +749,18 @@ var last_pick_dist := INF                    # how far along the click ray the l
 func pick(camera: Camera3D, screen_pos: Vector2) -> Npc:
 	last_pick_dist = INF
 	var from := camera.project_ray_origin(screen_pos)
-	var to := from + camera.project_ray_normal(screen_pos) * 120.0
+	var dir := camera.project_ray_normal(screen_pos)
+	var to := from + dir * 120.0
 	var q := PhysicsRayQueryParameters3D.create(from, to, 1 << 9)
 	q.collide_with_areas = false
 	# a corpse isn't clickable: the ray goes on through it, so a dead bot lying under it can still be targeted for
 	# a resurrection (owner 2026-10-11)
-	for _i in 4:
+	# GitHub #48 (2026-11-12): a living gamebot standing in front of (or in) a merchant, trainer, stable master, healer,
+	# vault keeper or quest NPC took the click. The ray now goes on through such a bot: a service NPC behind it on the
+	# ray, or right beside the ray just behind it, wins; with none there the bot is picked as before.
+	var first: Npc = null
+	var first_dist := INF
+	for _i in 6:
 		var hit := get_world_3d().direct_space_state.intersect_ray(q)
 		if hit.is_empty():
 			break
@@ -762,12 +768,81 @@ func pick(camera: Camera3D, screen_pos: Vector2) -> Npc:
 		if c and c.has_meta("npc"):
 			var n: Npc = c.get_meta("npc")
 			if is_instance_valid(n) and (n.state.alive or n.rez_target()):   # (a dead bot / companion: to resurrect)
-				last_pick_dist = from.distance_to(hit.position)
-				return n
+				var d := from.distance_to(hit.position)
+				if first == null:
+					if not _yields_to_service(n):
+						last_pick_dist = d
+						return n
+					first = n
+					first_dist = d
+				elif is_service_npc(n):
+					last_pick_dist = d
+					return n
 			q.exclude = q.exclude + [hit.rid]
 			continue
 		break
+	if first != null:
+		var beside := _service_beside_ray(from, dir, first_dist)
+		if beside != null:
+			last_pick_dist = from.distance_to(beside.global_position)
+			return beside
+		last_pick_dist = first_dist
+		return first
 	return _pick_name(camera, screen_pos)
+
+
+## GitHub #48: what a click prefers over a gamebot. The server sends no NPC class, so the client takes what it knows:
+## a role from its own data, a quest indicator, or (a friendly or peaceful NPC) a service title on the guild line -
+## the 1.65 world's "Stable Master", "Weapon Merchant", "Cleric Trainer", "Healer", "Vault Keeper", "Smith"...
+const _SERVICE_ROLES := {"merchant": true, "trainer": true, "stablemaster": true, "healer": true, "vaultkeeper": true,
+		"smith": true, "innkeeper": true, "emissary": true, "horn_handler": true}
+const _SERVICE_TITLES := ["merchant", "trainer", "stable master", "stablemaster", "healer", "vault keeper",
+		"vault banker", "banker", "smith", "enchanter", "hastener", "recharger", "master", "registrar", "emblemeer",
+		"emblemer", "innkeeper", "horn handler", "realm exchange"]
+
+
+func is_service_npc(n: Npc) -> bool:
+	if not is_instance_valid(n) or n.state == null or not n.state.alive or bool(n.spawn.get("player_like", false)):
+		return false
+	if _SERVICE_ROLES.has(String(n.spawn.get("role", ""))) or int(n.spawn.get("quest", 0)) != 0:
+		return true
+	if not (n.is_friendly() or int(n.spawn.get("flags", 0)) & Npc.FLAG_PEACE):
+		return false
+	var g := String(n.spawn.get("guild", "")).strip_edges().to_lower()
+	if g == "":
+		return false
+	for t in _SERVICE_TITLES:
+		if g.ends_with(t):
+			return true
+	return false
+
+
+## A living player-like figure (a gamebot, a companion, a guard) that is no service NPC itself: a service NPC behind
+## it takes the click. A dead one (to resurrect) and monsters keep the click.
+func _yields_to_service(n: Npc) -> bool:
+	if not n.state.alive or is_service_npc(n):
+		return false
+	return bool(n.spawn.get("player_like", false)) or n.info.has("race")
+
+
+## A service NPC whose body stands within 1.2 m of the click ray, from just before the bot that was hit to 4 m
+## behind it (the bot covers it, but the ray misses its own shape). Only on a click, over the views in range.
+func _service_beside_ray(from: Vector3, dir: Vector3, hit_dist: float) -> Npc:
+	var best: Npc = null
+	var best_off := 1.2
+	for i in active:
+		var n: Npc = active[i]
+		if not is_service_npc(n):
+			continue
+		var body := n.global_position + Vector3(0, 0.9, 0)          # (mid-body: its position is at its feet)
+		var along := (body - from).dot(dir)
+		if along < hit_dist - 1.0 or along > hit_dist + 4.0:
+			continue
+		var off := (from + dir * along).distance_to(body)
+		if off < best_off:
+			best_off = off
+			best = n
+	return best
 
 
 ## The overhead names are clickable too (owner 2026-10-10: "you could click on visible names to target on the old
@@ -775,6 +850,10 @@ func pick(camera: Camera3D, screen_pos: Vector2) -> Npc:
 func _pick_name(camera: Camera3D, screen_pos: Vector2) -> Npc:
 	var best: Npc = null
 	var best_d := INF
+	# GitHub #48: a service NPC's name under the click wins over a gamebot's name overlapping it (nearest first
+	# among the service names, then nearest among the rest, as before)
+	var best_service: Npc = null
+	var best_service_d := INF
 	for i in active:
 		var n: Npc = active[i]
 		if not is_instance_valid(n) or not bool(n.get_meta("plate_shown", false)):
@@ -795,10 +874,17 @@ func _pick_name(camera: Camera3D, screen_pos: Vector2) -> Npc:
 			top = minf(top, p.y - lb.offset.y - sz.y)
 		if screen_pos.x >= p.x - half - 3.0 and screen_pos.x <= p.x + half + 3.0 and screen_pos.y >= top - 3.0 				and screen_pos.y <= p.y + 3.0:
 			var d := camera.global_position.distance_to(anchor)
+			if is_service_npc(n) and d < best_service_d:
+				best_service_d = d
+				best_service = n
 			if d < best_d:
 				best_d = d
 				best = n
-				last_pick_dist = d
+	if best_service != null and best != null and best != best_service and _yields_to_service(best):
+		best = best_service
+		best_d = best_service_d
+	if best != null:
+		last_pick_dist = best_d
 	return best
 
 
