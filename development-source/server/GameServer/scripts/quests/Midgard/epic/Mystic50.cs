@@ -118,13 +118,18 @@ namespace DOL.GS.Quests.Midgard
 
 			GameNPC[] npcs = WorldMgr.GetNPCsByName("Danica", eRealm.Midgard);
 
-			if (npcs.Length > 0)
+			// Quest audit 2026-11-11 (P02-E4): the world Danica (the giver of the level 45/48 parts, DataQuests 21049-21052)
+			// stands at 804440,722267, 5146 units from the spot searched before, so the script made a twin beside her and
+			// only the twin offered the epic. The world Danica is searched first, the old spot after it.
+			foreach ((int x, int y) in new[] { (804440, 722267), (802818, 727413) })
+			{
 				foreach (GameNPC npc in npcs)
-					if (DOL.GS.Quests.QuestNpcPlacement.IsAt(npc, 100, 802818, 727413))
-					{
+					if (DOL.GS.Quests.QuestNpcPlacement.IsAt(npc, 100, x, y) &&
+					    (Danica == null || npc.GetDistanceTo(new Point3D(x, y, npc.Z)) < Danica.GetDistanceTo(new Point3D(x, y, Danica.Z))))
 						Danica = npc;
-						break;
-					}
+				if (Danica != null)
+					break;
+			}
 
 			if (Danica == null)
 			{
