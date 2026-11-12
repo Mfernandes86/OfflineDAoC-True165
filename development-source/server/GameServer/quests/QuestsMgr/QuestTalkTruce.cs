@@ -35,6 +35,8 @@ namespace DOL.GS.Quests
                 // aggressive NPC attacked the player whispering for a reward (quest audit 2026-11-11, P07).
                 if (ClassicQuests.IsTalkStep(dataQuest.ID, dataQuest.Step, npc.Name))
                     return true;
+                if (TalkedToBeforeThisHunt(dataQuest, npc))
+                    return true;
             }
 
             // A quest it gives. Level range only: the full qualification check reads the database.
@@ -48,6 +50,35 @@ namespace DOL.GS.Quests
                     return true;
             }
 
+            return false;
+        }
+
+        /// <summary>
+        /// The NPC the player last talked to (or handed something to) on this quest, while the player now hunts something
+        /// else: it waits instead of turning hostile the moment the talk step ends. Quest audit 2026-11-11 (P02): in Essence
+        /// of Hostility the Fallen One attacked as soon as the bracer was delivered; in the period he attacks only after the
+        /// hill hound is dead. The truce ends when a step targets the NPC itself (or the hunt is over).
+        /// </summary>
+        public static bool TalkedToBeforeThisHunt(DataQuest quest, GameNPC npc) =>
+            quest.Step > 1 && TalkedToBeforeThisHunt(step => quest.TryGetStep(step, out var type, out string target, out ushort region)
+                ? (type, target, region) : null, quest.Step, npc.Name, npc.CurrentRegionID);
+
+        public static bool TalkedToBeforeThisHunt(Func<int, (DataQuest.eStepType Type, string Target, ushort Region)?> stepAt, int current,
+            string npcName, ushort npcRegion)
+        {
+            if (stepAt(current) is not { } now || now.Type is not (DataQuest.eStepType.Kill or DataQuest.eStepType.KillFinish) ||
+                QuestNames.Same(now.Target, npcName))
+                return false;
+            for (int step = current - 1, looked = 0; step >= 1 && looked < 6; step--, looked++)
+            {
+                if (stepAt(step) is not { } before)
+                    return false;
+                if (TalksTo(before.Type))
+                    return QuestNames.Same(before.Target, npcName) && (before.Region == 0 || before.Region == npcRegion);
+                if (before.Type is not (DataQuest.eStepType.Kill or DataQuest.eStepType.KillFinish or DataQuest.eStepType.Search or
+                    DataQuest.eStepType.SearchFinish) || QuestNames.Same(before.Target, npcName))
+                    return false;
+            }
             return false;
         }
 

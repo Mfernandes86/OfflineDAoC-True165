@@ -62,6 +62,23 @@ public class UT_QuestFix07
         Assert.That(ClassicQuests.TalkTargetsOf(Parse("""{ "Quests": { "1": { "Steps": [ null, { "Custom": { "Kind": "travel", "Target": "x" } } ] } } }""")), Is.Empty);
     }
 
+    [TestCase(3, false)]   // delivering to him is the talk step itself (the per-step truce covers it)
+    [TestCase(4, true)]    // hunting the hill hound: he waits
+    [TestCase(5, false)]   // the step that targets him: the fight is on
+    [TestCase(2, false)]   // another NPC's delivery
+    public void EssenceOfHostilityTheFallenOneWaitsForTheHillHound(int step, bool truce)
+    {
+        // 20078: kill Rolling Stone, deliver to Guardian Andraste, deliver to Fallen One, kill hill hound, kill Fallen One
+        var steps = new (DataQuest.eStepType, string, ushort)[]
+        {
+            (DataQuest.eStepType.Kill, "Rolling Stone", 200), (DataQuest.eStepType.Deliver, "Guardian Andraste", 200),
+            (DataQuest.eStepType.Deliver, "Fallen One", 200), (DataQuest.eStepType.Kill, "hill hound", 200),
+            (DataQuest.eStepType.KillFinish, "Fallen One", 200),
+        };
+        (DataQuest.eStepType Type, string Target, ushort Region)? At(int s) => s >= 1 && s <= steps.Length ? steps[s - 1] : null;
+        Assert.That(QuestTalkTruce.TalkedToBeforeThisHunt(At, step, "Fallen One", 200), Is.EqualTo(truce));
+    }
+
     [TestCase(0, false)]
     [TestCase(3, true)]
     [TestCase(35, true)]

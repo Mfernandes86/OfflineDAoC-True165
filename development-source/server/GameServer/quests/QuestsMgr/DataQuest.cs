@@ -1193,6 +1193,22 @@ namespace DOL.GS.Quests
 			}
 		}
 
+		/// <summary>The type, target name and target region of a step (1-based) without throwing; false past the ends.</summary>
+		public bool TryGetStep(int step, out eStepType type, out string target, out ushort region)
+		{
+			type = eStepType.Unknown;
+			target = string.Empty;
+			region = 0;
+			if (step < 1 || step > m_stepTypes.Count)
+				return false;
+			type = m_stepTypes[step - 1];
+			if (step <= m_targetNames.Count)
+				target = m_targetNames[step - 1];
+			if (step <= m_targetRegions.Count)
+				region = m_targetRegions[step - 1];
+			return true;
+		}
+
 		/// <summary>
 		/// Current step type
 		/// </summary>
