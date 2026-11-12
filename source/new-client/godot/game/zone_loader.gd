@@ -13,6 +13,7 @@ const VIEW_RANGE_MAX_M := 900.0        # ...and at most this far (trees, buildin
 static var view_mult := 1.0
 const TERRAIN_SHADER := preload("res://game/terrain.gdshader")
 const WATER_SHADER := preload("res://game/water.gdshader")
+const ZONE_BOUNDS := preload("res://game/world/zone_bounds.gd")   # the zone's boundary walls (bound.json)
 
 var info: Dictionary
 var dir: String
@@ -63,6 +64,7 @@ func load_zone(content_dir: String, terrain_set_name := "blend", texture_set_nam
 		_build_terrain()
 		_build_water()
 	_build_fixtures()
+	ZONE_BOUNDS.build(self, dir, LAYER_BOUND)              # the 1.64 bound.csv walls (issue #50: out of Muspelheim)
 	_build_lights()
 	print("zone %s built in %d ms" % [info.name, Time.get_ticks_msec() - t0])
 
@@ -142,6 +144,7 @@ func water_level_at(x: float, z: float) -> float:
 const LAYER_WALL := 1
 const LAYER_FLOOR := 2
 const LAYER_SCENERY := 4
+const LAYER_BOUND := 8                                     # the zone's boundary walls (zone_bounds.gd): the player's capsule only
 
 
 ## Whether the client's ground pick sees a placed fixture (see the layers above).
