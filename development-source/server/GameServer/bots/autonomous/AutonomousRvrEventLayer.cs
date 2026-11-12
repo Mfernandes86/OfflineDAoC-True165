@@ -139,6 +139,53 @@ public static partial class AutonomousRvrEventLayer
     private static readonly Dictionary<string, LiveObjective> CarrierTargets = new(StringComparer.Ordinal);
     private static readonly Dictionary<string, long> Cooldowns = new(StringComparer.Ordinal);
     private static readonly Dictionary<string, string> ReleasedForces = new(StringComparer.Ordinal);
+
+    // ---- holding parties (keeps audit 2026-11-11, T4): a captured keep has its new lord after a second but no guards for
+    // 13-17 minutes, and every force used to be released at once, so it stood empty for the first counterattack. Veteran
+    // raids left a few to hold it. The capturing army's warband with the most bots at the keep stays as its holding party
+    // (DefendEvent on the keep: the ordinary defender posts) until every guard of the keep is back, the keep is lost again,
+    // or HoldMaximumMilliseconds pass; then it is released like any other force.
+    private sealed class KeepHold
+    {
+        public required LiveObjective Target;
+        public required string Force;
+        public required eRealm Realm;
+        public long StartTick, NextCheckTick;
+    }
+    private static readonly Dictionary<string, KeepHold> Holds = new(StringComparer.Ordinal);
+    /// <summary>Longest hold: the guards' longest respawn (17 minutes) and a little more.</summary>
+    public const long HoldMaximumMilliseconds = 20 * 60_000;
+    /// <summary>Shortest hold, so a keep with few guard rows is not left at once.</summary>
+    public const long HoldMinimumMilliseconds = 2 * 60_000;
+    public const long HoldCheckMilliseconds = 30_000;
+
+    /// <summary>
+    /// Pure rule: which attacking warband stays to hold a captured keep: a whole party (not a lone recruit, which would go
+    /// back to its own staging), the one with the most bots at the keep, then the largest; null when there is none.
+    /// </summary>
+    public static string ChooseHoldingForce(IEnumerable<(string Force, int Present, int Members)> forces)
+    {
+        string best = null;
+        int bestPresent = -1, bestMembers = -1;
+        foreach (var (force, present, members) in forces ?? [])
+        {
+            if (string.IsNullOrEmpty(force) || force.StartsWith("rvr-", StringComparison.Ordinal) || members < 2) continue;
+            if (present > bestPresent || present == bestPresent && (members > bestMembers ||
+                    members == bestMembers && string.CompareOrdinal(force, best) < 0))
+            {
+                best = force;
+                bestPresent = present;
+                bestMembers = members;
+            }
+        }
+        return best;
+    }
+
+    /// <summary>Pure rule: whether a holding party may leave: the keep is lost, the time is up, or (after the shortest
+    /// hold) every guard of the keep stands again.</summary>
+    public static bool HoldEnds(bool keepStillHeld, long heldMilliseconds, bool allGuardsBack) =>
+        !keepStillHeld || heldMilliseconds >= HoldMaximumMilliseconds ||
+        heldMilliseconds >= HoldMinimumMilliseconds && allGuardsBack;
     private static long _nextStragglerSweep;
     private static readonly HashSet<string> SelectedKeeps = new(StringComparer.Ordinal);
     private static readonly HashSet<string> SelectedRelics = new(StringComparer.Ordinal);
@@ -383,6 +430,8 @@ public static partial class AutonomousRvrEventLayer
                     result[force] = e.TargetId;
             foreach (var e in CarrierEvents)
                 foreach (string force in e.Value.Participants.Values.SelectMany(p => p.Keys)) result[force] = e.Key;
+            foreach (var hold in Holds)
+                result.TryAdd(hold.Value.Force, hold.Key);
             return result;
         }
     }
@@ -835,7 +884,7 @@ public static partial class AutonomousRvrEventLayer
                     ? "This force remains committed to the relic escort through defeat and regrouping."
                     : "This force remains committed to intercepting the relic through defeat and regrouping.");
         }
-        return null;
+        return HoldPlan(force.GroupId, force.Realm);
     }
 
     public sealed record BattleNotice(string TargetId, string Kind, eRealm Attacker, eRealm Defender,
@@ -1254,7 +1303,8 @@ public static partial class AutonomousRvrEventLayer
         lock (Sync)
             return Events.Values.Any(entry => entry.ExpiresTick > nowTick &&
                 (entry.Attackers.ContainsKey(forceId) || entry.Defenders.ContainsKey(forceId) || entry.ThirdRealm.ContainsKey(forceId))) ||
-                CarrierEvents.Values.Any(entry => entry.ExpiresTick > nowTick && entry.Participants.Values.Any(realm => realm.ContainsKey(forceId)));
+                CarrierEvents.Values.Any(entry => entry.ExpiresTick > nowTick && entry.Participants.Values.Any(realm => realm.ContainsKey(forceId))) ||
+                Holds.Values.Any(hold => hold.Force == forceId);
     }
 
     public static bool IsBattleForce(string forceId, long nowTick)
@@ -1270,7 +1320,7 @@ public static partial class AutonomousRvrEventLayer
         lock (Sync)
         {
             var active = Events.Values.FirstOrDefault(entry => entry.ExpiresTick > nowTick && Participants(entry, realm).ContainsKey(forceId));
-            return active == null ? null : ToPlan(realm == active.DefenderRealm ? Intent.DefendEvent :
+            return active == null ? HoldPlan(forceId, realm) : ToPlan(realm == active.DefenderRealm ? Intent.DefendEvent :
                 active.RelicKeep ? Intent.AssaultRelicKeep : Intent.AssaultKeep, active.Target, true,
                 active.BattleStarted ? "Return to the ongoing siege" : "Assemble at the physical siege rally");
         }
@@ -1382,7 +1432,7 @@ public static partial class AutonomousRvrEventLayer
         // release there is nothing Expire could end or release, so answer
         // without the layer-wide lock. (Unsynchronized Count reads: a stale
         // zero only defers a brand-new release to the next check.)
-        if (Events.Count == 0 && CarrierEvents.Count == 0 && ReleasedForces.Count == 0)
+        if (Events.Count == 0 && CarrierEvents.Count == 0 && ReleasedForces.Count == 0 && Holds.Count == 0)
         {
             reason = null;
             return false;
@@ -1431,6 +1481,8 @@ public static partial class AutonomousRvrEventLayer
             }
             foreach (var active in CarrierEvents.Values)
                 foreach (var realm in active.Participants.Values) realm.Remove(forceId);
+            foreach (string held in Holds.Where(pair => pair.Value.Force == forceId).Select(pair => pair.Key).ToArray())
+                Holds.Remove(held);
         }
     }
 
@@ -1561,6 +1613,7 @@ public static partial class AutonomousRvrEventLayer
         }
         ContinueRelicCampaigns(nowTick);
         RefreshCarrierEvents(nowTick);
+        ExpireHolds(nowTick);
         foreach (var active in Events.Values)
         {
             if (!RealmEventBanter.ReminderDue(active.BattleStarted, active.PreparationNoticeSent, active.ExpiresTick - nowTick)) continue;
@@ -1680,8 +1733,9 @@ public static partial class AutonomousRvrEventLayer
         RealmEventRecords.Finish(active.TargetId, reason.StartsWith("Rally failed") ? "Failed rally" : reason.StartsWith("Keep captured") ? "Captured" :
             reason.StartsWith("Siege defended") ? reason.Contains("expired") ? "Defended (timeout)" : "Defended" : SiegeEndOutcome(reason), reason,
             active.Attackers.Values.Sum() + active.Defenders.Values.Sum() + active.ThirdRealm.Values.Sum());
+        string holding = BeginHold(active, nowTick, reason, winner);
         foreach (string force in active.Attackers.Keys.Concat(active.Defenders.Keys).Concat(active.ThirdRealm.Keys))
-            ReleasedForces[force] = reason;
+            if (force != holding) ReleasedForces[force] = reason;
         Events.Remove(active.TargetId);
         Cooldowns[active.TargetId] = nowTick + TargetCooldownMilliseconds;
         Campaigns.Remove(active.TargetId);   // the relic siege itself has ended
@@ -1692,6 +1746,68 @@ public static partial class AutonomousRvrEventLayer
         }
         var log = DOL.Logging.LoggerManager.Create(typeof(AutonomousRvrEventLayer));
         if (log.IsInfoEnabled) log.Info($"RVR_EVENT_ENDED target={active.TargetId} reason=\"{reason}\"");
+    }
+
+    /// <summary>A bot army that captured an ordinary keep leaves its holding party there (T4); null when none stays.</summary>
+    private static string BeginHold(ActiveEvent active, long nowTick, string reason, eRealm winner)
+    {
+        if (active.RelicKeep || active.DefenseReaction || winner == eRealm.None || winner != active.AttackerRealm ||
+            reason?.StartsWith("Keep captured", StringComparison.Ordinal) != true)
+            return null;
+        var present = active.Present.Values
+            .Where(entry => entry.Realm == active.AttackerRealm && nowTick - entry.Tick <= AttendanceFreshnessMilliseconds &&
+                            entry.Bot?.IsAlive != false)
+            .GroupBy(entry => entry.Force).ToDictionary(group => group.Key, group => group.Count(), StringComparer.Ordinal);
+        string force = ChooseHoldingForce(active.Attackers.Select(pair => (pair.Key, present.GetValueOrDefault(pair.Key), pair.Value)));
+        if (force == null) return null;
+        Holds[active.TargetId] = new KeepHold
+        {
+            Target = active.Target with { OwningRealm = winner }, Force = force, Realm = winner,
+            StartTick = nowTick, NextCheckTick = nowTick + HoldCheckMilliseconds,
+        };
+        RealmEventNotices.Queue(active.TargetId, winner, $"{Place(active.Target.Name)} is ours! A warband holds it until its guards return.");
+        var log = DOL.Logging.LoggerManager.Create(typeof(AutonomousRvrEventLayer));
+        if (log.IsInfoEnabled) log.Info($"RVR_KEEP_HOLD_STARTED target={active.TargetId} force={force} realm={winner} " +
+            $"present={present.GetValueOrDefault(force)} maxMinutes={HoldMaximumMilliseconds / 60_000}");
+        return force;
+    }
+
+    /// <summary>Holding parties whose keep is lost, whose guards are back or whose time is up are released (every 30 s).</summary>
+    private static void ExpireHolds(long nowTick)
+    {
+        if (Holds.Count == 0) return;
+        foreach ((string targetId, KeepHold hold) in Holds.ToArray())
+        {
+            if (nowTick < hold.NextCheckTick && nowTick - hold.StartTick < HoldMaximumMilliseconds) continue;
+            hold.NextCheckTick = nowTick + HoldCheckMilliseconds;
+            bool held = true, guardsBack = false;
+            try
+            {
+                if (int.TryParse(targetId.AsSpan("rvr-keep-".Length), out int keepId) &&
+                    GameServer.KeepManager?.GetKeepByID(keepId) is { } keep)
+                {
+                    held = keep.Realm == hold.Realm;
+                    guardsBack = keep.Guards.Values.All(guard => guard.IsAlive);
+                }
+            }
+            catch (Exception) { }
+            if (!HoldEnds(held, nowTick - hold.StartTick, guardsBack)) continue;
+            string why = !held ? "the keep was lost" : nowTick - hold.StartTick < HoldMaximumMilliseconds
+                ? "the keep's guards are back" : "the holding time is up";
+            Holds.Remove(targetId);
+            ReleasedForces[hold.Force] = $"Holding party relieved: {why}";
+            var log = DOL.Logging.LoggerManager.Create(typeof(AutonomousRvrEventLayer));
+            if (log.IsInfoEnabled) log.Info($"RVR_KEEP_HOLD_ENDED target={targetId} force={hold.Force} " +
+                $"minutes={(nowTick - hold.StartTick) / 60_000} reason=\"{why}\"");
+        }
+    }
+
+    private static Plan HoldPlan(string forceId, eRealm realm)
+    {
+        foreach (KeepHold hold in Holds.Values)
+            if (hold.Force == forceId && hold.Realm == realm)
+                return ToPlan(Intent.DefendEvent, hold.Target, true, "Holding the captured keep until its guards return.");
+        return null;
     }
 
     /// <summary>
@@ -1855,7 +1971,8 @@ public static partial class AutonomousRvrEventLayer
                        (active.Attackers.ContainsKey(forceId) || active.Defenders.ContainsKey(forceId) ||
                         active.ThirdRealm.ContainsKey(forceId))) ||
                    CarrierEvents.Values.Any(active => active.ExpiresTick > nowTick &&
-                       active.Participants.Values.Any(realm => realm.ContainsKey(forceId)));
+                       active.Participants.Values.Any(realm => realm.ContainsKey(forceId))) ||
+                   Holds.Values.Any(hold => hold.Force == forceId);
     }
 
     public static bool IsPlayerDefenseResponse(string targetId, long nowTick)
@@ -1872,7 +1989,8 @@ public static partial class AutonomousRvrEventLayer
             return false;
         lock (Sync)
             return (Events.TryGetValue(targetId, out ActiveEvent active) && active.ExpiresTick > nowTick) ||
-                   (CarrierEvents.TryGetValue(targetId, out var carrier) && carrier.ExpiresTick > nowTick);
+                   (CarrierEvents.TryGetValue(targetId, out var carrier) && carrier.ExpiresTick > nowTick) ||
+                   Holds.ContainsKey(targetId);
     }
 
     public static void EndTarget(string targetId, long nowTick, eRealm winner = eRealm.None) =>

@@ -107,4 +107,54 @@ public class UT_KeepRaidFixes
         Assert.That(AutonomousWorldBotController.MayFetchFrontierMedallion(92_500, true), Is.True,
             "a siege recruit at Vindsaul rides or walks to Svasud's teleporter");
     });
+    [Test]
+    public void AWarbandHoldsTheCapturedKeepUntilItsGuardsAreBack() => Assert.Multiple(() =>
+    {
+        Assert.That(AutonomousRvrEventLayer.ChooseHoldingForce([("party-a", 3, 8), ("party-b", 6, 6), ("rvr-77", 9, 1)]),
+            Is.EqualTo("party-b"), "the warband with most bots at the keep; a lone recruit never holds");
+        Assert.That(AutonomousRvrEventLayer.ChooseHoldingForce([("rvr-1", 1, 1)]), Is.Null);
+        Assert.That(AutonomousRvrEventLayer.ChooseHoldingForce([("party-a", 4, 6), ("party-b", 4, 8)]), Is.EqualTo("party-b"));
+        Assert.That(AutonomousRvrEventLayer.HoldEnds(true, 60_000, true), Is.False, "not in the first two minutes");
+        Assert.That(AutonomousRvrEventLayer.HoldEnds(true, 10 * 60_000, false), Is.False, "guards still missing");
+        Assert.That(AutonomousRvrEventLayer.HoldEnds(true, 10 * 60_000, true), Is.True, "the guards are back");
+        Assert.That(AutonomousRvrEventLayer.HoldEnds(true, AutonomousRvrEventLayer.HoldMaximumMilliseconds, false), Is.True, "time is up");
+        Assert.That(AutonomousRvrEventLayer.HoldEnds(false, 0, false), Is.True, "the keep was lost");
+    });
+}
+
+/// <summary>Keeps audit T4: a captured keep keeps a holding party until its guards are back.</summary>
+[TestFixture, NonParallelizable]
+public class UT_KeepHoldingParty
+{
+    [SetUp] public void SetUp() => RvrEventTestState.Clear();
+    [TearDown] public void TearDown() => RvrEventTestState.Clear();
+
+    [Test]
+    public void TheWarbandAtTheKeepStaysAndTheRestAreReleased()
+    {
+        string id = System.Guid.NewGuid().ToString();
+        long now = GameLoop.GameLoopTime;
+        var target = new AutonomousRvrEventLayer.LiveObjective(id, "Held keep", AutonomousRvrEventLayer.Intent.AssaultKeep,
+            eRealm.Hibernia, 200, 300000, 400000, 100, false, 0, 0, 10, 2);
+        var first = new AutonomousRvrEventLayer.Force(id + ":a", eRealm.Albion, 8, 50, 2);
+        var second = new AutonomousRvrEventLayer.Force(id + ":b", eRealm.Albion, 8, 50, 2);
+        Assert.That(AutonomousRvrEventLayer.ChooseOrJoin(first, [target], now, 0)?.TargetId, Is.EqualTo(id));
+        Assert.That(AutonomousRvrEventLayer.ChooseOrJoin(second, [target], now, 0)?.TargetId, Is.EqualTo(id));
+        for (int i = 0; i < 5; i++)
+            AutonomousRvrEventLayer.ReportAttendance(id, second.GroupId, eRealm.Albion, 2000 + i, true, now + 1);
+        AutonomousRvrEventLayer.EndTarget(id, now + 2, eRealm.Albion);
+        Assert.Multiple(() =>
+        {
+            Assert.That(AutonomousRvrEventLayer.TryConsumeRelease(first.GroupId, now + 3, out _), Is.True, "the other warband goes");
+            Assert.That(AutonomousRvrEventLayer.TryConsumeRelease(second.GroupId, now + 3, out _), Is.False, "the warband at the keep holds it");
+            Assert.That(AutonomousRvrEventLayer.KeepPlan(second.GroupId, eRealm.Albion, now + 3)?.Intent,
+                Is.EqualTo(AutonomousRvrEventLayer.Intent.DefendEvent));
+            Assert.That(AutonomousRvrEventLayer.IsTargetActive(id, now + 3), Is.True);
+            Assert.That(AutonomousRvrEventLayer.IsForceCommitted(second.GroupId, now + 3), Is.True);
+        });
+        long over = now + 3 + AutonomousRvrEventLayer.HoldMaximumMilliseconds;
+        Assert.That(AutonomousRvrEventLayer.TryConsumeRelease(second.GroupId, over, out string reason), Is.True);
+        Assert.That(reason, Does.Contain("Holding party relieved"));
+        Assert.That(AutonomousRvrEventLayer.IsTargetActive(id, over + 1), Is.False);
+    }
 }
