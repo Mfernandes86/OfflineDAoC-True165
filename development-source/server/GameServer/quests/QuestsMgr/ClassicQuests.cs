@@ -1126,11 +1126,16 @@ namespace DOL.GS.Quests
                     foreach (int gone in (Shown.TryGetValue(player, out var onMap) ? onMap.Keys : Enumerable.Empty<int>())
                                  .Where(id => active.All(q => q.ID != id)).ToArray())
                         ShowMarker(player, gone, 0, null);
+                    foreach (int gone in QuestPatrolRoutes.ShownQuests(player).Where(id => active.All(q => q.ID != id)).ToArray())
+                        QuestPatrolRoutes.Hide(player, gone);
                     foreach (DataQuest quest in active)
                     {
                         QuestInfo info = _config.Quests[quest.ID];
                         StepInfo step = quest.Step > 0 && quest.Step < info.Steps.Count ? info.Steps[quest.Step] : null;
-                        ShowMarker(player, quest.ID, quest.Step, StepMarker(player, step));
+                        Point stepMarker = StepMarker(player, step);
+                        ShowMarker(player, quest.ID, quest.Step, stepMarker);
+                        // a target that walks a patrol shows its route on the map as a red line (owner 2026-11-11)
+                        QuestPatrolRoutes.Show(player, quest, stepMarker);
                         if (step?.Spawn != null) TrySpawnEvent(player, quest.ID, quest.Step, step.Spawn);
                         if (step?.Grant != null) GrantItems(player, quest, step);
                         if (!string.IsNullOrEmpty(step?.NeedsItem)) ReissueWithoutIssuer(player, quest, step);
@@ -1146,7 +1151,10 @@ namespace DOL.GS.Quests
                     EventCooldown[entry.Key] = GameLoop.GameLoopTime + EventRespawnMilliseconds;
                 }
                 foreach (GamePlayer gone in Shown.Keys.Where(p => p.ObjectState != GameObject.eObjectState.Active).ToArray())
+                {
                     Shown.TryRemove(gone, out _);
+                    QuestPatrolRoutes.Forget(gone);
+                }
             }
             catch (Exception ex)
             {
@@ -1209,6 +1217,8 @@ namespace DOL.GS.Quests
 
         private static void ClearMarker(GamePlayer player)
         {
+            foreach (int quest in QuestPatrolRoutes.ShownQuests(player).ToArray())
+                QuestPatrolRoutes.Hide(player, quest);
             if (!Shown.TryRemove(player, out var onMap)) return;
             foreach (int quest in onMap.Keys) player.Out.SendMinotaurRelicMapRemove(QuestMarkerId(quest));
         }
