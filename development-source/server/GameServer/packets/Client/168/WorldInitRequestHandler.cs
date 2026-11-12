@@ -165,7 +165,16 @@ namespace DOL.GS.PacketHandler.Client.v168
             //used only on PvP, sets THIS players ID for nearest friend/enemy buttons and "friendly" name colors
             //if (GameServer.ServerRules.GetColorHandling(player.Client) == 1) // PvP
             player.Out.SendObjectGuildID(player, player.Guild);
-            player.Out.SendDebugMode(player.TempProperties.GetProperty<bool>(GamePlayer.DEBUG_MODE_PROPERTY));
+            // GitHub #53: a GM in /fly who changed region arrived on foot - the flight state is only sent when /fly is
+            // typed, and the new client starts every region with it off. The next /fly then switched flight OFF and
+            // carried the GM back to where the flight began, in the region just left. Flight in progress is sent again.
+            if (DOL.GS.Commands.FlyCommandHandler.ResendsFlight(player.TempProperties.GetProperty<bool>(DOL.GS.Commands.FlyCommandHandler.ActiveKey)))
+            {
+                player.Out.SendObserverFlightMode(true, player.TempProperties.GetProperty<bool>(GamePlayer.DEBUG_MODE_PROPERTY));
+                player.Out.SendModelChange(player, DOL.GS.Commands.FlyCommandHandler.InvisibleModel);
+            }
+            else
+                player.Out.SendDebugMode(player.TempProperties.GetProperty<bool>(GamePlayer.DEBUG_MODE_PROPERTY));
             player.Out.SendUpdateMaxSpeed(); // Speed in debug mode ?
                                                 //WARNING: This would change problems if a scripter changed the values for plvl
                                                 //GSMessages.SendDebugMode(client,client.Account.PrivLevel>1);

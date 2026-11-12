@@ -11,6 +11,12 @@ namespace DOL.GS.Commands
         private const string StateKey = "Offline.ObserverFlight.State";
         private sealed record FlightState(ushort Region, int X, int Y, int Z, ushort Heading, bool Stealthed, bool Debug, bool Flight);
 
+        /// <summary>Whether a world init (a region change) sends the flight state again: only while /fly is on.</summary>
+        public static bool ResendsFlight(bool flightActive) => flightActive;
+
+        /// <summary>The flight byte of the debug-mode packet: 1 flying, 2 not (0 is the plain packet: no change).</summary>
+        public static byte FlightByte(bool gm, bool flying) => (byte)(gm && flying ? 1 : 2);
+
         public void OnCommand(GameClient client, string[] args)
         {
             GamePlayer player = client?.Player;

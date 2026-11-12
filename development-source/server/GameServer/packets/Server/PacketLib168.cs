@@ -1023,7 +1023,7 @@ namespace DOL.GS.PacketHandler
                 pak.WriteByte((byte)(gm && debugEnabled ? 1 : 0));
                 // Offline client extension: activate/deactivate native flying state.
                 // Ordinary DebugMode packets keep the reserved byte at zero.
-                pak.WriteByte((byte)(gm && flying ? 1 : 2));
+                pak.WriteByte(Commands.FlyCommandHandler.FlightByte(gm, flying));
                 SendTCP(pak);
             }
 		}
