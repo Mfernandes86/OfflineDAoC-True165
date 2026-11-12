@@ -22,7 +22,7 @@ namespace DOL.GS.Effects
 
         public override void OnStartEffect()
         {
-            _healthPool = (int) (1000 * (1 + OwnerPlayer.GetModified(eProperty.BuffEffectiveness) * 0.01));
+            _healthPool = (int) (1000 * (1 + Owner.GetModified(eProperty.BuffEffectiveness) * 0.01));
             base.OnStartEffect();
         }
 
@@ -31,13 +31,13 @@ namespace DOL.GS.Effects
             if (_healthPool <= 0)
                 End();
 
-            if (OwnerPlayer.Group != null)
+            if (Owner.Group != null)
             {
                 Dictionary<GameLiving, int> livingToHeal = new();
 
-                foreach (GameLiving living in OwnerPlayer.Group.GetMembersInTheGroup())
+                foreach (GameLiving living in Owner.Group.GetMembersInTheGroup())
                 {
-                    if (living.IsWithinRadius(OwnerPlayer, 1500) && living.IsAlive && living != OwnerPlayer)
+                    if (living.IsWithinRadius(Owner, 1500) && living.IsAlive && living != Owner)
                         livingToHeal.Add(living, living.Health);
                 }
 
@@ -51,7 +51,7 @@ namespace DOL.GS.Effects
                     GameLiving currentLiving = healed.Key;
                     int difference = currentLiving.MaxHealth - currentLiving.Health;
 
-                    difference = currentLiving.ChangeHealth(OwnerPlayer, eHealthChangeType.Spell, difference);
+                    difference = currentLiving.ChangeHealth(Owner, eHealthChangeType.Spell, difference);
 
                     if (difference > 0)
                     {

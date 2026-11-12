@@ -35,7 +35,7 @@ public static class AutonomousBotRealmAbilities
 
     // M8 (veteran review 2026-11-11): the class actives whose handlers also work for a gamebot.
     public const string SoldiersBarricade = "AtlasOF_SoldiersBarricade", FaithHealing = "AtlasOF_FaithHealing",
-        RagingPower = "AtlasOF_RagingPower", VolcanicPillar = "AtlasOF_VolcanicPillar";
+        RagingPower = "AtlasOF_RagingPower", VolcanicPillar = "AtlasOF_VolcanicPillar", BatteryOfLife = "AtlasOF_BatteryOfLife";
 
     /// <summary>Prerequisites, as the Atlas handlers' CheckRequirement (written for GamePlayer only).</summary>
     public static (string Key, int Level)? Requirement(string key, int classId) => key switch
@@ -59,7 +59,7 @@ public static class AutonomousBotRealmAbilities
 
     /// <summary>True 1.65 Mode adds these (escape and rescue first, then group, then self).</summary>
     public static readonly string[] ClassicActives =
-        { Vanish, PerfectRecovery, BunkerOfFaith, SoldiersBarricade, FaithHealing, SpeedOfSound, AmelioratingMelodies,
+        { Vanish, PerfectRecovery, BunkerOfFaith, BatteryOfLife, SoldiersBarricade, FaithHealing, SpeedOfSound, AmelioratingMelodies,
           VolcanicPillar, MasteryOfConcentration, RagingPower, MysticCrystalLore };
 
     public static string[] UsableActivesFor(bool classic) => classic ? ClassicActives.Concat(UsableActives).ToArray() : UsableActives;
@@ -100,6 +100,7 @@ public static class AutonomousBotRealmAbilities
     // Mastery of Concentration once its Acuity is met. Steps a class lacks are skipped.
     private static readonly Step[] ClassActiveSteps = Build((Vanish, 1), (SpeedOfSound, 1), (BunkerOfFaith, 1),
         (PerfectRecovery, 1), (AmelioratingMelodies, 1), (SoldiersBarricade, 1), (FaithHealing, 1), (VolcanicPillar, 1),
+        (BatteryOfLife, 1),
         (MysticCrystalLore, 1), (MysticCrystalLore, 2), (RagingPower, 1));
 
     private static Step[] Insert(Step[] build, Step after, Step[] steps)
@@ -530,7 +531,7 @@ public static class AutonomousBotRealmAbilities
             AmelioratingMelodies => s.GroupFighting && s.GroupHurt >= 2,
             // M8 Albion actives: Soldier's Barricade on group burst (the Bunker rule); Faith Healing on group burst or the
             // Paladin itself near death; Raging Power is the in-fight twin of MCL; Volcanic Pillar on three or more enemies.
-            SoldiersBarricade => burst,
+            SoldiersBarricade or BatteryOfLife => burst,
             FaithHealing => burst || s.InCombat && s.Health < 25,
             RagingPower => s.InCombat && !s.Sitting && s.Mana < 25,
             VolcanicPillar => s.InCombat && !s.Casting && s.EnemiesAtTarget >= 3,

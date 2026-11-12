@@ -16,14 +16,14 @@ namespace DOL.UnitTests
             {
                 Purge or PurgeReduced or SecondWind or IgnorePain or IgnorePainTank or MasteryOfConcentration or BunkerOfFaith or
                     PerfectRecovery or SpeedOfSound or Vanish or AmelioratingMelodies or SoldiersBarricade or FaithHealing or
-                    RagingPower or VolcanicPillar => 1,
+                    RagingPower or VolcanicPillar or BatteryOfLife => 1,
                 FirstAid or MysticCrystalLore => 3,
                 _ => 5,
             });
 
         private static int Cost(string key, int level) => key switch
         {
-            Purge or SecondWind or BunkerOfFaith or SpeedOfSound or Vanish or SoldiersBarricade or RagingPower => 10,
+            Purge or SecondWind or BunkerOfFaith or SpeedOfSound or Vanish or SoldiersBarricade or RagingPower or BatteryOfLife => 10,
             FaithHealing or VolcanicPillar => 14,
             PurgeReduced => 4,
             MasteryOfConcentration or PerfectRecovery or IgnorePain => 14,
@@ -216,7 +216,10 @@ namespace DOL.UnitTests
             }
             Assert.That(previous.ContainsKey(VolcanicPillar), Is.True);
             Assert.That(previous.ContainsKey(RagingPower), Is.True);
-            Assert.That(UsableActivesFor(true), Is.SupersetOf(new[] { SoldiersBarricade, FaithHealing, RagingPower, VolcanicPillar }));
+            Assert.That(UsableActivesFor(true), Is.SupersetOf(new[] { SoldiersBarricade, FaithHealing, RagingPower, VolcanicPillar, BatteryOfLife }));
+            var cleric = Catalog("AugAcuity", "AugCon", "AugDex", "MasteryOfHealing", "WildHealing", "Serenity", "Toughness",
+                Purge, MasteryOfConcentration, BunkerOfFaith, BatteryOfLife, MysticCrystalLore);
+            Assert.That(Plan(cleric, Archetype.Healer, (int)eCharacterClass.Cleric, 100, Cost, true).ContainsKey(BatteryOfLife), Is.True);
             Assert.That(UsableActivesFor(false), Does.Not.Contain(SoldiersBarricade), "normal mode unchanged");
         }
 
@@ -225,6 +228,8 @@ namespace DOL.UnitTests
         {
             Assert.That(Wants(SoldiersBarricade, S(hurt: 4)), Is.True, "group burst");
             Assert.That(Wants(SoldiersBarricade, S(hurt: 1)), Is.False);
+            Assert.That(Wants(BatteryOfLife, S(hurt: 4)), Is.True, "group burst");
+            Assert.That(Wants(BatteryOfLife, S(hurt: 1)), Is.False);
             Assert.That(Wants(FaithHealing, S(hurt: 4)), Is.True);
             Assert.That(Wants(FaithHealing, S(near: 1, hurt: 1, health: 20)), Is.True, "the Paladin itself near death");
             Assert.That(Wants(FaithHealing, S(hurt: 2)), Is.False, "a 30-minute heal waits for a real emergency");

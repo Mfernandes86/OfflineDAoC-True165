@@ -20,12 +20,14 @@ namespace DOL.GS.RealmAbilities
             if (CheckPreconditions(living, DEAD | SITTING | MEZZED | STUNNED))
                 return;
 
-            GamePlayer player = living as GamePlayer;
+            // players and gamebots (M8, veteran review 2026-11-11: a gamebot Cleric uses it too)
+            if (living is not (GamePlayer or GameBot))
+                return;
 
-            SendCasterSpellEffectAndCastMessage(player, 7009, true);
-            DisableSkill(player);
+            SendCasterSpellEffectAndCastMessage(living, 7009, true);
+            DisableSkill(living);
 
-            ECSGameEffectFactory.Create(new(player, m_duration, 1, CreateSpell(player)), static (in i) => new AtlasOF_BatteryOfLifeECSEffect(i));
+            ECSGameEffectFactory.Create(new(living, m_duration, 1, CreateSpell(living)), static (in i) => new AtlasOF_BatteryOfLifeECSEffect(i));
         }
         
         private SpellHandler CreateSpell(GameLiving owner)
