@@ -1747,7 +1747,14 @@ namespace DOL.GS;
             if (bot?.Inventory == null)
                 return null;
 
-            (HashSet<DbInventoryItem> operationalLoadout, HashSet<DbInventoryItem> kept) = VendorSetsOf(bot);
+            // Q35 (veteran review 2026-11-11): SerializedCraftingSkills is never written for gamebots - a gamebot's craft is
+            // CrafterBots165 (CraftSkill/CraftLevel on the record) - so trainedCrafter is always false here and stackables
+            // are sold as usual. Do not "fix" it to read the real craft flag without also changing
+            // TryClearBlockedBackpackAtMerchant: protecting every stack of a crafter leaves nothing to sell at a full bag,
+            // and that last-resort cleanup then deletes the crafter's material stacks.
+            bool trainedCrafter = !string.IsNullOrWhiteSpace(bot.PersistentRecord?.SerializedCraftingSkills);
+            bool canList = KeepsForExchange(bot);
+            HashSet<DbInventoryItem> operationalLoadout = FindOperationalLoadoutItems(bot);
             return bot.Inventory.AllItems
                 .Where(item => item != null && item.IsDropable && item.OwnerLot == 0 &&
                                item.SlotPosition >= (int)eInventorySlot.FirstBackpack &&
@@ -1882,8 +1889,10 @@ namespace DOL.GS;
                 !merchant.IsWithinRadius(bot, GS.ServerProperties.Properties.WORLD_PICKUP_DISTANCE))
                 return false;
 
-            (HashSet<DbInventoryItem> operationalLoadout, HashSet<DbInventoryItem> kept) = VendorSetsOf(bot);
-            if (IsProtectedFromVendor(bot, item, kept, operationalLoadout))
+            // Q35: always false for gamebots - see FindVendorTrashCandidate before changing it
+            bool trainedCrafter = !string.IsNullOrWhiteSpace(bot.PersistentRecord?.SerializedCraftingSkills);
+            if (IsProtectedFromVendor(bot, item, trainedCrafter, KeepsForExchange(bot),
+                    FindOperationalLoadoutItems(bot)))
                 return false;
             bool failedListing = Exchange165.RelistOf(item) != null;
 
