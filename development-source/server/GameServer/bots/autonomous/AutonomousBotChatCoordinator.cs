@@ -269,14 +269,21 @@ public static class AutonomousBotChatCoordinator
     {
         bool hasKnowledge = AutonomousChatKnowledge.TryAnswer(player, message, out string knowledge);
         eAutonomousChatIntent intent = AutonomousChatIntentModel.Predict(message);
-        GameBot[] eligible = AutonomousBotRegistry.Snapshot()
+        // veteran review Q30: a bot named in the message always stays a candidate; the rest are sampled (about 64) and
+        // only those are scored, instead of building a string for and sorting every bot of the realm
+        var mentionedList = new List<GameBot>();
+        GameBot[] eligible = RankReplyCandidates(AutonomousBotRegistry.Snapshot()
             .Where(Eligible)
             .Where(bot => bot.Realm == player.Realm)
             .Where(bot => faction || bot.CurrentRegion == player.CurrentRegion && bot.IsWithinRadius(player, WorldMgr.SAY_DISTANCE))
-            .OrderByDescending(bot => Relevance(bot, message))
-            .ThenBy(_ => Random.Shared.Next())
-            .ToArray();
-        GameBot[] mentioned = eligible.Where(bot => ContainsMention(message, bot.Name)).ToArray();
+            .Where(bot =>
+            {
+                if (!ContainsMention(message, bot.Name))
+                    return true;
+                mentionedList.Add(bot);
+                return false;
+            }), message, Random.Shared);
+        GameBot[] mentioned = RankReplyCandidates(mentionedList, message, Random.Shared);
         bool directed = mentioned.Length > 0;
         if (directed)
             eligible = mentioned;
@@ -313,12 +320,10 @@ public static class AutonomousBotChatCoordinator
     {
         string channel = faction ? "realm" : "say";
         bool hasKnowledge = AutonomousChatKnowledge.TryAnswer(starter.Realm, opening, out string knowledge);
-        GameBot[] eligible = AutonomousBotRegistry.Snapshot()
+        GameBot[] eligible = RankReplyCandidates(AutonomousBotRegistry.Snapshot()
             .Where(bot => bot != starter && Eligible(bot) && bot.Realm == starter.Realm)
-            .Where(bot => faction || bot.CurrentRegion == starter.CurrentRegion && bot.IsWithinRadius(starter, WorldMgr.SAY_DISTANCE))
-            .OrderByDescending(bot => Relevance(bot, opening))
-            .ThenBy(_ => Random.Shared.Next())
-            .ToArray();
+            .Where(bot => faction || bot.CurrentRegion == starter.CurrentRegion && bot.IsWithinRadius(starter, WorldMgr.SAY_DISTANCE)),
+            opening, Random.Shared);
         int count = hasKnowledge ? Math.Min(1, eligible.Length) : RollResponseCount(eligible.Length);
         HashSet<string> scheduledResponses = new(StringComparer.OrdinalIgnoreCase);
         int scheduledCount = 0;
@@ -474,13 +479,64 @@ public static class AutonomousBotChatCoordinator
         };
     }
 
-    private static int Relevance(GameBot bot, string incoming)
+    /// <summary>Reply candidates scored at most (veteran review Q30): a uniform reservoir sample of the eligible bots.</summary>
+    public const int ReplyCandidateSample = 64;
+
+    /// <summary>
+    /// The eligible candidates to answer, most relevant first (ties in random order). At most
+    /// <see cref="ReplyCandidateSample"/> are drawn uniformly (reservoir) and only those are scored; a reply needs one or
+    /// two speakers, so a sample this size still finds a bot whose work matches the message. The message is split once.
+    /// </summary>
+    public static T[] RankReplyCandidates<T>(IEnumerable<T> eligible, string incoming, Random random,
+        Func<T, string> describe, int sample = ReplyCandidateSample)
     {
-        string haystack = $"{bot.PersistentRecord?.Activity} {bot.PersistentRecord?.CurrentGoal} {bot.PersistentRecord?.TargetName} {bot.PersistentRecord?.TravelDestination}";
-        return (incoming ?? string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries)
+        random ??= Random.Shared;
+        var picked = new List<T>(Math.Min(sample, 16));
+        int seen = 0;
+        foreach (T candidate in eligible)
+        {
+            seen++;
+            if (picked.Count < sample)
+                picked.Add(candidate);
+            else
+            {
+                int slot = random.Next(seen);
+                if (slot < sample)
+                    picked[slot] = candidate;
+            }
+        }
+        if (picked.Count <= 1)
+            return picked.ToArray();
+        string[] words = RelevanceWords(incoming);
+        return picked
+            .Select(candidate => (candidate, score: words.Length == 0 ? 0 : RelevanceScore(describe(candidate), words), tie: random.Next()))
+            .OrderByDescending(entry => entry.score)
+            .ThenBy(entry => entry.tie)
+            .Select(entry => entry.candidate)
+            .ToArray();
+    }
+
+    private static GameBot[] RankReplyCandidates(IEnumerable<GameBot> eligible, string incoming, Random random) =>
+        RankReplyCandidates(eligible, incoming, random, bot =>
+            $"{bot.PersistentRecord?.Activity} {bot.PersistentRecord?.CurrentGoal} {bot.PersistentRecord?.TargetName} {bot.PersistentRecord?.TravelDestination}");
+
+    /// <summary>The words of a message that count for relevance (four letters or more, punctuation trimmed).</summary>
+    public static string[] RelevanceWords(string incoming) =>
+        (incoming ?? string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries)
             .Select(word => word.Trim('?', '!', '.', ',', '\'', '"'))
             .Where(word => word.Length >= 4)
-            .Count(word => haystack.Contains(word, StringComparison.OrdinalIgnoreCase));
+            .ToArray();
+
+    /// <summary>How many of the message's words appear in what the bot is doing.</summary>
+    public static int RelevanceScore(string haystack, string[] words)
+    {
+        if (string.IsNullOrEmpty(haystack))
+            return 0;
+        int count = 0;
+        foreach (string word in words)
+            if (haystack.Contains(word, StringComparison.OrdinalIgnoreCase))
+                count++;
+        return count;
     }
 
     private static string GenerateDirectedReply(string incoming)
