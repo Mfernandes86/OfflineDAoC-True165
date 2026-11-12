@@ -130,6 +130,25 @@ namespace DOL.GS
             return false;
         }
 
+        /// <summary>
+        /// 2026-11-11 exchange plan (phase 4): the realm's only Realm Exchange broker is judged by its own spot alone. The
+        /// straight line from a bot to it is not a route: in Hibernia it crossed the Silvermine / Lough Derg hotspots
+        /// from almost every camp east of Eilwen, so 347 young bots in 30 h found "no broker" and sold their exchange
+        /// goods to merchants. The real way there is still judged: the horse planner prefers a landing whose walk passes
+        /// no hotspot (<see cref="FinishWalkUnsafe"/>) and a walk on a real path through one skips the broker for that bot
+        /// (AUTONOMOUS_SERVICE_HOTSPOT_SKIP). Other services (many merchants, healers, trainers) keep the straight-line rule.
+        /// </summary>
+        public static bool BlocksService(bool onlyOfItsKind, ushort fromRegion, int fromX, int fromY, int botLevel,
+            ushort toRegion, int toX, int toY, long now)
+        {
+            if (!onlyOfItsKind)
+                return Blocks(fromRegion, fromX, fromY, botLevel, toRegion, toX, toY, now);
+            foreach (Hotspot h in _hotspots)
+                if (Dangerous(h, botLevel, now) && h.Region == toRegion && Near(h.X, h.Y, toX, toY, Radius))
+                    return true;
+            return false;
+        }
+
         /// <summary>The same check against hotspots already filtered by <see cref="DangerousTo"/>.</summary>
         public static bool Blocks(Hotspot[] dangerous, ushort fromRegion, int fromX, int fromY, ushort toRegion, int toX, int toY)
         {

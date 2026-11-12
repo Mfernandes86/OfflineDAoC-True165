@@ -1416,9 +1416,11 @@ namespace DOL.GS
 
         private static bool IsServiceCandidate(GameBot bot, GameNPC npc) =>
             npc.ObjectState is GameObject.eObjectState.Active && npc.CurrentZone != null && IsZoneAccessible(bot.Realm, npc.CurrentZone) &&
-            // not a merchant, healer or trainer near or straight past a spot where bots of its level keep dying (AutonomousRoadHotspots)
-            !AutonomousRoadHotspots.Blocks(bot.CurrentRegionID, bot.X, bot.Y, bot.Level, npc.CurrentRegionID, npc.X, npc.Y,
-                GameLoop.GameLoopTime);
+            // not a merchant, healer or trainer near or straight past a spot where bots of its level keep dying (AutonomousRoadHotspots);
+            // the realm's one broker only when it stands in such a spot (its real route is judged on the way, phase 4 of the
+            // 2026-11-11 exchange plan)
+            !AutonomousRoadHotspots.BlocksService(npc is RealmExchangeBroker, bot.CurrentRegionID, bot.X, bot.Y, bot.Level,
+                npc.CurrentRegionID, npc.X, npc.Y, GameLoop.GameLoopTime);
 
         private bool HandlePendingTraining(GameBot bot)
         {

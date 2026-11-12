@@ -40,6 +40,29 @@ namespace DOL.UnitTests
                 1_000 + AutonomousRoadHotspots.ActiveMilliseconds + 1), Is.False);
         }
 
+        // 2026-11-11 exchange plan, phase 4: Hibernian bots east of Eilwen found "no broker" because the straight line to it
+        // crossed the Silvermine hotspots; the one broker is judged by its own spot, merchants keep the straight-line rule
+        [Test]
+        public void TheOneBrokerIsJudgedByItsSpotNotTheStraightLine()
+        {
+            const int brokerX = 315_236, brokerY = 635_972, botX = 345_000, botY = 550_000;
+            int midX = (brokerX + botX) / 2, midY = (brokerY + botY) / 2;
+            for (int bot = 1; bot <= 4; bot++)
+                AutonomousRoadHotspots.RecordDeath(200, midX, midY, bot, 12, 24, 1_000, out _);
+
+            Assert.That(AutonomousRoadHotspots.BlocksService(false, 200, botX, botY, 12, 200, brokerX, brokerY, 2_000), Is.True,
+                "a merchant behind the hotspot is still refused");
+            Assert.That(AutonomousRoadHotspots.BlocksService(true, 200, botX, botY, 12, 200, brokerX, brokerY, 2_000), Is.False,
+                "the broker is not refused for a straight line that is no route");
+
+            for (int bot = 11; bot <= 14; bot++)
+                AutonomousRoadHotspots.RecordDeath(200, brokerX + 300, brokerY, bot, 12, 24, 1_000, out _);
+            Assert.That(AutonomousRoadHotspots.BlocksService(true, 200, botX, botY, 12, 200, brokerX, brokerY, 2_000), Is.True,
+                "a broker standing in a hotspot is refused");
+            Assert.That(AutonomousRoadHotspots.BlocksService(true, 200, botX, botY, 22, 200, brokerX, brokerY, 2_000), Is.False,
+                "a bot past the danger level is not");
+        }
+
         [Test]
         public void PlanningReadsAFilteredSnapshotWithoutTheLock()
         {
