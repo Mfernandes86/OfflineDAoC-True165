@@ -111,6 +111,33 @@ namespace DOL.GS.Quests
             return byName.TryGetValue(name ?? string.Empty, out List<Row> found) ? found : Array.Empty<Row>();
         }
 
+        private static Dictionary<string, List<Row>> _lineRows = new(StringComparer.OrdinalIgnoreCase);
+        private static object _lineSource;
+
+        /// <summary>Every data quest row of an epic line: the line's name or the line's name with "(level N)"
+        /// (<see cref="Epics165.IsPartOf"/>); cached per line until the data quest cache is refilled.</summary>
+        public static IReadOnlyList<Row> RowsOfLine(string lineName)
+        {
+            Dictionary<ushort, List<DbDataQuest>> source = GameObject.DataQuestCacheByRegion;
+            lock (_lock)
+            {
+                if (!ReferenceEquals(source, _lineSource))
+                {
+                    _lineRows = new(StringComparer.OrdinalIgnoreCase);
+                    _lineSource = source;
+                }
+                if (_lineRows.TryGetValue(lineName ?? string.Empty, out List<Row> cached))
+                    return cached;
+                var rows = new List<Row>();
+                if (source != null)
+                    foreach (DbDataQuest q in source.Values.SelectMany(list => list))
+                        if (q != null && Epics165.IsPartOf(q.Name, lineName))
+                            rows.Add(new Row(q.ID, q.Name, q.MinLevel, ParseClasses(q.AllowedClasses)));
+                _lineRows[lineName ?? string.Empty] = rows;
+                return rows;
+            }
+        }
+
         /// <summary>Are all of a quest's dependencies met by what this player has finished?</summary>
         public static bool AllMet(IReadOnlyCollection<string> dependencies, string ownName, int ownMinLevel, GamePlayer player,
             IEnumerable<AbstractQuest> finishedQuests)

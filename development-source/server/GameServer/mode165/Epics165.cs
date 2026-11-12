@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DOL.Database;
 using DOL.GS.PacketHandler;
 
@@ -24,7 +25,53 @@ namespace DOL.GS.Quests
             foreach (AbstractQuest quest in player.GetFinishedQuests())
             {
                 if (quest is DataQuest dataQuest && dataQuest.DBDataQuest != null && dataQuest.DBDataQuest.MinLevel == minLevel &&
-                    string.Equals(dataQuest.DBDataQuest.Name, questName, StringComparison.OrdinalIgnoreCase))
+                    IsPartOf(dataQuest.DBDataQuest.Name, questName))
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>The title a scripted level 50 finale has in True 1.65 Mode: the line's name with "(level 50)", as
+        /// Allakhazam names the parts, so it never shares a name with the line's data quest parts (their name-based
+        /// dependencies, the journal and the Quest Guide told them apart by name only; quest audit 2026-11-11).</summary>
+        public static string FinaleTitle(string lineName) => lineName + " (level 50)";
+
+        /// <summary>Is a data quest row's name a part of this epic line: the line's name itself, or the line's name with
+        /// "(level N)" (quest fix 0.7 named the parts of The Moonstone Twin "(level 45)" and "(level 47)")?</summary>
+        public static bool IsPartOf(string rowName, string lineName)
+        {
+            if (string.IsNullOrEmpty(rowName) || string.IsNullOrEmpty(lineName))
+                return false;
+            if (string.Equals(rowName, lineName, StringComparison.OrdinalIgnoreCase))
+                return true;
+            string prefix = lineName + " (level ";
+            return rowName.Length > prefix.Length + 1 && rowName.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) &&
+                   rowName.EndsWith(")", StringComparison.Ordinal) &&
+                   int.TryParse(rowName.AsSpan(prefix.Length, rowName.Length - prefix.Length - 1), out _);
+        }
+
+        /// <summary>
+        /// Has the player finished the last part of the epic line before the level 50 finale, whatever its level in this
+        /// world (War Concluded's last data quest part is level 45, the others 47 or 48)? The highest MinLevel below 50
+        /// among the line's data quest rows the player's class may take is the part needed. A line with no such row in
+        /// the world cannot be gated and is allowed. The rows come from the cached data quest list (QuestDependencyRule).
+        /// </summary>
+        public static bool FinishedLastPart(GamePlayer player, string lineName)
+        {
+            int classId = player.CharacterClass.ID;
+            int required = -1;
+            foreach (QuestDependencyRule.Row row in QuestDependencyRule.RowsOfLine(lineName))
+            {
+                if (row.MinLevel >= 50 || row.Classes.Count > 0 && !row.Classes.Contains(classId))
+                    continue;
+                required = Math.Max(required, row.MinLevel);
+            }
+            if (required < 0)
+                return true;
+            foreach (AbstractQuest quest in player.GetFinishedQuests())
+            {
+                if (quest is DataQuest dataQuest && dataQuest.DBDataQuest != null && dataQuest.DBDataQuest.MinLevel >= required &&
+                    dataQuest.DBDataQuest.MinLevel < 50 && IsPartOf(dataQuest.DBDataQuest.Name, lineName))
                     return true;
             }
             return false;
