@@ -1,0 +1,272 @@
+{
+ "fixer": "integrator",
+ "about": "Quest markers left on the spot an NPC stood before a 0.7 fix moved it (owner 2026-11-11: the objective markers must show the new spots).",
+ "entries": [
+  {
+   "finding": "INT-2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20515",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 573736,
+    "Y": 530221,
+    "Z": 2902
+   },
+   "why": "Gronyr Gloyw was moved by a 0.7 quest fix; this step (Zombie Problem) still marked its old spot (574171,526101), 4142 units away"
+  },
+  {
+   "finding": "INT-2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20207",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 566069,
+    "Y": 528139,
+    "Z": 2159
+   },
+   "why": "Mulgrut Maggot was moved by a 0.7 quest fix; this step (Cleric Mulgrut) still marked its old spot (570194,524831), 5287 units away"
+  },
+  {
+   "finding": "INT-2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21382",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 337488,
+    "Y": 532328,
+    "Z": 5526
+   },
+   "why": "Wug was moved by a 0.7 quest fix; this step (Wug's Jug) still marked its old spot (335064,535895), 4312 units away"
+  },
+  {
+   "finding": "INT-2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21383",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 337488,
+    "Y": 532328,
+    "Z": 5526
+   },
+   "why": "Wug was moved by a 0.7 quest fix; this step (Wug's Jug) still marked its old spot (335064,535895), 4312 units away"
+  },
+  {
+   "finding": "INT-2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21384",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 337488,
+    "Y": 532328,
+    "Z": 5526
+   },
+   "why": "Wug was moved by a 0.7 quest fix; this step (Wug's Jug) still marked its old spot (335064,535895), 4312 units away"
+  },
+  {
+   "finding": "INT-2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21385",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 337488,
+    "Y": 532328,
+    "Z": 5526
+   },
+   "why": "Wug was moved by a 0.7 quest fix; this step (Wug's Jug) still marked its old spot (335064,535895), 4312 units away"
+  },
+  {
+   "finding": "INT-2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21386",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 337488,
+    "Y": 532328,
+    "Z": 5526
+   },
+   "why": "Wug was moved by a 0.7 quest fix; this step (Wug's Jug) still marked its old spot (335064,535895), 4312 units away"
+  },
+  {
+   "finding": "INT-2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20081",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 295720,
+    "Y": 705436,
+    "Z": 6458
+   },
+   "why": "luch catcher was moved by a 0.7 quest fix; this step (Larylle's Necklace) still marked its old spot (296672,718008), 12607 units away"
+  },
+  {
+   "finding": "INT-2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20347",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 695128,
+    "Y": 914120,
+    "Z": 1682
+   },
+   "why": "Leildolf was moved by a 0.7 quest fix; this step (Mimir's Protection) still marked its old spot (697212,920724), 6925 units away"
+  },
+  {
+   "finding": "INT-2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20348",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 695128,
+    "Y": 914120,
+    "Z": 1682
+   },
+   "why": "Leildolf was moved by a 0.7 quest fix; this step (Mimir's Protection) still marked its old spot (697212,920724), 6925 units away"
+  },
+  {
+   "finding": "INT-2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21100",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 778664,
+    "Y": 684044,
+    "Z": 4778
+   },
+   "why": "Prugor was moved by a 0.7 quest fix; this step (The Rod and the Scholars) still marked its old spot (782745,688636), 6143 units away"
+  },
+  {
+   "finding": "INT-2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21101",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 778664,
+    "Y": 684044,
+    "Z": 4778
+   },
+   "why": "Prugor was moved by a 0.7 quest fix; this step (The Rod and the Scholars) still marked its old spot (782745,688636), 6143 units away"
+  },
+  {
+   "finding": "INT-2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20368",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 776696,
+    "Y": 750930,
+    "Z": 4404
+   },
+   "why": "Svartmoln was moved by a 0.7 quest fix; this step (Svartmoln's Appetite) still marked its old spot (776724,753563), 2633 units away"
+  },
+  {
+   "finding": "INT-2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21533",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 702789,
+    "Y": 940853,
+    "Z": 1594
+   },
+   "why": "Big Paw was moved by a 0.7 quest fix; this step (Big Paw) still marked its old spot (698907,939950), 3985 units away"
+  }
+ ]
+}

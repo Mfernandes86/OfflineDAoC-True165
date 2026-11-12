@@ -1,0 +1,195 @@
+{
+ "fixer": "part01",
+ "about": "v2: CollectRewards data for the period random-reward kill tasks (needs QSCHEMA CollectRewards in qf07common.py before it can load; rename to .json then)",
+ "entries": [
+  {
+   "finding": "P01-D-random-rewards",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "105"
+   ],
+   "value": {
+    "Steps": [
+     null
+    ],
+    "CollectRewards": {
+     "XpWeight": 1,
+     "MoneyWeight": 1,
+     "MoneyMin": 7500,
+     "MoneyMax": 7599,
+     "ItemWeight": 1,
+     "Items": [
+      "Precious_Heliodor",
+      "Kornerupine",
+      "Yellow_Tourmaline",
+      "Alexandrite",
+      "Chrysoberyl",
+      "Black_Sapphire"
+     ]
+    }
+   },
+   "why": "Fell Creature's Tooth paid a random reward: 'receive 4.4 million exp, some coin or a gem'; Sep 2003: '75 Silver and some copper' for one, a chrysoberyl for the other",
+   "source": "Allakhazam zam 536 'Fell Creature Teeth -- Kill Task' (Wayback 2004-10-14) description and comment Sep 30 2003; gems named by period players for these tasks: Precious Heliodor, Kornerupine, Yellow Tourmaline (zam 468, Aug 2004), Alexandrite (zam 468, Aug 2003), Chrysoberyl (zam 536, Sep 2003), Black Sapphire (zam 1815, Jan 2004); all are existing loot-gem ItemTemplates"
+  },
+  {
+   "finding": "P01-D-random-rewards",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "117"
+   ],
+   "value": {
+    "Steps": [
+     null
+    ],
+    "CollectRewards": {
+     "XpWeight": 3,
+     "MoneyWeight": 3,
+     "MoneyMin": 5000,
+     "MoneyMax": 5099,
+     "ItemWeight": 10,
+     "Items": [
+      "Precious_Heliodor",
+      "Kornerupine",
+      "Yellow_Tourmaline",
+      "Alexandrite",
+      "Chrysoberyl",
+      "Black_Sapphire"
+     ]
+    }
+   },
+   "why": "Glowing Soul Gem: 'anything from 50 silver in cash to a jewel item ... to varying amounts of exp'; Jun 2003 tally of 16 friendly spirits: XP 'a few times', 50sp 'a few times', 'the rest were various gems' (weights 3/3/10). The rare hostile 'freed spirit' (2 of 18, 1 of ~40) is left out: no period name/level beyond a guess ('probably around level 20')",
+   "source": "Allakhazam zam 449 'Glowing Soul Gem -- Kill Task' comments Aug 28 2002, Jun 26 2003; gems named by period players for these tasks: Precious Heliodor, Kornerupine, Yellow Tourmaline (zam 468, Aug 2004), Alexandrite (zam 468, Aug 2003), Chrysoberyl (zam 536, Sep 2003), Black Sapphire (zam 1815, Jan 2004); all are existing loot-gem ItemTemplates"
+  },
+  {
+   "finding": "P01-D-random-rewards",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "217"
+   ],
+   "value": {
+    "Steps": [
+     null
+    ],
+    "CollectRewards": {
+     "XpWeight": 7,
+     "MoneyWeight": 3,
+     "MoneyMin": 5000,
+     "MoneyMax": 5099,
+     "ItemWeight": 4,
+     "Items": [
+      "Precious_Heliodor",
+      "Kornerupine",
+      "Yellow_Tourmaline",
+      "Alexandrite",
+      "Chrysoberyl",
+      "Black_Sapphire"
+     ]
+    }
+   },
+   "why": "Thick White Pelt: Aug 2004 tally of 15 turn-ins: 7 x the row's experience, 3 x '50 silver and some copper', 4 gems (weights 7/3/4); the one 'creature saw you with the skins' attack in that tally is left out (period text does not name or level the creature)",
+   "source": "Allakhazam zam 468 'Thick White Pelt -- Kill Task' comment Aug 31 2004 (edited, 46th level Skald) and Aug 2003; gems named by period players for these tasks: Precious Heliodor, Kornerupine, Yellow Tourmaline (zam 468, Aug 2004), Alexandrite (zam 468, Aug 2003), Chrysoberyl (zam 536, Sep 2003), Black Sapphire (zam 1815, Jan 2004); all are existing loot-gem ItemTemplates"
+  },
+  {
+   "finding": "P01-D-random-rewards",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "228"
+   ],
+   "value": {
+    "Steps": [
+     null
+    ],
+    "CollectRewards": {
+     "XpWeight": 3,
+     "MoneyWeight": 2,
+     "MoneyMin": 7500,
+     "MoneyMax": 7599,
+     "ItemWeight": 3,
+     "Items": [
+      "Precious_Heliodor",
+      "Kornerupine",
+      "Yellow_Tourmaline",
+      "Alexandrite",
+      "Chrysoberyl",
+      "Black_Sapphire"
+     ]
+    }
+   },
+   "why": "Malefic Tooth: Jan 2004, five teeth: 75 silver for two, a Black Sapphire for one, about 4 million experience for two; the page: 'alternated between giving exp and giving gems' (weights 3/2/3)",
+   "source": "Allakhazam zam 1815 'Malefic Tooth -- Kill Task' description and comment Jan 31 2004; gems named by period players for these tasks: Precious Heliodor, Kornerupine, Yellow Tourmaline (zam 468, Aug 2004), Alexandrite (zam 468, Aug 2003), Chrysoberyl (zam 536, Sep 2003), Black Sapphire (zam 1815, Jan 2004); all are existing loot-gem ItemTemplates"
+  },
+  {
+   "finding": "P01-D-random-rewards",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "307"
+   ],
+   "value": {
+    "Steps": [
+     null
+    ],
+    "CollectRewards": {
+     "XpWeight": 2,
+     "MoneyWeight": 3,
+     "MoneyMin": 5000,
+     "MoneyMax": 5099,
+     "ItemWeight": 4,
+     "Items": [
+      "Precious_Heliodor",
+      "Kornerupine",
+      "Yellow_Tourmaline",
+      "Alexandrite",
+      "Chrysoberyl",
+      "Black_Sapphire"
+     ],
+     "HostileWeight": 1,
+     "HostileName": "Angry Sett Dweller",
+     "HostileTemplateId": 60165875
+    }
+   },
+   "why": "Sett Fur: Oct 2002 'got either 50s or a gem', Nov 2003 'random gem sold for 1 to 4 gp', the page: '50 sp in coin, 1+ gp gem, 2+ gp gem, 813K exp' and 'about my fifth fur, an \"Angry Sett Dweller\" appeared and attacked. Green to level 30' (about 1 in 10); the hostile uses the existing sett dweller template 60165875 (level 27-31, the period 'green to 30')",
+   "source": "Allakhazam zam 438 'Sett Fur -- Kill Task' description and comments Oct 2 2002, Nov 1 2003; gems named by period players for these tasks: Precious Heliodor, Kornerupine, Yellow Tourmaline (zam 468, Aug 2004), Alexandrite (zam 468, Aug 2003), Chrysoberyl (zam 536, Sep 2003), Black Sapphire (zam 1815, Jan 2004); all are existing loot-gem ItemTemplates"
+  },
+  {
+   "finding": "P01-D-random-rewards",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "313"
+   ],
+   "value": {
+    "Steps": [
+     null
+    ],
+    "CollectRewards": {
+     "XpWeight": 1,
+     "MoneyWeight": 1,
+     "MoneyMin": 7500,
+     "MoneyMax": 7599,
+     "ItemWeight": 1,
+     "Items": [
+      "Precious_Heliodor",
+      "Kornerupine",
+      "Yellow_Tourmaline",
+      "Alexandrite",
+      "Chrysoberyl",
+      "Black_Sapphire"
+     ]
+    }
+   },
+   "why": "Rage Wolf Tooth: Aug 2002 'received a gem worth 2 gold for each' tooth, Jan 2003 'didnt get a gem ... but 75 silver' (the row's experience kept as the third outcome)",
+   "source": "Allakhazam zam 404 'Rage Wolf Teeth -- Kill Task' (Wayback 2004-10-13) comments Aug 24 2002, Jan 10 2003; gems named by period players for these tasks: Precious Heliodor, Kornerupine, Yellow Tourmaline (zam 468, Aug 2004), Alexandrite (zam 468, Aug 2003), Chrysoberyl (zam 536, Sep 2003), Black Sapphire (zam 1815, Jan 2004); all are existing loot-gem ItemTemplates"
+  }
+ ]
+}

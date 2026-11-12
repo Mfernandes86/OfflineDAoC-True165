@@ -1,0 +1,51 @@
+{
+ "fixer": "part07",
+ "about": "B1: Runes of Darkness marker + post-1.65 willow copy",
+ "entries": [
+  {
+   "finding": "P07-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21043",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 796020,
+    "Y": 916407,
+    "Z": 4829
+   },
+   "why": "step-2 marker pointed at the West Svealand willow, which is the Patch 1.75 relocation ('The Lone Weeping Willow can now be found in West Svealand'); the 1.65 willow is in Myrkwood south of Gna Faste (quest guide text, CapnBry zone 105 sightings 41-43k,46-48k), spawn 9c5f5b69 at Myrkwood 42356,48055"
+  },
+  {
+   "finding": "P07-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21044",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 796020,
+    "Y": 916407,
+    "Z": 4829
+   },
+   "why": "step-2 marker pointed at the West Svealand willow, which is the Patch 1.75 relocation ('The Lone Weeping Willow can now be found in West Svealand'); the 1.65 willow is in Myrkwood south of Gna Faste (quest guide text, CapnBry zone 105 sightings 41-43k,46-48k), spawn 9c5f5b69 at Myrkwood 42356,48055"
+  },
+  {
+   "finding": "P07-B1",
+   "kind": "remove",
+   "table": "Mob",
+   "where": "Mob_ID = '7bcbe051-9919-4ebf-9a70-8f6b9ef0cf4a'",
+   "why": "non-period second Lone Weeping Willow at West Svealand 44633,17960: Allakhazam Runes of Darkness 'Per Patch 1.75: The Lone Weeping Willow can now be found in West Svealand'; CapnBry has 9 sightings, all in Myrkwood (zone 105); no other quest names this monster (Bowyer's Draw uses 'weeping willow')"
+  }
+ ]
+}

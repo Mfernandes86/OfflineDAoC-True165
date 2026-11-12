@@ -1,0 +1,404 @@
+{
+ "fixer": "part02",
+ "about": "E1 Rania, E2 Trial of Intelligence, E5 duplicate Loken, E6 Fearan finale, E7/E8 markers and search area",
+ "entries": [
+  {
+   "finding": "P02-E1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Rania;151|naive sjora;151|naive sjora;151|Rania;151|Rania;151"
+   },
+   "where": {
+    "ID": 20105
+   },
+   "why": "steps 1, 4 and 5 targeted Rana, the Healer Trainer in Jordheim (region 101); the step text and the period page (Wayback 2004, cquest 552) send the level 3-5 Viking to Rania in Aegirhamn, who stands at 289093,354473 (region 151; CapnBry sighting 2678)"
+  },
+  {
+   "finding": "P02-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20105",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 151,
+    "X": 289093,
+    "Y": 354473,
+    "Z": 3866
+   },
+   "why": "marker pointed at Rana in Jordheim; now on Rania in Aegirhamn"
+  },
+  {
+   "finding": "P02-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20105",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 151,
+    "X": 289093,
+    "Y": 354473,
+    "Z": 3866
+   },
+   "why": "marker pointed at Rana in Jordheim; now on Rania in Aegirhamn"
+  },
+  {
+   "finding": "P02-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20105",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 151,
+    "X": 289093,
+    "Y": 354473,
+    "Z": 3866
+   },
+   "why": "marker pointed at Rana in Jordheim; now on Rania in Aegirhamn"
+  },
+  {
+   "finding": "P02-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20105",
+    "Steps",
+    4,
+    "Greet"
+   ],
+   "value": "Welcome back. Please give me the sjora shell necklace.",
+   "source": "Allakhazam 'Trial of Bravery' (cquest 552, Wayback capture 2004-10-13): Rania says, \"Welcome back. Please give me the sjora shell necklace.\"",
+   "why": "Rania's recorded line when the player returns with the necklace"
+  },
+  {
+   "finding": "P02-E2",
+   "kind": "row",
+   "table": "ItemTemplate",
+   "row": {
+    "Id_nb": "qf07_part02_marine_fungus_leg",
+    "TranslationId": null,
+    "Name": "Marine Fungus Leg",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "Level": 1,
+    "Durability": 50000,
+    "MaxDurability": 50000,
+    "IsNotLosingDur": 0,
+    "Condition": 50000,
+    "MaxCondition": 50000,
+    "Quality": 100,
+    "DPS_AF": 0,
+    "SPD_ABS": 0,
+    "Hand": 0,
+    "Type_Damage": 0,
+    "Object_Type": 0,
+    "Item_Type": 40,
+    "Color": 0,
+    "Emblem": 0,
+    "Effect": 0,
+    "Weight": 1,
+    "SalvageExtension": null,
+    "Model": 546,
+    "Extension": 0,
+    "Bonus": 0,
+    "Bonus1": 0,
+    "Bonus2": 0,
+    "Bonus3": 0,
+    "Bonus4": 0,
+    "Bonus5": 0,
+    "Bonus6": 0,
+    "Bonus7": 0,
+    "Bonus8": 0,
+    "Bonus9": 0,
+    "Bonus10": 0,
+    "ExtraBonus": 0,
+    "Bonus1Type": 0,
+    "Bonus2Type": 0,
+    "Bonus3Type": 0,
+    "Bonus4Type": 0,
+    "Bonus5Type": 0,
+    "Bonus6Type": 0,
+    "Bonus7Type": 0,
+    "Bonus8Type": 0,
+    "Bonus9Type": 0,
+    "Bonus10Type": 0,
+    "ExtraBonusType": 0,
+    "CanUseEvery": 0,
+    "SpellID": 0,
+    "Charges": 0,
+    "MaxCharges": 0,
+    "SpellID1": 0,
+    "Charges1": 0,
+    "MaxCharges1": 0,
+    "ProcChance": 0,
+    "ProcSpellID": 0,
+    "ProcSpellID1": 0,
+    "PoisonSpellID": 0,
+    "PoisonCharges": 0,
+    "PoisonMaxCharges": 0,
+    "IsPickable": 1,
+    "IsDropable": 1,
+    "CanDropAsLoot": 0,
+    "IsTradable": 1,
+    "Price": 0,
+    "MaxCount": 1,
+    "IsIndestructible": 0,
+    "PackSize": 1,
+    "Realm": 0,
+    "AllowedClasses": "0",
+    "Flags": 0,
+    "BonusLevel": 0,
+    "LevelRequirement": 0,
+    "PackageID": "ClassicQuest",
+    "Description": "Classic quest item (Trial of Intelligence)",
+    "ClassType": null,
+    "SalvageYieldID": 0
+   },
+   "source": "Camelot Warcry quest 991 'Trial of Intelligence (SI)' (Wayback capture 2004-11-02, period-data/archive/wayback-warcry): the trainer sends you to Idena Blaimmel 'West and around the corner'; her riddle wants TWO legs of the marine fungus; 'Return to Idena and hand her both legs to receive 6 Silver and some Copper'; reward 22 experience; prerequisite Trial of Strength; classes Rogue, Viking",
+   "why": "the two marine fungus legs Idena's riddle asks for (a quest token, copied from the Trial of Strength marine fungus root token)"
+  },
+  {
+   "finding": "P02-E2",
+   "kind": "row",
+   "table": "DataQuest",
+   "row": {
+    "ID": 27100,
+    "Name": "Trial of Intelligence",
+    "StartType": 0,
+    "StartName": "Torold Sterkkriger",
+    "StartRegionID": 151,
+    "AcceptText": "Trial of Intelligence",
+    "Description": "[Trial of Intelligence]",
+    "SourceName": "",
+    "SourceText": "Find Idena Blaimmel west of your trainer, around the corner in Aegirhamn, and hear her riddle.|||",
+    "StepType": "4|0|0|11",
+    "StepText": "Find Idena Blaimmel west of your trainer, around the corner in Aegirhamn, and hear her riddle.|Idena's riddle names the marine fungus: kill one in the waters south of Aegirhamn and take its leg.|She wants TWO legs: kill a second marine fungus.|Return to Idena and hand her both legs.",
+    "StepItemTemplates": "|qf07_part02_marine_fungus_leg|qf07_part02_marine_fungus_leg|",
+    "AdvanceText": "|||",
+    "TargetName": "Idena Blaimmel;151|marine fungus;151|marine fungus;151|Idena Blaimmel;151",
+    "TargetText": "|||",
+    "CollectItemTemplate": "|||qf07_part02_marine_fungus_leg",
+    "MaxCount": 1,
+    "MinLevel": 2,
+    "MaxLevel": 5,
+    "RewardMoney": "0|0|0|600",
+    "RewardXP": "0|0|0|22",
+    "RewardCLXP": null,
+    "RewardRP": null,
+    "RewardBP": null,
+    "OptionalRewardItemTemplates": null,
+    "FinalRewardItemTemplates": "",
+    "FinishText": "",
+    "QuestDependency": "Trial of Strength",
+    "AllowedClasses": "35|38",
+    "ClassType": "DOL.GS.Quests.ClassicQuestStep"
+   },
+   "source": "Camelot Warcry quest 991 'Trial of Intelligence (SI)' (Wayback capture 2004-11-02, period-data/archive/wayback-warcry): the trainer sends you to Idena Blaimmel 'West and around the corner'; her riddle wants TWO legs of the marine fungus; 'Return to Idena and hand her both legs to receive 6 Silver and some Copper'; reward 22 experience; prerequisite Trial of Strength; classes Rogue, Viking",
+   "why": "the middle Aegir trial was missing: Torold's Trial of Bravery offer says 'Idena spoke of your intelligence in dealing with those riddles', and Idena Blaimmel already stands in Aegirhamn (288537,353782; CapnBry sighting 2684); built from the Warcry spoiler (the riddle text itself is recorded nowhere, so no dialogue is added)"
+  },
+  {
+   "finding": "P02-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "27100"
+   ],
+   "value": {
+    "Steps": [
+     null,
+     {
+      "Marker": {
+       "Region": 151,
+       "X": 288537,
+       "Y": 353782,
+       "Z": 3867
+      }
+     },
+     {
+      "Marker": {
+       "Region": 151,
+       "X": 284717,
+       "Y": 360617,
+       "Z": 3177
+      }
+     },
+     {
+      "Marker": {
+       "Region": 151,
+       "X": 284717,
+       "Y": 360617,
+       "Z": 3177
+      }
+     },
+     {
+      "Marker": {
+       "Region": 151,
+       "X": 288537,
+       "Y": 353782,
+       "Z": 3867
+      }
+     }
+    ]
+   },
+   "why": "quest markers for the new Trial of Intelligence (Idena Blaimmel; the marine fungus shore the Trial of Strength marker uses)"
+  },
+  {
+   "finding": "P02-E2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "QuestDependency": "Trial of Intelligence"
+   },
+   "where": {
+    "ID": 20105
+   },
+   "why": "Trial of Bravery comes after the trials of strength and intelligence (Warcry 991 prerequisite chain; Allakhazam 552 comment: 'I had to complete another quest, called the Trial of Intelligence (Level 2), before I was given the Trial of Bravery')"
+  },
+  {
+   "finding": "P02-E5",
+   "kind": "remove",
+   "table": "Mob",
+   "where": "Mob_ID = '9f269de5-87b6-4da8-970b-897bb26c4b75'",
+   "why": "two live Loken epic bosses 3.3k apart; the period one (CapnBry sighting 3177, zone 108 local 46960,25153 = 636784,762433) is cb757cf0 at 636788,762435, which Seer50.cs also uses; the stray copy at 639272,764711 is archived"
+  },
+  {
+   "finding": "P02-E6",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepType": "0|10|0|10|4|0|10|5",
+    "StepText": "Get the spores of a dew sheerie on the eastern shore of the loch, east of Ardagh.|Take the spores to Cait in Howth.|Get otherworld soil from a deamhan creig (or ask Merlo near Howth for [soil from the otherworld]).|Return to Cait.|Ainrebh the enchanter in Caille must seal the magic between the soil and the spores.|Get the grass seeds from the grass sheerie named Fearan, on the hill west-northwest of Caille (he runs the hill crest with a companion).|Return the seeds to Ainrebh.|Return to Fianait in Ardee with the otherworld potted soil.",
+    "StepItemTemplates": "cq_dew_sheerie_spores;50||cq_otherworld_soil;50|||cq_grass_seeds||",
+    "TargetName": "dew sheerie;200|Cait;200|deamhan creig;200|Cait;200|Ainrebh;200|Fearan;200|Ainrebh;200|Fianait;200"
+   },
+   "where": {
+    "ID": 20074
+   },
+   "why": "the finale was 'reconstructed' (spec note): any grass sheerie dropped the seeds and the quest ended on a Fearan kill; walkthrough Hib 174: 'stumble upon the grass sheerie named Fearan ... With grass seeds in hand, I returned to Ainrebh ... returned to Fianait in triumph', so Fearan carries the seeds and the quest ends at Fianait"
+  },
+  {
+   "finding": "P02-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20074",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 401831,
+    "Y": 513456,
+    "Z": 6430
+   },
+   "why": "step 6 is now Fearan himself (his spawn on the Bri Leith hill crest)"
+  },
+  {
+   "finding": "P02-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20074",
+    "Steps",
+    8,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 341546,
+    "Y": 467611,
+    "Z": 5247
+   },
+   "why": "the quest now ends at Fianait in Ardee"
+  },
+  {
+   "finding": "P02-E7",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20026",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 515227,
+    "Y": 395921,
+    "Z": 6720
+   },
+   "why": "step text says 'hill northwest of Snowdonia Station' but the marker pointed at the Camelot Hills queen; two dragon ant queens stand on the Black Mtns. North hill (515227,395921 and 514809,395920)"
+  },
+  {
+   "finding": "P02-E8",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20003",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 541341,
+    "Y": 600749,
+    "Z": 1953
+   },
+   "why": "marker was on the Forest Sauvage fellwoods; the walkthrough (Alb 501) puts the ebony fellwoods at the Campacorentin / Salisbury Plains zone line (58000/19000), where the fellwood group around 541341,600749 stands"
+  },
+  {
+   "finding": "P02-E8",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "SourceName": "SEARCH;3;;1;605900;564450;800;5"
+   },
+   "where": {
+    "ID": 20003
+   },
+   "why": "step 3 search area was a placeholder 32k circle (581632,581632 r32768) over all of Salisbury Plains; the walkthrough says 'walk up right next to the 2 crates in the camp', so the search is now radius 800 around the slaver camp (slavers, slave masters and Slave Master Cottrel at 605300-606400 / 564000-565000)"
+  },
+  {
+   "finding": "P02-E8",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20003",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 605900,
+    "Y": 564450,
+    "Z": 2170
+   },
+   "why": "step 3 had no marker; it now points at the slaver camp crates"
+  }
+ ]
+}

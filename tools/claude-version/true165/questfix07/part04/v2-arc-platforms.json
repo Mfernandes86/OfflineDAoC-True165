@@ -1,0 +1,90 @@
+{
+ "fixer": "part04",
+ "about": "v2: B11 Arc of Ages east platform (step 2) separated from the north platform (step 5)",
+ "entries": [
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20396",
+    "Steps",
+    2
+   ],
+   "value": {
+    "Marker": {
+     "Region": 1,
+     "X": 498824,
+     "Y": 587720,
+     "Z": 2480
+    },
+    "Custom": {
+     "Region": 1,
+     "X": 498824,
+     "Y": 587720,
+     "Z": 0,
+     "Radius": 450,
+     "Kind": "travel"
+    }
+   },
+   "why": "step 2 and step 5 used points 185 apart with radius 1500, so one visit finished both; walkthrough 199 'step onto the East Platform': the Mage Tower model (b-rndtw4, fixture 2882 at Campacorentin 14080,5952, yaw 180) has three raised platforms; the east one is centred at Campacorentin 15496,6088 (the Albion banner at 15496,6432 stands on its edge); radius 450 covers it and stays 1.9k from the north platform"
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20397",
+    "Steps",
+    2
+   ],
+   "value": {
+    "Marker": {
+     "Region": 1,
+     "X": 498824,
+     "Y": 587720,
+     "Z": 2480
+    },
+    "Custom": {
+     "Region": 1,
+     "X": 498824,
+     "Y": 587720,
+     "Z": 0,
+     "Radius": 450,
+     "Kind": "travel"
+    }
+   },
+   "why": "step 2 and step 5 used points 185 apart with radius 1500, so one visit finished both; walkthrough 199 'step onto the East Platform': the Mage Tower model (b-rndtw4, fixture 2882 at Campacorentin 14080,5952, yaw 180) has three raised platforms; the east one is centred at Campacorentin 15496,6088 (the Albion banner at 15496,6432 stands on its edge); radius 450 covers it and stays 1.9k from the north platform"
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20398",
+    "Steps",
+    2
+   ],
+   "value": {
+    "Marker": {
+     "Region": 1,
+     "X": 498824,
+     "Y": 587720,
+     "Z": 2480
+    },
+    "Custom": {
+     "Region": 1,
+     "X": 498824,
+     "Y": 587720,
+     "Z": 0,
+     "Radius": 450,
+     "Kind": "travel"
+    }
+   },
+   "why": "step 2 and step 5 used points 185 apart with radius 1500, so one visit finished both; walkthrough 199 'step onto the East Platform': the Mage Tower model (b-rndtw4, fixture 2882 at Campacorentin 14080,5952, yaw 180) has three raised platforms; the east one is centred at Campacorentin 15496,6088 (the Albion banner at 15496,6432 stands on its edge); radius 450 covers it and stays 1.9k from the north platform"
+  }
+ ]
+}

@@ -1,0 +1,3343 @@
+{
+ "fixer": "patrols",
+ "about": "Midgard quest monsters that the period describes walking a route (CapnBry radar sightings first, then walkthroughs)",
+ "entries": [
+  {
+   "finding": "P04-C1",
+   "why": "Svartmoln stood 800 units east of Vasudheim's merchants (East Svealand 55828,16283); step text 'the bear that roams near the bridge', walkthrough 18 'he walks towards the bridge and past it'; CapnBry radar saw him at 13 spots from the water north of town (55828,13612 / 56090,13093), north of town (55357,14589), down the river past the bridge (57080,19796 / 58461,19839) to the south lake (58955,22988 / 58365,27584): a there-and-back route through those spots, swimming where he swam (patrol path, 9 points, 17125 units, there and back)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000001",
+    "PathID": "qf07_patrols_svartmoln_vasudheim_bridge",
+    "RegionID": 100,
+    "PathType": 2
+   }
+  },
+  {
+   "finding": "P04-C1",
+   "why": "qf07_patrols_svartmoln_vasudheim_bridge point 1: navmesh ground at zone 101 local 55800,13650",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000001",
+    "PathID": "qf07_patrols_svartmoln_vasudheim_bridge",
+    "Step": 1,
+    "X": 776696,
+    "Y": 750930,
+    "Z": 4404,
+    "MaxSpeed": 150,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P04-C1",
+   "why": "qf07_patrols_svartmoln_vasudheim_bridge point 2: navmesh ground at zone 101 local 55300,14700",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000002",
+    "PathID": "qf07_patrols_svartmoln_vasudheim_bridge",
+    "Step": 2,
+    "X": 776196,
+    "Y": 751980,
+    "Z": 4602,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C1",
+   "why": "qf07_patrols_svartmoln_vasudheim_bridge point 3: navmesh ground at zone 101 local 56750,15300",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000003",
+    "PathID": "qf07_patrols_svartmoln_vasudheim_bridge",
+    "Step": 3,
+    "X": 777646,
+    "Y": 752580,
+    "Z": 4602,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C1",
+   "why": "qf07_patrols_svartmoln_vasudheim_bridge point 4: navmesh water at zone 101 local 57900,16200",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000004",
+    "PathID": "qf07_patrols_svartmoln_vasudheim_bridge",
+    "Step": 4,
+    "X": 778796,
+    "Y": 753480,
+    "Z": 4355,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C1",
+   "why": "qf07_patrols_svartmoln_vasudheim_bridge point 5: navmesh water at zone 101 local 57300,17600",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000005",
+    "PathID": "qf07_patrols_svartmoln_vasudheim_bridge",
+    "Step": 5,
+    "X": 778196,
+    "Y": 754880,
+    "Z": 4355,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C1",
+   "why": "qf07_patrols_svartmoln_vasudheim_bridge point 6: navmesh water at zone 101 local 57080,19796",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000006",
+    "PathID": "qf07_patrols_svartmoln_vasudheim_bridge",
+    "Step": 6,
+    "X": 777976,
+    "Y": 757076,
+    "Z": 4355,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C1",
+   "why": "qf07_patrols_svartmoln_vasudheim_bridge point 7: navmesh ground at zone 101 local 58461,19839",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000007",
+    "PathID": "qf07_patrols_svartmoln_vasudheim_bridge",
+    "Step": 7,
+    "X": 779357,
+    "Y": 757119,
+    "Z": 4494,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C1",
+   "why": "qf07_patrols_svartmoln_vasudheim_bridge point 8: navmesh water at zone 101 local 58955,22988",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000008",
+    "PathID": "qf07_patrols_svartmoln_vasudheim_bridge",
+    "Step": 8,
+    "X": 779851,
+    "Y": 760268,
+    "Z": 4355,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C1",
+   "why": "qf07_patrols_svartmoln_vasudheim_bridge point 9: navmesh water at zone 101 local 58365,27584",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000009",
+    "PathID": "qf07_patrols_svartmoln_vasudheim_bridge",
+    "Step": 9,
+    "X": 779261,
+    "Y": 764864,
+    "Z": 4355,
+    "MaxSpeed": 150,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P04-C1",
+   "why": "Svartmoln stood 800 units east of Vasudheim's merchants (East Svealand 55828,16283); step text 'the bear that roams near the bridge', walkthrough 18 'he walks towards the bridge and past it'; CapnBry radar saw him at 13 spots from the water north of town (55828,13612 / 56090,13093), north of town (55357,14589), down the river past the bridge (57080,19796 / 58461,19839) to the south lake (58955,22988 / 58365,27584): a there-and-back route through those spots, swimming where he swam; Svartmoln walks qf07_patrols_svartmoln_vasudheim_bridge from its first point (was 776724,753563)",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_svartmoln_vasudheim_bridge",
+    "RoamingRange": 0,
+    "X": 776696,
+    "Y": 750930,
+    "Z": 4404
+   },
+   "where": {
+    "Mob_ID": "7d1cfe51-7258-53bc-b817-fd41f2a04619"
+   }
+  },
+  {
+   "finding": "P10-C1",
+   "why": "Ugnof Toestubber stood still at West Svealand 64468,43807; step text 'patrols around Huginfell with a blodfelag henchman and a wolfhound', period 'walking outside the perimeter of Hugginfel'; CapnBry radar saw him at 11 spots in a ring round Huginfel (50570,40795 / 52009,43244 / 52638,36474 / 55214,49819 / 58138,49716 / 59211,47791 / 63819,44147): a loop through those spots outside the town guards (none within 900), round the lake's west end (patrol path, 14 points, 47583 units, loop)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000002",
+    "PathID": "qf07_patrols_ugnof_huginfel_ring",
+    "RegionID": 100,
+    "PathType": 3
+   }
+  },
+  {
+   "finding": "P10-C1",
+   "why": "qf07_patrols_ugnof_huginfel_ring point 1: navmesh ground at zone 102 local 63819,44147",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000010",
+    "PathID": "qf07_patrols_ugnof_huginfel_ring",
+    "Step": 1,
+    "X": 719179,
+    "Y": 781427,
+    "Z": 4469,
+    "MaxSpeed": 150,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P10-C1",
+   "why": "qf07_patrols_ugnof_huginfel_ring point 2: navmesh ground at zone 102 local 59211,47791",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000011",
+    "PathID": "qf07_patrols_ugnof_huginfel_ring",
+    "Step": 2,
+    "X": 714571,
+    "Y": 785071,
+    "Z": 4675,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C1",
+   "why": "qf07_patrols_ugnof_huginfel_ring point 3: navmesh ground at zone 102 local 58138,49716",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000012",
+    "PathID": "qf07_patrols_ugnof_huginfel_ring",
+    "Step": 3,
+    "X": 713498,
+    "Y": 786996,
+    "Z": 4675,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C1",
+   "why": "qf07_patrols_ugnof_huginfel_ring point 4: navmesh ground at zone 102 local 55214,49819",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000013",
+    "PathID": "qf07_patrols_ugnof_huginfel_ring",
+    "Step": 4,
+    "X": 710574,
+    "Y": 787099,
+    "Z": 4649,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C1",
+   "why": "qf07_patrols_ugnof_huginfel_ring point 5: navmesh ground at zone 102 local 51600,47200",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000014",
+    "PathID": "qf07_patrols_ugnof_huginfel_ring",
+    "Step": 5,
+    "X": 706960,
+    "Y": 784480,
+    "Z": 4669,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C1",
+   "why": "qf07_patrols_ugnof_huginfel_ring point 6: navmesh ground at zone 102 local 52009,43244",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000015",
+    "PathID": "qf07_patrols_ugnof_huginfel_ring",
+    "Step": 6,
+    "X": 707369,
+    "Y": 780524,
+    "Z": 4675,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C1",
+   "why": "qf07_patrols_ugnof_huginfel_ring point 7: navmesh ground at zone 102 local 51218,41582",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000016",
+    "PathID": "qf07_patrols_ugnof_huginfel_ring",
+    "Step": 7,
+    "X": 706578,
+    "Y": 778862,
+    "Z": 4518,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C1",
+   "why": "qf07_patrols_ugnof_huginfel_ring point 8: navmesh ground at zone 102 local 50570,40795",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000017",
+    "PathID": "qf07_patrols_ugnof_huginfel_ring",
+    "Step": 8,
+    "X": 705930,
+    "Y": 778075,
+    "Z": 4475,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C1",
+   "why": "qf07_patrols_ugnof_huginfel_ring point 9: navmesh ground at zone 102 local 48800,39300",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000018",
+    "PathID": "qf07_patrols_ugnof_huginfel_ring",
+    "Step": 9,
+    "X": 704160,
+    "Y": 776580,
+    "Z": 4603,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C1",
+   "why": "qf07_patrols_ugnof_huginfel_ring point 10: navmesh ground at zone 102 local 49200,37200",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000019",
+    "PathID": "qf07_patrols_ugnof_huginfel_ring",
+    "Step": 10,
+    "X": 704560,
+    "Y": 774480,
+    "Z": 5184,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C1",
+   "why": "qf07_patrols_ugnof_huginfel_ring point 11: navmesh ground at zone 102 local 52638,36474",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000020",
+    "PathID": "qf07_patrols_ugnof_huginfel_ring",
+    "Step": 11,
+    "X": 707998,
+    "Y": 773754,
+    "Z": 4622,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C1",
+   "why": "qf07_patrols_ugnof_huginfel_ring point 12: navmesh ground at zone 102 local 58000,36400",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000021",
+    "PathID": "qf07_patrols_ugnof_huginfel_ring",
+    "Step": 12,
+    "X": 713360,
+    "Y": 773680,
+    "Z": 4579,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C1",
+   "why": "qf07_patrols_ugnof_huginfel_ring point 13: navmesh ground at zone 102 local 63200,38300",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000022",
+    "PathID": "qf07_patrols_ugnof_huginfel_ring",
+    "Step": 13,
+    "X": 718560,
+    "Y": 775580,
+    "Z": 4541,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C1",
+   "why": "qf07_patrols_ugnof_huginfel_ring point 14: navmesh ground at zone 102 local 64800,41300",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000023",
+    "PathID": "qf07_patrols_ugnof_huginfel_ring",
+    "Step": 14,
+    "X": 720160,
+    "Y": 778580,
+    "Z": 4492,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C1",
+   "why": "Ugnof Toestubber stood still at West Svealand 64468,43807; step text 'patrols around Huginfell with a blodfelag henchman and a wolfhound', period 'walking outside the perimeter of Hugginfel'; CapnBry radar saw him at 11 spots in a ring round Huginfel (50570,40795 / 52009,43244 / 52638,36474 / 55214,49819 / 58138,49716 / 59211,47791 / 63819,44147): a loop through those spots outside the town guards (none within 900), round the lake's west end; Ugnof Toestubber walks qf07_patrols_ugnof_huginfel_ring",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_ugnof_huginfel_ring",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "2ed26c46-7ad9-4d38-9f4f-b11effe85e98"
+   }
+  },
+  {
+   "finding": "P10-C1",
+   "why": "blodfelag henchman walks with Ugnof Toestubber (QuestFellowBrain + classic-quests Fellows, as Fjall's fellows), starting beside the leader's spawn",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "RoamingRange": 0,
+    "X": 719269,
+    "Y": 781427,
+    "Z": 4468
+   },
+   "where": {
+    "Mob_ID": "45433a41-d40b-4c2f-a414-966916053866"
+   }
+  },
+  {
+   "finding": "P10-C1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "45433a41-d40b-4c2f-a414-966916053866"
+   ],
+   "value": "Ugnof Toestubber",
+   "why": "blodfelag henchman (45433a41-d40b-4c2f-a414-966916053866) is a fellow of Ugnof Toestubber"
+  },
+  {
+   "finding": "P10-C1",
+   "why": "blodfelag warhound walks with Ugnof Toestubber (QuestFellowBrain + classic-quests Fellows, as Fjall's fellows), starting beside the leader's spawn",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "RoamingRange": 0,
+    "X": 719089,
+    "Y": 781427,
+    "Z": 4470
+   },
+   "where": {
+    "Mob_ID": "0db04efa-3400-4a90-9701-580479b9d228"
+   }
+  },
+  {
+   "finding": "P10-C1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "0db04efa-3400-4a90-9701-580479b9d228"
+   ],
+   "value": "Ugnof Toestubber",
+   "why": "blodfelag warhound (0db04efa-3400-4a90-9701-580479b9d228) is a fellow of Ugnof Toestubber"
+  },
+  {
+   "finding": "P03-C1",
+   "why": "Fridgeir Gestsson stood still east of the blodfelag fort (West Svealand 23125,13679); Allakhazam 228 'He's walking around the blodfelag fort ... he usually has escorts', our journal 'patrols the path beyond the blodfelag fort with a warhound and a haxa': a loop round the outside of the fort walls from his spot, with the haxa beside him and a warhound (patrol path, 7 points, 30253 units, loop)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000003",
+    "PathID": "qf07_patrols_fridgeir_blodfelag_fort",
+    "RegionID": 100,
+    "PathType": 3
+   }
+  },
+  {
+   "finding": "P03-C1",
+   "why": "qf07_patrols_fridgeir_blodfelag_fort point 1: navmesh ground at zone 102 local 23125,13679",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000024",
+    "PathID": "qf07_patrols_fridgeir_blodfelag_fort",
+    "Step": 1,
+    "X": 678485,
+    "Y": 750959,
+    "Z": 5593,
+    "MaxSpeed": 150,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P03-C1",
+   "why": "qf07_patrols_fridgeir_blodfelag_fort point 2: navmesh ground at zone 102 local 21600,11700",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000025",
+    "PathID": "qf07_patrols_fridgeir_blodfelag_fort",
+    "Step": 2,
+    "X": 676960,
+    "Y": 748980,
+    "Z": 5571,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P03-C1",
+   "why": "qf07_patrols_fridgeir_blodfelag_fort point 3: navmesh ground at zone 102 local 17000,11500",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000026",
+    "PathID": "qf07_patrols_fridgeir_blodfelag_fort",
+    "Step": 3,
+    "X": 672360,
+    "Y": 748780,
+    "Z": 5433,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P03-C1",
+   "why": "qf07_patrols_fridgeir_blodfelag_fort point 4: navmesh ground at zone 102 local 12600,11800",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000027",
+    "PathID": "qf07_patrols_fridgeir_blodfelag_fort",
+    "Step": 4,
+    "X": 667960,
+    "Y": 749080,
+    "Z": 5504,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P03-C1",
+   "why": "qf07_patrols_fridgeir_blodfelag_fort point 5: navmesh ground at zone 102 local 12500,17500",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000028",
+    "PathID": "qf07_patrols_fridgeir_blodfelag_fort",
+    "Step": 5,
+    "X": 667860,
+    "Y": 754780,
+    "Z": 5482,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P03-C1",
+   "why": "qf07_patrols_fridgeir_blodfelag_fort point 6: navmesh ground at zone 102 local 17000,17600",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000029",
+    "PathID": "qf07_patrols_fridgeir_blodfelag_fort",
+    "Step": 6,
+    "X": 672360,
+    "Y": 754880,
+    "Z": 5475,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P03-C1",
+   "why": "qf07_patrols_fridgeir_blodfelag_fort point 7: navmesh ground at zone 102 local 21600,17300",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000030",
+    "PathID": "qf07_patrols_fridgeir_blodfelag_fort",
+    "Step": 7,
+    "X": 676960,
+    "Y": 754580,
+    "Z": 5457,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P03-C1",
+   "why": "Fridgeir Gestsson stood still east of the blodfelag fort (West Svealand 23125,13679); Allakhazam 228 'He's walking around the blodfelag fort ... he usually has escorts', our journal 'patrols the path beyond the blodfelag fort with a warhound and a haxa': a loop round the outside of the fort walls from his spot, with the haxa beside him and a warhound; Fridgeir Gestsson walks qf07_patrols_fridgeir_blodfelag_fort",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_fridgeir_blodfelag_fort",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "b2a58d66-a425-4c07-ab7f-67b52c66309f"
+   }
+  },
+  {
+   "finding": "P03-C1",
+   "why": "blodfelag haxa walks with Fridgeir Gestsson (QuestFellowBrain + classic-quests Fellows, as Fjall's fellows), starting beside the leader's spawn",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "RoamingRange": 0,
+    "X": 678575,
+    "Y": 750959,
+    "Z": 5597
+   },
+   "where": {
+    "Mob_ID": "9d4229bc-84ab-4dc3-b69f-f2ca36ce1f3d"
+   }
+  },
+  {
+   "finding": "P03-C1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "9d4229bc-84ab-4dc3-b69f-f2ca36ce1f3d"
+   ],
+   "value": "Fridgeir Gestsson",
+   "why": "blodfelag haxa (9d4229bc-84ab-4dc3-b69f-f2ca36ce1f3d) is a fellow of Fridgeir Gestsson"
+  },
+  {
+   "finding": "P03-C1",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "blodfelag warhound",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 678395,
+    "Y": 750959,
+    "Z": 5587,
+    "Speed": 180,
+    "Heading": 3806,
+    "Region": 100,
+    "Model": 102,
+    "Size": 39,
+    "Strength": 0,
+    "Constitution": 30,
+    "Dexterity": 30,
+    "Quickness": 30,
+    "Intelligence": 30,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 10,
+    "Realm": 0,
+    "EquipmentTemplateID": null,
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 60158529,
+    "Race": 2005,
+    "Flags": 0,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 3,
+    "RespawnInterval": 80,
+    "FactionID": 118,
+    "BodyType": 6,
+    "HouseNumber": 0,
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071101-0000-4000-8000-000000000001"
+   },
+   "why": "Fridgeir walks 'with a warhound and a haxa' (our journal; period Related NPCs Blodfelag Haxa, Blodfelag Warhound) but no warhound stood with him (a copy of blodfelag warhound 116a1799-56df-438e-836a-dca3db3b9a78, same template and stats, walking with Fridgeir Gestsson)",
+   "source": "Allakhazam quest 228 Living Warning: Related NPCs 'Blodfelag Haxa', 'Blodfelag Warhound', 'Fridgeir Gestsson'; 'He's walking around the blodfelag fort ... And he usually has escorts of some kind'"
+  },
+  {
+   "finding": "P03-C1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "00071101-0000-4000-8000-000000000001"
+   ],
+   "value": "Fridgeir Gestsson",
+   "why": "new blodfelag warhound (00071101-0000-4000-8000-000000000001) is a fellow of Fridgeir Gestsson"
+  },
+  {
+   "finding": "P08-C2",
+   "why": "Rathis stood still (Vale of Mularn 34243,27514); walkthrough 98 'he is in the hunter party that wanders the valley ... He is hardly ever alone', walkthrough 108 'Rathes and his little war band ... travel the same path'; CapnBry radar saw him at 38 spots on a loop through both vendo camps (25155,12480 / 27937,11186 / 28461,15643 / 30043,20319 / 32543,22196 / 34191,25973 / 32406,30782 / 29124,31348 / 24951,29751 / 24935,23275): a loop through those spots, with the band the radar saw beside him (patrol path, 15 points, 49868 units, loop)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000004",
+    "PathID": "qf07_patrols_rathis_vendo_warband",
+    "RegionID": 100,
+    "PathType": 3
+   }
+  },
+  {
+   "finding": "P08-C2",
+   "why": "qf07_patrols_rathis_vendo_warband point 1: navmesh ground at zone 100 local 34243,27514",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000031",
+    "PathID": "qf07_patrols_rathis_vendo_warband",
+    "Step": 1,
+    "X": 787907,
+    "Y": 699258,
+    "Z": 4726,
+    "MaxSpeed": 150,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P08-C2",
+   "why": "qf07_patrols_rathis_vendo_warband point 2: navmesh ground at zone 100 local 34200,29000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000032",
+    "PathID": "qf07_patrols_rathis_vendo_warband",
+    "Step": 2,
+    "X": 787864,
+    "Y": 700744,
+    "Z": 4821,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P08-C2",
+   "why": "qf07_patrols_rathis_vendo_warband point 3: navmesh ground at zone 100 local 32400,30700",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000033",
+    "PathID": "qf07_patrols_rathis_vendo_warband",
+    "Step": 3,
+    "X": 786064,
+    "Y": 702444,
+    "Z": 4703,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P08-C2",
+   "why": "qf07_patrols_rathis_vendo_warband point 4: navmesh ground at zone 100 local 29200,31300",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000034",
+    "PathID": "qf07_patrols_rathis_vendo_warband",
+    "Step": 4,
+    "X": 782864,
+    "Y": 703044,
+    "Z": 4783,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P08-C2",
+   "why": "qf07_patrols_rathis_vendo_warband point 5: navmesh ground at zone 100 local 24900,29600",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000035",
+    "PathID": "qf07_patrols_rathis_vendo_warband",
+    "Step": 5,
+    "X": 778564,
+    "Y": 701344,
+    "Z": 4964,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P08-C2",
+   "why": "qf07_patrols_rathis_vendo_warband point 6: navmesh ground at zone 100 local 24800,26450",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000036",
+    "PathID": "qf07_patrols_rathis_vendo_warband",
+    "Step": 6,
+    "X": 778464,
+    "Y": 698194,
+    "Z": 5594,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P08-C2",
+   "why": "qf07_patrols_rathis_vendo_warband point 7: navmesh ground at zone 100 local 24700,23300",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000037",
+    "PathID": "qf07_patrols_rathis_vendo_warband",
+    "Step": 7,
+    "X": 778364,
+    "Y": 695044,
+    "Z": 4835,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P08-C2",
+   "why": "qf07_patrols_rathis_vendo_warband point 8: navmesh ground at zone 100 local 25000,17500",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000038",
+    "PathID": "qf07_patrols_rathis_vendo_warband",
+    "Step": 8,
+    "X": 778664,
+    "Y": 689244,
+    "Z": 6484,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P08-C2",
+   "why": "qf07_patrols_rathis_vendo_warband point 9: navmesh ground at zone 100 local 25100,12400",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000039",
+    "PathID": "qf07_patrols_rathis_vendo_warband",
+    "Step": 9,
+    "X": 778764,
+    "Y": 684144,
+    "Z": 4787,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P08-C2",
+   "why": "qf07_patrols_rathis_vendo_warband point 10: navmesh ground at zone 100 local 27800,11300",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000040",
+    "PathID": "qf07_patrols_rathis_vendo_warband",
+    "Step": 10,
+    "X": 781464,
+    "Y": 683044,
+    "Z": 4701,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P08-C2",
+   "why": "qf07_patrols_rathis_vendo_warband point 11: navmesh ground at zone 100 local 28400,14000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000041",
+    "PathID": "qf07_patrols_rathis_vendo_warband",
+    "Step": 11,
+    "X": 782064,
+    "Y": 685744,
+    "Z": 4815,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P08-C2",
+   "why": "qf07_patrols_rathis_vendo_warband point 12: navmesh ground at zone 100 local 28500,15700",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000042",
+    "PathID": "qf07_patrols_rathis_vendo_warband",
+    "Step": 12,
+    "X": 782164,
+    "Y": 687444,
+    "Z": 4889,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P08-C2",
+   "why": "qf07_patrols_rathis_vendo_warband point 13: navmesh ground at zone 100 local 29900,19400",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000043",
+    "PathID": "qf07_patrols_rathis_vendo_warband",
+    "Step": 13,
+    "X": 783564,
+    "Y": 691144,
+    "Z": 5082,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P08-C2",
+   "why": "qf07_patrols_rathis_vendo_warband point 14: navmesh ground at zone 100 local 32500,22200",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000044",
+    "PathID": "qf07_patrols_rathis_vendo_warband",
+    "Step": 14,
+    "X": 786164,
+    "Y": 693944,
+    "Z": 5052,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P08-C2",
+   "why": "qf07_patrols_rathis_vendo_warband point 15: navmesh ground at zone 100 local 34000,25500",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000045",
+    "PathID": "qf07_patrols_rathis_vendo_warband",
+    "Step": 15,
+    "X": 787664,
+    "Y": 697244,
+    "Z": 4682,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P08-C2",
+   "why": "Rathis stood still (Vale of Mularn 34243,27514); walkthrough 98 'he is in the hunter party that wanders the valley ... He is hardly ever alone', walkthrough 108 'Rathes and his little war band ... travel the same path'; CapnBry radar saw him at 38 spots on a loop through both vendo camps (25155,12480 / 27937,11186 / 28461,15643 / 30043,20319 / 32543,22196 / 34191,25973 / 32406,30782 / 29124,31348 / 24951,29751 / 24935,23275): a loop through those spots, with the band the radar saw beside him; Rathis walks qf07_patrols_rathis_vendo_warband",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_rathis_vendo_warband",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "5717fe8e-d792-5c47-9609-08f1327adc1a"
+   }
+  },
+  {
+   "finding": "P08-C2",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "rabid wolfhound",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 787997,
+    "Y": 699258,
+    "Z": 4729,
+    "Speed": 180,
+    "Heading": 1934,
+    "Region": 100,
+    "Model": 56,
+    "Size": 49,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 0,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 11,
+    "Realm": 0,
+    "EquipmentTemplateID": null,
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 60165108,
+    "Race": 2000,
+    "Flags": 0,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 3,
+    "RespawnInterval": 80,
+    "FactionID": 0,
+    "BodyType": 1,
+    "HouseNumber": 0,
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071101-0000-4000-8000-000000000002"
+   },
+   "why": "Rathis's war band: CapnBry radar saw rabid wolfhounds at 19 of his spots (a copy of rabid wolfhound e1d2ec47-d57e-4a3b-8ce6-bf4b697193d0, same template and stats, walking with Rathis)"
+  },
+  {
+   "finding": "P08-C2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "00071101-0000-4000-8000-000000000002"
+   ],
+   "value": "Rathis",
+   "why": "new rabid wolfhound (00071101-0000-4000-8000-000000000002) is a fellow of Rathis"
+  },
+  {
+   "finding": "P08-C2",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "rabid wolfhound",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 787907,
+    "Y": 699348,
+    "Z": 4735,
+    "Speed": 180,
+    "Heading": 1934,
+    "Region": 100,
+    "Model": 56,
+    "Size": 49,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 0,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 11,
+    "Realm": 0,
+    "EquipmentTemplateID": null,
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 60165108,
+    "Race": 2000,
+    "Flags": 0,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 3,
+    "RespawnInterval": 80,
+    "FactionID": 0,
+    "BodyType": 1,
+    "HouseNumber": 0,
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071101-0000-4000-8000-000000000003"
+   },
+   "why": "Rathis's war band: CapnBry radar saw rabid wolfhounds at 19 of his spots (a copy of rabid wolfhound e1d2ec47-d57e-4a3b-8ce6-bf4b697193d0, same template and stats, walking with Rathis)"
+  },
+  {
+   "finding": "P08-C2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "00071101-0000-4000-8000-000000000003"
+   ],
+   "value": "Rathis",
+   "why": "new rabid wolfhound (00071101-0000-4000-8000-000000000003) is a fellow of Rathis"
+  },
+  {
+   "finding": "P08-C2",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "vendo bone-collector",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 787817,
+    "Y": 699258,
+    "Z": 4724,
+    "Speed": 180,
+    "Heading": 4058,
+    "Region": 100,
+    "Model": 394,
+    "Size": 56,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 0,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 13,
+    "Realm": 0,
+    "EquipmentTemplateID": null,
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 60167576,
+    "Race": 2005,
+    "Flags": 0,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 1,
+    "RespawnInterval": 80,
+    "FactionID": 179,
+    "BodyType": 6,
+    "HouseNumber": 0,
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071101-0000-4000-8000-000000000004"
+   },
+   "why": "Rathis's war band: CapnBry radar saw vendo bone-collectors at 16 of his spots (a copy of vendo bone-collector f13b9111-8c9d-5ebb-ba77-45b37c22601b, same template and stats, walking with Rathis)"
+  },
+  {
+   "finding": "P08-C2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "00071101-0000-4000-8000-000000000004"
+   ],
+   "value": "Rathis",
+   "why": "new vendo bone-collector (00071101-0000-4000-8000-000000000004) is a fellow of Rathis"
+  },
+  {
+   "finding": "P08-C2",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "vendo shaman",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 787907,
+    "Y": 699168,
+    "Z": 4718,
+    "Speed": 180,
+    "Heading": 3554,
+    "Region": 100,
+    "Model": 394,
+    "Size": 52,
+    "Strength": 0,
+    "Constitution": 30,
+    "Dexterity": 30,
+    "Quickness": 30,
+    "Intelligence": 30,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 10,
+    "Realm": 0,
+    "EquipmentTemplateID": null,
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 60167590,
+    "Race": 2005,
+    "Flags": 0,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 0,
+    "RespawnInterval": 80,
+    "FactionID": 179,
+    "BodyType": 6,
+    "HouseNumber": 0,
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071101-0000-4000-8000-000000000005"
+   },
+   "why": "Rathis's war band: CapnBry radar saw vendo shamans at 9 of his spots (a copy of vendo shaman 6696bbce-5049-510b-b264-a440067ade92, same template and stats, walking with Rathis)"
+  },
+  {
+   "finding": "P08-C2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "00071101-0000-4000-8000-000000000005"
+   ],
+   "value": "Rathis",
+   "why": "new vendo shaman (00071101-0000-4000-8000-000000000005) is a fellow of Rathis"
+  },
+  {
+   "finding": "P08-C3",
+   "why": "Prugor only drifted (roam 200) between the camps at Vale of Mularn 29081,16892; walkthrough: he 'wanders between the two vendo camps west of Fort Veldon', walkthrough 108 'Prugor can be found in the Vendo camp ... Loc 25k, 12k', walkthrough 98 'the lake vendo camp ... kill Vendo Scout Prugor'; CapnBry radar saw him at the north camp (24854,12198 / 25135,12407) and by the lake camp: a there-and-back walk between the north camp (25000,12300) and the lake camp (24800,22600) (patrol path, 4 points, 10879 units, there and back)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000005",
+    "PathID": "qf07_patrols_prugor_vendo_camps",
+    "RegionID": 100,
+    "PathType": 2
+   }
+  },
+  {
+   "finding": "P08-C3",
+   "why": "qf07_patrols_prugor_vendo_camps point 1: navmesh ground at zone 100 local 25000,12300",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000046",
+    "PathID": "qf07_patrols_prugor_vendo_camps",
+    "Step": 1,
+    "X": 778664,
+    "Y": 684044,
+    "Z": 4778,
+    "MaxSpeed": 150,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P08-C3",
+   "why": "qf07_patrols_prugor_vendo_camps point 2: navmesh ground at zone 100 local 26500,15000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000047",
+    "PathID": "qf07_patrols_prugor_vendo_camps",
+    "Step": 2,
+    "X": 780164,
+    "Y": 686744,
+    "Z": 4789,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P08-C3",
+   "why": "qf07_patrols_prugor_vendo_camps point 3: navmesh ground at zone 100 local 25500,19000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000048",
+    "PathID": "qf07_patrols_prugor_vendo_camps",
+    "Step": 3,
+    "X": 779164,
+    "Y": 690744,
+    "Z": 6811,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P08-C3",
+   "why": "qf07_patrols_prugor_vendo_camps point 4: navmesh ground at zone 100 local 24800,22600",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000049",
+    "PathID": "qf07_patrols_prugor_vendo_camps",
+    "Step": 4,
+    "X": 778464,
+    "Y": 694344,
+    "Z": 4810,
+    "MaxSpeed": 150,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P08-C3",
+   "why": "Prugor only drifted (roam 200) between the camps at Vale of Mularn 29081,16892; walkthrough: he 'wanders between the two vendo camps west of Fort Veldon', walkthrough 108 'Prugor can be found in the Vendo camp ... Loc 25k, 12k', walkthrough 98 'the lake vendo camp ... kill Vendo Scout Prugor'; CapnBry radar saw him at the north camp (24854,12198 / 25135,12407) and by the lake camp: a there-and-back walk between the north camp (25000,12300) and the lake camp (24800,22600); Prugor walks qf07_patrols_prugor_vendo_camps from its first point (was 782745,688636)",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_prugor_vendo_camps",
+    "RoamingRange": 0,
+    "X": 778664,
+    "Y": 684044,
+    "Z": 4778
+   },
+   "where": {
+    "Mob_ID": "c7477088-fa27-4219-99d8-bc09a6bd66f2"
+   }
+  },
+  {
+   "finding": "P07-C1",
+   "why": "Darksong stood still (East Svealand 11383,49229, roam 0); walkthrough 'her ghost roams the land'; CapnBry radar saw her at 10 spots over 9.5k-13.2k by 48.1k-50.4k (9499,49701 / 10320,48766 / 10683,50419 / 11481,48492 / 12519,49627 / 13171,48095): a slow loop through those spots (patrol path, 7 points, 9807 units, loop)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000006",
+    "PathID": "qf07_patrols_darksong_ghost_wander",
+    "RegionID": 100,
+    "PathType": 3
+   }
+  },
+  {
+   "finding": "P07-C1",
+   "why": "qf07_patrols_darksong_ghost_wander point 1: navmesh ground at zone 101 local 11383,49229",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000050",
+    "PathID": "qf07_patrols_darksong_ghost_wander",
+    "Step": 1,
+    "X": 732279,
+    "Y": 786509,
+    "Z": 4639,
+    "MaxSpeed": 120,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P07-C1",
+   "why": "qf07_patrols_darksong_ghost_wander point 2: navmesh ground at zone 101 local 12519,49627",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000051",
+    "PathID": "qf07_patrols_darksong_ghost_wander",
+    "Step": 2,
+    "X": 733415,
+    "Y": 786907,
+    "Z": 4695,
+    "MaxSpeed": 120,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C1",
+   "why": "qf07_patrols_darksong_ghost_wander point 3: navmesh ground at zone 101 local 13171,48095",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000052",
+    "PathID": "qf07_patrols_darksong_ghost_wander",
+    "Step": 3,
+    "X": 734067,
+    "Y": 785375,
+    "Z": 4753,
+    "MaxSpeed": 120,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C1",
+   "why": "qf07_patrols_darksong_ghost_wander point 4: navmesh ground at zone 101 local 11481,48492",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000053",
+    "PathID": "qf07_patrols_darksong_ghost_wander",
+    "Step": 4,
+    "X": 732377,
+    "Y": 785772,
+    "Z": 4595,
+    "MaxSpeed": 120,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C1",
+   "why": "qf07_patrols_darksong_ghost_wander point 5: navmesh ground at zone 101 local 10320,48766",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000054",
+    "PathID": "qf07_patrols_darksong_ghost_wander",
+    "Step": 5,
+    "X": 731216,
+    "Y": 786046,
+    "Z": 4576,
+    "MaxSpeed": 120,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C1",
+   "why": "qf07_patrols_darksong_ghost_wander point 6: navmesh ground at zone 101 local 9499,49701",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000055",
+    "PathID": "qf07_patrols_darksong_ghost_wander",
+    "Step": 6,
+    "X": 730395,
+    "Y": 786981,
+    "Z": 4593,
+    "MaxSpeed": 120,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C1",
+   "why": "qf07_patrols_darksong_ghost_wander point 7: navmesh ground at zone 101 local 10683,50419",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000056",
+    "PathID": "qf07_patrols_darksong_ghost_wander",
+    "Step": 7,
+    "X": 731579,
+    "Y": 787699,
+    "Z": 4688,
+    "MaxSpeed": 120,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C1",
+   "why": "Darksong stood still (East Svealand 11383,49229, roam 0); walkthrough 'her ghost roams the land'; CapnBry radar saw her at 10 spots over 9.5k-13.2k by 48.1k-50.4k (9499,49701 / 10320,48766 / 10683,50419 / 11481,48492 / 12519,49627 / 13171,48095): a slow loop through those spots; Darksong walks qf07_patrols_darksong_ghost_wander",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_darksong_ghost_wander",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "c5c14a09-0919-5aa7-8061-2f0c77ef41eb"
+   }
+  },
+  {
+   "finding": "P07-C2",
+   "why": "Kobold Dirge stood still (Myrkwood 13749,11316, roam 0); period 'she wanders between the two roads to the south' and 'roams east of Dvalin tower'; CapnBry radar saw her at 65 spots over 12.0k-16.3k by 8.8k-13.7k: a loop round the edge of that area through radar spots (13971,8797 / 15739,9260 / 16288,10945 / 14595,13667 / 13249,13712 / 12050,13017 / 11957,11449 / 12392,8862) (patrol path, 10 points, 19068 units, loop)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000007",
+    "PathID": "qf07_patrols_kobold_dirge_dvalin_roads",
+    "RegionID": 100,
+    "PathType": 3
+   }
+  },
+  {
+   "finding": "P07-C2",
+   "why": "qf07_patrols_kobold_dirge_dvalin_roads point 1: navmesh ground at zone 105 local 13749,11316",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000057",
+    "PathID": "qf07_patrols_kobold_dirge_dvalin_roads",
+    "Step": 1,
+    "X": 767413,
+    "Y": 879668,
+    "Z": 4759,
+    "MaxSpeed": 120,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P07-C2",
+   "why": "qf07_patrols_kobold_dirge_dvalin_roads point 2: navmesh ground at zone 105 local 13971,8797",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000058",
+    "PathID": "qf07_patrols_kobold_dirge_dvalin_roads",
+    "Step": 2,
+    "X": 767635,
+    "Y": 877149,
+    "Z": 4746,
+    "MaxSpeed": 120,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C2",
+   "why": "qf07_patrols_kobold_dirge_dvalin_roads point 3: navmesh ground at zone 105 local 15739,9260",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000059",
+    "PathID": "qf07_patrols_kobold_dirge_dvalin_roads",
+    "Step": 3,
+    "X": 769403,
+    "Y": 877612,
+    "Z": 4761,
+    "MaxSpeed": 120,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C2",
+   "why": "qf07_patrols_kobold_dirge_dvalin_roads point 4: navmesh ground at zone 105 local 16288,10945",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000060",
+    "PathID": "qf07_patrols_kobold_dirge_dvalin_roads",
+    "Step": 4,
+    "X": 769952,
+    "Y": 879297,
+    "Z": 4782,
+    "MaxSpeed": 120,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C2",
+   "why": "qf07_patrols_kobold_dirge_dvalin_roads point 5: navmesh ground at zone 105 local 15855,11771",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000061",
+    "PathID": "qf07_patrols_kobold_dirge_dvalin_roads",
+    "Step": 5,
+    "X": 769519,
+    "Y": 880123,
+    "Z": 4749,
+    "MaxSpeed": 120,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C2",
+   "why": "qf07_patrols_kobold_dirge_dvalin_roads point 6: navmesh ground at zone 105 local 14595,13667",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000062",
+    "PathID": "qf07_patrols_kobold_dirge_dvalin_roads",
+    "Step": 6,
+    "X": 768259,
+    "Y": 882019,
+    "Z": 4746,
+    "MaxSpeed": 120,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C2",
+   "why": "qf07_patrols_kobold_dirge_dvalin_roads point 7: navmesh ground at zone 105 local 13249,13712",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000063",
+    "PathID": "qf07_patrols_kobold_dirge_dvalin_roads",
+    "Step": 7,
+    "X": 766913,
+    "Y": 882064,
+    "Z": 4758,
+    "MaxSpeed": 120,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C2",
+   "why": "qf07_patrols_kobold_dirge_dvalin_roads point 8: navmesh ground at zone 105 local 12050,13017",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000064",
+    "PathID": "qf07_patrols_kobold_dirge_dvalin_roads",
+    "Step": 8,
+    "X": 765714,
+    "Y": 881369,
+    "Z": 4793,
+    "MaxSpeed": 120,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C2",
+   "why": "qf07_patrols_kobold_dirge_dvalin_roads point 9: navmesh ground at zone 105 local 11957,11449",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000065",
+    "PathID": "qf07_patrols_kobold_dirge_dvalin_roads",
+    "Step": 9,
+    "X": 765621,
+    "Y": 879801,
+    "Z": 4819,
+    "MaxSpeed": 120,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C2",
+   "why": "qf07_patrols_kobold_dirge_dvalin_roads point 10: navmesh ground at zone 105 local 12392,8862",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000066",
+    "PathID": "qf07_patrols_kobold_dirge_dvalin_roads",
+    "Step": 10,
+    "X": 766056,
+    "Y": 877214,
+    "Z": 4746,
+    "MaxSpeed": 120,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C2",
+   "why": "Kobold Dirge stood still (Myrkwood 13749,11316, roam 0); period 'she wanders between the two roads to the south' and 'roams east of Dvalin tower'; CapnBry radar saw her at 65 spots over 12.0k-16.3k by 8.8k-13.7k: a loop round the edge of that area through radar spots (13971,8797 / 15739,9260 / 16288,10945 / 14595,13667 / 13249,13712 / 12050,13017 / 11957,11449 / 12392,8862); Kobold Dirge walks qf07_patrols_kobold_dirge_dvalin_roads",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_kobold_dirge_dvalin_roads",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "11daae1e-91a6-566c-aa37-91c07b2122d3"
+   }
+  },
+  {
+   "finding": "P07-C3",
+   "why": "Arakane stood still (Myrkwood 7519,14505, roam 0) while CapnBry radar saw it at 29 spots over 4.7k-9.2k by 11.6k-17.3k: a loop through radar spots (9249,14218 / 8470,12716 / 6207,11590 / 6765,14377 / 4735,15222 / 7774,17320 / 8485,17247 / 8353,16236) (patrol path, 9 points, 18363 units, loop)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000008",
+    "PathID": "qf07_patrols_arakane_myrkwood_wander",
+    "RegionID": 100,
+    "PathType": 3
+   }
+  },
+  {
+   "finding": "P07-C3",
+   "why": "qf07_patrols_arakane_myrkwood_wander point 1: navmesh ground at zone 105 local 7519,14505",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000067",
+    "PathID": "qf07_patrols_arakane_myrkwood_wander",
+    "Step": 1,
+    "X": 761183,
+    "Y": 882857,
+    "Z": 5073,
+    "MaxSpeed": 130,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P07-C3",
+   "why": "qf07_patrols_arakane_myrkwood_wander point 2: navmesh ground at zone 105 local 9249,14218",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000068",
+    "PathID": "qf07_patrols_arakane_myrkwood_wander",
+    "Step": 2,
+    "X": 762913,
+    "Y": 882570,
+    "Z": 5034,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C3",
+   "why": "qf07_patrols_arakane_myrkwood_wander point 3: navmesh ground at zone 105 local 8470,12716",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000069",
+    "PathID": "qf07_patrols_arakane_myrkwood_wander",
+    "Step": 3,
+    "X": 762134,
+    "Y": 881068,
+    "Z": 4895,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C3",
+   "why": "qf07_patrols_arakane_myrkwood_wander point 4: navmesh ground at zone 105 local 6207,11590",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000070",
+    "PathID": "qf07_patrols_arakane_myrkwood_wander",
+    "Step": 4,
+    "X": 759871,
+    "Y": 879942,
+    "Z": 5034,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C3",
+   "why": "qf07_patrols_arakane_myrkwood_wander point 5: navmesh ground at zone 105 local 6765,14377",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000071",
+    "PathID": "qf07_patrols_arakane_myrkwood_wander",
+    "Step": 5,
+    "X": 760429,
+    "Y": 882729,
+    "Z": 5074,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C3",
+   "why": "qf07_patrols_arakane_myrkwood_wander point 6: navmesh ground at zone 105 local 4735,15222",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000072",
+    "PathID": "qf07_patrols_arakane_myrkwood_wander",
+    "Step": 6,
+    "X": 758399,
+    "Y": 883574,
+    "Z": 5302,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C3",
+   "why": "qf07_patrols_arakane_myrkwood_wander point 7: navmesh ground at zone 105 local 7774,17320",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000073",
+    "PathID": "qf07_patrols_arakane_myrkwood_wander",
+    "Step": 7,
+    "X": 761438,
+    "Y": 885672,
+    "Z": 5058,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C3",
+   "why": "qf07_patrols_arakane_myrkwood_wander point 8: navmesh ground at zone 105 local 8485,17247",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000074",
+    "PathID": "qf07_patrols_arakane_myrkwood_wander",
+    "Step": 8,
+    "X": 762149,
+    "Y": 885599,
+    "Z": 5080,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C3",
+   "why": "qf07_patrols_arakane_myrkwood_wander point 9: navmesh ground at zone 105 local 8353,16236",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000075",
+    "PathID": "qf07_patrols_arakane_myrkwood_wander",
+    "Step": 9,
+    "X": 762017,
+    "Y": 884588,
+    "Z": 5075,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C3",
+   "why": "Arakane stood still (Myrkwood 7519,14505, roam 0) while CapnBry radar saw it at 29 spots over 4.7k-9.2k by 11.6k-17.3k: a loop through radar spots (9249,14218 / 8470,12716 / 6207,11590 / 6765,14377 / 4735,15222 / 7774,17320 / 8485,17247 / 8353,16236); Arakane walks qf07_patrols_arakane_myrkwood_wander",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_arakane_myrkwood_wander",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "9b0455cd-a441-5e21-8b47-1890cb5966eb"
+   }
+  },
+  {
+   "finding": "P07-C4",
+   "why": "the Albion leader stood still in his camp (Jamtland 8439,12895, roam 0); walkthrough 1804 'Albion leader roams in camp with 3-4 albion minions. There is also one in camp which is stationary'; CapnBry radar saw him at 35 spots over the camp (7865-9572 by 11918-14022): a slow loop round the camp through radar spots with three of the camp's Albion minions walking with him (the others stay put) (patrol path, 8 points, 6978 units, loop)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000009",
+    "PathID": "qf07_patrols_albion_leader_camp",
+    "RegionID": 100,
+    "PathType": 3
+   }
+  },
+  {
+   "finding": "P07-C4",
+   "why": "qf07_patrols_albion_leader_camp point 1: navmesh ground at zone 113 local 8439,12895",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000076",
+    "PathID": "qf07_patrols_albion_leader_camp",
+    "Step": 1,
+    "X": 663799,
+    "Y": 619103,
+    "Z": 5254,
+    "MaxSpeed": 110,
+    "WaitTime": 200
+   }
+  },
+  {
+   "finding": "P07-C4",
+   "why": "qf07_patrols_albion_leader_camp point 2: navmesh ground at zone 113 local 9397,12333",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000077",
+    "PathID": "qf07_patrols_albion_leader_camp",
+    "Step": 2,
+    "X": 664757,
+    "Y": 618541,
+    "Z": 5125,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C4",
+   "why": "qf07_patrols_albion_leader_camp point 3: navmesh ground at zone 113 local 9572,13103",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000078",
+    "PathID": "qf07_patrols_albion_leader_camp",
+    "Step": 3,
+    "X": 664932,
+    "Y": 619311,
+    "Z": 5200,
+    "MaxSpeed": 110,
+    "WaitTime": 200
+   }
+  },
+  {
+   "finding": "P07-C4",
+   "why": "qf07_patrols_albion_leader_camp point 4: navmesh ground at zone 113 local 8580,13608",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000079",
+    "PathID": "qf07_patrols_albion_leader_camp",
+    "Step": 4,
+    "X": 663940,
+    "Y": 619816,
+    "Z": 5235,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C4",
+   "why": "qf07_patrols_albion_leader_camp point 5: navmesh ground at zone 113 local 7964,14022",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000080",
+    "PathID": "qf07_patrols_albion_leader_camp",
+    "Step": 5,
+    "X": 663324,
+    "Y": 620230,
+    "Z": 5235,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C4",
+   "why": "qf07_patrols_albion_leader_camp point 6: navmesh ground at zone 113 local 7915,13401",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000081",
+    "PathID": "qf07_patrols_albion_leader_camp",
+    "Step": 6,
+    "X": 663275,
+    "Y": 619609,
+    "Z": 5235,
+    "MaxSpeed": 110,
+    "WaitTime": 200
+   }
+  },
+  {
+   "finding": "P07-C4",
+   "why": "qf07_patrols_albion_leader_camp point 7: navmesh ground at zone 113 local 7966,12282",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000082",
+    "PathID": "qf07_patrols_albion_leader_camp",
+    "Step": 7,
+    "X": 663326,
+    "Y": 618490,
+    "Z": 5244,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C4",
+   "why": "qf07_patrols_albion_leader_camp point 8: navmesh ground at zone 113 local 8297,11918",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000083",
+    "PathID": "qf07_patrols_albion_leader_camp",
+    "Step": 8,
+    "X": 663657,
+    "Y": 618126,
+    "Z": 5238,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P07-C4",
+   "why": "the Albion leader stood still in his camp (Jamtland 8439,12895, roam 0); walkthrough 1804 'Albion leader roams in camp with 3-4 albion minions. There is also one in camp which is stationary'; CapnBry radar saw him at 35 spots over the camp (7865-9572 by 11918-14022): a slow loop round the camp through radar spots with three of the camp's Albion minions walking with him (the others stay put); Albion leader walks qf07_patrols_albion_leader_camp",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_albion_leader_camp",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "18942b03-5ef5-5112-b50f-9153c3ba8227"
+   }
+  },
+  {
+   "finding": "P07-C4",
+   "why": "Albion minion walks with Albion leader (QuestFellowBrain + classic-quests Fellows, as Fjall's fellows), starting beside the leader's spawn",
+   "kind": "add_edit",
+   "file": "add-periodspawns165.json",
+   "id": "73170f92-6d79-5ccf-b30e-628ed11c3eb4",
+   "set": {
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "RoamingRange": 0,
+    "X": 663889,
+    "Y": 619103,
+    "Z": 5244
+   }
+  },
+  {
+   "finding": "P07-C4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "73170f92-6d79-5ccf-b30e-628ed11c3eb4"
+   ],
+   "value": "Albion leader",
+   "why": "Albion minion (73170f92-6d79-5ccf-b30e-628ed11c3eb4) is a fellow of Albion leader"
+  },
+  {
+   "finding": "P07-C4",
+   "why": "Albion minion walks with Albion leader (QuestFellowBrain + classic-quests Fellows, as Fjall's fellows), starting beside the leader's spawn",
+   "kind": "add_edit",
+   "file": "add-periodspawns165.json",
+   "id": "77de77b3-99bd-5cd1-aac2-ae2058aac5f8",
+   "set": {
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "RoamingRange": 0,
+    "X": 663754,
+    "Y": 619180,
+    "Z": 5248
+   }
+  },
+  {
+   "finding": "P07-C4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "77de77b3-99bd-5cd1-aac2-ae2058aac5f8"
+   ],
+   "value": "Albion leader",
+   "why": "Albion minion (77de77b3-99bd-5cd1-aac2-ae2058aac5f8) is a fellow of Albion leader"
+  },
+  {
+   "finding": "P07-C4",
+   "why": "Albion minion walks with Albion leader (QuestFellowBrain + classic-quests Fellows, as Fjall's fellows), starting beside the leader's spawn",
+   "kind": "add_edit",
+   "file": "add-periodspawns165.json",
+   "id": "60acdc1c-9be8-57ae-a77b-33e0d1a13641",
+   "set": {
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "RoamingRange": 0,
+    "X": 663754,
+    "Y": 619025,
+    "Z": 5256
+   }
+  },
+  {
+   "finding": "P07-C4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "60acdc1c-9be8-57ae-a77b-33e0d1a13641"
+   ],
+   "value": "Albion leader",
+   "why": "Albion minion (60acdc1c-9be8-57ae-a77b-33e0d1a13641) is a fellow of Albion leader"
+  },
+  {
+   "finding": "P04-C4",
+   "why": "Hrrgyf stood still (Vale of Mularn 11768,25767); step text 'wanders near Darkness Falls, the Vendo caverns and Svadsad Faste', walkthrough 629 'She roams the mountains', walkthrough 40 'on the hill next to Darkness Falls entrance on the way from Karl to Svasud Faste'; CapnBry radar saw her at 36 spots over 10.1k-13.8k by 24.3k-30.1k on that hill: a loop through radar spots (patrol path, 13 points, 20675 units, loop)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000010",
+    "PathID": "qf07_patrols_hrrgyf_df_hill",
+    "RegionID": 100,
+    "PathType": 3
+   }
+  },
+  {
+   "finding": "P04-C4",
+   "why": "qf07_patrols_hrrgyf_df_hill point 1: navmesh ground at zone 100 local 11768,25767",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000084",
+    "PathID": "qf07_patrols_hrrgyf_df_hill",
+    "Step": 1,
+    "X": 765432,
+    "Y": 697511,
+    "Z": 7412,
+    "MaxSpeed": 150,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P04-C4",
+   "why": "qf07_patrols_hrrgyf_df_hill point 2: navmesh ground at zone 100 local 12566,25778",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000085",
+    "PathID": "qf07_patrols_hrrgyf_df_hill",
+    "Step": 2,
+    "X": 766230,
+    "Y": 697522,
+    "Z": 7043,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C4",
+   "why": "qf07_patrols_hrrgyf_df_hill point 3: navmesh ground at zone 100 local 13824,25159",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000086",
+    "PathID": "qf07_patrols_hrrgyf_df_hill",
+    "Step": 3,
+    "X": 767488,
+    "Y": 696903,
+    "Z": 5378,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C4",
+   "why": "qf07_patrols_hrrgyf_df_hill point 4: navmesh ground at zone 100 local 12443,24495",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000087",
+    "PathID": "qf07_patrols_hrrgyf_df_hill",
+    "Step": 4,
+    "X": 766107,
+    "Y": 696239,
+    "Z": 5616,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C4",
+   "why": "qf07_patrols_hrrgyf_df_hill point 5: navmesh ground at zone 100 local 11946,24279",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000088",
+    "PathID": "qf07_patrols_hrrgyf_df_hill",
+    "Step": 5,
+    "X": 765610,
+    "Y": 696023,
+    "Z": 5610,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C4",
+   "why": "qf07_patrols_hrrgyf_df_hill point 6: navmesh ground at zone 100 local 10514,24366",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000089",
+    "PathID": "qf07_patrols_hrrgyf_df_hill",
+    "Step": 6,
+    "X": 764178,
+    "Y": 696110,
+    "Z": 6519,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C4",
+   "why": "qf07_patrols_hrrgyf_df_hill point 7: navmesh ground at zone 100 local 10102,26015",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000090",
+    "PathID": "qf07_patrols_hrrgyf_df_hill",
+    "Step": 7,
+    "X": 763766,
+    "Y": 697759,
+    "Z": 8356,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C4",
+   "why": "qf07_patrols_hrrgyf_df_hill point 8: navmesh ground at zone 100 local 10406,27089",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000091",
+    "PathID": "qf07_patrols_hrrgyf_df_hill",
+    "Step": 8,
+    "X": 764070,
+    "Y": 698833,
+    "Z": 7771,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C4",
+   "why": "qf07_patrols_hrrgyf_df_hill point 9: navmesh ground at zone 100 local 10537,30054",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000092",
+    "PathID": "qf07_patrols_hrrgyf_df_hill",
+    "Step": 9,
+    "X": 764201,
+    "Y": 701798,
+    "Z": 5769,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C4",
+   "why": "qf07_patrols_hrrgyf_df_hill point 10: navmesh ground at zone 100 local 10821,27871",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000093",
+    "PathID": "qf07_patrols_hrrgyf_df_hill",
+    "Step": 10,
+    "X": 764485,
+    "Y": 699615,
+    "Z": 6855,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C4",
+   "why": "qf07_patrols_hrrgyf_df_hill point 11: navmesh ground at zone 100 local 12202,27050",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000094",
+    "PathID": "qf07_patrols_hrrgyf_df_hill",
+    "Step": 11,
+    "X": 765866,
+    "Y": 698794,
+    "Z": 7116,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C4",
+   "why": "qf07_patrols_hrrgyf_df_hill point 12: navmesh ground at zone 100 local 12759,28564",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000095",
+    "PathID": "qf07_patrols_hrrgyf_df_hill",
+    "Step": 12,
+    "X": 766423,
+    "Y": 700308,
+    "Z": 6366,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C4",
+   "why": "qf07_patrols_hrrgyf_df_hill point 13: navmesh ground at zone 100 local 13075,26200",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000096",
+    "PathID": "qf07_patrols_hrrgyf_df_hill",
+    "Step": 13,
+    "X": 766739,
+    "Y": 697944,
+    "Z": 6941,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C4",
+   "why": "Hrrgyf stood still (Vale of Mularn 11768,25767); step text 'wanders near Darkness Falls, the Vendo caverns and Svadsad Faste', walkthrough 629 'She roams the mountains', walkthrough 40 'on the hill next to Darkness Falls entrance on the way from Karl to Svasud Faste'; CapnBry radar saw her at 36 spots over 10.1k-13.8k by 24.3k-30.1k on that hill: a loop through radar spots; Hrrgyf walks qf07_patrols_hrrgyf_df_hill",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_hrrgyf_df_hill",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "17dd830e-5508-57c5-9cc0-fd70bf4420d3"
+   }
+  },
+  {
+   "finding": "P04-C5",
+   "why": "Leildolf stood still at Skona Ravine 9084,19604 (part04 B8: 6.9k from the period spot); walkthrough 700 'Seek out Leildolf in Skona, Loc 7k, 13, 1.6k we walks N-S at the beach'; CapnBry radar saw him at 8374,16088 and 9794,23121: a north-south beach walk from the walkthrough spot 7000,13000 through both radar spots (patrol path, 4 points, 10554 units, there and back)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000011",
+    "PathID": "qf07_patrols_leildolf_skona_beach",
+    "RegionID": 100,
+    "PathType": 2
+   }
+  },
+  {
+   "finding": "P04-C5",
+   "why": "qf07_patrols_leildolf_skona_beach point 1: navmesh ground at zone 106 local 7000,13000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000097",
+    "PathID": "qf07_patrols_leildolf_skona_beach",
+    "Step": 1,
+    "X": 695128,
+    "Y": 914120,
+    "Z": 1682,
+    "MaxSpeed": 130,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P04-C5",
+   "why": "qf07_patrols_leildolf_skona_beach point 2: navmesh ground at zone 106 local 8374,16088",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000098",
+    "PathID": "qf07_patrols_leildolf_skona_beach",
+    "Step": 2,
+    "X": 696502,
+    "Y": 917208,
+    "Z": 1667,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C5",
+   "why": "qf07_patrols_leildolf_skona_beach point 3: navmesh water at zone 106 local 9084,19604",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000099",
+    "PathID": "qf07_patrols_leildolf_skona_beach",
+    "Step": 3,
+    "X": 697212,
+    "Y": 920724,
+    "Z": 1568,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C5",
+   "why": "qf07_patrols_leildolf_skona_beach point 4: navmesh ground at zone 106 local 9794,23121",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000100",
+    "PathID": "qf07_patrols_leildolf_skona_beach",
+    "Step": 4,
+    "X": 697922,
+    "Y": 924241,
+    "Z": 1667,
+    "MaxSpeed": 130,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P04-C5",
+   "why": "Leildolf stood still at Skona Ravine 9084,19604 (part04 B8: 6.9k from the period spot); walkthrough 700 'Seek out Leildolf in Skona, Loc 7k, 13, 1.6k we walks N-S at the beach'; CapnBry radar saw him at 8374,16088 and 9794,23121: a north-south beach walk from the walkthrough spot 7000,13000 through both radar spots; Leildolf walks qf07_patrols_leildolf_skona_beach from its first point (was 697212,920724)",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_leildolf_skona_beach",
+    "RoamingRange": 0,
+    "X": 695128,
+    "Y": 914120,
+    "Z": 1682
+   },
+   "where": {
+    "Mob_ID": "3e4ffddd-4fea-519c-a368-144e1b048fdf"
+   }
+  },
+  {
+   "finding": "P10-C5",
+   "why": "Damekia stood still (Gripklosa 11321,51233) while CapnBry radar saw her at 5 spots along a 3.8k line (8987,49296 / 10823,50822 / 11321,51233 / 11591,52241 / 11950,53138): a slow walk along that line, a minute's stop at each end (patrol path, 5 points, 7930 units, there and back)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000012",
+    "PathID": "qf07_patrols_damekia_gripklosa",
+    "RegionID": 151,
+    "PathType": 2
+   }
+  },
+  {
+   "finding": "P10-C5",
+   "why": "qf07_patrols_damekia_gripklosa point 1: navmesh ground at zone 152 local 11321,51233",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000101",
+    "PathID": "qf07_patrols_damekia_gripklosa",
+    "Step": 1,
+    "X": 289849,
+    "Y": 296993,
+    "Z": 4465,
+    "MaxSpeed": 110,
+    "WaitTime": 600
+   }
+  },
+  {
+   "finding": "P10-C5",
+   "why": "qf07_patrols_damekia_gripklosa point 2: navmesh ground at zone 152 local 10823,50822",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000102",
+    "PathID": "qf07_patrols_damekia_gripklosa",
+    "Step": 2,
+    "X": 289351,
+    "Y": 296582,
+    "Z": 4552,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C5",
+   "why": "qf07_patrols_damekia_gripklosa point 3: navmesh ground at zone 152 local 8987,49296",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000103",
+    "PathID": "qf07_patrols_damekia_gripklosa",
+    "Step": 3,
+    "X": 287515,
+    "Y": 295056,
+    "Z": 4791,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C5",
+   "why": "qf07_patrols_damekia_gripklosa point 4: navmesh ground at zone 152 local 11591,52241",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000104",
+    "PathID": "qf07_patrols_damekia_gripklosa",
+    "Step": 4,
+    "X": 290119,
+    "Y": 298001,
+    "Z": 4289,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C5",
+   "why": "qf07_patrols_damekia_gripklosa point 5: navmesh ground at zone 152 local 11950,53138",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000105",
+    "PathID": "qf07_patrols_damekia_gripklosa",
+    "Step": 5,
+    "X": 290478,
+    "Y": 298898,
+    "Z": 4350,
+    "MaxSpeed": 110,
+    "WaitTime": 600
+   }
+  },
+  {
+   "finding": "P10-C5",
+   "why": "Damekia stood still (Gripklosa 11321,51233) while CapnBry radar saw her at 5 spots along a 3.8k line (8987,49296 / 10823,50822 / 11321,51233 / 11591,52241 / 11950,53138): a slow walk along that line, a minute's stop at each end; Damekia walks qf07_patrols_damekia_gripklosa",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_damekia_gripklosa",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "04d6e9c8-ba3b-59da-ad07-462cae00bfc6"
+   }
+  },
+  {
+   "finding": "P10-C5",
+   "why": "Rollo stood still (Vale of Mularn 46582,20210); his own line 'For 300 years I have wandered these hills', CapnBry radar saw him at 45254,21787 and 47225,21564: a slow walk between his spot and both radar spots, a minute's stop at each (patrol path, 3 points, 3482 units, there and back)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000013",
+    "PathID": "qf07_patrols_rollo_mularn_hills",
+    "RegionID": 100,
+    "PathType": 2
+   }
+  },
+  {
+   "finding": "P10-C5",
+   "why": "qf07_patrols_rollo_mularn_hills point 1: navmesh ground at zone 100 local 46582,20210",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000106",
+    "PathID": "qf07_patrols_rollo_mularn_hills",
+    "Step": 1,
+    "X": 800246,
+    "Y": 691954,
+    "Z": 7092,
+    "MaxSpeed": 100,
+    "WaitTime": 600
+   }
+  },
+  {
+   "finding": "P10-C5",
+   "why": "qf07_patrols_rollo_mularn_hills point 2: navmesh ground at zone 100 local 47225,21564",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000107",
+    "PathID": "qf07_patrols_rollo_mularn_hills",
+    "Step": 2,
+    "X": 800889,
+    "Y": 693308,
+    "Z": 6611,
+    "MaxSpeed": 100,
+    "WaitTime": 600
+   }
+  },
+  {
+   "finding": "P10-C5",
+   "why": "qf07_patrols_rollo_mularn_hills point 3: navmesh ground at zone 100 local 45254,21787",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000108",
+    "PathID": "qf07_patrols_rollo_mularn_hills",
+    "Step": 3,
+    "X": 798918,
+    "Y": 693531,
+    "Z": 6912,
+    "MaxSpeed": 100,
+    "WaitTime": 600
+   }
+  },
+  {
+   "finding": "P10-C5",
+   "why": "Rollo stood still (Vale of Mularn 46582,20210); his own line 'For 300 years I have wandered these hills', CapnBry radar saw him at 45254,21787 and 47225,21564: a slow walk between his spot and both radar spots, a minute's stop at each; Rollo walks qf07_patrols_rollo_mularn_hills",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_rollo_mularn_hills",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "30620dc4-293a-42a3-8d24-db0c50a62385"
+   }
+  },
+  {
+   "finding": "P10-C5",
+   "why": "Big Paw stood about 3.9k west of every period sighting (Skona Ravine 10779,38830; part10 B13); CapnBry radar saw him at 14661,39733 / 15150,39893 / 16075,40327 / 19213,40136: moved onto the first sighting, walking through all four (patrol path, 4 points, 4680 units, there and back)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000014",
+    "PathID": "qf07_patrols_big_paw_skona",
+    "RegionID": 100,
+    "PathType": 2
+   }
+  },
+  {
+   "finding": "P10-C5",
+   "why": "qf07_patrols_big_paw_skona point 1: navmesh ground at zone 106 local 14661,39733",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000109",
+    "PathID": "qf07_patrols_big_paw_skona",
+    "Step": 1,
+    "X": 702789,
+    "Y": 940853,
+    "Z": 1594,
+    "MaxSpeed": 150,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P10-C5",
+   "why": "qf07_patrols_big_paw_skona point 2: navmesh ground at zone 106 local 15150,39893",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000110",
+    "PathID": "qf07_patrols_big_paw_skona",
+    "Step": 2,
+    "X": 703278,
+    "Y": 941013,
+    "Z": 1624,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C5",
+   "why": "qf07_patrols_big_paw_skona point 3: navmesh ground at zone 106 local 16075,40327",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000111",
+    "PathID": "qf07_patrols_big_paw_skona",
+    "Step": 3,
+    "X": 704203,
+    "Y": 941447,
+    "Z": 1804,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C5",
+   "why": "qf07_patrols_big_paw_skona point 4: navmesh ground at zone 106 local 19213,40136",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000112",
+    "PathID": "qf07_patrols_big_paw_skona",
+    "Step": 4,
+    "X": 707341,
+    "Y": 941256,
+    "Z": 2131,
+    "MaxSpeed": 150,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P10-C5",
+   "why": "Big Paw stood about 3.9k west of every period sighting (Skona Ravine 10779,38830; part10 B13); CapnBry radar saw him at 14661,39733 / 15150,39893 / 16075,40327 / 19213,40136: moved onto the first sighting, walking through all four; Big Paw walks qf07_patrols_big_paw_skona from its first point (was 698907,939950)",
+   "kind": "add_edit",
+   "file": "add-restoredspawns165.json",
+   "id": "100005484",
+   "set": {
+    "PathID": "qf07_patrols_big_paw_skona",
+    "RoamingRange": 0,
+    "X": 702789,
+    "Y": 940853,
+    "Z": 1594
+   }
+  },
+  {
+   "finding": "P09-C2",
+   "why": "the svartalf dark forester (Malmohus 52000,4000) walked alone; walkthrough 1801 'He comes with a group of 8 level 50 svart infils': eight svartalf infiltrators (copies of the Malmohus infiltrators, template 55003) walk and fight with him while he roams, and gamebots leave him alone",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "RoamingRange": 300
+   },
+   "where": {
+    "Mob_ID": "7e847296-31f2-58b4-90a3-c53e39b04fd5"
+   }
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "svartalf infiltrator",
+    "Suffix": null,
+    "Guild": null,
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 740218,
+    "Y": 970656,
+    "Z": 6204,
+    "Speed": 180,
+    "Heading": 2460,
+    "Region": 100,
+    "Model": 1390,
+    "Size": 43,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 94,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 49,
+    "Realm": 0,
+    "EquipmentTemplateID": "",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 55003,
+    "Race": 2005,
+    "Flags": 1,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 0,
+    "RespawnInterval": 80,
+    "FactionID": 124,
+    "BodyType": 6,
+    "HouseNumber": 0,
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071101-0000-4000-8000-000000000006"
+   },
+   "why": "walkthrough 1801 'He comes with a group of 8 level 50 svart infils'; our text 'he walks with eight svartalf infiltrators', but none stood within 4.7k (a copy of svartalf infiltrator 0134926a-7e70-4567-9be9-5bf8711813a8, same template and stats, walking with svartalf dark forester)",
+   "source": "Allakhazam quest 1801 Strange Bedfellows (Mid): 'kill a svart dark forester (52k, 4k). He comes with a group of 8 level 50 svart infils'"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "00071101-0000-4000-8000-000000000006"
+   ],
+   "value": "svartalf dark forester",
+   "why": "new svartalf infiltrator (00071101-0000-4000-8000-000000000006) is a fellow of svartalf dark forester"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "00071101-0000-4000-8000-000000000006",
+   "why": "gamebots leave svartalf dark forester's fellow svartalf infiltrator alone"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "svartalf infiltrator",
+    "Suffix": null,
+    "Guild": null,
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 740191,
+    "Y": 970719,
+    "Z": 6201,
+    "Speed": 180,
+    "Heading": 2460,
+    "Region": 100,
+    "Model": 1390,
+    "Size": 43,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 94,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 49,
+    "Realm": 0,
+    "EquipmentTemplateID": "",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 55003,
+    "Race": 2005,
+    "Flags": 1,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 0,
+    "RespawnInterval": 80,
+    "FactionID": 124,
+    "BodyType": 6,
+    "HouseNumber": 0,
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071101-0000-4000-8000-000000000007"
+   },
+   "why": "walkthrough 1801 'He comes with a group of 8 level 50 svart infils'; our text 'he walks with eight svartalf infiltrators', but none stood within 4.7k (a copy of svartalf infiltrator 0134926a-7e70-4567-9be9-5bf8711813a8, same template and stats, walking with svartalf dark forester)",
+   "source": "Allakhazam quest 1801 Strange Bedfellows (Mid): 'kill a svart dark forester (52k, 4k). He comes with a group of 8 level 50 svart infils'"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "00071101-0000-4000-8000-000000000007"
+   ],
+   "value": "svartalf dark forester",
+   "why": "new svartalf infiltrator (00071101-0000-4000-8000-000000000007) is a fellow of svartalf dark forester"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "00071101-0000-4000-8000-000000000007",
+   "why": "gamebots leave svartalf dark forester's fellow svartalf infiltrator alone"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "svartalf infiltrator",
+    "Suffix": null,
+    "Guild": null,
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 740128,
+    "Y": 970746,
+    "Z": 6229,
+    "Speed": 180,
+    "Heading": 2460,
+    "Region": 100,
+    "Model": 1390,
+    "Size": 43,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 94,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 49,
+    "Realm": 0,
+    "EquipmentTemplateID": "",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 55003,
+    "Race": 2005,
+    "Flags": 1,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 0,
+    "RespawnInterval": 80,
+    "FactionID": 124,
+    "BodyType": 6,
+    "HouseNumber": 0,
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071101-0000-4000-8000-000000000008"
+   },
+   "why": "walkthrough 1801 'He comes with a group of 8 level 50 svart infils'; our text 'he walks with eight svartalf infiltrators', but none stood within 4.7k (a copy of svartalf infiltrator 0134926a-7e70-4567-9be9-5bf8711813a8, same template and stats, walking with svartalf dark forester)",
+   "source": "Allakhazam quest 1801 Strange Bedfellows (Mid): 'kill a svart dark forester (52k, 4k). He comes with a group of 8 level 50 svart infils'"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "00071101-0000-4000-8000-000000000008"
+   ],
+   "value": "svartalf dark forester",
+   "why": "new svartalf infiltrator (00071101-0000-4000-8000-000000000008) is a fellow of svartalf dark forester"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "00071101-0000-4000-8000-000000000008",
+   "why": "gamebots leave svartalf dark forester's fellow svartalf infiltrator alone"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "svartalf infiltrator",
+    "Suffix": null,
+    "Guild": null,
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 740064,
+    "Y": 970719,
+    "Z": 6245,
+    "Speed": 180,
+    "Heading": 2460,
+    "Region": 100,
+    "Model": 1390,
+    "Size": 43,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 94,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 49,
+    "Realm": 0,
+    "EquipmentTemplateID": "",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 55003,
+    "Race": 2005,
+    "Flags": 1,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 0,
+    "RespawnInterval": 80,
+    "FactionID": 124,
+    "BodyType": 6,
+    "HouseNumber": 0,
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071101-0000-4000-8000-000000000009"
+   },
+   "why": "walkthrough 1801 'He comes with a group of 8 level 50 svart infils'; our text 'he walks with eight svartalf infiltrators', but none stood within 4.7k (a copy of svartalf infiltrator 0134926a-7e70-4567-9be9-5bf8711813a8, same template and stats, walking with svartalf dark forester)",
+   "source": "Allakhazam quest 1801 Strange Bedfellows (Mid): 'kill a svart dark forester (52k, 4k). He comes with a group of 8 level 50 svart infils'"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "00071101-0000-4000-8000-000000000009"
+   ],
+   "value": "svartalf dark forester",
+   "why": "new svartalf infiltrator (00071101-0000-4000-8000-000000000009) is a fellow of svartalf dark forester"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "00071101-0000-4000-8000-000000000009",
+   "why": "gamebots leave svartalf dark forester's fellow svartalf infiltrator alone"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "svartalf infiltrator",
+    "Suffix": null,
+    "Guild": null,
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 740038,
+    "Y": 970656,
+    "Z": 6249,
+    "Speed": 180,
+    "Heading": 2460,
+    "Region": 100,
+    "Model": 1390,
+    "Size": 43,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 94,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 49,
+    "Realm": 0,
+    "EquipmentTemplateID": "",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 55003,
+    "Race": 2005,
+    "Flags": 1,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 0,
+    "RespawnInterval": 80,
+    "FactionID": 124,
+    "BodyType": 6,
+    "HouseNumber": 0,
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071101-0000-4000-8000-000000000010"
+   },
+   "why": "walkthrough 1801 'He comes with a group of 8 level 50 svart infils'; our text 'he walks with eight svartalf infiltrators', but none stood within 4.7k (a copy of svartalf infiltrator 0134926a-7e70-4567-9be9-5bf8711813a8, same template and stats, walking with svartalf dark forester)",
+   "source": "Allakhazam quest 1801 Strange Bedfellows (Mid): 'kill a svart dark forester (52k, 4k). He comes with a group of 8 level 50 svart infils'"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "00071101-0000-4000-8000-000000000010"
+   ],
+   "value": "svartalf dark forester",
+   "why": "new svartalf infiltrator (00071101-0000-4000-8000-000000000010) is a fellow of svartalf dark forester"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "00071101-0000-4000-8000-000000000010",
+   "why": "gamebots leave svartalf dark forester's fellow svartalf infiltrator alone"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "svartalf infiltrator",
+    "Suffix": null,
+    "Guild": null,
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 740064,
+    "Y": 970592,
+    "Z": 6254,
+    "Speed": 180,
+    "Heading": 2460,
+    "Region": 100,
+    "Model": 1390,
+    "Size": 43,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 94,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 49,
+    "Realm": 0,
+    "EquipmentTemplateID": "",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 55003,
+    "Race": 2005,
+    "Flags": 1,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 0,
+    "RespawnInterval": 80,
+    "FactionID": 124,
+    "BodyType": 6,
+    "HouseNumber": 0,
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071101-0000-4000-8000-000000000011"
+   },
+   "why": "walkthrough 1801 'He comes with a group of 8 level 50 svart infils'; our text 'he walks with eight svartalf infiltrators', but none stood within 4.7k (a copy of svartalf infiltrator 0134926a-7e70-4567-9be9-5bf8711813a8, same template and stats, walking with svartalf dark forester)",
+   "source": "Allakhazam quest 1801 Strange Bedfellows (Mid): 'kill a svart dark forester (52k, 4k). He comes with a group of 8 level 50 svart infils'"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "00071101-0000-4000-8000-000000000011"
+   ],
+   "value": "svartalf dark forester",
+   "why": "new svartalf infiltrator (00071101-0000-4000-8000-000000000011) is a fellow of svartalf dark forester"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "00071101-0000-4000-8000-000000000011",
+   "why": "gamebots leave svartalf dark forester's fellow svartalf infiltrator alone"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "svartalf infiltrator",
+    "Suffix": null,
+    "Guild": null,
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 740128,
+    "Y": 970566,
+    "Z": 6247,
+    "Speed": 180,
+    "Heading": 2460,
+    "Region": 100,
+    "Model": 1390,
+    "Size": 43,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 94,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 49,
+    "Realm": 0,
+    "EquipmentTemplateID": "",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 55003,
+    "Race": 2005,
+    "Flags": 1,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 0,
+    "RespawnInterval": 80,
+    "FactionID": 124,
+    "BodyType": 6,
+    "HouseNumber": 0,
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071101-0000-4000-8000-000000000012"
+   },
+   "why": "walkthrough 1801 'He comes with a group of 8 level 50 svart infils'; our text 'he walks with eight svartalf infiltrators', but none stood within 4.7k (a copy of svartalf infiltrator 0134926a-7e70-4567-9be9-5bf8711813a8, same template and stats, walking with svartalf dark forester)",
+   "source": "Allakhazam quest 1801 Strange Bedfellows (Mid): 'kill a svart dark forester (52k, 4k). He comes with a group of 8 level 50 svart infils'"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "00071101-0000-4000-8000-000000000012"
+   ],
+   "value": "svartalf dark forester",
+   "why": "new svartalf infiltrator (00071101-0000-4000-8000-000000000012) is a fellow of svartalf dark forester"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "00071101-0000-4000-8000-000000000012",
+   "why": "gamebots leave svartalf dark forester's fellow svartalf infiltrator alone"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "svartalf infiltrator",
+    "Suffix": null,
+    "Guild": null,
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 740191,
+    "Y": 970592,
+    "Z": 6223,
+    "Speed": 180,
+    "Heading": 2460,
+    "Region": 100,
+    "Model": 1390,
+    "Size": 43,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 94,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 49,
+    "Realm": 0,
+    "EquipmentTemplateID": "",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 55003,
+    "Race": 2005,
+    "Flags": 1,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 0,
+    "RespawnInterval": 80,
+    "FactionID": 124,
+    "BodyType": 6,
+    "HouseNumber": 0,
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071101-0000-4000-8000-000000000013"
+   },
+   "why": "walkthrough 1801 'He comes with a group of 8 level 50 svart infils'; our text 'he walks with eight svartalf infiltrators', but none stood within 4.7k (a copy of svartalf infiltrator 0134926a-7e70-4567-9be9-5bf8711813a8, same template and stats, walking with svartalf dark forester)",
+   "source": "Allakhazam quest 1801 Strange Bedfellows (Mid): 'kill a svart dark forester (52k, 4k). He comes with a group of 8 level 50 svart infils'"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "00071101-0000-4000-8000-000000000013"
+   ],
+   "value": "svartalf dark forester",
+   "why": "new svartalf infiltrator (00071101-0000-4000-8000-000000000013) is a fellow of svartalf dark forester"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "00071101-0000-4000-8000-000000000013",
+   "why": "gamebots leave svartalf dark forester's fellow svartalf infiltrator alone"
+  },
+  {
+   "finding": "P09-C2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "7e847296-31f2-58b4-90a3-c53e39b04fd5",
+   "why": "gamebots leave the quest monster svartalf dark forester alone (its fellows too)"
+  },
+  {
+   "finding": "P04-C7",
+   "why": "Gokstad stood still (Vale of Mularn 64614,9317, the CapnBry radar spot); walkthrough 55 'an old skald that wanders between the vale of Mularn and Muspelheim. Go past Haggerfell, and start through the pass into Muspelheim, you will see a troll named Gokstad': a slow walk through the pass from his spot toward Muspelheim and back toward Haggerfel, a minute's stop at each point (patrol path, 3 points, 7886 units, there and back)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000015",
+    "PathID": "qf07_patrols_gokstad_muspelheim_pass",
+    "RegionID": 100,
+    "PathType": 2
+   }
+  },
+  {
+   "finding": "P04-C7",
+   "why": "qf07_patrols_gokstad_muspelheim_pass point 1: navmesh ground at zone 100 local 64614,9317",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000113",
+    "PathID": "qf07_patrols_gokstad_muspelheim_pass",
+    "Step": 1,
+    "X": 818278,
+    "Y": 681061,
+    "Z": 6832,
+    "MaxSpeed": 110,
+    "WaitTime": 600
+   }
+  },
+  {
+   "finding": "P04-C7",
+   "why": "qf07_patrols_gokstad_muspelheim_pass point 2: navmesh ground at zone 100 local 66400,8300",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000114",
+    "PathID": "qf07_patrols_gokstad_muspelheim_pass",
+    "Step": 2,
+    "X": 820064,
+    "Y": 680044,
+    "Z": 6406,
+    "MaxSpeed": 110,
+    "WaitTime": 600
+   }
+  },
+  {
+   "finding": "P04-C7",
+   "why": "qf07_patrols_gokstad_muspelheim_pass point 3: navmesh ground at zone 100 local 61000,10500",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000115",
+    "PathID": "qf07_patrols_gokstad_muspelheim_pass",
+    "Step": 3,
+    "X": 814664,
+    "Y": 682244,
+    "Z": 5676,
+    "MaxSpeed": 110,
+    "WaitTime": 600
+   }
+  },
+  {
+   "finding": "P04-C7",
+   "why": "Gokstad stood still (Vale of Mularn 64614,9317, the CapnBry radar spot); walkthrough 55 'an old skald that wanders between the vale of Mularn and Muspelheim. Go past Haggerfell, and start through the pass into Muspelheim, you will see a troll named Gokstad': a slow walk through the pass from his spot toward Muspelheim and back toward Haggerfel, a minute's stop at each point; Gokstad walks qf07_patrols_gokstad_muspelheim_pass",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_gokstad_muspelheim_pass",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "94be344e-357f-559e-9c52-fc048fb3b36f"
+   }
+  }
+ ]
+}

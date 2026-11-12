@@ -1,0 +1,104 @@
+{
+ "fixer": "part10",
+ "about": "A2 any of the three spraggons counts; B6 Spicket spawn/marker by the bridge north of Ardee",
+ "entries": [
+  {
+   "finding": "P10-A2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepType": "8|2|8|2|9",
+    "TargetName": "|Tethra;200||Tethra;200|Tethra;200",
+    "StepItemTemplates": "|||cq_bag|"
+   },
+   "where": {
+    "ID": 21397
+   },
+   "why": "step 1 offers Spicket, Spackit or Spykit but only a Spicket kill counted; step 1 is now a scripted step that completes when the player holds a spraggon head, which any of the three drops (ClassicQuests Drops); the head is no longer handed out again at step 2 (the hand-in still matches it through CollectItemTemplate)"
+  },
+  {
+   "finding": "P10-A2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21397",
+    "Steps",
+    1
+   ],
+   "value": {
+    "Marker": {
+     "Region": 200,
+     "X": 335820,
+     "Y": 465092,
+     "Z": 5203
+    },
+    "Spawn": {
+     "Name": "Spicket",
+     "TemplateId": 0,
+     "Level": 5,
+     "Model": 112,
+     "Region": 200,
+     "X": 335820,
+     "Y": 465092,
+     "Z": 5203,
+     "TriggerRadius": 1200,
+     "DespawnSeconds": 600,
+     "Count": 1
+    },
+    "Custom": {
+     "Kind": "has_item",
+     "Item": "cq_spraggon_s_head",
+     "Drops": [
+      {
+       "Mob": "Spicket",
+       "Item": "cq_spraggon_s_head",
+       "Chance": 100
+      },
+      {
+       "Mob": "Spackit",
+       "Item": "cq_spraggon_s_head",
+       "Chance": 100
+      },
+      {
+       "Mob": "Spykit",
+       "Item": "cq_spraggon_s_head",
+       "Chance": 100
+      }
+     ]
+    }
+   },
+   "why": "A2: all three spraggons drop the head (period: \"Kill him and he drops Spicket's Head / Spacket's Head / Spykit's Head\"); B6: the Spicket event spawn and marker were at the far east edge of Lough Derg (63007,15045), now in the woods west of the river crossing north of Ardee (Connacht 49100,47300; period \"appears at night in the woods to the west of the bridge on the road north from Ardee\"); until a head is held the marker also points at the nearest Spackit/Spykit"
+  },
+  {
+   "finding": "P10-A2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "3f679c2d-d3e4-4886-8b5a-be271dc2d3a7",
+   "why": "Spackit and Spykit are now quest kills of Spicket, Spackit and Spykit; gamebots leave them alone"
+  },
+  {
+   "finding": "P10-A2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "c0aa0ef9-fac8-43f4-9db6-463ed835f384",
+   "why": "Spackit and Spykit are now quest kills of Spicket, Spackit and Spykit; gamebots leave them alone"
+  },
+  {
+   "finding": "P10-A2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "c6c489b8-7c42-4e51-ab1c-952f4eac1404",
+   "why": "Spackit and Spykit are now quest kills of Spicket, Spackit and Spykit; gamebots leave them alone"
+  }
+ ]
+}

@@ -1,0 +1,150 @@
+{
+ "fixer": "part09",
+ "about": "part09 A: quests that could not be completed or started",
+ "entries": [
+  {
+   "finding": "P09-A1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "QuestDependency": ""
+   },
+   "where_sql": "ID IN (20003, 20007, 20399, 20400, 20401, 20402, 20411)",
+   "why": "Legend of the Lake (15) step 2 needs 2 of Wizard Lost/Barbaric Tales/Lisreen's Plight/Forged Excellence, but those 7 rows required a FINISHED 'Legend of the Lake' (DataQuest.cs CheckQuestQualification), so nobody could ever finish part 15 and the whole Armsman/Scout/Friar/Theurgist epic was dead; the period has Nimue hand them out during part I (Allakhazam 142: 'She will then give you a quest called Wizard Lost')",
+   "source": "Allakhazam quest 142 Legend of the Lake (level 15): nested sub-quests given during Part I (patch 1.53 note: two of four)"
+  },
+  {
+   "finding": "P09-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20003",
+    "OnlyDuring"
+   ],
+   "value": [
+    "Legend of the Lake"
+   ],
+   "why": "sub-quest 20003 is offered only while Legend of the Lake is in progress (the Growler's Necklace mechanism) instead of after it is finished, which was a deadlock"
+  },
+  {
+   "finding": "P09-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20007",
+    "OnlyDuring"
+   ],
+   "value": [
+    "Legend of the Lake"
+   ],
+   "why": "sub-quest 20007 is offered only while Legend of the Lake is in progress (the Growler's Necklace mechanism) instead of after it is finished, which was a deadlock"
+  },
+  {
+   "finding": "P09-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20399",
+    "OnlyDuring"
+   ],
+   "value": [
+    "Legend of the Lake"
+   ],
+   "why": "sub-quest 20399 is offered only while Legend of the Lake is in progress (the Growler's Necklace mechanism) instead of after it is finished, which was a deadlock"
+  },
+  {
+   "finding": "P09-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20400",
+    "OnlyDuring"
+   ],
+   "value": [
+    "Legend of the Lake"
+   ],
+   "why": "sub-quest 20400 is offered only while Legend of the Lake is in progress (the Growler's Necklace mechanism) instead of after it is finished, which was a deadlock"
+  },
+  {
+   "finding": "P09-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20401",
+    "OnlyDuring"
+   ],
+   "value": [
+    "Legend of the Lake"
+   ],
+   "why": "sub-quest 20401 is offered only while Legend of the Lake is in progress (the Growler's Necklace mechanism) instead of after it is finished, which was a deadlock"
+  },
+  {
+   "finding": "P09-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20402",
+    "OnlyDuring"
+   ],
+   "value": [
+    "Legend of the Lake"
+   ],
+   "why": "sub-quest 20402 is offered only while Legend of the Lake is in progress (the Growler's Necklace mechanism) instead of after it is finished, which was a deadlock"
+  },
+  {
+   "finding": "P09-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20411",
+    "OnlyDuring"
+   ],
+   "value": [
+    "Legend of the Lake"
+   ],
+   "why": "sub-quest 20411 is offered only while Legend of the Lake is in progress (the Growler's Necklace mechanism) instead of after it is finished, which was a deadlock"
+  },
+  {
+   "finding": "P09-A2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "MaxLevel": 50
+   },
+   "where_sql": "ID BETWEEN 21288 AND 21291",
+   "why": "Legend of the Lake (level 15) had MaxLevel 19, so a player who reached 20 first lost the whole epic line (parts 20/25, Hands of Fate, Feast, Craft of Retribution); the period page for part 15 gives no maximum level (the spec's 19 was inferred) and parts 20/25 are Max 50",
+   "source": "Allakhazam quest 142 head: no Min/Max level; quests 185/186 (parts 20, 25) Max Level 50"
+  },
+  {
+   "finding": "P09-A3",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "MaxLevel": 50
+   },
+   "where_sql": "ID IN (20498, 20499, 20500)",
+   "why": "Wisdom was MinLevel 11 = MaxLevel 11: a Wizard/Sorcerer/Minstrel who passed level 11 without it lost Scura Tragedia, La Morti Parla, Animare il morti, Legione Perso and the Academy epic for good; the walkthrough says the trainers gave it 'upon reaching lvl 11' (an epic step, offered from then on), and every later part of the line is Max 50",
+   "source": "Allakhazam quest 53 Wisdom ('Given by the trainers upon reaching lvl 11'); quest 94 Scura Tragedia Max Level 50"
+  },
+  {
+   "finding": "P09-A4",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "AllowedClasses": "2|11|1|3|6|9"
+   },
+   "where": {
+    "ID": 21351
+   },
+   "why": "AllowedClasses held 14 (the level 1-5 Fighter base class) on a level 32 quest, so Armsmen, Mercenaries and Paladins could never take it; the period 'Fighter' label means the Albion fighter classes (Armsman 2, Mercenary 11, Paladin 1); Scout 3, Cleric 6, Infiltrator 9 kept",
+   "source": "Allakhazam quest 161 Wizard's Demand: 'Class: Fighter Scout Cleric Infiltrator'"
+  }
+ ]
+}

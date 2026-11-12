@@ -1,0 +1,283 @@
+{
+ "fixer": "part03",
+ "about": "part03 section B: spawn and marker locations",
+ "entries": [
+  {
+   "finding": "P03-B1",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 537400,
+    "Y": 451600,
+    "Z": 2985
+   },
+   "where": {
+    "Mob_ID": "3ce2271f-b9f6-4504-b55a-250da35504ba"
+   },
+   "why": "Frund stood in Black Mtns South loc 8608,50568, 56k from Agisthil; period guide: both runaway guards 'can be found at 53899, 17267' (Agisthil 537227,451443 matches exactly)"
+  },
+  {
+   "finding": "P03-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20155",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "why": "step 2 marker follows Frund to the period spot beside Agisthil",
+   "value": {
+    "Region": 1,
+    "X": 537400,
+    "Y": 451600,
+    "Z": 2985
+   }
+  },
+  {
+   "finding": "P03-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20156",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "why": "step 2 marker follows Frund to the period spot beside Agisthil",
+   "value": {
+    "Region": 1,
+    "X": 537400,
+    "Y": 451600,
+    "Z": 2985
+   }
+  },
+  {
+   "finding": "P03-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20157",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "why": "step 2 marker follows Frund to the period spot beside Agisthil",
+   "value": {
+    "Region": 1,
+    "X": 537400,
+    "Y": 451600,
+    "Z": 2985
+   }
+  },
+  {
+   "finding": "P03-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20158",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "why": "step 2 marker follows Frund to the period spot beside Agisthil",
+   "value": {
+    "Region": 1,
+    "X": 537400,
+    "Y": 451600,
+    "Z": 2985
+   }
+  },
+  {
+   "finding": "P03-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20159",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "why": "step 2 marker follows Frund to the period spot beside Agisthil",
+   "value": {
+    "Region": 1,
+    "X": 537400,
+    "Y": 451600,
+    "Z": 2985
+   }
+  },
+  {
+   "finding": "P03-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20131",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "why": "marker pointed at a stray Konung Botolf Redhands in Muspelheim; the period page puts him in the blodfelag fort with the moat, where the restored copy stands with his warhounds and livvakt",
+   "value": {
+    "Region": 100,
+    "X": 670728,
+    "Y": 752189,
+    "Z": 6031
+   }
+  },
+  {
+   "finding": "P03-B2",
+   "kind": "remove",
+   "table": "Mob",
+   "where": "Mob_ID = '60a2f804-52e9-4f1f-af6e-69331d3aaec9'",
+   "why": "stray second Konung Botolf Redhands in Muspelheim (847764,651684, level 28): the period quest page puts him only in the blodfelag fort (West Svealand), where the real copy stands"
+  },
+  {
+   "finding": "P03-B3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20153",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "why": "marker pointed at a stray Amano 40k north of Tepok's Mine; period: 'Amano is out side of Tepok's near the ruined house on hill' (restored copy 3.3k from the mine entrance)",
+   "value": {
+    "Region": 1,
+    "X": 488134,
+    "Y": 440061,
+    "Z": 5312
+   }
+  },
+  {
+   "finding": "P03-B3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20154",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "why": "marker pointed at a stray Amano 40k north of Tepok's Mine; period: 'Amano is out side of Tepok's near the ruined house on hill' (restored copy 3.3k from the mine entrance)",
+   "value": {
+    "Region": 1,
+    "X": 488134,
+    "Y": 440061,
+    "Z": 5312
+   }
+  },
+  {
+   "finding": "P03-B3",
+   "kind": "remove",
+   "table": "Mob",
+   "where": "Mob_ID = '69e8b827-ee6d-52d8-bcb1-e81104669c27'",
+   "why": "stray second Amano in Black Mtns North standing on the exact spot of a goblin warrior spawn; the period Amano is the restored copy outside Tepok's Mine"
+  },
+  {
+   "finding": "P03-B4",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "SourceName": "SEARCH;9;;200;330634;557009;500;5"
+   },
+   "where": {
+    "ID": 20310
+   },
+   "why": "the leaf search area was 58k from Boss; period guide: Boss 'spawns right next to the barn' and the leaves are found inside it; Boss stands at the CapnBry sighting (Silvermine 11146,8145, beside the Spraggon Den), so the search is centred on him"
+  },
+  {
+   "finding": "P03-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20310",
+    "Steps",
+    9,
+    "Marker"
+   ],
+   "why": "step 9 marker moved to the barn beside Boss",
+   "value": {
+    "Region": 200,
+    "X": 330634,
+    "Y": 557009,
+    "Z": 6688
+   }
+  },
+  {
+   "finding": "P03-B5",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 457949,
+    "Y": 661728,
+    "Z": 1732
+   },
+   "where": {
+    "Mob_ID": "fa80453f-966d-4d08-8df4-77ebe81e02c0"
+   },
+   "why": "the Dark Bishop stood behind Vetusta Abbey (a patch 1.76 move); period guide: Avalon Marsh 'loc is 40157 47328 1732 in a church ruins with ghostly knights', which is what the journal says"
+  },
+  {
+   "finding": "P03-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20221",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "why": "step 1 marker follows the Dark Bishop to the Avalon Marsh church ruins",
+   "value": {
+    "Region": 1,
+    "X": 457949,
+    "Y": 661728,
+    "Z": 1732
+   }
+  },
+  {
+   "finding": "P03-B6",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 283999,
+    "Y": 345642,
+    "Z": 3100
+   },
+   "where": {
+    "Mob_ID": "971b3ffe-7720-4351-b5e9-4c52ff6bb613"
+   },
+   "why": "Ibicus stood 3.8k south of where the period radar saw him (CapnBry zone 151 locs 38079,34090 and 38399,34602); the audit's 43488,31460 comes from the 2005 hot fix that moved him out of the water, so the CapnBry spot is used"
+  },
+  {
+   "finding": "P03-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20121",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "why": "step 1 marker follows Ibicus",
+   "value": {
+    "Region": 151,
+    "X": 283999,
+    "Y": 345642,
+    "Z": 3100
+   }
+  }
+ ]
+}

@@ -6319,6 +6319,10 @@
     [
      "p165_drop_6974",
      2
+    ],
+    [
+     "Aurora_Corpse",
+     6
     ]
    ]
   },
@@ -6984,10 +6988,6 @@
     [
      "Edgebender_Cloak",
      3
-    ],
-    [
-     "Bucca_Silver_Mirror",
-     9
     ]
    ]
   },
@@ -11040,6 +11040,10 @@
     [
      "Sleeves_of_Might",
      1
+    ],
+    [
+     "Yellow_Curmudgeon_Tooth",
+     6
     ]
    ]
   },
@@ -11074,6 +11078,10 @@
     [
      "Sleeves_of_Might",
      1
+    ],
+    [
+     "Yellow_Curmudgeon_Tooth",
+     6
     ]
    ]
   },
@@ -15737,6 +15745,10 @@
     [
      "p165_prima_small_engraved_scale",
      4
+    ],
+    [
+     "Drakulv_Scale",
+     1
     ]
    ]
   },
@@ -16760,6 +16772,10 @@
     [
      "p165_prima_dullahan_s_skin",
      80
+    ],
+    [
+     "Horseshoe",
+     6
     ]
    ]
   },
@@ -19866,6 +19882,10 @@
     [
      "p165_drop_6976",
      5
+    ],
+    [
+     "Troll_Teeth",
+     6
     ]
    ]
   },
@@ -20339,8 +20359,8 @@
      1
     ],
     [
-     "Sack_of_Grain_165l4",
-     12
+     "Sack_of_Grain",
+     6
     ]
    ]
   },
@@ -23274,6 +23294,10 @@
     [
      "p165_drop_6982",
      1
+    ],
+    [
+     "Ghostly_Necklace",
+     6
     ]
    ]
   },
@@ -29573,6 +29597,10 @@
     [
      "p165_prima_sea_serpent_totem",
      5
+    ],
+    [
+     "Jeweled_Shaman_Totem",
+     6
     ]
    ]
   },
@@ -29626,6 +29654,10 @@
     [
      "p165_prima_sea_serpent_totem",
      5
+    ],
+    [
+     "Spirit_Stone1",
+     6
     ]
    ]
   },
@@ -31805,10 +31837,6 @@
    "drop_count": 4,
    "items": [
     [
-     "Frosted Grimel Root",
-     6
-    ],
-    [
      "Kornerupine",
      3
     ],
@@ -31819,6 +31847,10 @@
     [
      "p165_prima_frosty_leg",
      18
+    ],
+    [
+     "Frosted_Gimel_Root",
+     6
     ]
    ]
   },
@@ -31929,6 +31961,10 @@
     [
      "p165_uth_1796",
      2
+    ],
+    [
+     "Red_Eye",
+     3
     ]
    ]
   },
@@ -40455,6 +40491,10 @@
     [
      "Spiritbender_Padded_Vest",
      3
+    ],
+    [
+     "Morvalt_Skydda_Eye",
+     6
     ]
    ]
   },
@@ -52832,6 +52872,10 @@
     [
      "Kornerupine",
      3
+    ],
+    [
+     "Speghoul_Heart",
+     6
     ]
    ]
   },
@@ -58287,6 +58331,10 @@
     [
      "Dangerous_Tooth",
      8
+    ],
+    [
+     "torc_tooth",
+     6
     ]
    ]
   },
@@ -59726,6 +59774,10 @@
     [
      "Yellow_Tourmaline",
      8
+    ],
+    [
+     "death_robe",
+     6
     ]
    ]
   },
@@ -63354,6 +63406,10 @@
     [
      "Peridot",
      1
+    ],
+    [
+     "Lost_Pearl",
+     3
     ]
    ]
   },
@@ -68573,6 +68629,10 @@
     [
      "p165_uth_1253",
      15
+    ],
+    [
+     "Shadowy_Helm",
+     6
     ]
    ]
   },
@@ -70812,6 +70872,10 @@
     [
      "p165_uth_1994",
      12
+    ],
+    [
+     "Badger_Stomach",
+     6
     ]
    ]
   },
@@ -72036,7 +72100,7 @@
    "drop_count": 1,
    "items": [
     [
-     "ice_water_165l31",
+     "Ice_Water",
      4
     ]
    ]
@@ -72232,12 +72296,7 @@
   },
   "cutthroat vines": {
    "drop_count": 1,
-   "items": [
-    [
-     "venom_sac",
-     6
-    ]
-   ]
+   "items": []
   },
   "sanidon": {
    "drop_count": 1,
@@ -72262,6 +72321,10 @@
    "items": [
     [
      "ixthiar_decimater_mandible",
+     6
+    ],
+    [
+     "Ixthiar_Wing",
      6
     ]
    ]
@@ -72431,6 +72494,10 @@
    "items": [
     [
      "cultist_supplie",
+     6
+    ],
+    [
+     "Cultist_Staff",
      6
     ]
    ]
@@ -74220,6 +74287,10 @@
     [
      "p165_prima_saturated_black_orm_hide",
      2
+    ],
+    [
+     "Silver_Gemmed_Collar",
+     6
     ]
    ]
   },
@@ -77585,6 +77656,217 @@
     [
      "Dread_Flail",
      25
+    ]
+   ]
+  },
+  "contraption": {
+   "drop_count": 1,
+   "items": [
+    [
+     "Contraption_Pieces",
+     6
+    ]
+   ]
+  },
+  "thrawn ogre thresher": {
+   "drop_count": 2,
+   "items": [
+    [
+     "Gruesome_Thrawn_Ogre_Head",
+     6
+    ],
+    [
+     "bronze_thrawn_ogre_thresher_spear_tip",
+     6
+    ]
+   ]
+  },
+  "young brown drake": {
+   "drop_count": 1,
+   "items": [
+    [
+     "Drake_Claw",
+     6
+    ]
+   ]
+  },
+  "little greeber": {
+   "drop_count": 1,
+   "items": [
+    [
+     "Little_Greeber_Beak",
+     6
+    ]
+   ]
+  },
+  "steam element": {
+   "drop_count": 1,
+   "items": [
+    [
+     "Steam",
+     6
+    ]
+   ]
+  },
+  "mammoth herdguard": {
+   "drop_count": 1,
+   "items": [
+    [
+     "Mammoth_Herdguard_Skin",
+     6
+    ]
+   ]
+  },
+  "griffon glider": {
+   "drop_count": 1,
+   "items": [
+    [
+     "Griffon_Glider_Head",
+     6
+    ]
+   ]
+  },
+  "megaloceros": {
+   "drop_count": 1,
+   "items": [
+    [
+     "rack_of_megaloceros_antlers",
+     6
+    ]
+   ]
+  },
+  "grasping ghoul": {
+   "drop_count": 1,
+   "items": [
+    [
+     "ghostly_soul_shroud",
+     6
+    ]
+   ]
+  },
+  "greater anglator": {
+   "drop_count": 1,
+   "items": [
+    [
+     "Greater_Angler_Tail",
+     6
+    ]
+   ]
+  },
+  "ixthiar plaguebringer": {
+   "drop_count": 1,
+   "items": [
+    [
+     "Ixthiar_Plaguebringer_Satchel",
+     6
+    ]
+   ]
+  },
+  "vehement guardian": {
+   "drop_count": 1,
+   "items": [
+    [
+     "Vehement_Gizzard",
+     6
+    ]
+   ]
+  },
+  "ixthiar doomcaller": {
+   "drop_count": 1,
+   "items": [
+    [
+     "Ixthiar_Doomcaller_Beads",
+     6
+    ]
+   ]
+  },
+  "mature skimmer": {
+   "drop_count": 1,
+   "items": [
+    [
+     "Mature_Skimmer_Hide",
+     6
+    ]
+   ]
+  },
+  "skeletal dwarf invader": {
+   "drop_count": 1,
+   "items": [
+    [
+     "Skeletal_Dwarf_Invader_Skull",
+     6
+    ]
+   ]
+  },
+  "bugbear nuisance": {
+   "drop_count": 1,
+   "items": [
+    [
+     "Bug_Bear_Snout",
+     6
+    ]
+   ]
+  },
+  "ravaging marine shriller": {
+   "drop_count": 1,
+   "items": [
+    [
+     "Ravaging_Marine_Shriller_Hide",
+     6
+    ]
+   ]
+  },
+  "tittering tree dervish": {
+   "drop_count": 1,
+   "items": [
+    [
+     "Tittering_Tree_Dervish_Bark",
+     6
+    ]
+   ]
+  },
+  "gangrenous mass": {
+   "drop_count": 1,
+   "items": [
+    [
+     "Gangrenous_Mass_Pustule",
+     6
+    ]
+   ]
+  },
+  "fell geist": {
+   "drop_count": 1,
+   "items": [
+    [
+     "Faint_Geist_Essence",
+     6
+    ]
+   ]
+  },
+  "bilious goo": {
+   "drop_count": 1,
+   "items": [
+    [
+     "Tattered_Rope_Threads",
+     6
+    ]
+   ]
+  },
+  "cave lioness": {
+   "drop_count": 1,
+   "items": [
+    [
+     "Cave_Lioness_Pelt",
+     6
+    ]
+   ]
+  },
+  "fomorian tremulare": {
+   "drop_count": 1,
+   "items": [
+    [
+     "Fomorian_Hormone_Gland",
+     6
     ]
    ]
   }

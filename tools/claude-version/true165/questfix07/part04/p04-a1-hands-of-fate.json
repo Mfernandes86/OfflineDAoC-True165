@@ -1,0 +1,132 @@
+{
+ "fixer": "part04",
+ "about": "A1: Hands Of Fate final step is a talk to the peaceful Shade, not a level-54 kill",
+ "entries": [
+  {
+   "finding": "P04-A1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepType": "4|5"
+   },
+   "where": {
+    "ID": 20412
+   },
+   "why": "step 2 was a KillFinish of the level-54 Shade at a MinLevel-30 quest; walkthrough 184 (Hands Of Fate): you hand the shade the scroll and tome, Morgana appears and kills him - the player talks to him, never fights him"
+  },
+  {
+   "finding": "P04-A1",
+   "kind": "quest",
+   "op": "delete",
+   "path": [
+    "Quests",
+    "20412",
+    "Steps",
+    2,
+    "Spawn"
+   ],
+   "why": "the extra level-54 hostile event spawn is not needed: the standing Shade (CapnBry sighting zone 19 18864,23551) is made peaceful and is the talk target"
+  },
+  {
+   "finding": "P04-A1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepType": "4|5"
+   },
+   "where": {
+    "ID": 20413
+   },
+   "why": "step 2 was a KillFinish of the level-54 Shade at a MinLevel-30 quest; walkthrough 184 (Hands Of Fate): you hand the shade the scroll and tome, Morgana appears and kills him - the player talks to him, never fights him"
+  },
+  {
+   "finding": "P04-A1",
+   "kind": "quest",
+   "op": "delete",
+   "path": [
+    "Quests",
+    "20413",
+    "Steps",
+    2,
+    "Spawn"
+   ],
+   "why": "the extra level-54 hostile event spawn is not needed: the standing Shade (CapnBry sighting zone 19 18864,23551) is made peaceful and is the talk target"
+  },
+  {
+   "finding": "P04-A1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepType": "4|5"
+   },
+   "where": {
+    "ID": 20414
+   },
+   "why": "step 2 was a KillFinish of the level-54 Shade at a MinLevel-30 quest; walkthrough 184 (Hands Of Fate): you hand the shade the scroll and tome, Morgana appears and kills him - the player talks to him, never fights him"
+  },
+  {
+   "finding": "P04-A1",
+   "kind": "quest",
+   "op": "delete",
+   "path": [
+    "Quests",
+    "20414",
+    "Steps",
+    2,
+    "Spawn"
+   ],
+   "why": "the extra level-54 hostile event spawn is not needed: the standing Shade (CapnBry sighting zone 19 18864,23551) is made peaceful and is the talk target"
+  },
+  {
+   "finding": "P04-A1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepType": "4|5"
+   },
+   "where": {
+    "ID": 20415
+   },
+   "why": "step 2 was a KillFinish of the level-54 Shade at a MinLevel-30 quest; walkthrough 184 (Hands Of Fate): you hand the shade the scroll and tome, Morgana appears and kills him - the player talks to him, never fights him"
+  },
+  {
+   "finding": "P04-A1",
+   "kind": "quest",
+   "op": "delete",
+   "path": [
+    "Quests",
+    "20415",
+    "Steps",
+    2,
+    "Spawn"
+   ],
+   "why": "the extra level-54 hostile event spawn is not needed: the standing Shade (CapnBry sighting zone 19 18864,23551) is made peaceful and is the talk target"
+  },
+  {
+   "finding": "P04-A1",
+   "kind": "update",
+   "table": "NpcTemplate",
+   "set": {
+    "Flags": 17,
+    "AggroLevel": 0
+   },
+   "where": {
+    "TemplateId": 12799
+   },
+   "why": "the Shade of Ambrosius Aurelianus is a talking spectre in the period quest (walkthrough 184: 'some talking (looks like a guard) spectre, I handed him both the scroll and the book'); template 12799 (ReplaceMobValues) made him aggro 200 at the barrows entrance. Level 54 kept; GHOST|PEACE"
+  },
+  {
+   "finding": "P04-A1",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "Flags": 17,
+    "AggroLevel": 0
+   },
+   "where": {
+    "Mob_ID": "8ae4dc04-ddf9-454c-acfe-7c4b363f1094"
+   },
+   "why": "same peaceful talking Shade on the Mob row (the template overrides it anyway; kept consistent)"
+  }
+ ]
+}

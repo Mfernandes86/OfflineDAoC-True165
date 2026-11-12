@@ -1,0 +1,58 @@
+{
+ "fixer": "part08",
+ "about": "A1: Rod of Mimir chain dead end (Wisdom of Time <-> The Rod and the Scholars)",
+ "entries": [
+  {
+   "finding": "P08-A1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "QuestDependency": "Darksong's Dirge"
+   },
+   "where": {
+    "ID": 21100
+   },
+   "why": "Wisdom of Time step 2 (custom 'quest', all of Rod/Visions/Decoding/Gashir finished) can never complete: The Rod and the Scholars needed Wisdom of Time FINISHED (DataQuest.cs only counts finished quests). Rod now needs Darksong's Dirge (Wisdom of Time's own prerequisite) and is offered only while Wisdom of Time is in progress (spec M307: nesting quest that ends when Gashir is done)"
+  },
+  {
+   "finding": "P08-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21100",
+    "OnlyDuring"
+   ],
+   "value": [
+    "Wisdom of Time"
+   ],
+   "why": "Wisdom of Time step 2 (custom 'quest', all of Rod/Visions/Decoding/Gashir finished) can never complete: The Rod and the Scholars needed Wisdom of Time FINISHED (DataQuest.cs only counts finished quests). Rod now needs Darksong's Dirge (Wisdom of Time's own prerequisite) and is offered only while Wisdom of Time is in progress (spec M307: nesting quest that ends when Gashir is done)"
+  },
+  {
+   "finding": "P08-A1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "QuestDependency": "Darksong's Dirge"
+   },
+   "where": {
+    "ID": 21101
+   },
+   "why": "Wisdom of Time step 2 (custom 'quest', all of Rod/Visions/Decoding/Gashir finished) can never complete: The Rod and the Scholars needed Wisdom of Time FINISHED (DataQuest.cs only counts finished quests). Rod now needs Darksong's Dirge (Wisdom of Time's own prerequisite) and is offered only while Wisdom of Time is in progress (spec M307: nesting quest that ends when Gashir is done)"
+  },
+  {
+   "finding": "P08-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21101",
+    "OnlyDuring"
+   ],
+   "value": [
+    "Wisdom of Time"
+   ],
+   "why": "Wisdom of Time step 2 (custom 'quest', all of Rod/Visions/Decoding/Gashir finished) can never complete: The Rod and the Scholars needed Wisdom of Time FINISHED (DataQuest.cs only counts finished quests). Rod now needs Darksong's Dirge (Wisdom of Time's own prerequisite) and is offered only while Wisdom of Time is in progress (spec M307: nesting quest that ends when Gashir is done)"
+  }
+ ]
+}

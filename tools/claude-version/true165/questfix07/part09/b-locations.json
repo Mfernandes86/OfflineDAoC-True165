@@ -1,0 +1,2325 @@
+{
+ "fixer": "part09",
+ "about": "part09 B: NPC and marker locations",
+ "entries": [
+  {
+   "finding": "P09-B4",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584,
+    "ClassType": "DOL.GS.NightSpawn"
+   },
+   "where": {
+    "Mob_ID": "99992215"
+   },
+   "why": "the only Lady Nimue stood in Camelot Hills (25233,14980), 200k from where the journal sends the player ('at night in Avalon Marsh'); moved to the period night spot Avalon Marsh 27631,45026 (navmesh Z 1584, the lake) as a night spawn",
+   "source": "Allakhazam quest 142 Legend of the Lake (level 15): 'Lady Nimue can be found in Campa Forest during the day at 8380, 47321, and Avalon Marsh during night at 27631, 45026' / 'She pops from 7pm-5am'"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.DaySpawn",
+    "TranslationId": "",
+    "Name": "Lady Nimue",
+    "Suffix": "",
+    "Guild": "",
+    "ExamineArticle": "",
+    "MessageArticle": "",
+    "X": 491708,
+    "Y": 628953,
+    "Z": 1512,
+    "Speed": 191,
+    "Heading": 4069,
+    "Region": 1,
+    "Model": 7,
+    "Size": 46,
+    "Strength": 124,
+    "Constitution": 124,
+    "Dexterity": 124,
+    "Quickness": 124,
+    "Intelligence": 124,
+    "Piety": 124,
+    "Empathy": 124,
+    "Charisma": 124,
+    "Level": 95,
+    "Realm": 1,
+    "EquipmentTemplateID": null,
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 60163064,
+    "Race": 0,
+    "Flags": 0,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 2,
+    "RespawnInterval": 0,
+    "FactionID": 0,
+    "BodyType": 0,
+    "HouseNumber": 0,
+    "Brain": "",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00070901-0000-4000-8000-000000000003"
+   },
+   "why": "the period day spot of Lady Nimue, Campacorentin Forest 8380,47321 (navmesh Z 1512), as a day spawn; the same name so every Nimue quest (QuestNames.Same on StartName) is offered there by day",
+   "source": "Allakhazam quest 142 Legend of the Lake (level 15): 'Lady Nimue can be found in Campa Forest during the day at 8380, 47321, and Avalon Marsh during night at 27631, 45026' / 'She pops from 7pm-5am'"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20003",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20007",
+    "Steps",
+    8,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20200",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20200",
+    "Steps",
+    10,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20396",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20397",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20398",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20399",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20400",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20401",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20402",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20419",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20420",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20421",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20422",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21288",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21288",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21289",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21289",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21290",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21290",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21291",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21291",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21476",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21477",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21478",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21479",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the marker followed Lady Nimue's old Camelot Hills spot; it now points at her period night spot in the Avalon Marsh lake, where the journal sends the player"
+  },
+  {
+   "finding": "P09-B5",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "Mystemas",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 13700,
+    "Y": 14900,
+    "Z": 22384,
+    "Speed": 180,
+    "Heading": 927,
+    "Region": 249,
+    "Model": 51,
+    "Size": 49,
+    "Strength": 350,
+    "Constitution": 50,
+    "Dexterity": 100,
+    "Quickness": 50,
+    "Intelligence": 30,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 36,
+    "Realm": 2,
+    "EquipmentTemplateID": "32eaf2b1-3128-452b-96e6-34db9cc9c0d1",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": -1,
+    "Race": 0,
+    "Flags": 16,
+    "AggroLevel": 0,
+    "AggroRange": 0,
+    "MeleeDamageType": 2,
+    "RespawnInterval": 30,
+    "FactionID": 0,
+    "BodyType": 0,
+    "HouseNumber": 0,
+    "Brain": null,
+    "PathID": null,
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 1,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00070901-0000-4000-8000-000000000001"
+   },
+   "why": "the period had one Mystemas per realm at its own entrance's imp merchants; ours stood only at the Albion entrance by the level 255 aleax, so Midgard players had to cross Darkness Falls; this Midgard copy stands among the Midgard seal merchants (navmesh Z 22384)",
+   "source": "Allakhazam quest 1802 Breaking the Blade (Mid): 'Go talk to Alb and Hib Mystemas ... Go back to Mid Mystemas'; quest 2007 (Hib): 'speak with Mystemas again at the imp merchants in Darkness Falls'; quest 2040 (Alb): 'the Albion entrance'; CapnBry radar: the Albion Mystemas at DF 28681,16197 (our row)"
+  },
+  {
+   "finding": "P09-B5",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "Mystemas",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 41300,
+    "Y": 40600,
+    "Z": 20399,
+    "Speed": 180,
+    "Heading": 2116,
+    "Region": 249,
+    "Model": 51,
+    "Size": 49,
+    "Strength": 350,
+    "Constitution": 50,
+    "Dexterity": 100,
+    "Quickness": 50,
+    "Intelligence": 30,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 36,
+    "Realm": 3,
+    "EquipmentTemplateID": "32eaf2b1-3128-452b-96e6-34db9cc9c0d1",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": -1,
+    "Race": 0,
+    "Flags": 16,
+    "AggroLevel": 0,
+    "AggroRange": 0,
+    "MeleeDamageType": 2,
+    "RespawnInterval": 30,
+    "FactionID": 0,
+    "BodyType": 0,
+    "HouseNumber": 0,
+    "Brain": null,
+    "PathID": null,
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 1,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00070901-0000-4000-8000-000000000002"
+   },
+   "why": "the period had one Mystemas per realm at its own entrance's imp merchants; ours stood only at the Albion entrance by the level 255 aleax, so Hibernia players had to cross Darkness Falls; this Hibernia copy stands among the Hibernia seal merchants (navmesh Z 20399)",
+   "source": "Allakhazam quest 1802 Breaking the Blade (Mid): 'Go talk to Alb and Hib Mystemas ... Go back to Mid Mystemas'; quest 2007 (Hib): 'speak with Mystemas again at the imp merchants in Darkness Falls'; quest 2040 (Alb): 'the Albion entrance'; CapnBry radar: the Albion Mystemas at DF 28681,16197 (our row)"
+  },
+  {
+   "finding": "P09-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21262",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 249,
+    "X": 13700,
+    "Y": 14900,
+    "Z": 22384
+   },
+   "why": "Midgard quest: the marker now points at the Midgard Mystemas at the Midgard entrance (step text 'at the Midgard entrance')"
+  },
+  {
+   "finding": "P09-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21262",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 249,
+    "X": 13700,
+    "Y": 14900,
+    "Z": 22384
+   },
+   "why": "Midgard quest: the marker now points at the Midgard Mystemas at the Midgard entrance (step text 'at the Midgard entrance')"
+  },
+  {
+   "finding": "P09-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21262",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "value": {
+    "Region": 249,
+    "X": 13700,
+    "Y": 14900,
+    "Z": 22384
+   },
+   "why": "Midgard quest: the marker now points at the Midgard Mystemas at the Midgard entrance (step text 'at the Midgard entrance')"
+  },
+  {
+   "finding": "P09-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21263",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 249,
+    "X": 13700,
+    "Y": 14900,
+    "Z": 22384
+   },
+   "why": "Midgard quest: the marker now points at the Midgard Mystemas at the Midgard entrance (step text 'at the Midgard entrance')"
+  },
+  {
+   "finding": "P09-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21263",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 249,
+    "X": 13700,
+    "Y": 14900,
+    "Z": 22384
+   },
+   "why": "Midgard quest: the marker now points at the Midgard Mystemas at the Midgard entrance (step text 'at the Midgard entrance')"
+  },
+  {
+   "finding": "P09-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21263",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "value": {
+    "Region": 249,
+    "X": 13700,
+    "Y": 14900,
+    "Z": 22384
+   },
+   "why": "Midgard quest: the marker now points at the Midgard Mystemas at the Midgard entrance (step text 'at the Midgard entrance')"
+  },
+  {
+   "finding": "P09-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21263",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 249,
+    "X": 13700,
+    "Y": 14900,
+    "Z": 22384
+   },
+   "why": "Midgard quest: the marker now points at the Midgard Mystemas at the Midgard entrance (step text 'at the Midgard entrance')"
+  },
+  {
+   "finding": "P09-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21263",
+    "Steps",
+    8,
+    "Marker"
+   ],
+   "value": {
+    "Region": 249,
+    "X": 13700,
+    "Y": 14900,
+    "Z": 22384
+   },
+   "why": "Midgard quest: the marker now points at the Midgard Mystemas at the Midgard entrance (step text 'at the Midgard entrance')"
+  },
+  {
+   "finding": "P09-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20975",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 249,
+    "X": 41300,
+    "Y": 40600,
+    "Z": 20399
+   },
+   "why": "Hibernia quest: the marker now points at the Hibernia Mystemas at the Hibernia imp merchants"
+  },
+  {
+   "finding": "P09-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20975",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 249,
+    "X": 41300,
+    "Y": 40600,
+    "Z": 20399
+   },
+   "why": "Hibernia quest: the marker now points at the Hibernia Mystemas at the Hibernia imp merchants"
+  },
+  {
+   "finding": "P09-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20975",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 249,
+    "X": 41300,
+    "Y": 40600,
+    "Z": 20399
+   },
+   "why": "Hibernia quest: the marker now points at the Hibernia Mystemas at the Hibernia imp merchants"
+  },
+  {
+   "finding": "P09-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20976",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 249,
+    "X": 41300,
+    "Y": 40600,
+    "Z": 20399
+   },
+   "why": "Hibernia quest: the marker now points at the Hibernia Mystemas at the Hibernia imp merchants"
+  },
+  {
+   "finding": "P09-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20976",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 249,
+    "X": 41300,
+    "Y": 40600,
+    "Z": 20399
+   },
+   "why": "Hibernia quest: the marker now points at the Hibernia Mystemas at the Hibernia imp merchants"
+  },
+  {
+   "finding": "P09-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20976",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 249,
+    "X": 41300,
+    "Y": 40600,
+    "Z": 20399
+   },
+   "why": "Hibernia quest: the marker now points at the Hibernia Mystemas at the Hibernia imp merchants"
+  },
+  {
+   "finding": "P09-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20976",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "value": {
+    "Region": 249,
+    "X": 41300,
+    "Y": 40600,
+    "Z": 20399
+   },
+   "why": "Hibernia quest: the marker now points at the Hibernia Mystemas at the Hibernia imp merchants"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "where": {
+    "Mob_ID": "8e720b09-ca16-49eb-a67f-11eac46c12c5"
+   },
+   "why": "Nalsor stood at Avalon Isle 15712,10976, 8.3k from the period spot; moved to Afal Dyffryn 10000,17000 (navmesh Z 3154)",
+   "source": "Allakhazam quest 572 Spirits of the Orchard: 'Go to Afal Dyffryn, which is north of Wearyall, loc of 10k, 17k. Locate and kill Nalsor' / 'Upon Nalsor's death, Tomos spawns'"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "remove",
+   "table": "Mob",
+   "where": "Mob_ID = '26cabb67-bfdc-5214-a063-29b2d96109d7'",
+   "why": "the permanent Tomos at exactly 10000,17000 was a placeholder; in the period he appears when Nalsor dies, which the step 3 event spawn below now does (archived, restorable)",
+   "source": "Allakhazam quest 572 Spirits of the Orchard: 'Go to Afal Dyffryn, which is north of Wearyall, loc of 10k, 17k. Locate and kill Nalsor' / 'Upon Nalsor's death, Tomos spawns'"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21355",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Nalsor's marker follows him to Afal Dyffryn"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21355",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Tomos appears where Nalsor died"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21355",
+    "Steps",
+    3,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Tomos",
+    "TemplateId": 0,
+    "Level": 46,
+    "Model": 80,
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154,
+    "TriggerRadius": 1500,
+    "DespawnSeconds": 600,
+    "Count": 1,
+    "Peaceful": true
+   },
+   "why": "Tomos now appears (peaceful, for the player on the step) where Nalsor died, as the journal and the period say, instead of standing there permanently",
+   "source": "Allakhazam quest 572 Spirits of the Orchard: 'Go to Afal Dyffryn, which is north of Wearyall, loc of 10k, 17k. Locate and kill Nalsor' / 'Upon Nalsor's death, Tomos spawns'"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21356",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Nalsor's marker follows him to Afal Dyffryn"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21356",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Tomos appears where Nalsor died"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21356",
+    "Steps",
+    3,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Tomos",
+    "TemplateId": 0,
+    "Level": 46,
+    "Model": 80,
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154,
+    "TriggerRadius": 1500,
+    "DespawnSeconds": 600,
+    "Count": 1,
+    "Peaceful": true
+   },
+   "why": "Tomos now appears (peaceful, for the player on the step) where Nalsor died, as the journal and the period say, instead of standing there permanently",
+   "source": "Allakhazam quest 572 Spirits of the Orchard: 'Go to Afal Dyffryn, which is north of Wearyall, loc of 10k, 17k. Locate and kill Nalsor' / 'Upon Nalsor's death, Tomos spawns'"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21357",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Nalsor's marker follows him to Afal Dyffryn"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21357",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Tomos appears where Nalsor died"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21357",
+    "Steps",
+    3,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Tomos",
+    "TemplateId": 0,
+    "Level": 46,
+    "Model": 80,
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154,
+    "TriggerRadius": 1500,
+    "DespawnSeconds": 600,
+    "Count": 1,
+    "Peaceful": true
+   },
+   "why": "Tomos now appears (peaceful, for the player on the step) where Nalsor died, as the journal and the period say, instead of standing there permanently",
+   "source": "Allakhazam quest 572 Spirits of the Orchard: 'Go to Afal Dyffryn, which is north of Wearyall, loc of 10k, 17k. Locate and kill Nalsor' / 'Upon Nalsor's death, Tomos spawns'"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21358",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Nalsor's marker follows him to Afal Dyffryn"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21358",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Tomos appears where Nalsor died"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21358",
+    "Steps",
+    3,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Tomos",
+    "TemplateId": 0,
+    "Level": 46,
+    "Model": 80,
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154,
+    "TriggerRadius": 1500,
+    "DespawnSeconds": 600,
+    "Count": 1,
+    "Peaceful": true
+   },
+   "why": "Tomos now appears (peaceful, for the player on the step) where Nalsor died, as the journal and the period say, instead of standing there permanently",
+   "source": "Allakhazam quest 572 Spirits of the Orchard: 'Go to Afal Dyffryn, which is north of Wearyall, loc of 10k, 17k. Locate and kill Nalsor' / 'Upon Nalsor's death, Tomos spawns'"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21359",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Nalsor's marker follows him to Afal Dyffryn"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21359",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Tomos appears where Nalsor died"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21359",
+    "Steps",
+    3,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Tomos",
+    "TemplateId": 0,
+    "Level": 46,
+    "Model": 80,
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154,
+    "TriggerRadius": 1500,
+    "DespawnSeconds": 600,
+    "Count": 1,
+    "Peaceful": true
+   },
+   "why": "Tomos now appears (peaceful, for the player on the step) where Nalsor died, as the journal and the period say, instead of standing there permanently",
+   "source": "Allakhazam quest 572 Spirits of the Orchard: 'Go to Afal Dyffryn, which is north of Wearyall, loc of 10k, 17k. Locate and kill Nalsor' / 'Upon Nalsor's death, Tomos spawns'"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21360",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Nalsor's marker follows him to Afal Dyffryn"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21360",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Tomos appears where Nalsor died"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21360",
+    "Steps",
+    3,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Tomos",
+    "TemplateId": 0,
+    "Level": 46,
+    "Model": 80,
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154,
+    "TriggerRadius": 1500,
+    "DespawnSeconds": 600,
+    "Count": 1,
+    "Peaceful": true
+   },
+   "why": "Tomos now appears (peaceful, for the player on the step) where Nalsor died, as the journal and the period say, instead of standing there permanently",
+   "source": "Allakhazam quest 572 Spirits of the Orchard: 'Go to Afal Dyffryn, which is north of Wearyall, loc of 10k, 17k. Locate and kill Nalsor' / 'Upon Nalsor's death, Tomos spawns'"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21361",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Nalsor's marker follows him to Afal Dyffryn"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21361",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Tomos appears where Nalsor died"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21361",
+    "Steps",
+    3,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Tomos",
+    "TemplateId": 0,
+    "Level": 46,
+    "Model": 80,
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154,
+    "TriggerRadius": 1500,
+    "DespawnSeconds": 600,
+    "Count": 1,
+    "Peaceful": true
+   },
+   "why": "Tomos now appears (peaceful, for the player on the step) where Nalsor died, as the journal and the period say, instead of standing there permanently",
+   "source": "Allakhazam quest 572 Spirits of the Orchard: 'Go to Afal Dyffryn, which is north of Wearyall, loc of 10k, 17k. Locate and kill Nalsor' / 'Upon Nalsor's death, Tomos spawns'"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21362",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Nalsor's marker follows him to Afal Dyffryn"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21362",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Tomos appears where Nalsor died"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21362",
+    "Steps",
+    3,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Tomos",
+    "TemplateId": 0,
+    "Level": 46,
+    "Model": 80,
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154,
+    "TriggerRadius": 1500,
+    "DespawnSeconds": 600,
+    "Count": 1,
+    "Peaceful": true
+   },
+   "why": "Tomos now appears (peaceful, for the player on the step) where Nalsor died, as the journal and the period say, instead of standing there permanently",
+   "source": "Allakhazam quest 572 Spirits of the Orchard: 'Go to Afal Dyffryn, which is north of Wearyall, loc of 10k, 17k. Locate and kill Nalsor' / 'Upon Nalsor's death, Tomos spawns'"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21363",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Nalsor's marker follows him to Afal Dyffryn"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21363",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Tomos appears where Nalsor died"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21363",
+    "Steps",
+    3,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Tomos",
+    "TemplateId": 0,
+    "Level": 46,
+    "Model": 80,
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154,
+    "TriggerRadius": 1500,
+    "DespawnSeconds": 600,
+    "Count": 1,
+    "Peaceful": true
+   },
+   "why": "Tomos now appears (peaceful, for the player on the step) where Nalsor died, as the journal and the period say, instead of standing there permanently",
+   "source": "Allakhazam quest 572 Spirits of the Orchard: 'Go to Afal Dyffryn, which is north of Wearyall, loc of 10k, 17k. Locate and kill Nalsor' / 'Upon Nalsor's death, Tomos spawns'"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21364",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Nalsor's marker follows him to Afal Dyffryn"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21364",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Tomos appears where Nalsor died"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21364",
+    "Steps",
+    3,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Tomos",
+    "TemplateId": 0,
+    "Level": 46,
+    "Model": 80,
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154,
+    "TriggerRadius": 1500,
+    "DespawnSeconds": 600,
+    "Count": 1,
+    "Peaceful": true
+   },
+   "why": "Tomos now appears (peaceful, for the player on the step) where Nalsor died, as the journal and the period say, instead of standing there permanently",
+   "source": "Allakhazam quest 572 Spirits of the Orchard: 'Go to Afal Dyffryn, which is north of Wearyall, loc of 10k, 17k. Locate and kill Nalsor' / 'Upon Nalsor's death, Tomos spawns'"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21365",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Nalsor's marker follows him to Afal Dyffryn"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21365",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Tomos appears where Nalsor died"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21365",
+    "Steps",
+    3,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Tomos",
+    "TemplateId": 0,
+    "Level": 46,
+    "Model": 80,
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154,
+    "TriggerRadius": 1500,
+    "DespawnSeconds": 600,
+    "Count": 1,
+    "Peaceful": true
+   },
+   "why": "Tomos now appears (peaceful, for the player on the step) where Nalsor died, as the journal and the period say, instead of standing there permanently",
+   "source": "Allakhazam quest 572 Spirits of the Orchard: 'Go to Afal Dyffryn, which is north of Wearyall, loc of 10k, 17k. Locate and kill Nalsor' / 'Upon Nalsor's death, Tomos spawns'"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21366",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Nalsor's marker follows him to Afal Dyffryn"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21366",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Tomos appears where Nalsor died"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21366",
+    "Steps",
+    3,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Tomos",
+    "TemplateId": 0,
+    "Level": 46,
+    "Model": 80,
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154,
+    "TriggerRadius": 1500,
+    "DespawnSeconds": 600,
+    "Count": 1,
+    "Peaceful": true
+   },
+   "why": "Tomos now appears (peaceful, for the player on the step) where Nalsor died, as the journal and the period say, instead of standing there permanently",
+   "source": "Allakhazam quest 572 Spirits of the Orchard: 'Go to Afal Dyffryn, which is north of Wearyall, loc of 10k, 17k. Locate and kill Nalsor' / 'Upon Nalsor's death, Tomos spawns'"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21367",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Nalsor's marker follows him to Afal Dyffryn"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21367",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Tomos appears where Nalsor died"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21367",
+    "Steps",
+    3,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Tomos",
+    "TemplateId": 0,
+    "Level": 46,
+    "Model": 80,
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154,
+    "TriggerRadius": 1500,
+    "DespawnSeconds": 600,
+    "Count": 1,
+    "Peaceful": true
+   },
+   "why": "Tomos now appears (peaceful, for the player on the step) where Nalsor died, as the journal and the period say, instead of standing there permanently",
+   "source": "Allakhazam quest 572 Spirits of the Orchard: 'Go to Afal Dyffryn, which is north of Wearyall, loc of 10k, 17k. Locate and kill Nalsor' / 'Upon Nalsor's death, Tomos spawns'"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21368",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Nalsor's marker follows him to Afal Dyffryn"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21368",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Tomos appears where Nalsor died"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21368",
+    "Steps",
+    3,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Tomos",
+    "TemplateId": 0,
+    "Level": 46,
+    "Model": 80,
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154,
+    "TriggerRadius": 1500,
+    "DespawnSeconds": 600,
+    "Count": 1,
+    "Peaceful": true
+   },
+   "why": "Tomos now appears (peaceful, for the player on the step) where Nalsor died, as the journal and the period say, instead of standing there permanently",
+   "source": "Allakhazam quest 572 Spirits of the Orchard: 'Go to Afal Dyffryn, which is north of Wearyall, loc of 10k, 17k. Locate and kill Nalsor' / 'Upon Nalsor's death, Tomos spawns'"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21369",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Nalsor's marker follows him to Afal Dyffryn"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21369",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154
+   },
+   "why": "Tomos appears where Nalsor died"
+  },
+  {
+   "finding": "P09-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21369",
+    "Steps",
+    3,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Tomos",
+    "TemplateId": 0,
+    "Level": 46,
+    "Model": 80,
+    "Region": 51,
+    "X": 435984,
+    "Y": 459368,
+    "Z": 3154,
+    "TriggerRadius": 1500,
+    "DespawnSeconds": 600,
+    "Count": 1,
+    "Peaceful": true
+   },
+   "why": "Tomos now appears (peaceful, for the player on the step) where Nalsor died, as the journal and the period say, instead of standing there permanently",
+   "source": "Allakhazam quest 572 Spirits of the Orchard: 'Go to Afal Dyffryn, which is north of Wearyall, loc of 10k, 17k. Locate and kill Nalsor' / 'Upon Nalsor's death, Tomos spawns'"
+  },
+  {
+   "finding": "P09-B7",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21264",
+    "Steps",
+    21,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 708328,
+    "Y": 914320,
+    "Z": 1612
+   },
+   "why": "the finish step says 'Find Yver in Skona Ravine' (period 20.2k,13.2k); the marker pointed at Haggerfell"
+  },
+  {
+   "finding": "P09-B7",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21264",
+    "Steps",
+    21,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Yver Tiu",
+    "TemplateId": 0,
+    "Level": 23,
+    "Model": 235,
+    "Region": 100,
+    "X": 708328,
+    "Y": 914320,
+    "Z": 1612,
+    "TriggerRadius": 1500,
+    "DespawnSeconds": 600,
+    "Count": 1,
+    "Peaceful": true
+   },
+   "why": "the cured Yver Tiu meets the player in Skona Ravine at 20.2k,13.2k (navmesh Z 1612) for the finish step, as a peaceful event spawn; the Haggerfell Yver (Strange Powers) stays",
+   "source": "Allakhazam quest 713 Dark Places of the Soul: '#23: Head to Skona Ravine and find Yver (loc=20.2k x 13.2k)'"
+  },
+  {
+   "finding": "P09-B8",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StepText = replace(StepText, 'Slay Centurion Favius in Salisbury Plains.', 'Slay Centurion Favius in Cornwall.'), SourceText = replace(SourceText, 'Slay Centurion Favius in Salisbury Plains.', 'Slay Centurion Favius in Cornwall.') WHERE ID BETWEEN 21284 AND 21286",
+   "why": "the text sent the player to Salisbury Plains but Favius spawns in Cornwall (54009,50332); patch 1.75 is what moved him to the Fallen Tower in Salisbury, so Cornwall is the 1.65 spot and the text was wrong",
+   "source": "Allakhazam quest 176 Animare il morti: 'Per Patch 1.75: Centurion Favius can now be found next to the Fallen Tower in Salisbury Plains'; Related Zones: Cornwall, Salisbury Plains"
+  },
+  {
+   "finding": "P09-B9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21318",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 535624,
+    "Y": 354534,
+    "Z": 6038
+   },
+   "why": "the marker pointed at the Lyonesse shamanesses; the period has them 'near the fortress to the north' of Snowdonia Fortress (Captain Leri), where our nearest group stands (Snowdonia 35912,51430)"
+  },
+  {
+   "finding": "P09-B9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21319",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 535624,
+    "Y": 354534,
+    "Z": 6038
+   },
+   "why": "the marker pointed at the Lyonesse shamanesses; the period has them 'near the fortress to the north' of Snowdonia Fortress (Captain Leri), where our nearest group stands (Snowdonia 35912,51430)"
+  },
+  {
+   "finding": "P09-B9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21320",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 535624,
+    "Y": 354534,
+    "Z": 6038
+   },
+   "why": "the marker pointed at the Lyonesse shamanesses; the period has them 'near the fortress to the north' of Snowdonia Fortress (Captain Leri), where our nearest group stands (Snowdonia 35912,51430)"
+  },
+  {
+   "finding": "P09-B9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21321",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 535624,
+    "Y": 354534,
+    "Z": 6038
+   },
+   "why": "the marker pointed at the Lyonesse shamanesses; the period has them 'near the fortress to the north' of Snowdonia Fortress (Captain Leri), where our nearest group stands (Snowdonia 35912,51430)"
+  },
+  {
+   "finding": "P09-B10",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21326",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 537961,
+    "Y": 455175,
+    "Z": 1907
+   },
+   "why": "the marker pointed at a spider in the far west of Black Mtns. South; the period says the spiders under the boar markings across the double bridge near Ludlow, loc 54k,21.5k, where our nearest giant spider stands (54633,20999)"
+  },
+  {
+   "finding": "P09-B10",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21327",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 537961,
+    "Y": 455175,
+    "Z": 1907
+   },
+   "why": "the marker pointed at a spider in the far west of Black Mtns. South; the period says the spiders under the boar markings across the double bridge near Ludlow, loc 54k,21.5k, where our nearest giant spider stands (54633,20999)"
+  },
+  {
+   "finding": "P09-B10",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21328",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 537961,
+    "Y": 455175,
+    "Z": 1907
+   },
+   "why": "the marker pointed at a spider in the far west of Black Mtns. South; the period says the spiders under the boar markings across the double bridge near Ludlow, loc 54k,21.5k, where our nearest giant spider stands (54633,20999)"
+  },
+  {
+   "finding": "P09-B11",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET SourceName = replace(SourceName, 'SEARCH;5;;151;457344;342912;800;5', 'SEARCH;5;;151;456920;333721;800;5') WHERE ID BETWEEN 21238 AND 21244",
+   "why": "the 'investigate the strange sjoalfs north of Shiake' search area was centred on Shiake herself; moved 9k north onto the sjoalf camp (the four spectral sjoalf waverunners, Modernagrav 30936,6041)",
+   "source": "Allakhazam quest 1808 Mother's Children: 'investigate the strange sjoalfs located N of Shiake'"
+  },
+  {
+   "finding": "P09-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21238",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 151,
+    "X": 456920,
+    "Y": 333721,
+    "Z": 7174
+   },
+   "why": "the search marker follows the search area to the sjoalf camp north of Shiake"
+  },
+  {
+   "finding": "P09-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21239",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 151,
+    "X": 456920,
+    "Y": 333721,
+    "Z": 7174
+   },
+   "why": "the search marker follows the search area to the sjoalf camp north of Shiake"
+  },
+  {
+   "finding": "P09-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21240",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 151,
+    "X": 456920,
+    "Y": 333721,
+    "Z": 7174
+   },
+   "why": "the search marker follows the search area to the sjoalf camp north of Shiake"
+  },
+  {
+   "finding": "P09-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21241",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 151,
+    "X": 456920,
+    "Y": 333721,
+    "Z": 7174
+   },
+   "why": "the search marker follows the search area to the sjoalf camp north of Shiake"
+  },
+  {
+   "finding": "P09-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21242",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 151,
+    "X": 456920,
+    "Y": 333721,
+    "Z": 7174
+   },
+   "why": "the search marker follows the search area to the sjoalf camp north of Shiake"
+  },
+  {
+   "finding": "P09-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21243",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 151,
+    "X": 456920,
+    "Y": 333721,
+    "Z": 7174
+   },
+   "why": "the search marker follows the search area to the sjoalf camp north of Shiake"
+  },
+  {
+   "finding": "P09-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21244",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 151,
+    "X": 456920,
+    "Y": 333721,
+    "Z": 7174
+   },
+   "why": "the search marker follows the search area to the sjoalf camp north of Shiake"
+  }
+ ]
+}

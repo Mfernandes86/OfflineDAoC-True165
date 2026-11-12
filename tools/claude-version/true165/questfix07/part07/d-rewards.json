@@ -1,0 +1,151 @@
+{
+ "fixer": "part07",
+ "about": "D1-D5: reward rows and broken reward items",
+ "entries": [
+  {
+   "finding": "P07-D1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "AllowedClasses": "42|40|41"
+   },
+   "where": {
+    "ID": 20936
+   },
+   "why": "Eldritch (40) and Enchanter (41) are cloth-only but got only the leather Kedger's Gilded Boots; period: 'If you can't wear leather armor ... he gives you Kedger's Quick Boots' (Allakhazam Criofan's Fish; Quick Boots citem 4364 are cloth) - they now use the row that also gives the cloth Quick Boots, like Mentalist"
+  },
+  {
+   "finding": "P07-D1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "AllowedClasses": "50|49"
+   },
+   "where": {
+    "ID": 20938
+   },
+   "why": "Ranger and Nightshade keep the leather Kedger's Gilded Boots; Eldritch/Enchanter moved to the Quick Boots row (20936)"
+  },
+  {
+   "finding": "P07-D2",
+   "kind": "update",
+   "table": "ItemTemplate",
+   "set": {
+    "Object_Type": 37,
+    "DPS_AF": 78,
+    "SPD_ABS": 19
+   },
+   "where": {
+    "Id_nb": "cq_hib_silver_reinforced_vest"
+   },
+   "source": "Allakhazam item citem 5154 'Silver Reinforced Vest' (Wayback 2004-09-29): Torso, Armor Factor 78, Absorb 19, Dex 6, Cha 6, Matter 10%, Body 10%",
+   "why": "Crace's Desire reward for Blademaster/Bard/Ranger had Object_Type 0 and AF 0 (not armour); period item is reinforced with AF 78 / ABS 19 (bonuses already match)"
+  },
+  {
+   "finding": "P07-D3",
+   "kind": "update",
+   "table": "ItemTemplate",
+   "set": {
+    "Object_Type": 45,
+    "DPS_AF": 2
+   },
+   "where": {
+    "Id_nb": "cq_hib_lute_of_the_harpers"
+   },
+   "source": "Allakhazam item citem 8837 'Lute of the Harpers' (Wayback 2004-05-25): Slot Two Hand, Instrument Type: Lute, Requires Skill: Instruments",
+   "why": "Bard reward had Object_Type 0, so it was no instrument; eObjectType.Instrument is 45 and DPS_AF holds the instrument type (lutes are 2, like dyrwood/ebonwood lutes)"
+  },
+  {
+   "finding": "P07-D3b",
+   "kind": "update",
+   "table": "ItemTemplate",
+   "set": {
+    "Object_Type": 45,
+    "DPS_AF": 3
+   },
+   "where": {
+    "Id_nb": "cq_hib_flute_of_angus_og"
+   },
+   "source": "Allakhazam item citem 2606 'Flute of Angus Og': Two Hand, Instrument Type: Flute, Requires Skill: Instruments (Bard)",
+   "why": "The West Wind reward had Object_Type 0 (no instrument); flutes are Object_Type 45 with DPS_AF 3 (as carved/dyrwood flutes); listed in part07 D3 'same defect outside the slice', no other part owns it"
+  },
+  {
+   "finding": "P07-D3b",
+   "kind": "update",
+   "table": "ItemTemplate",
+   "set": {
+    "Object_Type": 45,
+    "DPS_AF": 3
+   },
+   "where": {
+    "Id_nb": "cq_alb_flute_of_displacement"
+   },
+   "source": "Allakhazam item citem 4099 'Flute of Displacement' (period capture 2003-10-03): Two Hand, Instrument Type: Flute, Requires Skill: Instruments (Minstrel)",
+   "why": "Scura Tragedia reward had Object_Type 0 (no instrument); flute = Object_Type 45, DPS_AF 3; listed in part07 D3, no other part owns it"
+  },
+  {
+   "finding": "P07-D3b",
+   "kind": "update",
+   "table": "ItemTemplate",
+   "set": {
+    "Object_Type": 24
+   },
+   "where": {
+    "Id_nb": "cq_alb_onyx_tipped_cat_o_nine_tails"
+   },
+   "source": "Allakhazam item citem 6572 'Onyx-tipped Cat o' Nine Tails' (Wayback 2003-10-20): Right Hand, Requires Skill: Flexible Weapons (Reaver), Slash, DPS 9.5, Delay 3.7",
+   "why": "Reaver reward had Object_Type 0 (no weapon skill or styles); Flexible is Object_Type 24 (DPS 95 / SPD 37 / slash already match the period page); listed in part07 D3, no other part owns it"
+  },
+  {
+   "finding": "P07-D4",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "AllowedClasses": "40|55"
+   },
+   "where": {
+    "ID": 20948
+   },
+   "source": "Allakhazam item citem 29051 'Mystical Faerie Ring': Requires Class: Animist, Eldritch, Enchanter, Mentalist (quest Catch of the Day)",
+   "why": "Animists got no reward although the period Mystical Faerie Ring is made for Animists; they now take the Eldritch row that gives it"
+  },
+  {
+   "finding": "P07-D4",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "AllowedClasses": "56|52|53|54|51|57"
+   },
+   "where": {
+    "ID": 20959
+   },
+   "why": "Animist (55) moved to the Mystical Faerie Ring row 20948; Valewalker stays on the no-item row because no period ring of this quest allows Valewalkers"
+  },
+  {
+   "finding": "P07-D5",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "FinalRewardItemTemplates": "cq_hib_lilerbad_s_beads_of_parrying"
+   },
+   "where": {
+    "ID": 20912
+   },
+   "source": "Allakhazam quest Missing Tapestry: 'Lilerbad's Beads of Parrying -- Hero, Blademaster, Paladin and Reaver (co-op)', 'Lilerbad's Beads of Strength -- Mauler'; item citem 9400",
+   "why": "Hero got the Mauler-only Beads of Strength; period gives Heroes the Beads of Parrying"
+  },
+  {
+   "finding": "P07-D5b",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "AllowedClasses": "42|41|40"
+   },
+   "where": {
+    "ID": 20910
+   },
+   "source": "Allakhazam quest Missing Tapestry: 'Lilerbad's Beads of Thought -- Animist, Valewalker, Enchanter and Mentalist'",
+   "why": "found while checking D5: no Missing Tapestry row allowed Enchanter (41) or Eldritch (40), so they could not take the quest at all; Enchanter gets the period Beads of Thought, Eldritch the same INT caster beads (the walkthrough names no Eldritch item)"
+  }
+ ]
+}

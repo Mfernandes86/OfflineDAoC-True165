@@ -1,0 +1,1792 @@
+{
+ "fixer": "part04",
+ "about": "B: quest locations (search area, event spawn points, travel radii, markers, a border-watcher camp, blossoms)",
+ "entries": [
+  {
+   "finding": "P04-B1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "SourceName": "SEARCH;3;;100;757246;770077;400;5"
+   },
+   "where": {
+    "ID": 20372
+   },
+   "why": "search area sat on Thorgil himself in Audliten; walkthrough 319: the house is east over the bridge, south of the road, where the scavengers are - the Norse House fixture at East Svealand 36350,32797 (zone 101 fixtures), 600 units from the tomte scavenger spawns"
+  },
+  {
+   "finding": "P04-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20372",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "why": "step-3 marker follows the search area to Thorgil's farmhouse (walkthrough 319)",
+   "value": {
+    "Region": 100,
+    "X": 757246,
+    "Y": 770077,
+    "Z": 4743
+   }
+  },
+  {
+   "finding": "P04-B4",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Guardsman;1|Guardsman;1|Lady Winchell;10|Scribe Veral;10"
+   },
+   "where": {
+    "ID": 20431
+   },
+   "why": "the two traitor guards are met beside Castle Sauvage (region 1), not in Camelot (region 10): kill targets follow the event spawn; walkthrough 79"
+  },
+  {
+   "finding": "P04-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20431",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "why": "walkthrough 79: 'I found the 2 guards to the left of castle sauvage if you are facing it'; v2: the first point (Forest Sauvage 18000,58600) was at the castle wall, 1.2k inside the aggro range of its realm NPCs (Keep Sentinels, Master Wizards with range 2000, the blacksmith), who would kill the hostile traitors before the player; now the nearest flat ground clear of every guard's range by 1.6k, south-west of the castle at Forest Sauvage 15000,56250 (ebony fellwoods 1.6k away), trigger radius 600",
+   "value": {
+    "Region": 1,
+    "X": 580248,
+    "Y": 474042,
+    "Z": 3284
+   }
+  },
+  {
+   "finding": "P04-B4",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20431",
+    "Steps",
+    1,
+    "Spawn"
+   ],
+   "why": "walkthrough 79: 'I found the 2 guards to the left of castle sauvage if you are facing it'; v2: the first point (Forest Sauvage 18000,58600) was at the castle wall, 1.2k inside the aggro range of its realm NPCs (Keep Sentinels, Master Wizards with range 2000, the blacksmith), who would kill the hostile traitors before the player; now the nearest flat ground clear of every guard's range by 1.6k, south-west of the castle at Forest Sauvage 15000,56250 (ebony fellwoods 1.6k away), trigger radius 600",
+   "value": {
+    "Region": 1,
+    "X": 580248,
+    "Y": 474042,
+    "Z": 3284,
+    "TriggerRadius": 600
+   }
+  },
+  {
+   "finding": "P04-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20431",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "why": "walkthrough 79: 'I found the 2 guards to the left of castle sauvage if you are facing it'; v2: the first point (Forest Sauvage 18000,58600) was at the castle wall, 1.2k inside the aggro range of its realm NPCs (Keep Sentinels, Master Wizards with range 2000, the blacksmith), who would kill the hostile traitors before the player; now the nearest flat ground clear of every guard's range by 1.6k, south-west of the castle at Forest Sauvage 15000,56250 (ebony fellwoods 1.6k away), trigger radius 600",
+   "value": {
+    "Region": 1,
+    "X": 580248,
+    "Y": 474042,
+    "Z": 3284
+   }
+  },
+  {
+   "finding": "P04-B4",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20431",
+    "Steps",
+    2,
+    "Spawn"
+   ],
+   "why": "walkthrough 79: 'I found the 2 guards to the left of castle sauvage if you are facing it'; v2: the first point (Forest Sauvage 18000,58600) was at the castle wall, 1.2k inside the aggro range of its realm NPCs (Keep Sentinels, Master Wizards with range 2000, the blacksmith), who would kill the hostile traitors before the player; now the nearest flat ground clear of every guard's range by 1.6k, south-west of the castle at Forest Sauvage 15000,56250 (ebony fellwoods 1.6k away), trigger radius 600",
+   "value": {
+    "Region": 1,
+    "X": 580248,
+    "Y": 474042,
+    "Z": 3284,
+    "TriggerRadius": 600
+   }
+  },
+  {
+   "finding": "P04-B4",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Guardsman;1|Guardsman;1|Lady Winchell;10|Scribe Veral;10"
+   },
+   "where": {
+    "ID": 20432
+   },
+   "why": "the two traitor guards are met beside Castle Sauvage (region 1), not in Camelot (region 10): kill targets follow the event spawn; walkthrough 79"
+  },
+  {
+   "finding": "P04-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20432",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "why": "walkthrough 79: 'I found the 2 guards to the left of castle sauvage if you are facing it'; v2: the first point (Forest Sauvage 18000,58600) was at the castle wall, 1.2k inside the aggro range of its realm NPCs (Keep Sentinels, Master Wizards with range 2000, the blacksmith), who would kill the hostile traitors before the player; now the nearest flat ground clear of every guard's range by 1.6k, south-west of the castle at Forest Sauvage 15000,56250 (ebony fellwoods 1.6k away), trigger radius 600",
+   "value": {
+    "Region": 1,
+    "X": 580248,
+    "Y": 474042,
+    "Z": 3284
+   }
+  },
+  {
+   "finding": "P04-B4",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20432",
+    "Steps",
+    1,
+    "Spawn"
+   ],
+   "why": "walkthrough 79: 'I found the 2 guards to the left of castle sauvage if you are facing it'; v2: the first point (Forest Sauvage 18000,58600) was at the castle wall, 1.2k inside the aggro range of its realm NPCs (Keep Sentinels, Master Wizards with range 2000, the blacksmith), who would kill the hostile traitors before the player; now the nearest flat ground clear of every guard's range by 1.6k, south-west of the castle at Forest Sauvage 15000,56250 (ebony fellwoods 1.6k away), trigger radius 600",
+   "value": {
+    "Region": 1,
+    "X": 580248,
+    "Y": 474042,
+    "Z": 3284,
+    "TriggerRadius": 600
+   }
+  },
+  {
+   "finding": "P04-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20432",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "why": "walkthrough 79: 'I found the 2 guards to the left of castle sauvage if you are facing it'; v2: the first point (Forest Sauvage 18000,58600) was at the castle wall, 1.2k inside the aggro range of its realm NPCs (Keep Sentinels, Master Wizards with range 2000, the blacksmith), who would kill the hostile traitors before the player; now the nearest flat ground clear of every guard's range by 1.6k, south-west of the castle at Forest Sauvage 15000,56250 (ebony fellwoods 1.6k away), trigger radius 600",
+   "value": {
+    "Region": 1,
+    "X": 580248,
+    "Y": 474042,
+    "Z": 3284
+   }
+  },
+  {
+   "finding": "P04-B4",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20432",
+    "Steps",
+    2,
+    "Spawn"
+   ],
+   "why": "walkthrough 79: 'I found the 2 guards to the left of castle sauvage if you are facing it'; v2: the first point (Forest Sauvage 18000,58600) was at the castle wall, 1.2k inside the aggro range of its realm NPCs (Keep Sentinels, Master Wizards with range 2000, the blacksmith), who would kill the hostile traitors before the player; now the nearest flat ground clear of every guard's range by 1.6k, south-west of the castle at Forest Sauvage 15000,56250 (ebony fellwoods 1.6k away), trigger radius 600",
+   "value": {
+    "Region": 1,
+    "X": 580248,
+    "Y": 474042,
+    "Z": 3284,
+    "TriggerRadius": 600
+   }
+  },
+  {
+   "finding": "P04-B5",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepText": "Ask Erstal Furlan, the smith at Outland Wharf, about the shards of Sequence. (whisper: shards of Sequence)|Take the shard from the mud golem Dooben.|Show the shard to Erstal Furlan.|Slay the wood ogre seer Vagdush.|Combine the shard and the amulet at the forge in Ludlow."
+   },
+   "where": {
+    "ID": 20411
+   },
+   "why": "v2: the period (wayback Allakhazam quest 507, 2004 capture, pre-1.75) sends you to 'Erstal Furlan, the smith at Outland Wharf' (Avalon Marsh 37300,18240, 'inside the Outland Wharf'); our Erstal stands there (37291,18752). 'West Downs' was the post-1.75 text"
+  },
+  {
+   "finding": "P04-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20369",
+    "Steps",
+    8,
+    "Marker"
+   ],
+   "why": "step text says Gotar; period Ick lived in Gotar (Allakhazam Silkstrand Belt comments 2001-2002 '53299, 59311 in Gotar'; CapnBry 22 sightings zone 103 50-55k,52-61k); marker pointed at the post-1.75 East Svealand Ick",
+   "value": {
+    "Region": 100,
+    "X": 772181,
+    "Y": 860346,
+    "Z": 4978
+   }
+  },
+  {
+   "finding": "P04-B6",
+   "kind": "remove",
+   "table": "Mob",
+   "where": "Mob_ID = 'b290058d-66de-4f20-b8ee-779fe27e22b8'",
+   "why": "Public_DB Ick in East Svealand is the post-1.75 location (quest spec: 'Before 1.75 Ick lived in Gotar (moved to East Svealand in 1.75)'); the Gotar Ick (true165-prima-new) is the period one"
+  },
+  {
+   "finding": "P04-B9",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": "",
+    "Name": "drakoran border watcher",
+    "Suffix": "",
+    "Guild": "",
+    "ExamineArticle": "",
+    "MessageArticle": "",
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3112,
+    "Speed": 191,
+    "Heading": 1024,
+    "Region": 51,
+    "Model": 887,
+    "Size": 33,
+    "Strength": 38,
+    "Constitution": 38,
+    "Dexterity": 41,
+    "Quickness": 41,
+    "Intelligence": 41,
+    "Piety": 41,
+    "Empathy": 41,
+    "Charisma": 41,
+    "Level": 12,
+    "Realm": 0,
+    "EquipmentTemplateID": "",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 60160081,
+    "Race": 2008,
+    "Flags": 0,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 0,
+    "RespawnInterval": 80,
+    "FactionID": 20,
+    "BodyType": 9,
+    "HouseNumber": 0,
+    "Brain": "",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 200,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00070401-0000-4000-8000-000000000001"
+   },
+   "why": "walkthrough 588: 'You will see Drakoran Border watchers and other low Drakorans around them (aprox loc=12124, 39452)'; the kill-3 step had one watcher 8.5k away. Copy of the existing watcher (99992632), camp member 1"
+  },
+  {
+   "finding": "P04-B9",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": "",
+    "Name": "drakoran border watcher",
+    "Suffix": "",
+    "Guild": "",
+    "ExamineArticle": "",
+    "MessageArticle": "",
+    "X": 503420,
+    "Y": 530720,
+    "Z": 3104,
+    "Speed": 191,
+    "Heading": 2048,
+    "Region": 51,
+    "Model": 887,
+    "Size": 33,
+    "Strength": 38,
+    "Constitution": 38,
+    "Dexterity": 41,
+    "Quickness": 41,
+    "Intelligence": 41,
+    "Piety": 41,
+    "Empathy": 41,
+    "Charisma": 41,
+    "Level": 12,
+    "Realm": 0,
+    "EquipmentTemplateID": "",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 60160081,
+    "Race": 2008,
+    "Flags": 0,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 0,
+    "RespawnInterval": 80,
+    "FactionID": 20,
+    "BodyType": 9,
+    "HouseNumber": 0,
+    "Brain": "",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 200,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00070401-0000-4000-8000-000000000002"
+   },
+   "why": "walkthrough 588: 'You will see Drakoran Border watchers and other low Drakorans around them (aprox loc=12124, 39452)'; the kill-3 step had one watcher 8.5k away. Copy of the existing watcher (99992632), camp member 2"
+  },
+  {
+   "finding": "P04-B9",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": "",
+    "Name": "drakoran border watcher",
+    "Suffix": "",
+    "Guild": "",
+    "ExamineArticle": "",
+    "MessageArticle": "",
+    "X": 503870,
+    "Y": 531220,
+    "Z": 3120,
+    "Speed": 191,
+    "Heading": 3072,
+    "Region": 51,
+    "Model": 887,
+    "Size": 33,
+    "Strength": 38,
+    "Constitution": 38,
+    "Dexterity": 41,
+    "Quickness": 41,
+    "Intelligence": 41,
+    "Piety": 41,
+    "Empathy": 41,
+    "Charisma": 41,
+    "Level": 12,
+    "Realm": 0,
+    "EquipmentTemplateID": "",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 60160081,
+    "Race": 2008,
+    "Flags": 0,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 0,
+    "RespawnInterval": 80,
+    "FactionID": 20,
+    "BodyType": 9,
+    "HouseNumber": 0,
+    "Brain": "",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 200,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00070401-0000-4000-8000-000000000003"
+   },
+   "why": "walkthrough 588: 'You will see Drakoran Border watchers and other low Drakorans around them (aprox loc=12124, 39452)'; the kill-3 step had one watcher 8.5k away. Copy of the existing watcher (99992632), camp member 3"
+  },
+  {
+   "finding": "P04-B9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20557",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "why": "marker to the period border-watcher camp, Isle of Glass 12124,39452 (walkthrough 588)",
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3112
+   }
+  },
+  {
+   "finding": "P04-B9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20557",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "why": "marker to the period border-watcher camp, Isle of Glass 12124,39452 (walkthrough 588)",
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3112
+   }
+  },
+  {
+   "finding": "P04-B9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20557",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "why": "marker to the period border-watcher camp, Isle of Glass 12124,39452 (walkthrough 588)",
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3112
+   }
+  },
+  {
+   "finding": "P04-B9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20558",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "why": "marker to the period border-watcher camp, Isle of Glass 12124,39452 (walkthrough 588)",
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3112
+   }
+  },
+  {
+   "finding": "P04-B9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20558",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "why": "marker to the period border-watcher camp, Isle of Glass 12124,39452 (walkthrough 588)",
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3112
+   }
+  },
+  {
+   "finding": "P04-B9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20558",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "why": "marker to the period border-watcher camp, Isle of Glass 12124,39452 (walkthrough 588)",
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3112
+   }
+  },
+  {
+   "finding": "P04-B9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20559",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "why": "marker to the period border-watcher camp, Isle of Glass 12124,39452 (walkthrough 588)",
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3112
+   }
+  },
+  {
+   "finding": "P04-B9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20559",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "why": "marker to the period border-watcher camp, Isle of Glass 12124,39452 (walkthrough 588)",
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3112
+   }
+  },
+  {
+   "finding": "P04-B9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20559",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "why": "marker to the period border-watcher camp, Isle of Glass 12124,39452 (walkthrough 588)",
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3112
+   }
+  },
+  {
+   "finding": "P04-B9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20560",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "why": "marker to the period border-watcher camp, Isle of Glass 12124,39452 (walkthrough 588)",
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3112
+   }
+  },
+  {
+   "finding": "P04-B9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20560",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "why": "marker to the period border-watcher camp, Isle of Glass 12124,39452 (walkthrough 588)",
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3112
+   }
+  },
+  {
+   "finding": "P04-B9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20560",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "why": "marker to the period border-watcher camp, Isle of Glass 12124,39452 (walkthrough 588)",
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3112
+   }
+  },
+  {
+   "finding": "P04-B9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20561",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "why": "marker to the period border-watcher camp, Isle of Glass 12124,39452 (walkthrough 588)",
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3112
+   }
+  },
+  {
+   "finding": "P04-B9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20561",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "why": "marker to the period border-watcher camp, Isle of Glass 12124,39452 (walkthrough 588)",
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3112
+   }
+  },
+  {
+   "finding": "P04-B9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20561",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "why": "marker to the period border-watcher camp, Isle of Glass 12124,39452 (walkthrough 588)",
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3112
+   }
+  },
+  {
+   "finding": "P04-B10",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "dryad blossom",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 749556,
+    "Y": 944710,
+    "Z": 4367,
+    "Speed": 180,
+    "Heading": 3600,
+    "Region": 100,
+    "Model": 1390,
+    "Size": 48,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 0,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 20,
+    "Realm": 0,
+    "EquipmentTemplateID": null,
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 60160196,
+    "Race": 2003,
+    "Flags": 0,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 3,
+    "RespawnInterval": 80,
+    "FactionID": 0,
+    "BodyType": 4,
+    "HouseNumber": 0,
+    "Brain": null,
+    "PathID": null,
+    "OwnerID": "",
+    "RoamingRange": 200,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00070401-0000-4000-8000-000000000004"
+   },
+   "why": "walkthrough 346: 'Blossom Dryads abound near 60k, 40k' (Skona Ravine); CapnBry sighting zone 106 61428,43590; only one of our 14 blossoms stood in that area. Copy of the existing north blossom"
+  },
+  {
+   "finding": "P04-B10",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "dryad blossom",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 750567,
+    "Y": 945208,
+    "Z": 4519,
+    "Speed": 180,
+    "Heading": 404,
+    "Region": 100,
+    "Model": 1390,
+    "Size": 48,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 0,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 20,
+    "Realm": 0,
+    "EquipmentTemplateID": null,
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 60160196,
+    "Race": 2003,
+    "Flags": 0,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 3,
+    "RespawnInterval": 80,
+    "FactionID": 0,
+    "BodyType": 4,
+    "HouseNumber": 0,
+    "Brain": null,
+    "PathID": null,
+    "OwnerID": "",
+    "RoamingRange": 200,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00070401-0000-4000-8000-000000000005"
+   },
+   "why": "walkthrough 346: 'Blossom Dryads abound near 60k, 40k' (Skona Ravine); CapnBry sighting zone 106 62439,44088; only one of our 14 blossoms stood in that area. Copy of the existing north blossom"
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20396",
+    "Steps",
+    5,
+    "Custom"
+   ],
+   "why": "travel step checked a whole zone (radius 32768); walkthrough 199 'stand on the North Platform': v2 the north platform of the Mage Tower model (b-rndtw4, fixture 2882 at Campacorentin 14080,5952, yaw 180) is centred at Campacorentin 14136,4732; radius 450, 1.9k from the east platform of step 2",
+   "value": {
+    "Region": 1,
+    "X": 497464,
+    "Y": 586364,
+    "Z": 0,
+    "Radius": 450
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20396",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "why": "marker on the north platform of the Lethantis tower (Campacorentin 14136,4732, platform floor 16 m above the tower base)",
+   "value": {
+    "Region": 1,
+    "X": 497464,
+    "Y": 586364,
+    "Z": 2480
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20396",
+    "Steps",
+    6,
+    "Custom"
+   ],
+   "why": "travel step checked a whole zone (radius 32768); walkthrough 199 names the teleport platform in Forest Sauvage (Portal Platform fixture 20702,59409)",
+   "value": {
+    "Region": 1,
+    "X": 585950,
+    "Y": 477201,
+    "Z": 0,
+    "Radius": 800
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20396",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "why": "marker for the teleport platform in Forest Sauvage (Portal Platform fixture 20702,59409)",
+   "value": {
+    "Region": 1,
+    "X": 585950,
+    "Y": 477201,
+    "Z": 2600
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20396",
+    "Steps",
+    7,
+    "Custom"
+   ],
+   "why": "travel step checked a whole zone (radius 32768); walkthrough 199 names the arc of the fallen aqueduct (Aqua fixtures, Hadrian's Wall 34816-36608,46976-48896)",
+   "value": {
+    "Region": 1,
+    "X": 633728,
+    "Y": 334656,
+    "Z": 0,
+    "Radius": 1500
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20396",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "why": "marker for the arc of the fallen aqueduct (Aqua fixtures, Hadrian's Wall 34816-36608,46976-48896)",
+   "value": {
+    "Region": 1,
+    "X": 633728,
+    "Y": 334656,
+    "Z": 4190
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20397",
+    "Steps",
+    5,
+    "Custom"
+   ],
+   "why": "travel step checked a whole zone (radius 32768); walkthrough 199 'stand on the North Platform': v2 the north platform of the Mage Tower model (b-rndtw4, fixture 2882 at Campacorentin 14080,5952, yaw 180) is centred at Campacorentin 14136,4732; radius 450, 1.9k from the east platform of step 2",
+   "value": {
+    "Region": 1,
+    "X": 497464,
+    "Y": 586364,
+    "Z": 0,
+    "Radius": 450
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20397",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "why": "marker on the north platform of the Lethantis tower (Campacorentin 14136,4732, platform floor 16 m above the tower base)",
+   "value": {
+    "Region": 1,
+    "X": 497464,
+    "Y": 586364,
+    "Z": 2480
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20397",
+    "Steps",
+    6,
+    "Custom"
+   ],
+   "why": "travel step checked a whole zone (radius 32768); walkthrough 199 names the teleport platform in Forest Sauvage (Portal Platform fixture 20702,59409)",
+   "value": {
+    "Region": 1,
+    "X": 585950,
+    "Y": 477201,
+    "Z": 0,
+    "Radius": 800
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20397",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "why": "marker for the teleport platform in Forest Sauvage (Portal Platform fixture 20702,59409)",
+   "value": {
+    "Region": 1,
+    "X": 585950,
+    "Y": 477201,
+    "Z": 2600
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20397",
+    "Steps",
+    7,
+    "Custom"
+   ],
+   "why": "travel step checked a whole zone (radius 32768); walkthrough 199 names the arc of the fallen aqueduct (Aqua fixtures, Hadrian's Wall 34816-36608,46976-48896)",
+   "value": {
+    "Region": 1,
+    "X": 633728,
+    "Y": 334656,
+    "Z": 0,
+    "Radius": 1500
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20397",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "why": "marker for the arc of the fallen aqueduct (Aqua fixtures, Hadrian's Wall 34816-36608,46976-48896)",
+   "value": {
+    "Region": 1,
+    "X": 633728,
+    "Y": 334656,
+    "Z": 4190
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20398",
+    "Steps",
+    5,
+    "Custom"
+   ],
+   "why": "travel step checked a whole zone (radius 32768); walkthrough 199 'stand on the North Platform': v2 the north platform of the Mage Tower model (b-rndtw4, fixture 2882 at Campacorentin 14080,5952, yaw 180) is centred at Campacorentin 14136,4732; radius 450, 1.9k from the east platform of step 2",
+   "value": {
+    "Region": 1,
+    "X": 497464,
+    "Y": 586364,
+    "Z": 0,
+    "Radius": 450
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20398",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "why": "marker on the north platform of the Lethantis tower (Campacorentin 14136,4732, platform floor 16 m above the tower base)",
+   "value": {
+    "Region": 1,
+    "X": 497464,
+    "Y": 586364,
+    "Z": 2480
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20398",
+    "Steps",
+    6,
+    "Custom"
+   ],
+   "why": "travel step checked a whole zone (radius 32768); walkthrough 199 names the teleport platform in Forest Sauvage (Portal Platform fixture 20702,59409)",
+   "value": {
+    "Region": 1,
+    "X": 585950,
+    "Y": 477201,
+    "Z": 0,
+    "Radius": 800
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20398",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "why": "marker for the teleport platform in Forest Sauvage (Portal Platform fixture 20702,59409)",
+   "value": {
+    "Region": 1,
+    "X": 585950,
+    "Y": 477201,
+    "Z": 2600
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20398",
+    "Steps",
+    7,
+    "Custom"
+   ],
+   "why": "travel step checked a whole zone (radius 32768); walkthrough 199 names the arc of the fallen aqueduct (Aqua fixtures, Hadrian's Wall 34816-36608,46976-48896)",
+   "value": {
+    "Region": 1,
+    "X": 633728,
+    "Y": 334656,
+    "Z": 0,
+    "Radius": 1500
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20398",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "why": "marker for the arc of the fallen aqueduct (Aqua fixtures, Hadrian's Wall 34816-36608,46976-48896)",
+   "value": {
+    "Region": 1,
+    "X": 633728,
+    "Y": 334656,
+    "Z": 4190
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20517",
+    "Steps",
+    6,
+    "Custom"
+   ],
+   "why": "use_item step accepted the potion anywhere in Isle of Glass; walkthrough 1778: 'go out into the middle of the town' (Anniogel centre)",
+   "value": {
+    "X": 529681,
+    "Y": 513225,
+    "Radius": 1200
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20517",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "why": "marker on the middle of Anniogel (walkthrough 1778)",
+   "value": {
+    "Region": 51,
+    "X": 529681,
+    "Y": 513225,
+    "Z": 3684
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20518",
+    "Steps",
+    6,
+    "Custom"
+   ],
+   "why": "use_item step accepted the potion anywhere in Isle of Glass; walkthrough 1778: 'go out into the middle of the town' (Anniogel centre)",
+   "value": {
+    "X": 529681,
+    "Y": 513225,
+    "Radius": 1200
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20518",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "why": "marker on the middle of Anniogel (walkthrough 1778)",
+   "value": {
+    "Region": 51,
+    "X": 529681,
+    "Y": 513225,
+    "Z": 3684
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20519",
+    "Steps",
+    6,
+    "Custom"
+   ],
+   "why": "use_item step accepted the potion anywhere in Isle of Glass; walkthrough 1778: 'go out into the middle of the town' (Anniogel centre)",
+   "value": {
+    "X": 529681,
+    "Y": 513225,
+    "Radius": 1200
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20519",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "why": "marker on the middle of Anniogel (walkthrough 1778)",
+   "value": {
+    "Region": 51,
+    "X": 529681,
+    "Y": 513225,
+    "Z": 3684
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20520",
+    "Steps",
+    6,
+    "Custom"
+   ],
+   "why": "use_item step accepted the potion anywhere in Isle of Glass; walkthrough 1778: 'go out into the middle of the town' (Anniogel centre)",
+   "value": {
+    "X": 529681,
+    "Y": 513225,
+    "Radius": 1200
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20520",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "why": "marker on the middle of Anniogel (walkthrough 1778)",
+   "value": {
+    "Region": 51,
+    "X": 529681,
+    "Y": 513225,
+    "Z": 3684
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20521",
+    "Steps",
+    6,
+    "Custom"
+   ],
+   "why": "use_item step accepted the potion anywhere in Isle of Glass; walkthrough 1778: 'go out into the middle of the town' (Anniogel centre)",
+   "value": {
+    "X": 529681,
+    "Y": 513225,
+    "Radius": 1200
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20521",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "why": "marker on the middle of Anniogel (walkthrough 1778)",
+   "value": {
+    "Region": 51,
+    "X": 529681,
+    "Y": 513225,
+    "Z": 3684
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20522",
+    "Steps",
+    6,
+    "Custom"
+   ],
+   "why": "use_item step accepted the potion anywhere in Isle of Glass; walkthrough 1778: 'go out into the middle of the town' (Anniogel centre)",
+   "value": {
+    "X": 529681,
+    "Y": 513225,
+    "Radius": 1200
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20522",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "why": "marker on the middle of Anniogel (walkthrough 1778)",
+   "value": {
+    "Region": 51,
+    "X": 529681,
+    "Y": 513225,
+    "Z": 3684
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20523",
+    "Steps",
+    6,
+    "Custom"
+   ],
+   "why": "use_item step accepted the potion anywhere in Isle of Glass; walkthrough 1778: 'go out into the middle of the town' (Anniogel centre)",
+   "value": {
+    "X": 529681,
+    "Y": 513225,
+    "Radius": 1200
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20523",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "why": "marker on the middle of Anniogel (walkthrough 1778)",
+   "value": {
+    "Region": 51,
+    "X": 529681,
+    "Y": 513225,
+    "Z": 3684
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20524",
+    "Steps",
+    6,
+    "Custom"
+   ],
+   "why": "use_item step accepted the potion anywhere in Isle of Glass; walkthrough 1778: 'go out into the middle of the town' (Anniogel centre)",
+   "value": {
+    "X": 529681,
+    "Y": 513225,
+    "Radius": 1200
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20524",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "why": "marker on the middle of Anniogel (walkthrough 1778)",
+   "value": {
+    "Region": 51,
+    "X": 529681,
+    "Y": 513225,
+    "Z": 3684
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20525",
+    "Steps",
+    6,
+    "Custom"
+   ],
+   "why": "use_item step accepted the potion anywhere in Isle of Glass; walkthrough 1778: 'go out into the middle of the town' (Anniogel centre)",
+   "value": {
+    "X": 529681,
+    "Y": 513225,
+    "Radius": 1200
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20525",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "why": "marker on the middle of Anniogel (walkthrough 1778)",
+   "value": {
+    "Region": 51,
+    "X": 529681,
+    "Y": 513225,
+    "Z": 3684
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20526",
+    "Steps",
+    6,
+    "Custom"
+   ],
+   "why": "use_item step accepted the potion anywhere in Isle of Glass; walkthrough 1778: 'go out into the middle of the town' (Anniogel centre)",
+   "value": {
+    "X": 529681,
+    "Y": 513225,
+    "Radius": 1200
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20526",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "why": "marker on the middle of Anniogel (walkthrough 1778)",
+   "value": {
+    "Region": 51,
+    "X": 529681,
+    "Y": 513225,
+    "Z": 3684
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20527",
+    "Steps",
+    6,
+    "Custom"
+   ],
+   "why": "use_item step accepted the potion anywhere in Isle of Glass; walkthrough 1778: 'go out into the middle of the town' (Anniogel centre)",
+   "value": {
+    "X": 529681,
+    "Y": 513225,
+    "Radius": 1200
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20527",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "why": "marker on the middle of Anniogel (walkthrough 1778)",
+   "value": {
+    "Region": 51,
+    "X": 529681,
+    "Y": 513225,
+    "Z": 3684
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20528",
+    "Steps",
+    6,
+    "Custom"
+   ],
+   "why": "use_item step accepted the potion anywhere in Isle of Glass; walkthrough 1778: 'go out into the middle of the town' (Anniogel centre)",
+   "value": {
+    "X": 529681,
+    "Y": 513225,
+    "Radius": 1200
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20528",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "why": "marker on the middle of Anniogel (walkthrough 1778)",
+   "value": {
+    "Region": 51,
+    "X": 529681,
+    "Y": 513225,
+    "Z": 3684
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20529",
+    "Steps",
+    6,
+    "Custom"
+   ],
+   "why": "use_item step accepted the potion anywhere in Isle of Glass; walkthrough 1778: 'go out into the middle of the town' (Anniogel centre)",
+   "value": {
+    "X": 529681,
+    "Y": 513225,
+    "Radius": 1200
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20529",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "why": "marker on the middle of Anniogel (walkthrough 1778)",
+   "value": {
+    "Region": 51,
+    "X": 529681,
+    "Y": 513225,
+    "Z": 3684
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20530",
+    "Steps",
+    6,
+    "Custom"
+   ],
+   "why": "use_item step accepted the potion anywhere in Isle of Glass; walkthrough 1778: 'go out into the middle of the town' (Anniogel centre)",
+   "value": {
+    "X": 529681,
+    "Y": 513225,
+    "Radius": 1200
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20530",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "why": "marker on the middle of Anniogel (walkthrough 1778)",
+   "value": {
+    "Region": 51,
+    "X": 529681,
+    "Y": 513225,
+    "Z": 3684
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20531",
+    "Steps",
+    6,
+    "Custom"
+   ],
+   "why": "use_item step accepted the potion anywhere in Isle of Glass; walkthrough 1778: 'go out into the middle of the town' (Anniogel centre)",
+   "value": {
+    "X": 529681,
+    "Y": 513225,
+    "Radius": 1200
+   }
+  },
+  {
+   "finding": "P04-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20531",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "why": "marker on the middle of Anniogel (walkthrough 1778)",
+   "value": {
+    "Region": 51,
+    "X": 529681,
+    "Y": 513225,
+    "Z": 3684
+   }
+  },
+  {
+   "finding": "P04-B13",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20392",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "why": "walkthrough 303: rangers at 'Pennine Mountain 53K,39K'; marker used a lone added ranger, now the true165-restored camp at Pennine 54287,40283",
+   "value": {
+    "Region": 1,
+    "X": 619535,
+    "Y": 392539,
+    "Z": 4707
+   }
+  },
+  {
+   "finding": "P04-B13",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20393",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "why": "walkthrough 303: rangers at 'Pennine Mountain 53K,39K'; marker used a lone added ranger, now the true165-restored camp at Pennine 54287,40283",
+   "value": {
+    "Region": 1,
+    "X": 619535,
+    "Y": 392539,
+    "Z": 4707
+   }
+  },
+  {
+   "finding": "P04-B13",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20394",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "why": "walkthrough 303: rangers at 'Pennine Mountain 53K,39K'; marker used a lone added ranger, now the true165-restored camp at Pennine 54287,40283",
+   "value": {
+    "Region": 1,
+    "X": 619535,
+    "Y": 392539,
+    "Z": 4707
+   }
+  },
+  {
+   "finding": "P04-B13",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20395",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "why": "walkthrough 303: rangers at 'Pennine Mountain 53K,39K'; marker used a lone added ranger, now the true165-restored camp at Pennine 54287,40283",
+   "value": {
+    "Region": 1,
+    "X": 619535,
+    "Y": 392539,
+    "Z": 4707
+   }
+  }
+ ]
+}

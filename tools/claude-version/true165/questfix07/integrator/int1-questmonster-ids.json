@@ -1,0 +1,22 @@
+{
+  "fixer": "integrator",
+  "about": "P03-B2, P03-B3, P07-B1 and P04-B6 removed stray duplicate quest monsters whose Mob_IDs were in QuestMonsterIds, while the period copies they kept were not listed. Move the gamebot protection to the copies that stay.",
+  "entries": [
+    {"finding": "INT-1", "kind": "quest", "op": "remove_value", "path": ["QuestMonsterIds"], "value": "60a2f804-52e9-4f1f-af6e-69331d3aaec9",
+     "why": "stray Konung Botolf Redhands (Muspelheim) removed by P03-B2; its id no longer exists"},
+    {"finding": "INT-1", "kind": "quest", "op": "add_unique", "path": ["QuestMonsterIds"], "value": "e590062c-9e12-4f69-9c22-bad5c8aa14d7",
+     "why": "the Konung Botolf Redhands that P03-B2 keeps (blodfelag fort, West Svealand) takes over the gamebot protection of the removed copy"},
+    {"finding": "INT-1", "kind": "quest", "op": "remove_value", "path": ["QuestMonsterIds"], "value": "69e8b827-ee6d-52d8-bcb1-e81104669c27",
+     "why": "stray Amano (Black Mtns North) removed by P03-B3; its id no longer exists"},
+    {"finding": "INT-1", "kind": "quest", "op": "add_unique", "path": ["QuestMonsterIds"], "value": "a52afa24-c342-40f7-8c44-c97d45cdb3f6",
+     "why": "the restored Amano outside Tepok's Mine that P03-B3 keeps takes over the gamebot protection of the removed copy"},
+    {"finding": "INT-1", "kind": "quest", "op": "remove_value", "path": ["QuestMonsterIds"], "value": "7bcbe051-9919-4ebf-9a70-8f6b9ef0cf4a",
+     "why": "post-1.75 Lone Weeping Willow (West Svealand) removed by P07-B1; its id no longer exists"},
+    {"finding": "INT-1", "kind": "quest", "op": "add_unique", "path": ["QuestMonsterIds"], "value": "9c5f5b69-ccf1-52b6-a8eb-943397f994cc",
+     "why": "the Myrkwood Lone Weeping Willow that P07-B1 keeps takes over the gamebot protection of the removed copy"},
+    {"finding": "INT-1", "kind": "quest", "op": "remove_value", "path": ["QuestMonsterIds"], "value": "b290058d-66de-4f20-b8ee-779fe27e22b8",
+     "why": "post-1.75 Ick (East Svealand) removed by P04-B6; its id no longer exists"},
+    {"finding": "INT-1", "kind": "quest", "op": "add_unique", "path": ["QuestMonsterIds"], "value": "1c2bb894-4c58-52f6-ad9c-26cb6522914e",
+     "why": "the Gotar Ick that P04-B6 keeps takes over the gamebot protection of the removed copy"}
+  ]
+}

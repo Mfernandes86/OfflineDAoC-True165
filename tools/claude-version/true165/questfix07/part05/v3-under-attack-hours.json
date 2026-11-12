@@ -1,0 +1,116 @@
+{
+ "fixer": "part05",
+ "about": "Under Attack (20641-20644): Commander Slor'vid and Lieutenant Grrar only from midnight to 3 A.M. game time (P05-B2)",
+ "entries": [
+  {
+   "finding": "P05-B2",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "ClassType": "DOL.GS.HourWindowSpawn"
+   },
+   "where": {
+    "Mob_ID": "dd59aa2e-1df7-4ccb-861c-02bd87af519a"
+   },
+   "source": "1.59 patch note as quoted on Freddyshouse (post 1653028, 2003-03-04): 'He has only been seen plotting with his underlings in the early morning hours'; Allakhazam quest 704: 'They appear from Midnight to 3 A.M. game time'; Warcry quest 985: 'The 3 Lieutanants and the Commander spawn at midnight at the center Drakoran camp, and disappear at 3AM'; Allakhazam quest 704 comment 2003-05-09: 'The commander will vanish at the stroke of 3am even if he is in combat'",
+   "why": "Commander Slor'vid (Isle of Glass 24372,24692, place unchanged by owner decision) appears only from midnight to 3 A.M. game time as in the period: HourWindowSpawn, hours by name in HourWindows"
+  },
+  {
+   "finding": "P05-B2",
+   "kind": "quest",
+   "op": "set",
+   "create": true,
+   "path": [
+    "HourWindows",
+    "Commander Slor'vid"
+   ],
+   "value": {
+    "Start": 0,
+    "End": 3
+   },
+   "source": "1.59 patch note as quoted on Freddyshouse (post 1653028, 2003-03-04): 'He has only been seen plotting with his underlings in the early morning hours'; Allakhazam quest 704: 'They appear from Midnight to 3 A.M. game time'; Warcry quest 985: 'The 3 Lieutanants and the Commander spawn at midnight at the center Drakoran camp, and disappear at 3AM'; Allakhazam quest 704 comment 2003-05-09: 'The commander will vanish at the stroke of 3am even if he is in combat'",
+   "why": "owner decision: Slor'vid appears only between midnight and 3 A.M. game time (the period window)"
+  },
+  {
+   "finding": "P05-B2",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "ClassType": "DOL.GS.HourWindowSpawn"
+   },
+   "where": {
+    "Mob_ID": "996f9658-5b55-4d33-a6e7-003db6b7c160"
+   },
+   "source": "1.59 patch note as quoted on Freddyshouse (post 1653028, 2003-03-04): 'He has only been seen plotting with his underlings in the early morning hours'; Allakhazam quest 704: 'They appear from Midnight to 3 A.M. game time'; Warcry quest 985: 'The 3 Lieutanants and the Commander spawn at midnight at the center Drakoran camp, and disappear at 3AM'; Allakhazam quest 704 comment 2003-05-09: 'The commander will vanish at the stroke of 3am even if he is in combat'",
+   "why": "Lieutenant Grrar, who stands beside Slor'vid, keeps the same hours: the period has all three lieutenants and the commander appear at midnight and vanish at 3 A.M.; Yal'ris and Zudd (north and south outposts) are left as they are"
+  },
+  {
+   "finding": "P05-B2",
+   "kind": "quest",
+   "op": "set",
+   "create": true,
+   "path": [
+    "HourWindows",
+    "Lieutenant Grrar"
+   ],
+   "value": {
+    "Start": 0,
+    "End": 3
+   },
+   "source": "1.59 patch note as quoted on Freddyshouse (post 1653028, 2003-03-04): 'He has only been seen plotting with his underlings in the early morning hours'; Allakhazam quest 704: 'They appear from Midnight to 3 A.M. game time'; Warcry quest 985: 'The 3 Lieutanants and the Commander spawn at midnight at the center Drakoran camp, and disappear at 3AM'; Allakhazam quest 704 comment 2003-05-09: 'The commander will vanish at the stroke of 3am even if he is in combat'",
+   "why": "Grrar shares Slor'vid's midnight to 3 A.M. window (period: the lieutenants and the commander spawn at midnight and disappear at 3 A.M.)"
+  },
+  {
+   "finding": "P05-B2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepText": "Speak with Kimmy Glaze in Anniogel.|Seek out Commander Slor'vid, who leads the Drakoran attack on the middle outpost of the Isle of Glass with Lieutenant Grrar. He has only been seen plotting with his underlings in the early morning hours, from midnight to 3 A.M. game time. Bring the heads of his lieutenants Yal'ris (north outpost), Zudd (south outpost) and Grrar to Kimmy Glaze in Anniogel for a bonus.|Take the commander's head to Frederik Rolby in Gothwaite Harbor. Turn in any lieutenant heads to Kimmy Glaze first!"
+   },
+   "where": {
+    "ID": 20641
+   },
+   "source": "1.59 patch note as quoted on Freddyshouse (post 1653028, 2003-03-04): 'He has only been seen plotting with his underlings in the early morning hours'; Allakhazam quest 704: 'They appear from Midnight to 3 A.M. game time'; Warcry quest 985: 'The 3 Lieutanants and the Commander spawn at midnight at the center Drakoran camp, and disappear at 3AM'; Allakhazam quest 704 comment 2003-05-09: 'The commander will vanish at the stroke of 3am even if he is in combat'; Prima SI 'Outpost': Yal'ris north, Zudd south, Grrar and Slor'vid attacking the middle; Allakhazam quest 704 'Under Attack' (wayback 2004-10-14) (heads to Kimmy Glaze for a bonus)",
+   "why": "kill-step journal text: when he appears (the 1.59 patch note's words plus the midnight-3 A.M. window); it sent the player to the NW campfire, where he does not stand (he stays at the middle outpost, owner decision), and promised an 'attack his lieutenants and he will show' trigger that is not implemented; still 3 entries"
+  },
+  {
+   "finding": "P05-B2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepText": "Speak with Kimmy Glaze in Anniogel.|Seek out Commander Slor'vid, who leads the Drakoran attack on the middle outpost of the Isle of Glass with Lieutenant Grrar. He has only been seen plotting with his underlings in the early morning hours, from midnight to 3 A.M. game time. Bring the heads of his lieutenants Yal'ris (north outpost), Zudd (south outpost) and Grrar to Kimmy Glaze in Anniogel for a bonus.|Take the commander's head to Frederik Rolby in Gothwaite Harbor. Turn in any lieutenant heads to Kimmy Glaze first!"
+   },
+   "where": {
+    "ID": 20642
+   },
+   "source": "1.59 patch note as quoted on Freddyshouse (post 1653028, 2003-03-04): 'He has only been seen plotting with his underlings in the early morning hours'; Allakhazam quest 704: 'They appear from Midnight to 3 A.M. game time'; Warcry quest 985: 'The 3 Lieutanants and the Commander spawn at midnight at the center Drakoran camp, and disappear at 3AM'; Allakhazam quest 704 comment 2003-05-09: 'The commander will vanish at the stroke of 3am even if he is in combat'; Prima SI 'Outpost': Yal'ris north, Zudd south, Grrar and Slor'vid attacking the middle; Allakhazam quest 704 'Under Attack' (wayback 2004-10-14) (heads to Kimmy Glaze for a bonus)",
+   "why": "kill-step journal text: when he appears (the 1.59 patch note's words plus the midnight-3 A.M. window); it sent the player to the NW campfire, where he does not stand (he stays at the middle outpost, owner decision), and promised an 'attack his lieutenants and he will show' trigger that is not implemented; still 3 entries"
+  },
+  {
+   "finding": "P05-B2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepText": "Speak with Kimmy Glaze in Anniogel.|Seek out Commander Slor'vid, who leads the Drakoran attack on the middle outpost of the Isle of Glass with Lieutenant Grrar. He has only been seen plotting with his underlings in the early morning hours, from midnight to 3 A.M. game time. Bring the heads of his lieutenants Yal'ris (north outpost), Zudd (south outpost) and Grrar to Kimmy Glaze in Anniogel for a bonus.|Take the commander's head to Frederik Rolby in Gothwaite Harbor. Turn in any lieutenant heads to Kimmy Glaze first!"
+   },
+   "where": {
+    "ID": 20643
+   },
+   "source": "1.59 patch note as quoted on Freddyshouse (post 1653028, 2003-03-04): 'He has only been seen plotting with his underlings in the early morning hours'; Allakhazam quest 704: 'They appear from Midnight to 3 A.M. game time'; Warcry quest 985: 'The 3 Lieutanants and the Commander spawn at midnight at the center Drakoran camp, and disappear at 3AM'; Allakhazam quest 704 comment 2003-05-09: 'The commander will vanish at the stroke of 3am even if he is in combat'; Prima SI 'Outpost': Yal'ris north, Zudd south, Grrar and Slor'vid attacking the middle; Allakhazam quest 704 'Under Attack' (wayback 2004-10-14) (heads to Kimmy Glaze for a bonus)",
+   "why": "kill-step journal text: when he appears (the 1.59 patch note's words plus the midnight-3 A.M. window); it sent the player to the NW campfire, where he does not stand (he stays at the middle outpost, owner decision), and promised an 'attack his lieutenants and he will show' trigger that is not implemented; still 3 entries"
+  },
+  {
+   "finding": "P05-B2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepText": "Speak with Kimmy Glaze in Anniogel.|Seek out Commander Slor'vid, who leads the Drakoran attack on the middle outpost of the Isle of Glass with Lieutenant Grrar. He has only been seen plotting with his underlings in the early morning hours, from midnight to 3 A.M. game time. Bring the heads of his lieutenants Yal'ris (north outpost), Zudd (south outpost) and Grrar to Kimmy Glaze in Anniogel for a bonus.|Take the commander's head to Frederik Rolby in Gothwaite Harbor. Turn in any lieutenant heads to Kimmy Glaze first!"
+   },
+   "where": {
+    "ID": 20644
+   },
+   "source": "1.59 patch note as quoted on Freddyshouse (post 1653028, 2003-03-04): 'He has only been seen plotting with his underlings in the early morning hours'; Allakhazam quest 704: 'They appear from Midnight to 3 A.M. game time'; Warcry quest 985: 'The 3 Lieutanants and the Commander spawn at midnight at the center Drakoran camp, and disappear at 3AM'; Allakhazam quest 704 comment 2003-05-09: 'The commander will vanish at the stroke of 3am even if he is in combat'; Prima SI 'Outpost': Yal'ris north, Zudd south, Grrar and Slor'vid attacking the middle; Allakhazam quest 704 'Under Attack' (wayback 2004-10-14) (heads to Kimmy Glaze for a bonus)",
+   "why": "kill-step journal text: when he appears (the 1.59 patch note's words plus the midnight-3 A.M. window); it sent the player to the NW campfire, where he does not stand (he stays at the middle outpost, owner decision), and promised an 'attack his lieutenants and he will show' trigger that is not implemented; still 3 entries"
+  }
+ ]
+}

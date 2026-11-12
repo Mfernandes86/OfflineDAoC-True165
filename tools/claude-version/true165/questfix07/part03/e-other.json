@@ -1,0 +1,167 @@
+{
+ "fixer": "part03",
+ "about": "part03 section E: journal text, missing quest token, duplicate scripted spawn",
+ "entries": [
+  {
+   "finding": "P03-E3",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StepText = replace(StepText, 'Take the powder to Viola in Caille.', 'Take the powder to Iola in Caille.') WHERE ID = 20228",
+   "why": "step 2 journal named 'Viola'; the target (TargetName, NeedsItem issuer and the Caille NPC) is Iola"
+  },
+  {
+   "finding": "P03-E3",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StepText = replace(StepText, 'Take the powder to Viola in Caille.', 'Take the powder to Iola in Caille.') WHERE ID = 20229",
+   "why": "step 2 journal named 'Viola'; the target (TargetName, NeedsItem issuer and the Caille NPC) is Iola"
+  },
+  {
+   "finding": "P03-E3",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StepText = replace(StepText, 'Take the powder to Viola in Caille.', 'Take the powder to Iola in Caille.') WHERE ID = 20230",
+   "why": "step 2 journal named 'Viola'; the target (TargetName, NeedsItem issuer and the Caille NPC) is Iola"
+  },
+  {
+   "finding": "P03-E3",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StepText = replace(StepText, 'Take the powder to Viola in Caille.', 'Take the powder to Iola in Caille.') WHERE ID = 20231",
+   "why": "step 2 journal named 'Viola'; the target (TargetName, NeedsItem issuer and the Caille NPC) is Iola"
+  },
+  {
+   "finding": "P03-E4",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StepText = replace(StepText, 'east of the bridge.||Take the stones', 'east of the bridge.|Find the runaway guard Agisthil east of the bridge and take his stone.|Take the stones') WHERE ID = 20155",
+   "why": "step 3 (kill Agisthil) had an empty journal line; text from the period guide ('the two guards ... east of South Black Mountain after the bridge', 'After acquiring the stones')"
+  },
+  {
+   "finding": "P03-E4",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StepText = replace(StepText, 'east of the bridge.||Take the stones', 'east of the bridge.|Find the runaway guard Agisthil east of the bridge and take his stone.|Take the stones') WHERE ID = 20156",
+   "why": "step 3 (kill Agisthil) had an empty journal line; text from the period guide ('the two guards ... east of South Black Mountain after the bridge', 'After acquiring the stones')"
+  },
+  {
+   "finding": "P03-E4",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StepText = replace(StepText, 'east of the bridge.||Take the stones', 'east of the bridge.|Find the runaway guard Agisthil east of the bridge and take his stone.|Take the stones') WHERE ID = 20157",
+   "why": "step 3 (kill Agisthil) had an empty journal line; text from the period guide ('the two guards ... east of South Black Mountain after the bridge', 'After acquiring the stones')"
+  },
+  {
+   "finding": "P03-E4",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StepText = replace(StepText, 'east of the bridge.||Take the stones', 'east of the bridge.|Find the runaway guard Agisthil east of the bridge and take his stone.|Take the stones') WHERE ID = 20158",
+   "why": "step 3 (kill Agisthil) had an empty journal line; text from the period guide ('the two guards ... east of South Black Mountain after the bridge', 'After acquiring the stones')"
+  },
+  {
+   "finding": "P03-E4",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StepText = replace(StepText, 'east of the bridge.||Take the stones', 'east of the bridge.|Find the runaway guard Agisthil east of the bridge and take his stone.|Take the stones') WHERE ID = 20159",
+   "why": "step 3 (kill Agisthil) had an empty journal line; text from the period guide ('the two guards ... east of South Black Mountain after the bridge', 'After acquiring the stones')"
+  },
+  {
+   "finding": "P03-E5",
+   "kind": "row",
+   "table": "ItemTemplate",
+   "row": {
+    "Id_nb": "qf07_part03_root",
+    "TranslationId": null,
+    "Name": "Root",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "Level": 1,
+    "Durability": 50000,
+    "MaxDurability": 50000,
+    "IsNotLosingDur": 0,
+    "Condition": 50000,
+    "MaxCondition": 50000,
+    "Quality": 100,
+    "DPS_AF": 0,
+    "SPD_ABS": 0,
+    "Hand": 0,
+    "Type_Damage": 0,
+    "Object_Type": 0,
+    "Item_Type": 40,
+    "Color": 0,
+    "Emblem": 0,
+    "Effect": 0,
+    "Weight": 1,
+    "SalvageExtension": null,
+    "Model": 106,
+    "Extension": 0,
+    "Bonus": 0,
+    "Bonus1": 0,
+    "Bonus2": 0,
+    "Bonus3": 0,
+    "Bonus4": 0,
+    "Bonus5": 0,
+    "Bonus6": 0,
+    "Bonus7": 0,
+    "Bonus8": 0,
+    "Bonus9": 0,
+    "Bonus10": 0,
+    "ExtraBonus": 0,
+    "Bonus1Type": 0,
+    "Bonus2Type": 0,
+    "Bonus3Type": 0,
+    "Bonus4Type": 0,
+    "Bonus5Type": 0,
+    "Bonus6Type": 0,
+    "Bonus7Type": 0,
+    "Bonus8Type": 0,
+    "Bonus9Type": 0,
+    "Bonus10Type": 0,
+    "ExtraBonusType": 0,
+    "CanUseEvery": 0,
+    "SpellID": 0,
+    "Charges": 0,
+    "MaxCharges": 0,
+    "SpellID1": 0,
+    "Charges1": 0,
+    "MaxCharges1": 0,
+    "ProcChance": 0,
+    "ProcSpellID": 0,
+    "ProcSpellID1": 0,
+    "PoisonSpellID": 0,
+    "PoisonCharges": 0,
+    "PoisonMaxCharges": 0,
+    "IsPickable": 1,
+    "IsDropable": 1,
+    "CanDropAsLoot": 0,
+    "IsTradable": 1,
+    "Price": 0,
+    "MaxCount": 1,
+    "IsIndestructible": 0,
+    "PackSize": 1,
+    "Realm": 0,
+    "AllowedClasses": "0",
+    "Flags": 0,
+    "BonusLevel": 0,
+    "LevelRequirement": 0,
+    "PackageID": "ClassicQuest",
+    "Description": null,
+    "ClassType": null,
+    "SalvageYieldID": 0,
+    "ItemTemplate_ID": "qf07_part03_root"
+   },
+   "source": "Allakhazam 'Reaching Beyond' (Wayback 2004-10-14): swim at the base of the bridge until he 'pulled out the root', then 'give him the feather and the root' (a stat-less quest token)",
+   "why": "the step 3 search handed out nothing, though step 4 asks for the feather and the root; a stat-less token like the Basilisk Feather"
+  },
+  {
+   "finding": "P03-E5",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepItemTemplates": "|cq_basilisk_feather|qf07_part03_root||cq_potion_of_reaching"
+   },
+   "where": {
+    "ID": 20217
+   },
+   "why": "the search step now hands out the root (a search step gives its StepItemTemplate on success, DataQuest.cs AdvanceQuestStep)"
+  },
+  {
+   "finding": "P03-E6",
+   "kind": "remove",
+   "table": "Mob",
+   "where": "Mob_ID = '100024952'",
+   "why": "permanent world 'Feairna-athar' (level 60) 1.1k from The Lost Seed ambush point; the script spawns its own Feairna-Athar for step 5 and its name check is case-sensitive, so both stood and killing the world copy never advanced the quest"
+  }
+ ]
+}

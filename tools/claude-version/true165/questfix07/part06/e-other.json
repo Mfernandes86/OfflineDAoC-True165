@@ -1,0 +1,472 @@
+{
+ "fixer": "part06",
+ "about": "part06 E1-E7: Moonstone Twin names, Anxious Healer, Way of Arms, journal texts, dead rows",
+ "entries": [
+  {
+   "finding": "P06-E1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "Name": "The Moonstone Twin (level 45)"
+   },
+   "where": {
+    "ID": 21378
+   },
+   "why": "parts 1-3 of The Moonstone Twin shared one name, so part 1 met every dependency and part 3 could be taken (on the same whisper) without part 2; Allakhazam names the parts 'The Moonstone Twin (level 45)' / '(level 47)'"
+  },
+  {
+   "finding": "P06-E1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "Name": "The Moonstone Twin (level 45)"
+   },
+   "where": {
+    "ID": 21379
+   },
+   "why": "part 2 gets its own name (Allakhazam quest 298 'The Moonstone Twin (level 45)') so part 3 can depend on it"
+  },
+  {
+   "finding": "P06-E1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "Name": "The Moonstone Twin (level 45)"
+   },
+   "where": {
+    "ID": 21380
+   },
+   "why": "part 2 gets its own name (Allakhazam quest 298 'The Moonstone Twin (level 45)') so part 3 can depend on it"
+  },
+  {
+   "finding": "P06-E1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "Name": "The Moonstone Twin (level 45)"
+   },
+   "where": {
+    "ID": 21381
+   },
+   "why": "part 2 gets its own name (Allakhazam quest 298 'The Moonstone Twin (level 45)') so part 3 can depend on it"
+  },
+  {
+   "finding": "P06-E1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "Name": "The Moonstone Twin (level 47)",
+    "QuestDependency": "The Moonstone Twin (level 45)"
+   },
+   "where": {
+    "ID": 20755
+   },
+   "why": "part 3 (Allakhazam quest 341 'The Moonstone Twin (level 47)') now needs part 2 finished instead of any part of the line"
+  },
+  {
+   "finding": "P06-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Guides",
+    "hibernia|the moonstone twin (level 45)"
+   ],
+   "why": "the renamed part keeps a Quest Guide: the period Allakhazam walkthrough of 'The Moonstone Twin (level 45)' (quest 298)",
+   "value": {
+    "Name": "The Moonstone Twin (level 45)",
+    "Realm": "Hibernia",
+    "Source": "Allakhazam quest page as archived 2004-10-13 (Wayback Machine)",
+    "Updated": "Tue Mar 30 09:26:52 2004",
+    "Lines": [
+     "Brigit will send you to Maudalin who lives at the top of the tower on the road to Caille. He tells you to seek the Tree Fairie near the edge of Bri Leith and Cursed Forest (16k/20k) who says you must kill Cadoc who runs with his enchanted horses during the day and night along the river from end to end. The horses are neutral and there are two sets: dark steeds at night and veil steeds during the day. Kill both sets and Cadoc will appear. Kill him and he gives you the second half-moonstone. Return this to Brigit for the second reward which is an Enchanter's Jewel.",
+     "Cadoc is on west side of river at far south end.",
+     "/loc = 14420,58733",
+     "*Note:",
+     "I did this with my bard and killed both day and night steeds, which worked fine (if in a grp). With my champ at lvl 45 I noticed in the journal that you first have to do the day steeds and the text says to leave them alone, just follow. I solo folowed them to the end of the river where I just talked to a friendly Cadoc. This got me the day step. The night step I'm afraid is a violent one...",
+     "Rewards:",
+     "Enchanter's Jewel",
+     "Nightshade Jewel",
+     "Champion's Jewel",
+     "Bard's Jewel"
+    ]
+   },
+   "create": true,
+   "file": "classic-quest-guides.json",
+   "source": "Allakhazam quest page 298 'The Moonstone Twin (level 45)', archived 2004-10-13 (Wayback Machine), period-data/archive/wayback-allakhazam/quest_pages.jsonl.gz"
+  },
+  {
+   "finding": "P06-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Guides",
+    "hibernia|the moonstone twin (level 47)"
+   ],
+   "why": "the renamed part keeps a Quest Guide: the period Allakhazam walkthrough of 'The Moonstone Twin (level 47)' (quest 341)",
+   "value": {
+    "Name": "The Moonstone Twin (level 47)",
+    "Realm": "Hibernia",
+    "Source": "Allakhazam quest page as archived 2004-10-28 (Wayback Machine)",
+    "Updated": "Wed Feb 18 17:42:22 2004",
+    "Lines": [
+     "Next Brigit sends you to kill a banshee named Rioldna who roams in the water northwest of Alainn Binn. After you kill her and get the first stone, the Faerie Queen appears momentarily and sends you to the healer in Alainn Binn (Ceri), who says you must kill the Faerie Queen in Cursed Forest (night only, east side of the river at 50k/25k). Kill the three maidens to get the Queen to spawn. Kill her maidens first, then kill her to get the second stone. Before she dies, she sends you to free the steed that is being held captive by the far dorochas.",
+     "To Find Banshee Rioldna, head to Alainn Binn in far South-East corner of Bog of Cullen and go West-SouthWest to /loc= 44200,52400",
+     "I believe it is a night time only spawn. Mentioned in another posting is midnight - 6:00am, I found her at 2:30am",
+     "Once you see the apparition of the Faerie Queen, head back into Alainn Binn the north hut and see the healer Ceri.",
+     "Target Healer Ceri and type \"/say Apparition\" and then \"/say Faerie Queen\"."
+    ]
+   },
+   "create": true,
+   "file": "classic-quest-guides.json",
+   "source": "Allakhazam quest page 341 'The Moonstone Twin (level 47)', archived 2004-10-28 (Wayback Machine), period-data/archive/wayback-allakhazam/quest_pages.jsonl.gz"
+  },
+  {
+   "finding": "P06-E2",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StepType = '0' || substr(StepType, 2), TargetName = replace(TargetName, 'merucha;224|', 'merucha;200|'), StepText = replace(StepText, 'Speak with Merucha.|', 'Kill a merucha near the Treibh Caillte entrance for its water dye.|'), SourceText = replace(SourceText, 'Speak with Merucha.|', 'Kill a merucha near the Treibh Caillte entrance for its water dye.|') WHERE ID = 20907 AND StepType LIKE '4|%'",
+   "why": "step 1 was an Interact with the hostile level 40-45 meruchas inside Treibh Caillte (region 224); period: 'First is the water dye from merucha's. They spawn near the Treibh Cali dungeon NW of innis village' (12 meruchas stand outside in region 200)"
+  },
+  {
+   "finding": "P06-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20907",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "why": "step 1 marker moved from inside the dungeon to the meruchas by the Treibh Caillte entrance (Lough Gur 12k,32k)",
+   "value": {
+    "Region": 200,
+    "X": 298816,
+    "Y": 712093,
+    "Z": 6388
+   }
+  },
+  {
+   "finding": "P06-E3",
+   "kind": "row",
+   "table": "DataQuest",
+   "row": {
+    "ID": 27500,
+    "Name": "Way of Arms -- Learn the Paths",
+    "StartType": 0,
+    "StartName": "Ailill",
+    "StartRegionID": 200,
+    "AcceptText": "return",
+    "Description": "Go and talk to each master of the paths, then [return] to me.",
+    "SourceName": "",
+    "SourceText": "Talk to a master of the Path of Essence (Hero).|||",
+    "StepType": "4|4|4|5",
+    "StepText": "Talk to a master of the Path of Essence (Hero).|Talk to a master of the Path of Harmony (Blademaster).|Talk to a master of the Path of Focus (Champion).|Return to your trainer.",
+    "StepItemTemplates": "|||",
+    "AdvanceText": "|||",
+    "TargetName": "Searlas;200|Allistar;200|Cordelia;200|Ailill;200",
+    "TargetText": "|||",
+    "CollectItemTemplate": "|||",
+    "MaxCount": 1,
+    "MinLevel": 1,
+    "MaxLevel": 5,
+    "RewardMoney": "0|0|0|0",
+    "RewardXP": "0|0|0|8",
+    "RewardCLXP": null,
+    "RewardRP": null,
+    "RewardBP": null,
+    "OptionalRewardItemTemplates": null,
+    "FinalRewardItemTemplates": "",
+    "FinishText": "",
+    "QuestDependency": "",
+    "AllowedClasses": "52",
+    "ClassType": "DOL.GS.Quests.ClassicQuestStep"
+   },
+   "why": "Way of Arms -- Learn the Paths was offered only by Kaley in Howth; period 'Given by your starting trainer': Ailill's copy. Connla: period 'particularly easy in Connla since all of the masters are centrally located right in town' (Searlas Hero, Allistar Blademaster, Cordelia Champion trainers)"
+  },
+  {
+   "finding": "P06-E3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "27500"
+   ],
+   "why": "markers, XP share and the one-version rule for Ailill's copy of Way of Arms -- Learn the Paths (as Kaley's 20810)",
+   "value": {
+    "Steps": [
+     null,
+     {
+      "Marker": {
+       "Region": 200,
+       "X": 294825,
+       "Y": 641462,
+       "Z": 4865
+      }
+     },
+     {
+      "Marker": {
+       "Region": 200,
+       "X": 294843,
+       "Y": 641102,
+       "Z": 4865
+      }
+     },
+     {
+      "Marker": {
+       "Region": 200,
+       "X": 297307,
+       "Y": 643004,
+       "Z": 4848
+      }
+     },
+     {
+      "Marker": {
+       "Region": 200,
+       "X": 296561,
+       "Y": 641368,
+       "Z": 4848
+      }
+     }
+    ],
+    "XpShares": [
+     0.0,
+     0.0,
+     0.0,
+     0.16
+    ],
+    "ExcludedBy": [
+     "Way of Arms -- Learn the Paths"
+    ]
+   },
+   "create": true
+  },
+  {
+   "finding": "P06-E3",
+   "kind": "row",
+   "table": "DataQuest",
+   "row": {
+    "ID": 27501,
+    "Name": "Way of Arms -- Learn the Paths",
+    "StartType": 0,
+    "StartName": "Meadghbh",
+    "StartRegionID": 200,
+    "AcceptText": "return",
+    "Description": "Go and talk to each master of the paths, then [return] to me.",
+    "SourceName": "",
+    "SourceText": "Talk to a master of the Path of Essence (Hero).|||",
+    "StepType": "4|4|4|5",
+    "StepText": "Talk to a master of the Path of Essence (Hero).|Talk to a master of the Path of Harmony (Blademaster).|Talk to a master of the Path of Focus (Champion).|Return to your trainer.",
+    "StepItemTemplates": "|||",
+    "AdvanceText": "|||",
+    "TargetName": "Nevin;200|Ea;200|Siodhachan;200|Meadghbh;200",
+    "TargetText": "|||",
+    "CollectItemTemplate": "|||",
+    "MaxCount": 1,
+    "MinLevel": 1,
+    "MaxLevel": 5,
+    "RewardMoney": "0|0|0|0",
+    "RewardXP": "0|0|0|8",
+    "RewardCLXP": null,
+    "RewardRP": null,
+    "RewardBP": null,
+    "OptionalRewardItemTemplates": null,
+    "FinalRewardItemTemplates": "",
+    "FinishText": "",
+    "QuestDependency": "",
+    "AllowedClasses": "52",
+    "ClassType": "DOL.GS.Quests.ClassicQuestStep"
+   },
+   "why": "Way of Arms -- Learn the Paths was offered only by Kaley in Howth; period 'Given by your starting trainer': Meadghbh's copy. Mag Mell has no path masters; the masters are the ones Kaley's row already uses (Howth and Ardagh): period 'If you are unlucky enough to have started your career in one of the other towns you may have quite a bit of running to do'"
+  },
+  {
+   "finding": "P06-E3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "27501"
+   ],
+   "why": "markers, XP share and the one-version rule for Meadghbh's copy of Way of Arms -- Learn the Paths (as Kaley's 20810)",
+   "value": {
+    "Steps": [
+     null,
+     {
+      "Marker": {
+       "Region": 200,
+       "X": 342074,
+       "Y": 592083,
+       "Z": 5473
+      }
+     },
+     {
+      "Marker": {
+       "Region": 200,
+       "X": 351072,
+       "Y": 552741,
+       "Z": 5102
+      }
+     },
+     {
+      "Marker": {
+       "Region": 200,
+       "X": 351969,
+       "Y": 552382,
+       "Z": 5105
+      }
+     },
+     {
+      "Marker": {
+       "Region": 200,
+       "X": 346434,
+       "Y": 490657,
+       "Z": 5330
+      }
+     }
+    ],
+    "XpShares": [
+     0.0,
+     0.0,
+     0.0,
+     0.16
+    ],
+    "ExcludedBy": [
+     "Way of Arms -- Learn the Paths"
+    ]
+   },
+   "create": true
+  },
+  {
+   "finding": "P06-E3",
+   "kind": "row",
+   "table": "DataQuest",
+   "row": {
+    "ID": 27502,
+    "Name": "Way of Arms -- Learn the Paths",
+    "StartType": 0,
+    "StartName": "Flannery",
+    "StartRegionID": 200,
+    "AcceptText": "return",
+    "Description": "Go and talk to each master of the paths, then [return] to me.",
+    "SourceName": "",
+    "SourceText": "Talk to a master of the Path of Essence (Hero).|||",
+    "StepType": "4|4|4|5",
+    "StepText": "Talk to a master of the Path of Essence (Hero).|Talk to a master of the Path of Harmony (Blademaster).|Talk to a master of the Path of Focus (Champion).|Return to your trainer.",
+    "StepItemTemplates": "|||",
+    "AdvanceText": "|||",
+    "TargetName": "Nevin;200|Ea;200|Siodhachan;200|Flannery;200",
+    "TargetText": "|||",
+    "CollectItemTemplate": "|||",
+    "MaxCount": 1,
+    "MinLevel": 1,
+    "MaxLevel": 5,
+    "RewardMoney": "0|0|0|0",
+    "RewardXP": "0|0|0|8",
+    "RewardCLXP": null,
+    "RewardRP": null,
+    "RewardBP": null,
+    "OptionalRewardItemTemplates": null,
+    "FinalRewardItemTemplates": "",
+    "FinishText": "",
+    "QuestDependency": "",
+    "AllowedClasses": "52",
+    "ClassType": "DOL.GS.Quests.ClassicQuestStep"
+   },
+   "why": "Way of Arms -- Learn the Paths was offered only by Kaley in Howth; period 'Given by your starting trainer': Flannery's copy. Ardee has no path masters; same masters as Kaley's row (Howth and Ardagh), period 'quite a bit of running to do'"
+  },
+  {
+   "finding": "P06-E3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "27502"
+   ],
+   "why": "markers, XP share and the one-version rule for Flannery's copy of Way of Arms -- Learn the Paths (as Kaley's 20810)",
+   "value": {
+    "Steps": [
+     null,
+     {
+      "Marker": {
+       "Region": 200,
+       "X": 342074,
+       "Y": 592083,
+       "Z": 5473
+      }
+     },
+     {
+      "Marker": {
+       "Region": 200,
+       "X": 351072,
+       "Y": 552741,
+       "Z": 5102
+      }
+     },
+     {
+      "Marker": {
+       "Region": 200,
+       "X": 351969,
+       "Y": 552382,
+       "Z": 5105
+      }
+     },
+     {
+      "Marker": {
+       "Region": 200,
+       "X": 341533,
+       "Y": 467718,
+       "Z": 5200
+      }
+     }
+    ],
+    "XpShares": [
+     0.0,
+     0.0,
+     0.0,
+     0.16
+    ],
+    "ExcludedBy": [
+     "Way of Arms -- Learn the Paths"
+    ]
+   },
+   "create": true
+  },
+  {
+   "finding": "P06-E3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "20810",
+    "ExcludedBy"
+   ],
+   "why": "four Guardian trainers now give the quest; a Guardian does it once, from whichever trainer it starts with",
+   "value": "Way of Arms -- Learn the Paths"
+  },
+  {
+   "finding": "P06-E5",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StepText = replace(replace(StepText, 'Give Duana or Edan the collar so you can talk to them.', 'Give Duana the collar so you can talk to her and Edan.'), 'Give Duana the collar so you can talk to him and Edan.', 'Give Duana the collar so you can talk to her and Edan.'), SourceText = replace(replace(SourceText, 'Give Duana or Edan the collar so you can talk to them.', 'Give Duana the collar so you can talk to her and Edan.'), 'Give Duana the collar so you can talk to him and Edan.', 'Give Duana the collar so you can talk to her and Edan.') WHERE ID BETWEEN 20781 AND 20784",
+   "why": "the step is a Deliver to Duana;200 (a DataQuest step has one target), so 'Duana or Edan' sent players to Edan for nothing; the period walkthrough's easiest route is Duana ('Easiest way to find Duana is to head to Parth Farm'); Duana is a she in the period text ('I gave the collar to Duana, but she told me', Maeve: 'Duana, in retribution, placed her own enchantment')"
+  },
+  {
+   "finding": "P06-E6",
+   "kind": "remove",
+   "table": "DataQuest",
+   "where": "ID IN (20720, 20726)",
+   "why": "Cad Goddeau C and D rows for class 58 only (Vampiir, Catacombs): no 1.65 character can be offered them"
+  },
+  {
+   "finding": "P06-E6",
+   "kind": "remove",
+   "table": "DataQuest",
+   "where": "ID IN (20794, 20795, 20796, 20797, 20798, 20799, 20802, 20804, 20806, 20807) AND Name = 'Misdelivered Letter' AND MaxLevel = 4",
+   "why": "Misdelivered Letter rows for advanced classes at levels 1-4: True 1.65 characters stay base class until level 5, so these can never be offered; the base-class rows 20800, 20801, 20803, 20805, 20808 stay"
+  },
+  {
+   "finding": "P06-E7",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StepText = replace(StepText, 'Chieftess Niamh asks you to watch the rat-catcher do his job at dusk.|', 'Chieftess Niamh tells you about the rat-catcher she hired to lead the rats into the lake at dusk; speak with her again.|') WHERE ID = 20903",
+   "why": "the period dusk event (the rat trail walking into the lake about 6pm) is not simulated and the step completes on a plain Interact with Chieftess Niamh, so the journal no longer asks the player to watch for it"
+  }
+ ]
+}

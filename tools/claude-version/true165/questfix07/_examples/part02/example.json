@@ -1,0 +1,93 @@
+{
+ "fixer": "part02",
+ "about": "WORKED EXAMPLE ONLY (the loader ignores _examples); values are test data, not real fixes",
+ "entries": [
+  {
+   "finding": "P02-B1",
+   "kind": "add_edit",
+   "file": "add-primaquests165.json",
+   "id": 21531,
+   "set": {
+    "MaxLevel": 12
+   },
+   "why": "TEST: an edit to a row an add-file creates"
+  },
+  {
+   "finding": "P02-C1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21539",
+    "OnlyDuring"
+   ],
+   "value": [
+    "The Growling Ghost"
+   ],
+   "why": "TEST: sub-quest offered only during its parent"
+  },
+  {
+   "finding": "P02-C2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "00070201-0000-4000-8000-000000000001",
+   "why": "TEST: a quest monster the gamebots leave alone"
+  },
+  {
+   "finding": "P02-C3",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "21539",
+    "Steps",
+    3
+   ],
+   "value": {
+    "NeedsItem": "Sack_of_Grain",
+    "Issuer": "Hodr"
+   },
+   "why": "TEST: merge two step keys"
+  },
+  {
+   "finding": "P02-D1",
+   "kind": "remove",
+   "table": "Mob",
+   "where": "Mob_ID = 'd2ff99a4-0000-0000-0000-000000000000'",
+   "why": "TEST: a removal that matches nothing (warning expected)"
+  },
+  {
+   "finding": "P02-E1",
+   "kind": "update",
+   "sql": "UPDATE Mob SET Level = 12 WHERE Name = 'Hodr' AND Region = 101",
+   "why": "TEST: raw SQL update form"
+  },
+  {
+   "finding": "P02-F1",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "Mob_ID": "00070201-0000-4000-8000-000000000001",
+    "ClassType": "DOL.GS.GameNPC",
+    "Name": "test patrol leader",
+    "Region": 1,
+    "X": 329919,
+    "Y": 661839,
+    "Z": 2804,
+    "Level": 10,
+    "Realm": 0,
+    "Model": 10,
+    "Size": 50,
+    "Speed": 200,
+    "Heading": 0,
+    "NPCTemplateID": 0,
+    "PathID": "qf07_patrols_test_route",
+    "PackageID": "true165-questfix07"
+   },
+   "why": "TEST: a new spawn on a new path"
+  }
+ ]
+}

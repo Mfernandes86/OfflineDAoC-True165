@@ -1,0 +1,1507 @@
+{
+ "fixer": "patrols",
+ "about": "Albion quest monsters that the period describes walking a route (CapnBry radar sightings first, then walkthroughs)",
+ "entries": [
+  {
+   "finding": "P05-C1",
+   "why": "Urfgrat the Green stood still (Campacorentin 42493,39605, the CapnBry radar spot); Allakhazam 107 'Also seen around loc= 40188, 43692', 'Started at 18,35 ... to 24,38 ... to 30,40 ... to 35,45 ... to 38,45', our step text 'walks with his cronies between the goblin camp and the ogre camp': a there-and-back walk from the radar spot through the goblin camp (40188,43692) along the period route to 18000,35000, with two sylvan goblin warriors of the goblin camp (template 12606) as his cronies (patrol path, 10 points, 30345 units, there and back)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000016",
+    "PathID": "qf07_patrols_urfgrat_ogre_goblin_camps",
+    "RegionID": 1,
+    "PathType": 2
+   }
+  },
+  {
+   "finding": "P05-C1",
+   "why": "qf07_patrols_urfgrat_ogre_goblin_camps point 1: navmesh ground at zone 8 local 42493,39605",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000116",
+    "PathID": "qf07_patrols_urfgrat_ogre_goblin_camps",
+    "Step": 1,
+    "X": 525821,
+    "Y": 621237,
+    "Z": 2658,
+    "MaxSpeed": 150,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P05-C1",
+   "why": "qf07_patrols_urfgrat_ogre_goblin_camps point 2: navmesh ground at zone 8 local 40188,43692",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000117",
+    "PathID": "qf07_patrols_urfgrat_ogre_goblin_camps",
+    "Step": 2,
+    "X": 523516,
+    "Y": 625324,
+    "Z": 4308,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P05-C1",
+   "why": "qf07_patrols_urfgrat_ogre_goblin_camps point 3: navmesh ground at zone 8 local 38000,45000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000118",
+    "PathID": "qf07_patrols_urfgrat_ogre_goblin_camps",
+    "Step": 3,
+    "X": 521328,
+    "Y": 626632,
+    "Z": 3469,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P05-C1",
+   "why": "qf07_patrols_urfgrat_ogre_goblin_camps point 4: navmesh ground at zone 8 local 35000,45000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000119",
+    "PathID": "qf07_patrols_urfgrat_ogre_goblin_camps",
+    "Step": 4,
+    "X": 518328,
+    "Y": 626632,
+    "Z": 1853,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P05-C1",
+   "why": "qf07_patrols_urfgrat_ogre_goblin_camps point 5: navmesh ground at zone 8 local 32500,42500",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000120",
+    "PathID": "qf07_patrols_urfgrat_ogre_goblin_camps",
+    "Step": 5,
+    "X": 515828,
+    "Y": 624132,
+    "Z": 1846,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P05-C1",
+   "why": "qf07_patrols_urfgrat_ogre_goblin_camps point 6: navmesh ground at zone 8 local 30000,40000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000121",
+    "PathID": "qf07_patrols_urfgrat_ogre_goblin_camps",
+    "Step": 6,
+    "X": 513328,
+    "Y": 621632,
+    "Z": 2116,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P05-C1",
+   "why": "qf07_patrols_urfgrat_ogre_goblin_camps point 7: navmesh ground at zone 8 local 27000,39000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000122",
+    "PathID": "qf07_patrols_urfgrat_ogre_goblin_camps",
+    "Step": 7,
+    "X": 510328,
+    "Y": 620632,
+    "Z": 1994,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P05-C1",
+   "why": "qf07_patrols_urfgrat_ogre_goblin_camps point 8: navmesh ground at zone 8 local 24000,38000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000123",
+    "PathID": "qf07_patrols_urfgrat_ogre_goblin_camps",
+    "Step": 8,
+    "X": 507328,
+    "Y": 619632,
+    "Z": 3749,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P05-C1",
+   "why": "qf07_patrols_urfgrat_ogre_goblin_camps point 9: navmesh ground at zone 8 local 21000,36500",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000124",
+    "PathID": "qf07_patrols_urfgrat_ogre_goblin_camps",
+    "Step": 9,
+    "X": 504328,
+    "Y": 618132,
+    "Z": 2154,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P05-C1",
+   "why": "qf07_patrols_urfgrat_ogre_goblin_camps point 10: navmesh ground at zone 8 local 18000,35000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000125",
+    "PathID": "qf07_patrols_urfgrat_ogre_goblin_camps",
+    "Step": 10,
+    "X": 501328,
+    "Y": 616632,
+    "Z": 2043,
+    "MaxSpeed": 150,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P05-C1",
+   "why": "Urfgrat the Green stood still (Campacorentin 42493,39605, the CapnBry radar spot); Allakhazam 107 'Also seen around loc= 40188, 43692', 'Started at 18,35 ... to 24,38 ... to 30,40 ... to 35,45 ... to 38,45', our step text 'walks with his cronies between the goblin camp and the ogre camp': a there-and-back walk from the radar spot through the goblin camp (40188,43692) along the period route to 18000,35000, with two sylvan goblin warriors of the goblin camp (template 12606) as his cronies; Urfgrat the Green walks qf07_patrols_urfgrat_ogre_goblin_camps",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_urfgrat_ogre_goblin_camps",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "508985c0-883f-5699-a957-159e63115d02"
+   }
+  },
+  {
+   "finding": "P05-C1",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "sylvan goblin warrior",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 525911,
+    "Y": 621237,
+    "Z": 2567,
+    "Speed": 180,
+    "Heading": 1346,
+    "Region": 1,
+    "Model": 246,
+    "Size": 51,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 0,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 0,
+    "Empathy": 0,
+    "Charisma": 0,
+    "Level": 0,
+    "Realm": 0,
+    "EquipmentTemplateID": null,
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 12606,
+    "Race": 2005,
+    "Flags": 0,
+    "AggroLevel": 50,
+    "AggroRange": 0,
+    "MeleeDamageType": 2,
+    "RespawnInterval": 80,
+    "FactionID": 61,
+    "BodyType": 6,
+    "HouseNumber": 0,
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 1,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071101-0000-4000-8000-000000000014"
+   },
+   "why": "Allakhazam 107 'Urfgrat and his two or three cronies walk through the middle of the Ogre camp', 'He travels with a few companions'; no crony stood with him (a copy of sylvan goblin warrior 58be6c3f-3659-49ae-9b78-f4a64dee1798, same template and stats, walking with Urfgrat the Green)",
+   "source": "Allakhazam quest 107 Dugan's Magical Totem: 'He travels with a few companions, who con red to a lvl 19', 'Urfgrat and his two or three cronies walk through the middle of the Ogre camp'"
+  },
+  {
+   "finding": "P05-C1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "00071101-0000-4000-8000-000000000014"
+   ],
+   "value": "Urfgrat the Green",
+   "why": "new sylvan goblin warrior (00071101-0000-4000-8000-000000000014) is a fellow of Urfgrat the Green"
+  },
+  {
+   "finding": "P05-C1",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "sylvan goblin warrior",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 525731,
+    "Y": 621237,
+    "Z": 2761,
+    "Speed": 180,
+    "Heading": 1346,
+    "Region": 1,
+    "Model": 246,
+    "Size": 51,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 0,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 0,
+    "Empathy": 0,
+    "Charisma": 0,
+    "Level": 0,
+    "Realm": 0,
+    "EquipmentTemplateID": null,
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 12606,
+    "Race": 2005,
+    "Flags": 0,
+    "AggroLevel": 50,
+    "AggroRange": 0,
+    "MeleeDamageType": 2,
+    "RespawnInterval": 80,
+    "FactionID": 61,
+    "BodyType": 6,
+    "HouseNumber": 0,
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 1,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071101-0000-4000-8000-000000000015"
+   },
+   "why": "Allakhazam 107 'Urfgrat and his two or three cronies walk through the middle of the Ogre camp', 'He travels with a few companions'; no crony stood with him (a copy of sylvan goblin warrior 58be6c3f-3659-49ae-9b78-f4a64dee1798, same template and stats, walking with Urfgrat the Green)",
+   "source": "Allakhazam quest 107 Dugan's Magical Totem: 'He travels with a few companions, who con red to a lvl 19', 'Urfgrat and his two or three cronies walk through the middle of the Ogre camp'"
+  },
+  {
+   "finding": "P05-C1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "00071101-0000-4000-8000-000000000015"
+   ],
+   "value": "Urfgrat the Green",
+   "why": "new sylvan goblin warrior (00071101-0000-4000-8000-000000000015) is a fellow of Urfgrat the Green"
+  },
+  {
+   "finding": "P03-C2",
+   "why": "Mulgrut Maggot stood still (Camelot Hills 21330,41503); Allakhazam 16 'He and 3 of his minions, 2 decayed zombies and a putrid zombie, walk from between the cemetery and the hill with the tall stone', '(or wait to kill Mulgruth in the cemetery at loc 18k, 45.5K)'; CapnBry radar saw him at 17205,44811 / 21330,41503 / 25194,36481: a there-and-back walk from the cemetery through those spots, with two of the nearby decayed zombies and a putrid zombie (patrol path, 5 points, 11624 units, there and back)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000017",
+    "PathID": "qf07_patrols_mulgrut_cemetery_hill",
+    "RegionID": 1,
+    "PathType": 2
+   }
+  },
+  {
+   "finding": "P03-C2",
+   "why": "qf07_patrols_mulgrut_cemetery_hill point 1: navmesh ground at zone 0 local 17205,44811",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000126",
+    "PathID": "qf07_patrols_mulgrut_cemetery_hill",
+    "Step": 1,
+    "X": 566069,
+    "Y": 528139,
+    "Z": 2159,
+    "MaxSpeed": 140,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P03-C2",
+   "why": "qf07_patrols_mulgrut_cemetery_hill point 2: navmesh ground at zone 0 local 19300,43100",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000127",
+    "PathID": "qf07_patrols_mulgrut_cemetery_hill",
+    "Step": 2,
+    "X": 568164,
+    "Y": 526428,
+    "Z": 2370,
+    "MaxSpeed": 140,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P03-C2",
+   "why": "qf07_patrols_mulgrut_cemetery_hill point 3: navmesh ground at zone 0 local 21330,41503",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000128",
+    "PathID": "qf07_patrols_mulgrut_cemetery_hill",
+    "Step": 3,
+    "X": 570194,
+    "Y": 524831,
+    "Z": 2619,
+    "MaxSpeed": 140,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P03-C2",
+   "why": "qf07_patrols_mulgrut_cemetery_hill point 4: navmesh ground at zone 0 local 23300,39000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000129",
+    "PathID": "qf07_patrols_mulgrut_cemetery_hill",
+    "Step": 4,
+    "X": 572164,
+    "Y": 522328,
+    "Z": 2340,
+    "MaxSpeed": 140,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P03-C2",
+   "why": "qf07_patrols_mulgrut_cemetery_hill point 5: navmesh ground at zone 0 local 25194,36481",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000130",
+    "PathID": "qf07_patrols_mulgrut_cemetery_hill",
+    "Step": 5,
+    "X": 574058,
+    "Y": 519809,
+    "Z": 2574,
+    "MaxSpeed": 140,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P03-C2",
+   "why": "Mulgrut Maggot stood still (Camelot Hills 21330,41503); Allakhazam 16 'He and 3 of his minions, 2 decayed zombies and a putrid zombie, walk from between the cemetery and the hill with the tall stone', '(or wait to kill Mulgruth in the cemetery at loc 18k, 45.5K)'; CapnBry radar saw him at 17205,44811 / 21330,41503 / 25194,36481: a there-and-back walk from the cemetery through those spots, with two of the nearby decayed zombies and a putrid zombie; Mulgrut Maggot walks qf07_patrols_mulgrut_cemetery_hill from its first point (was 570194,524831)",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_mulgrut_cemetery_hill",
+    "RoamingRange": 0,
+    "X": 566069,
+    "Y": 528139,
+    "Z": 2159
+   },
+   "where": {
+    "Mob_ID": "d5913594-869f-5d90-bcea-fce428f63926"
+   }
+  },
+  {
+   "finding": "P03-C2",
+   "why": "decayed zombie walks with Mulgrut Maggot (QuestFellowBrain + classic-quests Fellows, as Fjall's fellows), starting beside the leader's spawn",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "RoamingRange": 0,
+    "X": 566159,
+    "Y": 528139,
+    "Z": 2165
+   },
+   "where": {
+    "Mob_ID": "a3b2d757-9f96-4d33-85ba-4332f16315c1"
+   }
+  },
+  {
+   "finding": "P03-C2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "a3b2d757-9f96-4d33-85ba-4332f16315c1"
+   ],
+   "value": "Mulgrut Maggot",
+   "why": "decayed zombie (a3b2d757-9f96-4d33-85ba-4332f16315c1) is a fellow of Mulgrut Maggot"
+  },
+  {
+   "finding": "P03-C2",
+   "why": "decayed zombie walks with Mulgrut Maggot (QuestFellowBrain + classic-quests Fellows, as Fjall's fellows), starting beside the leader's spawn",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "RoamingRange": 0,
+    "X": 565979,
+    "Y": 528139,
+    "Z": 2156
+   },
+   "where": {
+    "Mob_ID": "995350ee-439b-452f-8d04-9ccac2c13f3a"
+   }
+  },
+  {
+   "finding": "P03-C2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "995350ee-439b-452f-8d04-9ccac2c13f3a"
+   ],
+   "value": "Mulgrut Maggot",
+   "why": "decayed zombie (995350ee-439b-452f-8d04-9ccac2c13f3a) is a fellow of Mulgrut Maggot"
+  },
+  {
+   "finding": "P03-C2",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "putrid zombie",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 566024,
+    "Y": 528061,
+    "Z": 2156,
+    "Speed": 180,
+    "Heading": 2825,
+    "Region": 1,
+    "Model": 110,
+    "Size": 48,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 0,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 0,
+    "Empathy": 0,
+    "Charisma": 0,
+    "Level": 0,
+    "Realm": 0,
+    "EquipmentTemplateID": null,
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 12380,
+    "Race": 2009,
+    "Flags": 0,
+    "AggroLevel": 0,
+    "AggroRange": 0,
+    "MeleeDamageType": 2,
+    "RespawnInterval": 80,
+    "FactionID": 63,
+    "BodyType": 11,
+    "HouseNumber": 0,
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 1,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071101-0000-4000-8000-000000000016"
+   },
+   "why": "Allakhazam 16 'He and 3 of his minions, 2 decayed zombies and a putrid zombie, walk'; no putrid zombie stood near him (this is a Camelot Hills putrid zombie, template 12380) (a copy of putrid zombie 105ea6c3-9098-41c5-b697-8ddec54da106, same template and stats, walking with Mulgrut Maggot)",
+   "source": "Allakhazam quest 16 Cleric Mulgrut: 'He and 3 of his minions, 2 decayed zombies and a putrid zombie, walk from between the cemetery and the hill with the tall stone and the large skeletons'"
+  },
+  {
+   "finding": "P03-C2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "00071101-0000-4000-8000-000000000016"
+   ],
+   "value": "Mulgrut Maggot",
+   "why": "new putrid zombie (00071101-0000-4000-8000-000000000016) is a fellow of Mulgrut Maggot"
+  },
+  {
+   "finding": "P01-C1",
+   "why": "every bwgan hunter only drifted (roam 200); Allakhazam kill task 406 (Aug 17 2002): 'at the northeast shore just past the Legendary Afanc as a pair of bwgans spawn midway up the hill that will then walk down to the shore and then west to the bwgan camp and back': one pair of the hunters from the north-shore camp now starts on the hill east of the Afanc (Llyn Barfog 40000,22500), walks down to the shore and west along it to the bwgan camp (27800,23600) and back (patrol path, 6 points, 12798 units, there and back)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000018",
+    "PathID": "qf07_patrols_bwgan_hunters_ne_shore",
+    "RegionID": 1,
+    "PathType": 2
+   }
+  },
+  {
+   "finding": "P01-C1",
+   "why": "qf07_patrols_bwgan_hunters_ne_shore point 1: navmesh ground at zone 7 local 40000,22500",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000131",
+    "PathID": "qf07_patrols_bwgan_hunters_ne_shore",
+    "Step": 1,
+    "X": 457792,
+    "Y": 391140,
+    "Z": 3024,
+    "MaxSpeed": 150,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P01-C1",
+   "why": "qf07_patrols_bwgan_hunters_ne_shore point 2: navmesh ground at zone 7 local 38300,23000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000132",
+    "PathID": "qf07_patrols_bwgan_hunters_ne_shore",
+    "Step": 2,
+    "X": 456092,
+    "Y": 391640,
+    "Z": 2430,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P01-C1",
+   "why": "qf07_patrols_bwgan_hunters_ne_shore point 3: navmesh ground at zone 7 local 36500,22000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000133",
+    "PathID": "qf07_patrols_bwgan_hunters_ne_shore",
+    "Step": 3,
+    "X": 454292,
+    "Y": 390640,
+    "Z": 1951,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P01-C1",
+   "why": "qf07_patrols_bwgan_hunters_ne_shore point 4: navmesh ground at zone 7 local 33000,22000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000134",
+    "PathID": "qf07_patrols_bwgan_hunters_ne_shore",
+    "Step": 4,
+    "X": 450792,
+    "Y": 390640,
+    "Z": 2152,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P01-C1",
+   "why": "qf07_patrols_bwgan_hunters_ne_shore point 5: navmesh ground at zone 7 local 30000,23200",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000135",
+    "PathID": "qf07_patrols_bwgan_hunters_ne_shore",
+    "Step": 5,
+    "X": 447792,
+    "Y": 391840,
+    "Z": 1984,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P01-C1",
+   "why": "qf07_patrols_bwgan_hunters_ne_shore point 6: navmesh ground at zone 7 local 27800,23600",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000136",
+    "PathID": "qf07_patrols_bwgan_hunters_ne_shore",
+    "Step": 6,
+    "X": 445592,
+    "Y": 392240,
+    "Z": 2100,
+    "MaxSpeed": 150,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P01-C1",
+   "why": "every bwgan hunter only drifted (roam 200); Allakhazam kill task 406 (Aug 17 2002): 'at the northeast shore just past the Legendary Afanc as a pair of bwgans spawn midway up the hill that will then walk down to the shore and then west to the bwgan camp and back': one pair of the hunters from the north-shore camp now starts on the hill east of the Afanc (Llyn Barfog 40000,22500), walks down to the shore and west along it to the bwgan camp (27800,23600) and back; bwgan hunter walks qf07_patrols_bwgan_hunters_ne_shore from its first point (was 445122,392530)",
+   "kind": "add_edit",
+   "file": "add-restoredspawns165.json",
+   "id": "a932e54f-3250-4c0d-8709-827cb2f9c0ff",
+   "set": {
+    "PathID": "qf07_patrols_bwgan_hunters_ne_shore",
+    "RoamingRange": 0,
+    "X": 457792,
+    "Y": 391140,
+    "Z": 3024
+   }
+  },
+  {
+   "finding": "P01-C1",
+   "why": "bwgan hunter walks with bwgan hunter (QuestFellowBrain + classic-quests Fellows, as Fjall's fellows), starting beside the leader's spawn",
+   "kind": "add_edit",
+   "file": "add-restoredspawns165.json",
+   "id": "87436a0c-fc3c-446b-98fa-10743079bb0c",
+   "set": {
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "RoamingRange": 0,
+    "X": 457882,
+    "Y": 391140,
+    "Z": 3058
+   }
+  },
+  {
+   "finding": "P01-C1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "87436a0c-fc3c-446b-98fa-10743079bb0c"
+   ],
+   "value": "bwgan hunter",
+   "why": "bwgan hunter (87436a0c-fc3c-446b-98fa-10743079bb0c) is a fellow of bwgan hunter"
+  },
+  {
+   "finding": "P01-C2",
+   "why": "Jolis stood still (Avalon Isle 11429,52936); Allakhazam 679 'Talk to Jolis, a guard that patrols Wearyall Village. He doesn't get too far from the buildings'; CapnBry radar saw him at 11474,51021: a slow loop round Wearyall's buildings through that spot (patrol path, 8 points, 13422 units, loop)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000019",
+    "PathID": "qf07_patrols_jolis_wearyall",
+    "RegionID": 51,
+    "PathType": 3
+   }
+  },
+  {
+   "finding": "P01-C2",
+   "why": "qf07_patrols_jolis_wearyall point 1: navmesh ground at zone 52 local 11429,52936",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000137",
+    "PathID": "qf07_patrols_jolis_wearyall",
+    "Step": 1,
+    "X": 437413,
+    "Y": 495304,
+    "Z": 3091,
+    "MaxSpeed": 110,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P01-C2",
+   "why": "qf07_patrols_jolis_wearyall point 2: navmesh ground at zone 52 local 12300,52200",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000138",
+    "PathID": "qf07_patrols_jolis_wearyall",
+    "Step": 2,
+    "X": 438284,
+    "Y": 494568,
+    "Z": 3091,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P01-C2",
+   "why": "qf07_patrols_jolis_wearyall point 3: navmesh ground at zone 52 local 11474,51021",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000139",
+    "PathID": "qf07_patrols_jolis_wearyall",
+    "Step": 3,
+    "X": 437458,
+    "Y": 493389,
+    "Z": 3091,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P01-C2",
+   "why": "qf07_patrols_jolis_wearyall point 4: navmesh ground at zone 52 local 11000,49700",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000140",
+    "PathID": "qf07_patrols_jolis_wearyall",
+    "Step": 4,
+    "X": 436984,
+    "Y": 492068,
+    "Z": 3053,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P01-C2",
+   "why": "qf07_patrols_jolis_wearyall point 5: navmesh ground at zone 52 local 9500,49700",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000141",
+    "PathID": "qf07_patrols_jolis_wearyall",
+    "Step": 5,
+    "X": 435484,
+    "Y": 492068,
+    "Z": 3089,
+    "MaxSpeed": 110,
+    "WaitTime": 150
+   }
+  },
+  {
+   "finding": "P01-C2",
+   "why": "qf07_patrols_jolis_wearyall point 6: navmesh ground at zone 52 local 8200,51000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000142",
+    "PathID": "qf07_patrols_jolis_wearyall",
+    "Step": 6,
+    "X": 434184,
+    "Y": 493368,
+    "Z": 3091,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P01-C2",
+   "why": "qf07_patrols_jolis_wearyall point 7: navmesh ground at zone 52 local 7900,53300",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000143",
+    "PathID": "qf07_patrols_jolis_wearyall",
+    "Step": 7,
+    "X": 433884,
+    "Y": 495668,
+    "Z": 3091,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P01-C2",
+   "why": "qf07_patrols_jolis_wearyall point 8: navmesh ground at zone 52 local 10200,53700",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000144",
+    "PathID": "qf07_patrols_jolis_wearyall",
+    "Step": 8,
+    "X": 436184,
+    "Y": 496068,
+    "Z": 3124,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P01-C2",
+   "why": "Jolis stood still (Avalon Isle 11429,52936); Allakhazam 679 'Talk to Jolis, a guard that patrols Wearyall Village. He doesn't get too far from the buildings'; CapnBry radar saw him at 11474,51021: a slow loop round Wearyall's buildings through that spot; Jolis walks qf07_patrols_jolis_wearyall",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_jolis_wearyall",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "e59565a9-193e-438d-8423-ae3058e17953"
+   }
+  },
+  {
+   "finding": "P03-C3",
+   "why": "Sergeant Grum stood still (Camelot Hills 36392,52761, just south of the Salisbury bridge); Allakhazam 72 'He can be found south of the bridge patrolling the area, and doesn't stop long to be disturbed': a short loop south of the bridge with short stops (patrol path, 5 points, 5660 units, loop)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000020",
+    "PathID": "qf07_patrols_grum_south_of_bridge",
+    "RegionID": 1,
+    "PathType": 3
+   }
+  },
+  {
+   "finding": "P03-C3",
+   "why": "qf07_patrols_grum_south_of_bridge point 1: navmesh ground at zone 0 local 36392,52761",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000145",
+    "PathID": "qf07_patrols_grum_south_of_bridge",
+    "Step": 1,
+    "X": 585256,
+    "Y": 536089,
+    "Z": 2076,
+    "MaxSpeed": 130,
+    "WaitTime": 100
+   }
+  },
+  {
+   "finding": "P03-C3",
+   "why": "qf07_patrols_grum_south_of_bridge point 2: navmesh ground at zone 0 local 37800,52600",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000146",
+    "PathID": "qf07_patrols_grum_south_of_bridge",
+    "Step": 2,
+    "X": 586664,
+    "Y": 535928,
+    "Z": 2274,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P03-C3",
+   "why": "qf07_patrols_grum_south_of_bridge point 3: navmesh ground at zone 0 local 37600,53800",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000147",
+    "PathID": "qf07_patrols_grum_south_of_bridge",
+    "Step": 3,
+    "X": 586464,
+    "Y": 537128,
+    "Z": 2226,
+    "MaxSpeed": 130,
+    "WaitTime": 50
+   }
+  },
+  {
+   "finding": "P03-C3",
+   "why": "qf07_patrols_grum_south_of_bridge point 4: navmesh ground at zone 0 local 36200,53900",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000148",
+    "PathID": "qf07_patrols_grum_south_of_bridge",
+    "Step": 4,
+    "X": 585064,
+    "Y": 537228,
+    "Z": 2123,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P03-C3",
+   "why": "qf07_patrols_grum_south_of_bridge point 5: navmesh ground at zone 0 local 35800,53000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000149",
+    "PathID": "qf07_patrols_grum_south_of_bridge",
+    "Step": 5,
+    "X": 584664,
+    "Y": 536328,
+    "Z": 2151,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P03-C3",
+   "why": "Sergeant Grum stood still (Camelot Hills 36392,52761, just south of the Salisbury bridge); Allakhazam 72 'He can be found south of the bridge patrolling the area, and doesn't stop long to be disturbed': a short loop south of the bridge with short stops; Sergeant Grum walks qf07_patrols_grum_south_of_bridge",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_grum_south_of_bridge",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "ccc5bd7f-b596-4a15-92b3-c7b5f720911a"
+   }
+  },
+  {
+   "finding": "P04-C2",
+   "why": "Gronyr Gloyw stood still on the road (Camelot Hills 25307,42773); walkthrough 15 'Gronyr wanders, sometimes he is in Prydwen Keep to the left of the entrance, sometimes on the road by the Camelot stone, and third place is next to the rock next to the stables at the farm'; CapnBry radar saw him at 24872,46893 / 26027,42769 / 27646,33683 / 30192,32390: a slow walk through those spots with two-minute stops at the keep, the road stone and the farm (patrol path, 5 points, 16367 units, there and back)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000021",
+    "PathID": "qf07_patrols_gronyr_prydwen_roads",
+    "RegionID": 1,
+    "PathType": 2
+   }
+  },
+  {
+   "finding": "P04-C2",
+   "why": "qf07_patrols_gronyr_prydwen_roads point 1: navmesh ground at zone 0 local 24872,46893",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000150",
+    "PathID": "qf07_patrols_gronyr_prydwen_roads",
+    "Step": 1,
+    "X": 573736,
+    "Y": 530221,
+    "Z": 2902,
+    "MaxSpeed": 110,
+    "WaitTime": 1200
+   }
+  },
+  {
+   "finding": "P04-C2",
+   "why": "qf07_patrols_gronyr_prydwen_roads point 2: navmesh ground at zone 0 local 26027,42769",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000151",
+    "PathID": "qf07_patrols_gronyr_prydwen_roads",
+    "Step": 2,
+    "X": 574891,
+    "Y": 526097,
+    "Z": 2075,
+    "MaxSpeed": 110,
+    "WaitTime": 1200
+   }
+  },
+  {
+   "finding": "P04-C2",
+   "why": "qf07_patrols_gronyr_prydwen_roads point 3: navmesh ground at zone 0 local 26836,38226",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000152",
+    "PathID": "qf07_patrols_gronyr_prydwen_roads",
+    "Step": 3,
+    "X": 575700,
+    "Y": 521554,
+    "Z": 2074,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C2",
+   "why": "qf07_patrols_gronyr_prydwen_roads point 4: navmesh ground at zone 0 local 27646,33683",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000153",
+    "PathID": "qf07_patrols_gronyr_prydwen_roads",
+    "Step": 4,
+    "X": 576510,
+    "Y": 517011,
+    "Z": 2078,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C2",
+   "why": "qf07_patrols_gronyr_prydwen_roads point 5: navmesh ground at zone 0 local 30192,32390",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000154",
+    "PathID": "qf07_patrols_gronyr_prydwen_roads",
+    "Step": 5,
+    "X": 579056,
+    "Y": 515718,
+    "Z": 2164,
+    "MaxSpeed": 110,
+    "WaitTime": 1200
+   }
+  },
+  {
+   "finding": "P04-C2",
+   "why": "Gronyr Gloyw stood still on the road (Camelot Hills 25307,42773); walkthrough 15 'Gronyr wanders, sometimes he is in Prydwen Keep to the left of the entrance, sometimes on the road by the Camelot stone, and third place is next to the rock next to the stables at the farm'; CapnBry radar saw him at 24872,46893 / 26027,42769 / 27646,33683 / 30192,32390: a slow walk through those spots with two-minute stops at the keep, the road stone and the farm; Gronyr Gloyw walks qf07_patrols_gronyr_prydwen_roads from its first point (was 574171,526101)",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_gronyr_prydwen_roads",
+    "RoamingRange": 0,
+    "X": 573736,
+    "Y": 530221,
+    "Z": 2902
+   },
+   "where": {
+    "Mob_ID": "cc238668-f5ce-40d6-a51d-0f01a98fb94b"
+   }
+  },
+  {
+   "finding": "P04-C3",
+   "why": "Thrurin the Dyemaster stood still (Camelot Hills 3939,6534); walkthrough 128 'Thrurin wanders the woods along the road that connects Camelot to Ludlow ... you need to check both sides of the road', our step text the same; CapnBry radar saw him at 3904,7593 and 721,9466 (south of the road) and Black Mtns South 63965,54157 (north of it): a slow loop through the woods on both sides of the road through those spots (patrol path, 8 points, 24149 units, loop)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000022",
+    "PathID": "qf07_patrols_thrurin_ludlow_road_woods",
+    "RegionID": 1,
+    "PathType": 3
+   }
+  },
+  {
+   "finding": "P04-C3",
+   "why": "qf07_patrols_thrurin_ludlow_road_woods point 1: navmesh ground at zone 0 local 3939,6534",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000155",
+    "PathID": "qf07_patrols_thrurin_ludlow_road_woods",
+    "Step": 1,
+    "X": 552803,
+    "Y": 489862,
+    "Z": 2176,
+    "MaxSpeed": 110,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P04-C3",
+   "why": "qf07_patrols_thrurin_ludlow_road_woods point 2: navmesh ground at zone 0 local 6500,5800",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000156",
+    "PathID": "qf07_patrols_thrurin_ludlow_road_woods",
+    "Step": 2,
+    "X": 555364,
+    "Y": 489128,
+    "Z": 2353,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C3",
+   "why": "qf07_patrols_thrurin_ludlow_road_woods point 3: navmesh ground at zone 0 local 7000,8300",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000157",
+    "PathID": "qf07_patrols_thrurin_ludlow_road_woods",
+    "Step": 3,
+    "X": 555864,
+    "Y": 491628,
+    "Z": 2314,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C3",
+   "why": "qf07_patrols_thrurin_ludlow_road_woods point 4: navmesh ground at zone 0 local 3904,7593",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000158",
+    "PathID": "qf07_patrols_thrurin_ludlow_road_woods",
+    "Step": 4,
+    "X": 552768,
+    "Y": 490921,
+    "Z": 2215,
+    "MaxSpeed": 110,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P04-C3",
+   "why": "qf07_patrols_thrurin_ludlow_road_woods point 5: navmesh ground at zone 0 local 721,9466",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000159",
+    "PathID": "qf07_patrols_thrurin_ludlow_road_woods",
+    "Step": 5,
+    "X": 549585,
+    "Y": 492794,
+    "Z": 2223,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C3",
+   "why": "qf07_patrols_thrurin_ludlow_road_woods point 6: navmesh ground at zone 0 local -1600,8800",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000160",
+    "PathID": "qf07_patrols_thrurin_ludlow_road_woods",
+    "Step": 6,
+    "X": 547264,
+    "Y": 492128,
+    "Z": 2113,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C3",
+   "why": "qf07_patrols_thrurin_ludlow_road_woods point 7: navmesh ground at zone 0 local -1571,5005",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000161",
+    "PathID": "qf07_patrols_thrurin_ludlow_road_woods",
+    "Step": 7,
+    "X": 547293,
+    "Y": 488333,
+    "Z": 2155,
+    "MaxSpeed": 110,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P04-C3",
+   "why": "qf07_patrols_thrurin_ludlow_road_woods point 8: navmesh ground at zone 0 local 1500,5200",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000162",
+    "PathID": "qf07_patrols_thrurin_ludlow_road_woods",
+    "Step": 8,
+    "X": 550364,
+    "Y": 488528,
+    "Z": 2218,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C3",
+   "why": "Thrurin the Dyemaster stood still (Camelot Hills 3939,6534); walkthrough 128 'Thrurin wanders the woods along the road that connects Camelot to Ludlow ... you need to check both sides of the road', our step text the same; CapnBry radar saw him at 3904,7593 and 721,9466 (south of the road) and Black Mtns South 63965,54157 (north of it): a slow loop through the woods on both sides of the road through those spots; Thrurin the Dyemaster walks qf07_patrols_thrurin_ludlow_road_woods",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_thrurin_ludlow_road_woods",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "c20d1e37-c2f7-4d0e-b1ad-4431fd152cb4"
+   }
+  },
+  {
+   "finding": "P04-C8",
+   "why": "Gwulin stood still (Camelot Hills 39403,61063); walkthrough 155 'roams near the road that runs from the Camelot Hills bridge to the Salisbury Plains'; CapnBry radar saw him at 15 spots along that road (37563,57585 / 38204,59649 / 40053,60101 / 42124,60962 / 42056,62588 / 38316,63248 / 39324,65508 / Salisbury 40458,1858 / 42484,84): a loop through those spots (patrol path, 10 points, 24295 units, loop)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000023",
+    "PathID": "qf07_patrols_gwulin_bridge_road",
+    "RegionID": 1,
+    "PathType": 3
+   }
+  },
+  {
+   "finding": "P04-C8",
+   "why": "qf07_patrols_gwulin_bridge_road point 1: navmesh ground at zone 0 local 39403,61063",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000163",
+    "PathID": "qf07_patrols_gwulin_bridge_road",
+    "Step": 1,
+    "X": 588267,
+    "Y": 544391,
+    "Z": 2174,
+    "MaxSpeed": 130,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P04-C8",
+   "why": "qf07_patrols_gwulin_bridge_road point 2: navmesh ground at zone 0 local 38204,59649",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000164",
+    "PathID": "qf07_patrols_gwulin_bridge_road",
+    "Step": 2,
+    "X": 587068,
+    "Y": 542977,
+    "Z": 2337,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C8",
+   "why": "qf07_patrols_gwulin_bridge_road point 3: navmesh ground at zone 0 local 37563,57585",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000165",
+    "PathID": "qf07_patrols_gwulin_bridge_road",
+    "Step": 3,
+    "X": 586427,
+    "Y": 540913,
+    "Z": 2255,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C8",
+   "why": "qf07_patrols_gwulin_bridge_road point 4: navmesh ground at zone 0 local 40053,60101",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000166",
+    "PathID": "qf07_patrols_gwulin_bridge_road",
+    "Step": 4,
+    "X": 588917,
+    "Y": 543429,
+    "Z": 2283,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C8",
+   "why": "qf07_patrols_gwulin_bridge_road point 5: navmesh ground at zone 0 local 42124,60962",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000167",
+    "PathID": "qf07_patrols_gwulin_bridge_road",
+    "Step": 5,
+    "X": 590988,
+    "Y": 544290,
+    "Z": 2348,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C8",
+   "why": "qf07_patrols_gwulin_bridge_road point 6: navmesh ground at zone 0 local 42056,62588",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000168",
+    "PathID": "qf07_patrols_gwulin_bridge_road",
+    "Step": 6,
+    "X": 590920,
+    "Y": 545916,
+    "Z": 2295,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C8",
+   "why": "qf07_patrols_gwulin_bridge_road point 7: navmesh ground at zone 0 local 42484,65620",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000169",
+    "PathID": "qf07_patrols_gwulin_bridge_road",
+    "Step": 7,
+    "X": 591348,
+    "Y": 548948,
+    "Z": 2665,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C8",
+   "why": "qf07_patrols_gwulin_bridge_road point 8: navmesh ground at zone 0 local 40458,67394",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000170",
+    "PathID": "qf07_patrols_gwulin_bridge_road",
+    "Step": 8,
+    "X": 589322,
+    "Y": 550722,
+    "Z": 2461,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C8",
+   "why": "qf07_patrols_gwulin_bridge_road point 9: navmesh ground at zone 0 local 39324,65508",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000171",
+    "PathID": "qf07_patrols_gwulin_bridge_road",
+    "Step": 9,
+    "X": 588188,
+    "Y": 548836,
+    "Z": 2127,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C8",
+   "why": "qf07_patrols_gwulin_bridge_road point 10: navmesh ground at zone 0 local 38316,63248",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000172",
+    "PathID": "qf07_patrols_gwulin_bridge_road",
+    "Step": 10,
+    "X": 587180,
+    "Y": 546576,
+    "Z": 2102,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C8",
+   "why": "Gwulin stood still (Camelot Hills 39403,61063); walkthrough 155 'roams near the road that runs from the Camelot Hills bridge to the Salisbury Plains'; CapnBry radar saw him at 15 spots along that road (37563,57585 / 38204,59649 / 40053,60101 / 42124,60962 / 42056,62588 / 38316,63248 / 39324,65508 / Salisbury 40458,1858 / 42484,84): a loop through those spots; Gwulin walks qf07_patrols_gwulin_bridge_road",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_gwulin_bridge_road",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "0ac01619-4e05-5161-a1cc-92d4ca85daa7"
+   }
+  },
+  {
+   "finding": "P04-C9",
+   "why": "Squire Graid stood still at the stone (Salisbury Plains 5183,31498); walkthrough 112 'the squire has an annoying tendency to walk away on his patrol': a short loop round the stone with a three-minute stop at it (patrol path, 5 points, 4676 units, loop)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000024",
+    "PathID": "qf07_patrols_graid_salisbury_stone",
+    "RegionID": 1,
+    "PathType": 3
+   }
+  },
+  {
+   "finding": "P04-C9",
+   "why": "qf07_patrols_graid_salisbury_stone point 1: navmesh ground at zone 1 local 5183,31498",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000173",
+    "PathID": "qf07_patrols_graid_salisbury_stone",
+    "Step": 1,
+    "X": 554047,
+    "Y": 580362,
+    "Z": 2268,
+    "MaxSpeed": 110,
+    "WaitTime": 1800
+   }
+  },
+  {
+   "finding": "P04-C9",
+   "why": "qf07_patrols_graid_salisbury_stone point 2: navmesh ground at zone 1 local 5900,31000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000174",
+    "PathID": "qf07_patrols_graid_salisbury_stone",
+    "Step": 2,
+    "X": 554764,
+    "Y": 579864,
+    "Z": 2301,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C9",
+   "why": "qf07_patrols_graid_salisbury_stone point 3: navmesh ground at zone 1 local 6100,32100",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000175",
+    "PathID": "qf07_patrols_graid_salisbury_stone",
+    "Step": 3,
+    "X": 554964,
+    "Y": 580964,
+    "Z": 2336,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C9",
+   "why": "qf07_patrols_graid_salisbury_stone point 4: navmesh ground at zone 1 local 5300,32500",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000176",
+    "PathID": "qf07_patrols_graid_salisbury_stone",
+    "Step": 4,
+    "X": 554164,
+    "Y": 581364,
+    "Z": 2275,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C9",
+   "why": "qf07_patrols_graid_salisbury_stone point 5: navmesh ground at zone 1 local 4500,32000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000177",
+    "PathID": "qf07_patrols_graid_salisbury_stone",
+    "Step": 5,
+    "X": 553364,
+    "Y": 580864,
+    "Z": 2293,
+    "MaxSpeed": 110,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P04-C9",
+   "why": "Squire Graid stood still at the stone (Salisbury Plains 5183,31498); walkthrough 112 'the squire has an annoying tendency to walk away on his patrol': a short loop round the stone with a three-minute stop at it; Squire Graid walks qf07_patrols_graid_salisbury_stone",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_graid_salisbury_stone",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "f794d556-e54a-45b4-b85f-f70d4470b4d7"
+   }
+  }
+ ]
+}

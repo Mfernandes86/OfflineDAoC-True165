@@ -1,0 +1,311 @@
+{
+ "table": "Path",
+ "key": "Path_ID",
+ "reason": "True 1.65 0.7 questfix07: Path rows for the 0.7 quest audit fixes (written by questfix07/build_questfix07_165.py from the fixer fragments)",
+ "rows": [
+  {
+   "Path_ID": "00070305-0000-4000-8000-000000000001",
+   "PathID": "qf07_part03_mad_sprite_dead_oak",
+   "RegionID": 200,
+   "PathType": 3,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P03-C4 part03"
+  },
+  {
+   "Path_ID": "00070405-0000-4000-8000-000000000001",
+   "PathID": "qf07_part04_skirr_warlord_room",
+   "RegionID": 129,
+   "PathType": 2,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P04-C6 part04"
+  },
+  {
+   "Path_ID": "00070405-0000-4000-8000-000000000002",
+   "PathID": "qf07_part04_golga_to_saydyn",
+   "RegionID": 100,
+   "PathType": 1,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P04-E3 part04"
+  },
+  {
+   "Path_ID": "00070905-0000-4000-8000-000000000001",
+   "PathID": "qf07_part09_cadoc_river",
+   "RegionID": 200,
+   "PathType": 2,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P09-C1 part09"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000016",
+   "PathID": "qf07_patrols_urfgrat_ogre_goblin_camps",
+   "RegionID": 1,
+   "PathType": 2,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P05-C1 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000017",
+   "PathID": "qf07_patrols_mulgrut_cemetery_hill",
+   "RegionID": 1,
+   "PathType": 2,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P03-C2 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000018",
+   "PathID": "qf07_patrols_bwgan_hunters_ne_shore",
+   "RegionID": 1,
+   "PathType": 2,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P01-C1 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000019",
+   "PathID": "qf07_patrols_jolis_wearyall",
+   "RegionID": 51,
+   "PathType": 3,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P01-C2 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000020",
+   "PathID": "qf07_patrols_grum_south_of_bridge",
+   "RegionID": 1,
+   "PathType": 3,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P03-C3 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000021",
+   "PathID": "qf07_patrols_gronyr_prydwen_roads",
+   "RegionID": 1,
+   "PathType": 2,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P04-C2 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000022",
+   "PathID": "qf07_patrols_thrurin_ludlow_road_woods",
+   "RegionID": 1,
+   "PathType": 3,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P04-C3 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000023",
+   "PathID": "qf07_patrols_gwulin_bridge_road",
+   "RegionID": 1,
+   "PathType": 3,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P04-C8 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000024",
+   "PathID": "qf07_patrols_graid_salisbury_stone",
+   "RegionID": 1,
+   "PathType": 3,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P04-C9 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000025",
+   "PathID": "qf07_patrols_achaius_tirnambeo_magmell",
+   "RegionID": 200,
+   "PathType": 2,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P02-C1 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000026",
+   "PathID": "qf07_patrols_tracker_silvermine_hills",
+   "RegionID": 200,
+   "PathType": 2,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P02-C2 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000027",
+   "PathID": "qf07_patrols_fearan_bri_leith_crest",
+   "RegionID": 200,
+   "PathType": 2,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P02-C3 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000028",
+   "PathID": "qf07_patrols_wug_stone_circle",
+   "RegionID": 200,
+   "PathType": 3,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P10-C2 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000029",
+   "PathID": "qf07_patrols_aoife_moher_wander",
+   "RegionID": 200,
+   "PathType": 3,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P10-C4 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000030",
+   "PathID": "qf07_patrols_ceard_moher_wander",
+   "RegionID": 200,
+   "PathType": 3,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P10-C3 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000031",
+   "PathID": "qf07_patrols_rioldna_bog_water",
+   "RegionID": 200,
+   "PathType": 3,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P06-C1 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000032",
+   "PathID": "qf07_patrols_nasco_shannon_wander",
+   "RegionID": 200,
+   "PathType": 3,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P06-C2 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000033",
+   "PathID": "qf07_patrols_cronicorn_siabra_camp_water",
+   "RegionID": 200,
+   "PathType": 2,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P06-C3 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000034",
+   "PathID": "qf07_patrols_duana_edan_tower",
+   "RegionID": 200,
+   "PathType": 3,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P06-C6 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000001",
+   "PathID": "qf07_patrols_svartmoln_vasudheim_bridge",
+   "RegionID": 100,
+   "PathType": 2,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P04-C1 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000002",
+   "PathID": "qf07_patrols_ugnof_huginfel_ring",
+   "RegionID": 100,
+   "PathType": 3,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P10-C1 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000003",
+   "PathID": "qf07_patrols_fridgeir_blodfelag_fort",
+   "RegionID": 100,
+   "PathType": 3,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P03-C1 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000004",
+   "PathID": "qf07_patrols_rathis_vendo_warband",
+   "RegionID": 100,
+   "PathType": 3,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P08-C2 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000005",
+   "PathID": "qf07_patrols_prugor_vendo_camps",
+   "RegionID": 100,
+   "PathType": 2,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P08-C3 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000006",
+   "PathID": "qf07_patrols_darksong_ghost_wander",
+   "RegionID": 100,
+   "PathType": 3,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P07-C1 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000007",
+   "PathID": "qf07_patrols_kobold_dirge_dvalin_roads",
+   "RegionID": 100,
+   "PathType": 3,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P07-C2 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000008",
+   "PathID": "qf07_patrols_arakane_myrkwood_wander",
+   "RegionID": 100,
+   "PathType": 3,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P07-C3 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000009",
+   "PathID": "qf07_patrols_albion_leader_camp",
+   "RegionID": 100,
+   "PathType": 3,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P07-C4 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000010",
+   "PathID": "qf07_patrols_hrrgyf_df_hill",
+   "RegionID": 100,
+   "PathType": 3,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P04-C4 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000011",
+   "PathID": "qf07_patrols_leildolf_skona_beach",
+   "RegionID": 100,
+   "PathType": 2,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P04-C5 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000012",
+   "PathID": "qf07_patrols_damekia_gripklosa",
+   "RegionID": 151,
+   "PathType": 2,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P10-C5 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000013",
+   "PathID": "qf07_patrols_rollo_mularn_hills",
+   "RegionID": 100,
+   "PathType": 2,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P10-C5 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000014",
+   "PathID": "qf07_patrols_big_paw_skona",
+   "RegionID": 100,
+   "PathType": 2,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P10-C5 patrols"
+  },
+  {
+   "Path_ID": "00071105-0000-4000-8000-000000000015",
+   "PathID": "qf07_patrols_gokstad_muspelheim_pass",
+   "RegionID": 100,
+   "PathType": 2,
+   "LastTimeRowUpdated": "2026-11-11 00:00:00",
+   "_qf07": "P04-C7 patrols"
+  }
+ ]
+}

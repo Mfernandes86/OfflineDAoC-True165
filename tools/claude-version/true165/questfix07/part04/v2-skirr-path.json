@@ -1,0 +1,94 @@
+{
+ "fixer": "part04",
+ "about": "v2: C6 Skirr patrols the Warlord's room through his CapnBry spots",
+ "entries": [
+  {
+   "finding": "P04-C6",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00070405-0000-4000-8000-000000000001",
+    "PathID": "qf07_part04_skirr_warlord_room",
+    "RegionID": 129,
+    "PathType": 2
+   },
+   "why": "Skirr only drifted at roam 300 around his spawn; walkthrough 509 'He patrols around the Warlord's room' and CapnBry saw him at three spots 540-770 south of the spawn, in one line on the same floor (z 15926-15940): a there-and-back patrol from the spawn through the three radar spots"
+  },
+  {
+   "finding": "P04-C6",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070406-0000-4000-8000-000000000001",
+    "PathID": "qf07_part04_skirr_warlord_room",
+    "Step": 1,
+    "X": 29053,
+    "Y": 38203,
+    "Z": 15934,
+    "MaxSpeed": 150,
+    "WaitTime": 300
+   },
+   "why": "qf07_part04_skirr_warlord_room point 1: Skirr's spawn (zone 129)"
+  },
+  {
+   "finding": "P04-C6",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070406-0000-4000-8000-000000000002",
+    "PathID": "qf07_part04_skirr_warlord_room",
+    "Step": 2,
+    "X": 28994,
+    "Y": 37667,
+    "Z": 15926,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part04_skirr_warlord_room point 2: CapnBry sighting 20802,29475 (zone 129)"
+  },
+  {
+   "finding": "P04-C6",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070406-0000-4000-8000-000000000003",
+    "PathID": "qf07_part04_skirr_warlord_room",
+    "Step": 3,
+    "X": 28951,
+    "Y": 37531,
+    "Z": 15940,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part04_skirr_warlord_room point 3: CapnBry sighting 20759,29339 (zone 129)"
+  },
+  {
+   "finding": "P04-C6",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070406-0000-4000-8000-000000000004",
+    "PathID": "qf07_part04_skirr_warlord_room",
+    "Step": 4,
+    "X": 29008,
+    "Y": 37431,
+    "Z": 15932,
+    "MaxSpeed": 150,
+    "WaitTime": 300
+   },
+   "why": "qf07_part04_skirr_warlord_room point 4: CapnBry sighting 20816,29239 (zone 129)"
+  },
+  {
+   "finding": "P04-C6",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_part04_skirr_warlord_room"
+   },
+   "where": {
+    "Mob_ID": "269b4890-8f37-4a2d-b721-c0a26ffd9132"
+   },
+   "why": "Skirr walks the Warlord's-room patrol through his three CapnBry radar spots (a PathID overrides the roam radius: NpcMovementComponent.CanRoam)"
+  }
+ ]
+}

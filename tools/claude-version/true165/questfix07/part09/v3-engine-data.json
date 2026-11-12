@@ -1,0 +1,1248 @@
+{
+ "fixer": "part09",
+ "about": "part09 v3: engine-feature data (Dark Places of the Soul mid-quest rewards at the period steps with class versions; Cadoc walks the Cursed Forest river with his steeds)",
+ "entries": [
+  {
+   "finding": "P09-D7",
+   "kind": "row",
+   "table": "ItemTemplate",
+   "row": {
+    "Id_nb": "qf07_part09_herbalist_s_vest_of_health",
+    "TranslationId": null,
+    "Name": "Herbalist's Vest of Health",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "Level": 50,
+    "Durability": 50000,
+    "MaxDurability": 50000,
+    "IsNotLosingDur": 0,
+    "Condition": 50000,
+    "MaxCondition": 50000,
+    "Quality": 100,
+    "DPS_AF": 100,
+    "SPD_ABS": 19,
+    "Hand": 0,
+    "Type_Damage": 0,
+    "Object_Type": 34,
+    "Item_Type": 25,
+    "Color": 0,
+    "Emblem": 0,
+    "Effect": 0,
+    "Weight": 55,
+    "SalvageExtension": null,
+    "Model": 290,
+    "Extension": 0,
+    "Bonus": 30,
+    "Bonus1": 7,
+    "Bonus2": 7,
+    "Bonus3": 10,
+    "Bonus4": 10,
+    "Bonus5": 0,
+    "Bonus6": 0,
+    "Bonus7": 0,
+    "Bonus8": 0,
+    "Bonus9": 0,
+    "Bonus10": 0,
+    "ExtraBonus": 0,
+    "Bonus1Type": 3,
+    "Bonus2Type": 2,
+    "Bonus3Type": 16,
+    "Bonus4Type": 18,
+    "Bonus5Type": 0,
+    "Bonus6Type": 0,
+    "Bonus7Type": 0,
+    "Bonus8Type": 0,
+    "Bonus9Type": 0,
+    "Bonus10Type": 0,
+    "ExtraBonusType": 0,
+    "CanUseEvery": 0,
+    "SpellID": 0,
+    "Charges": 0,
+    "MaxCharges": 0,
+    "SpellID1": 0,
+    "Charges1": 0,
+    "MaxCharges1": 0,
+    "ProcChance": 0,
+    "ProcSpellID": 0,
+    "ProcSpellID1": 0,
+    "PoisonSpellID": 0,
+    "PoisonCharges": 0,
+    "PoisonMaxCharges": 0,
+    "IsPickable": 1,
+    "IsDropable": 1,
+    "CanDropAsLoot": 0,
+    "IsTradable": 1,
+    "Price": 15000,
+    "MaxCount": 1,
+    "IsIndestructible": 0,
+    "PackSize": 1,
+    "Realm": 2,
+    "AllowedClasses": "0",
+    "Flags": 0,
+    "BonusLevel": 0,
+    "LevelRequirement": 0,
+    "PackageID": "ClassicQuest",
+    "Description": "Classic quest reward (Dark Places of the Soul)",
+    "ClassType": null,
+    "SalvageYieldID": 0,
+    "ItemTemplate_ID": "bdc17052-6d11-5b68-9de9-aee9a8ce0eb7"
+   },
+   "source": "Allakhazam item citem=6126 'Herbalist's Vest of Health' (Wayback capture 2003-04-28, period-data/archive/wayback-allakhazam/period_items.jsonl.gz): Studded torso, AF 100, Absorb 19, Constitution 7, Dexterity 7, Matter Resist 10%, Spirit Resist 10%, Default Bonus 30%, Quality 100%, 5.50 lbs, Level to Attain 50 (the live page names Berserker, Hunter, Savage); listed with the rewards of Allakhazam quest 713 'Dark Places of the Soul'; 3D model borrowed (no period page records models)",
+   "why": "class version of the Herbalist's Hauberk of Ivy (Dark Places of the Soul step 17 reward) that did not exist; built from its period item page (stats, AF, absorb, level, bonus %, weight); price 15000 (level 50 of the price table)"
+  },
+  {
+   "finding": "P09-D7",
+   "kind": "row",
+   "table": "ItemTemplate",
+   "row": {
+    "Id_nb": "qf07_part09_herbalist_jerkin_of_night",
+    "TranslationId": null,
+    "Name": "Herbalist Jerkin of Night",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "Level": 49,
+    "Durability": 50000,
+    "MaxDurability": 50000,
+    "IsNotLosingDur": 0,
+    "Condition": 50000,
+    "MaxCondition": 50000,
+    "Quality": 100,
+    "DPS_AF": 90,
+    "SPD_ABS": 10,
+    "Hand": 0,
+    "Type_Damage": 0,
+    "Object_Type": 33,
+    "Item_Type": 25,
+    "Color": 0,
+    "Emblem": 0,
+    "Effect": 0,
+    "Weight": 35,
+    "SalvageExtension": null,
+    "Model": 280,
+    "Extension": 0,
+    "Bonus": 35,
+    "Bonus1": 3,
+    "Bonus2": 3,
+    "Bonus3": 3,
+    "Bonus4": 3,
+    "Bonus5": 0,
+    "Bonus6": 0,
+    "Bonus7": 0,
+    "Bonus8": 0,
+    "Bonus9": 0,
+    "Bonus10": 0,
+    "ExtraBonus": 0,
+    "Bonus1Type": 3,
+    "Bonus2Type": 23,
+    "Bonus3Type": 31,
+    "Bonus4Type": 49,
+    "Bonus5Type": 0,
+    "Bonus6Type": 0,
+    "Bonus7Type": 0,
+    "Bonus8Type": 0,
+    "Bonus9Type": 0,
+    "Bonus10Type": 0,
+    "ExtraBonusType": 0,
+    "CanUseEvery": 0,
+    "SpellID": 0,
+    "Charges": 0,
+    "MaxCharges": 0,
+    "SpellID1": 0,
+    "Charges1": 0,
+    "MaxCharges1": 0,
+    "ProcChance": 0,
+    "ProcSpellID": 0,
+    "ProcSpellID1": 0,
+    "PoisonSpellID": 0,
+    "PoisonCharges": 0,
+    "PoisonMaxCharges": 0,
+    "IsPickable": 1,
+    "IsDropable": 1,
+    "CanDropAsLoot": 0,
+    "IsTradable": 1,
+    "Price": 15000,
+    "MaxCount": 1,
+    "IsIndestructible": 0,
+    "PackSize": 1,
+    "Realm": 2,
+    "AllowedClasses": "0",
+    "Flags": 0,
+    "BonusLevel": 0,
+    "LevelRequirement": 0,
+    "PackageID": "ClassicQuest",
+    "Description": "Classic quest reward (Dark Places of the Soul)",
+    "ClassType": null,
+    "SalvageYieldID": 0,
+    "ItemTemplate_ID": "093d1d7e-df03-5e2c-88fa-dec0af71f56c"
+   },
+   "source": "Allakhazam item citem=6317 'Herbalist Jerkin of Night' (Wayback capture 2003-06-18, period-data/archive/wayback-allakhazam/period_items.jsonl.gz): Leather torso, AF 90, Absorb 10, Constitution 3, Critical Strikes +3, Envenom +3, Stealth +3, Default Bonus 35%, Quality 100%, 3.50 lbs, Level to Attain 49; listed with the rewards of Allakhazam quest 713 'Dark Places of the Soul'; 3D model borrowed (no period page records models)",
+   "why": "class version of the Herbalist's Hauberk of Ivy (Dark Places of the Soul step 17 reward) that did not exist; built from its period item page (stats, AF, absorb, level, bonus %, weight); price 15000 (level 49 of the price table)"
+  },
+  {
+   "finding": "P09-D7",
+   "kind": "row",
+   "table": "ItemTemplate",
+   "row": {
+    "Id_nb": "qf07_part09_herbalist_s_tunic_of_power",
+    "TranslationId": null,
+    "Name": "Herbalist's Tunic of Power",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "Level": 49,
+    "Durability": 50000,
+    "MaxDurability": 50000,
+    "IsNotLosingDur": 0,
+    "Condition": 50000,
+    "MaxCondition": 50000,
+    "Quality": 100,
+    "DPS_AF": 50,
+    "SPD_ABS": 0,
+    "Hand": 0,
+    "Type_Damage": 0,
+    "Object_Type": 32,
+    "Item_Type": 25,
+    "Color": 0,
+    "Emblem": 0,
+    "Effect": 0,
+    "Weight": 25,
+    "SalvageExtension": null,
+    "Model": 245,
+    "Extension": 0,
+    "Bonus": 30,
+    "Bonus1": 7,
+    "Bonus2": 7,
+    "Bonus3": 10,
+    "Bonus4": 0,
+    "Bonus5": 0,
+    "Bonus6": 0,
+    "Bonus7": 0,
+    "Bonus8": 0,
+    "Bonus9": 0,
+    "Bonus10": 0,
+    "ExtraBonus": 0,
+    "Bonus1Type": 3,
+    "Bonus2Type": 6,
+    "Bonus3Type": 9,
+    "Bonus4Type": 0,
+    "Bonus5Type": 0,
+    "Bonus6Type": 0,
+    "Bonus7Type": 0,
+    "Bonus8Type": 0,
+    "Bonus9Type": 0,
+    "Bonus10Type": 0,
+    "ExtraBonusType": 0,
+    "CanUseEvery": 0,
+    "SpellID": 0,
+    "Charges": 0,
+    "MaxCharges": 0,
+    "SpellID1": 0,
+    "Charges1": 0,
+    "MaxCharges1": 0,
+    "ProcChance": 0,
+    "ProcSpellID": 0,
+    "ProcSpellID1": 0,
+    "PoisonSpellID": 0,
+    "PoisonCharges": 0,
+    "PoisonMaxCharges": 0,
+    "IsPickable": 1,
+    "IsDropable": 1,
+    "CanDropAsLoot": 0,
+    "IsTradable": 1,
+    "Price": 15000,
+    "MaxCount": 1,
+    "IsIndestructible": 0,
+    "PackSize": 1,
+    "Realm": 2,
+    "AllowedClasses": "29",
+    "Flags": 0,
+    "BonusLevel": 0,
+    "LevelRequirement": 0,
+    "PackageID": "ClassicQuest",
+    "Description": "Classic quest reward (Dark Places of the Soul)",
+    "ClassType": null,
+    "SalvageYieldID": 0,
+    "ItemTemplate_ID": "b91817b0-d830-5ca4-90ce-a3e48b3b753e"
+   },
+   "source": "Allakhazam item citem=9645 'Herbalist's Tunic of Power' (Wayback capture 2003-07-17, period-data/archive/wayback-allakhazam/period_items.jsonl.gz): Cloth torso, Requires Class: Runemaster, AF 50, Constitution 7, Piety 7, Power 10, Default Bonus 30%, Quality 100%, 2.50 lbs, Level to Attain 49; listed with the rewards of Allakhazam quest 713 'Dark Places of the Soul'; 3D model borrowed (no period page records models)",
+   "why": "class version of the Herbalist's Hauberk of Ivy (Dark Places of the Soul step 17 reward) that did not exist; built from its period item page (stats, AF, absorb, level, bonus %, weight); price 15000 (level 49 of the price table)"
+  },
+  {
+   "finding": "P09-D7",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "ClassRewards",
+    "cq_mid_herbalist_s_hauberk_of_ivy"
+   ],
+   "value": {
+    "31": "qf07_part09_herbalist_s_vest_of_health",
+    "25": "qf07_part09_herbalist_s_vest_of_health",
+    "32": "qf07_part09_herbalist_s_vest_of_health",
+    "23": "qf07_part09_herbalist_jerkin_of_night",
+    "29": "qf07_part09_herbalist_s_tunic_of_power"
+   },
+   "source": "Allakhazam quest 713 'Dark Places of the Soul' reward list (Herbalist's Hauberk of Ivy, Herbalist's Vest of Health, Herbalist Jerkin of Night, Herbalist's Tunic of Power) and the item pages 6122/6126/6317/9645",
+   "why": "the step-17 chest reward in the player's class version: Berserker (31) / Hunter (25) / Savage (32) the studded Vest of Health, Shadowblade (23) the leather Jerkin of Night (stealth/envenom/crit), Runemaster (29) the cloth Tunic of Power (its page: Requires Class Runemaster); Healer, Shaman, Skald, Thane, Warrior keep the chain Hauberk of Ivy (its page lists them); Spiritmaster and Bonedancer have no period version and keep the hauberk"
+  },
+  {
+   "finding": "P09-D7",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21264",
+    "Steps",
+    6,
+    "Grant"
+   ],
+   "value": [
+    "cq_mid_ring_of_spun_silk"
+   ],
+   "source": "Allakhazam quest 713 (Wayback 2004-08-13): '#6: Return to Gna Faste and hand head to Jytal. You will receive the Ring of Spun Silk ( +21 hp +10% crush/matter +3 con ), 5g, and 415 million xp'",
+   "why": "Jytal gives the real Ring of Spun Silk (cq_mid_ring_of_spun_silk, level 48, Con 3 / Hits 21 / Crush 10% / Matter 10%, as the period item page 6123) when the head is handed in, instead of the level-1 placeholder cq_ring_of_spun_silk; the engine now remembers a real grant across restarts, so it is given once"
+  },
+  {
+   "finding": "P09-D7",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21264",
+    "Steps",
+    17,
+    "Grant"
+   ],
+   "value": [
+    "cq_mid_herbalist_s_hauberk_of_ivy"
+   ],
+   "source": "Allakhazam quest 713 (Wayback 2004-08-13): '#17: Take the bowl to Besje in Huginfell. You will get a Herbalists' Hauberk of Ivy, 3g, and 784 mil xp'",
+   "why": "Besje gives the real chest piece when the bowl is shown (the player's ClassRewards version, see the ClassRewards entry) instead of the level-1 placeholder cq_herbalist_s_hauberk_of_ivy"
+  },
+  {
+   "finding": "P09-D7",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "FinalRewardItemTemplates": ""
+   },
+   "where": {
+    "ID": 21264
+   },
+   "why": "the ring and the chest piece are now granted at the period steps 6 and 17, so the end of the quest no longer hands out a second copy of each",
+   "source": "Allakhazam quest 713: ring at #6 from Jytal, hauberk at #17 from Besje"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00070905-0000-4000-8000-000000000001",
+    "PathID": "qf07_part09_cadoc_river",
+    "RegionID": 200,
+    "PathType": 2
+   },
+   "why": "Cadoc 'runs with his enchanted horses during the day and night along the river from end to end' (walkthrough 298): a there-and-back route along the west bank of the Cursed Forest river, from his period spot at the far south end (14420,58733) to the north end of the river valley, built from the river's bank points in the real 1.64 client (zone208 sector.dat river00)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000001",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 1,
+    "X": 464980,
+    "Y": 542061,
+    "Z": 5383,
+    "MaxSpeed": 150,
+    "WaitTime": 300
+   },
+   "why": "qf07_part09_cadoc_river point 1: Cursed Forest 14420,58733 (Cadoc's period loc, the south end)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000002",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 2,
+    "X": 464553,
+    "Y": 540466,
+    "Z": 4996,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 2: Cursed Forest 13993,57138 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000003",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 3,
+    "X": 465935,
+    "Y": 539381,
+    "Z": 5057,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 3: Cursed Forest 15375,56053 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000004",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 4,
+    "X": 467228,
+    "Y": 538518,
+    "Z": 5038,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 4: Cursed Forest 16668,55190 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000005",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 5,
+    "X": 467318,
+    "Y": 538296,
+    "Z": 5059,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 5: Cursed Forest 16758,54968 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000006",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 6,
+    "X": 468083,
+    "Y": 536668,
+    "Z": 5020,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 6: Cursed Forest 17523,53340 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000007",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 7,
+    "X": 468848,
+    "Y": 535040,
+    "Z": 5058,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 7: Cursed Forest 18288,51712 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000008",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 8,
+    "X": 469488,
+    "Y": 533120,
+    "Z": 5050,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 8: Cursed Forest 18928,49792 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000009",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 9,
+    "X": 470128,
+    "Y": 531200,
+    "Z": 5012,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 9: Cursed Forest 19568,47872 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000010",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 10,
+    "X": 470560,
+    "Y": 529369,
+    "Z": 5008,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 10: Cursed Forest 20000,46041 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000011",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 11,
+    "X": 470992,
+    "Y": 527539,
+    "Z": 5019,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 11: Cursed Forest 20432,44211 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000012",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 12,
+    "X": 471425,
+    "Y": 525709,
+    "Z": 5001,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 12: Cursed Forest 20865,42381 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000013",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 13,
+    "X": 472337,
+    "Y": 523750,
+    "Z": 5098,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 13: Cursed Forest 21777,40422 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000014",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 14,
+    "X": 472458,
+    "Y": 523488,
+    "Z": 5108,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 14: Cursed Forest 21898,40160 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000015",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 15,
+    "X": 473249,
+    "Y": 521792,
+    "Z": 5124,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 15: Cursed Forest 22689,38464 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000016",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 16,
+    "X": 474540,
+    "Y": 520408,
+    "Z": 5058,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 16: Cursed Forest 23980,37080 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000017",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 17,
+    "X": 475832,
+    "Y": 519025,
+    "Z": 5089,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 17: Cursed Forest 25272,35697 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000018",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 18,
+    "X": 476191,
+    "Y": 518699,
+    "Z": 5096,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 18: Cursed Forest 25631,35371 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000019",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 19,
+    "X": 477124,
+    "Y": 517642,
+    "Z": 5131,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 19: Cursed Forest 26564,34314 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000020",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 20,
+    "X": 478517,
+    "Y": 516084,
+    "Z": 5141,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 20: Cursed Forest 27957,32756 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000021",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 21,
+    "X": 478821,
+    "Y": 515817,
+    "Z": 5125,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 21: Cursed Forest 28261,32489 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000022",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 22,
+    "X": 480518,
+    "Y": 513992,
+    "Z": 5012,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 22: Cursed Forest 29958,30664 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000023",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 23,
+    "X": 482143,
+    "Y": 512881,
+    "Z": 5179,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 23: Cursed Forest 31583,29553 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000024",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 24,
+    "X": 483768,
+    "Y": 511771,
+    "Z": 5172,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 24: Cursed Forest 33208,28443 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000025",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 25,
+    "X": 485238,
+    "Y": 510895,
+    "Z": 5053,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 25: Cursed Forest 34678,27567 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000026",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 26,
+    "X": 486161,
+    "Y": 510298,
+    "Z": 5031,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 26: Cursed Forest 35601,26970 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000027",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 27,
+    "X": 486709,
+    "Y": 510019,
+    "Z": 5072,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 27: Cursed Forest 36149,26691 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000028",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 28,
+    "X": 487879,
+    "Y": 509275,
+    "Z": 5185,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 28: Cursed Forest 37319,25947 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000029",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 29,
+    "X": 488180,
+    "Y": 509143,
+    "Z": 5180,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 29: Cursed Forest 37620,25815 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000030",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 30,
+    "X": 490365,
+    "Y": 507983,
+    "Z": 5130,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 30: Cursed Forest 39805,24655 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000031",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 31,
+    "X": 492550,
+    "Y": 506824,
+    "Z": 5075,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 31: Cursed Forest 41990,23496 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000032",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 32,
+    "X": 494035,
+    "Y": 506244,
+    "Z": 5049,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 32: Cursed Forest 43475,22916 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000033",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 33,
+    "X": 495314,
+    "Y": 505701,
+    "Z": 5054,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 33: Cursed Forest 44754,22373 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000034",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 34,
+    "X": 495521,
+    "Y": 505664,
+    "Z": 5057,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 34: Cursed Forest 44961,22336 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000035",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 35,
+    "X": 496785,
+    "Y": 504293,
+    "Z": 5020,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 35: Cursed Forest 46225,20965 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000036",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 36,
+    "X": 497201,
+    "Y": 503959,
+    "Z": 5008,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 36: Cursed Forest 46641,20631 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000037",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 37,
+    "X": 498050,
+    "Y": 502922,
+    "Z": 5022,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 37: Cursed Forest 47490,19594 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000038",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 38,
+    "X": 498937,
+    "Y": 501701,
+    "Z": 4992,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 38: Cursed Forest 48377,18373 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000039",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 39,
+    "X": 499041,
+    "Y": 501625,
+    "Z": 4990,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 39: Cursed Forest 48481,18297 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000040",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 40,
+    "X": 499824,
+    "Y": 500480,
+    "Z": 4986,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 40: Cursed Forest 49264,17152 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000041",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 41,
+    "X": 499911,
+    "Y": 498578,
+    "Z": 4989,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 41: Cursed Forest 49351,15250 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000042",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 42,
+    "X": 499998,
+    "Y": 496677,
+    "Z": 4994,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 42: Cursed Forest 49438,13349 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000043",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 43,
+    "X": 500086,
+    "Y": 494776,
+    "Z": 5006,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 43: Cursed Forest 49526,11448 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000044",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 44,
+    "X": 500684,
+    "Y": 493348,
+    "Z": 5066,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 44: Cursed Forest 50124,10020 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000045",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 45,
+    "X": 500637,
+    "Y": 493243,
+    "Z": 5076,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part09_cadoc_river point 45: Cursed Forest 50077,9915 (west bank, on the navmesh)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070906-0000-4000-8000-000000000046",
+    "PathID": "qf07_part09_cadoc_river",
+    "Step": 46,
+    "X": 501109,
+    "Y": 491710,
+    "Z": 5071,
+    "MaxSpeed": 150,
+    "WaitTime": 300
+   },
+   "why": "qf07_part09_cadoc_river point 46: Cursed Forest 50549,8382 (north end of the river valley)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "21378",
+    "Steps",
+    3,
+    "Spawn"
+   ],
+   "value": {
+    "PathId": "qf07_part09_cadoc_river",
+    "TriggerRadius": 4000,
+    "DespawnSeconds": 1800,
+    "Escort": [
+     {
+      "Name": "dark steed",
+      "TemplateId": 60159711,
+      "Level": 0,
+      "Model": 463,
+      "Count": 1,
+      "Peaceful": true
+     },
+     {
+      "Name": "veil steed",
+      "TemplateId": 60167558,
+      "Level": 0,
+      "Model": 2130,
+      "Count": 1,
+      "Peaceful": true
+     }
+    ]
+   },
+   "source": "Allakhazam quest 298 'The Moonstone Twin (level 45)': 'Cadoc who runs with his enchanted horses during the day and night along the river from end to end. The horses are neutral and there are two sets: dark steeds at night and veil steeds during the day. Kill both sets and Cadoc will appear ... Cadoc is on west side of river at far south end. /loc = 14420,58733'",
+   "why": "Cadoc now appears at his period spot and walks the river with one steed of each set (the world's dark steed and veil steed templates, levels and aggro as in the templates; the period gives no count); his own Name/TemplateId/Level/Model/point stay as they were; trigger radius 4000 round the south end and 30 minutes before he leaves (the route is 66k one way) (integrator 2026-11-11: the steeds are Peaceful - the period calls them neutral, and as fighting level 51-56 escorts they would have made a level 45 step much harder than before)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "21379",
+    "Steps",
+    3,
+    "Spawn"
+   ],
+   "value": {
+    "PathId": "qf07_part09_cadoc_river",
+    "TriggerRadius": 4000,
+    "DespawnSeconds": 1800,
+    "Escort": [
+     {
+      "Name": "dark steed",
+      "TemplateId": 60159711,
+      "Level": 0,
+      "Model": 463,
+      "Count": 1,
+      "Peaceful": true
+     },
+     {
+      "Name": "veil steed",
+      "TemplateId": 60167558,
+      "Level": 0,
+      "Model": 2130,
+      "Count": 1,
+      "Peaceful": true
+     }
+    ]
+   },
+   "source": "Allakhazam quest 298 'The Moonstone Twin (level 45)': 'Cadoc who runs with his enchanted horses during the day and night along the river from end to end. The horses are neutral and there are two sets: dark steeds at night and veil steeds during the day. Kill both sets and Cadoc will appear ... Cadoc is on west side of river at far south end. /loc = 14420,58733'",
+   "why": "Cadoc now appears at his period spot and walks the river with one steed of each set (the world's dark steed and veil steed templates, levels and aggro as in the templates; the period gives no count); his own Name/TemplateId/Level/Model/point stay as they were; trigger radius 4000 round the south end and 30 minutes before he leaves (the route is 66k one way) (integrator 2026-11-11: the steeds are Peaceful - the period calls them neutral, and as fighting level 51-56 escorts they would have made a level 45 step much harder than before)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "21380",
+    "Steps",
+    3,
+    "Spawn"
+   ],
+   "value": {
+    "PathId": "qf07_part09_cadoc_river",
+    "TriggerRadius": 4000,
+    "DespawnSeconds": 1800,
+    "Escort": [
+     {
+      "Name": "dark steed",
+      "TemplateId": 60159711,
+      "Level": 0,
+      "Model": 463,
+      "Count": 1,
+      "Peaceful": true
+     },
+     {
+      "Name": "veil steed",
+      "TemplateId": 60167558,
+      "Level": 0,
+      "Model": 2130,
+      "Count": 1,
+      "Peaceful": true
+     }
+    ]
+   },
+   "source": "Allakhazam quest 298 'The Moonstone Twin (level 45)': 'Cadoc who runs with his enchanted horses during the day and night along the river from end to end. The horses are neutral and there are two sets: dark steeds at night and veil steeds during the day. Kill both sets and Cadoc will appear ... Cadoc is on west side of river at far south end. /loc = 14420,58733'",
+   "why": "Cadoc now appears at his period spot and walks the river with one steed of each set (the world's dark steed and veil steed templates, levels and aggro as in the templates; the period gives no count); his own Name/TemplateId/Level/Model/point stay as they were; trigger radius 4000 round the south end and 30 minutes before he leaves (the route is 66k one way) (integrator 2026-11-11: the steeds are Peaceful - the period calls them neutral, and as fighting level 51-56 escorts they would have made a level 45 step much harder than before)"
+  },
+  {
+   "finding": "P09-C1",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "21381",
+    "Steps",
+    3,
+    "Spawn"
+   ],
+   "value": {
+    "PathId": "qf07_part09_cadoc_river",
+    "TriggerRadius": 4000,
+    "DespawnSeconds": 1800,
+    "Escort": [
+     {
+      "Name": "dark steed",
+      "TemplateId": 60159711,
+      "Level": 0,
+      "Model": 463,
+      "Count": 1,
+      "Peaceful": true
+     },
+     {
+      "Name": "veil steed",
+      "TemplateId": 60167558,
+      "Level": 0,
+      "Model": 2130,
+      "Count": 1,
+      "Peaceful": true
+     }
+    ]
+   },
+   "source": "Allakhazam quest 298 'The Moonstone Twin (level 45)': 'Cadoc who runs with his enchanted horses during the day and night along the river from end to end. The horses are neutral and there are two sets: dark steeds at night and veil steeds during the day. Kill both sets and Cadoc will appear ... Cadoc is on west side of river at far south end. /loc = 14420,58733'",
+   "why": "Cadoc now appears at his period spot and walks the river with one steed of each set (the world's dark steed and veil steed templates, levels and aggro as in the templates; the period gives no count); his own Name/TemplateId/Level/Model/point stay as they were; trigger radius 4000 round the south end and 30 minutes before he leaves (the route is 66k one way) (integrator 2026-11-11: the steeds are Peaceful - the period calls them neutral, and as fighting level 51-56 escorts they would have made a level 45 step much harder than before)"
+  },
+  {
+   "finding": "P09-D7",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21264",
+    "Steps",
+    21,
+    "Grant"
+   ],
+   "value": [
+    "cq_mid_ring_of_spun_silk",
+    "cq_mid_herbalist_s_hauberk_of_ivy"
+   ],
+   "why": "catch-up for a player who was already past step 6 or 17 when the mid-quest grants arrived (the end reward list is now empty): on the last step both items are handed out unless this quest already granted them (the engine remembers a real grant per quest, whatever the step)"
+  }
+ ]
+}

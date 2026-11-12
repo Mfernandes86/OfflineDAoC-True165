@@ -1,0 +1,476 @@
+{
+ "fixer": "part05",
+ "about": "Part 05 section E: period level ranges, dead Catacombs rows, stonebreakers, Stoppered Wondrous Potion, duplicate deliver items, night-only wells (E2 is in d-rewards.json with D3; E4 skipped)",
+ "entries": [
+  {
+   "finding": "P05-E1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "MinLevel": 6,
+    "MaxLevel": 50
+   },
+   "where": {
+    "ID": 20637
+   },
+   "why": "Outcast Ormgarth used the patch 1.75b range 22-32 (grey target, Ormgarth L5); Prima Revised quest table '6 Outcast Ormgarth' (Atlas 'Outcast Ormgarth (lvl 6)'), period reward Snake Charm level 5"
+  },
+  {
+   "finding": "P05-E1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "MinLevel": 14,
+    "MaxLevel": 50
+   },
+   "where_sql": "ID BETWEEN 20607 AND 20621",
+   "why": "The Hunt for Arachneida used the patch 1.75b range 20-30; Prima Revised quest table '14 The Hunt For Arachneida' (Atlas 'lvl 14'); its period rewards are level 14"
+  },
+  {
+   "finding": "P05-E1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "MinLevel": 15
+   },
+   "where": {
+    "ID": 20640
+   },
+   "why": "Supplies for Lillian used the patch 1.76 minimum 28; Prima Revised quest table '15 Supplies For Lillian' (Allakhazam 147: done at level 15, Scraek blue at 15)"
+  },
+  {
+   "finding": "P05-E1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "MinLevel": 19
+   },
+   "where": {
+    "ID": 20638
+   },
+   "why": "Dugan's Magical Totem used minimum 24; Prima Revised quest table '19 Dugan's Magic Totem' (Urfgrat Prima [17], reward Skull-shaped Totem level 19)"
+  },
+  {
+   "finding": "P05-E1",
+   "kind": "quest",
+   "op": "delete",
+   "path": [
+    "Quests",
+    "20640",
+    "Steps",
+    5,
+    "Custom",
+    "Choices",
+    "Blackened Mantle"
+   ],
+   "why": "the Blackened Mantle (level 28, Con 15 Dex 15 Hits 24) is the patch 1.94 reward 'adjusted to be more appropriate to its level' 28 (Allakhazam 147; item id 24141 has no period capture); the period reward is the Blackened Hammer ('she rewarded me with a Blackened Hammer', done at level 15), so with the period level 15 only the hammer is offered"
+  },
+  {
+   "finding": "P05-E1",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StepText = replace(StepText, ' (Blackened Hammer, Blackened Mantle).', ' (Blackened Hammer).'), SourceText = replace(SourceText, '[Blackened Hammer], [Blackened Mantle].', '[Blackened Hammer].') WHERE ID = 20640",
+   "why": "the reward step no longer lists the post-period Blackened Mantle (patch 1.94); only the period Blackened Hammer is offered"
+  },
+  {
+   "finding": "P05-E3",
+   "kind": "remove",
+   "table": "DataQuest",
+   "where": "ID IN (20713, 20714)",
+   "why": "Cad Goddeau B rows for Vampiir (58) and Bainshee (39): Cad Goddeau A has no row for those classes, so they can never be offered, and both are post-1.65 Catacombs classes"
+  },
+  {
+   "finding": "P05-E3",
+   "kind": "quest",
+   "op": "delete",
+   "path": [
+    "Quests",
+    "20713"
+   ],
+   "why": "classic-quests entry of the archived post-1.65 Cad Goddeau B row"
+  },
+  {
+   "finding": "P05-E3",
+   "kind": "quest",
+   "op": "delete",
+   "path": [
+    "Quests",
+    "20714"
+   ],
+   "why": "classic-quests entry of the archived post-1.65 Cad Goddeau B row"
+  },
+  {
+   "finding": "P05-E5",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "granite giant stonebreaker",
+    "Suffix": null,
+    "Guild": null,
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 363256,
+    "Y": 739520,
+    "Z": 390,
+    "Speed": 180,
+    "Heading": 1000,
+    "Region": 1,
+    "Model": 616,
+    "Size": 127,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 0,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 0,
+    "Empathy": 0,
+    "Charisma": 0,
+    "Level": 50,
+    "Realm": 0,
+    "EquipmentTemplateID": "6b7a2472-3cc2-4c56-bc05-9e5505bc5b65",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 13067,
+    "Race": 2004,
+    "Flags": 0,
+    "AggroLevel": 0,
+    "AggroRange": 0,
+    "MeleeDamageType": 1,
+    "RespawnInterval": 80,
+    "FactionID": 31,
+    "BodyType": 5,
+    "HouseNumber": 0,
+    "Brain": "",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 200,
+    "IsCloakHoodUp": 0,
+    "Gender": 1,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00070501-0000-4000-8000-000000000006"
+   },
+   "why": "Strange Bedfellows asks for a granite gem from a granite giant stonebreaker in SW Dartmoor; no stonebreaker existed (the step counted stoneshapers). A copy of the nearby stonecaller row with the world's own stonebreaker template 13067 (model 616, L49-51), Z from the navmesh",
+   "source": "Allakhazam quest 2040 Strange Bedfellows: Mystemas 'I want a granite gem from a granite giant stonebreaker living in southwestern [Dartmoor]'; 'Killed Granite Giant Stonebreaker at Dartmoor loc=11k 43k, got gem' (= region 1 X 363256 Y 739520); Uthgard bestiary monster 3702 'granite giant stonebreaker' Dartmoor, level 49-50, aggressive"
+  },
+  {
+   "finding": "P05-E5",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "granite giant stonebreaker",
+    "Suffix": null,
+    "Guild": null,
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 363756,
+    "Y": 739720,
+    "Z": 259,
+    "Speed": 180,
+    "Heading": 2500,
+    "Region": 1,
+    "Model": 616,
+    "Size": 127,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 0,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 0,
+    "Empathy": 0,
+    "Charisma": 0,
+    "Level": 50,
+    "Realm": 0,
+    "EquipmentTemplateID": "6b7a2472-3cc2-4c56-bc05-9e5505bc5b65",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 13067,
+    "Race": 2004,
+    "Flags": 0,
+    "AggroLevel": 0,
+    "AggroRange": 0,
+    "MeleeDamageType": 1,
+    "RespawnInterval": 80,
+    "FactionID": 31,
+    "BodyType": 5,
+    "HouseNumber": 0,
+    "Brain": "",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 200,
+    "IsCloakHoodUp": 0,
+    "Gender": 1,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00070501-0000-4000-8000-000000000007"
+   },
+   "why": "Strange Bedfellows asks for a granite gem from a granite giant stonebreaker in SW Dartmoor; no stonebreaker existed (the step counted stoneshapers). A copy of the nearby stonecaller row with the world's own stonebreaker template 13067 (model 616, L49-51), Z from the navmesh",
+   "source": "Allakhazam quest 2040 Strange Bedfellows: Mystemas 'I want a granite gem from a granite giant stonebreaker living in southwestern [Dartmoor]'; 'Killed Granite Giant Stonebreaker at Dartmoor loc=11k 43k, got gem' (= region 1 X 363256 Y 739520); Uthgard bestiary monster 3702 'granite giant stonebreaker' Dartmoor, level 49-50, aggressive"
+  },
+  {
+   "finding": "P05-E5",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "granite giant stonebreaker",
+    "Suffix": null,
+    "Guild": null,
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 363356,
+    "Y": 739920,
+    "Z": 345,
+    "Speed": 180,
+    "Heading": 3600,
+    "Region": 1,
+    "Model": 616,
+    "Size": 127,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 0,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 0,
+    "Empathy": 0,
+    "Charisma": 0,
+    "Level": 50,
+    "Realm": 0,
+    "EquipmentTemplateID": "6b7a2472-3cc2-4c56-bc05-9e5505bc5b65",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 13067,
+    "Race": 2004,
+    "Flags": 0,
+    "AggroLevel": 0,
+    "AggroRange": 0,
+    "MeleeDamageType": 1,
+    "RespawnInterval": 80,
+    "FactionID": 31,
+    "BodyType": 5,
+    "HouseNumber": 0,
+    "Brain": "",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 200,
+    "IsCloakHoodUp": 0,
+    "Gender": 1,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00070501-0000-4000-8000-000000000008"
+   },
+   "why": "Strange Bedfellows asks for a granite gem from a granite giant stonebreaker in SW Dartmoor; no stonebreaker existed (the step counted stoneshapers). A copy of the nearby stonecaller row with the world's own stonebreaker template 13067 (model 616, L49-51), Z from the navmesh",
+   "source": "Allakhazam quest 2040 Strange Bedfellows: Mystemas 'I want a granite gem from a granite giant stonebreaker living in southwestern [Dartmoor]'; 'Killed Granite Giant Stonebreaker at Dartmoor loc=11k 43k, got gem' (= region 1 X 363256 Y 739520); Uthgard bestiary monster 3702 'granite giant stonebreaker' Dartmoor, level 49-50, aggressive"
+  },
+  {
+   "finding": "P05-E5",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET TargetName = replace(TargetName, '|granite giant stoneshaper;1|', '|granite giant stonebreaker;1|') WHERE ID = 20702 AND TargetName LIKE '%|granite giant stoneshaper;1|%'",
+   "why": "step 2 text and the period (Allakhazam 2040) name the granite giant stonebreaker; the step counted stoneshapers. Stonebreakers now stand at the period spot"
+  },
+  {
+   "finding": "P05-E5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20702",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 363256,
+    "Y": 739520,
+    "Z": 390
+   },
+   "why": "step-2 marker now points at the stonebreakers at Dartmoor loc 11k,43k (Allakhazam 2040)"
+  },
+  {
+   "finding": "P05-E6",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepItemTemplates": "||cq_sealed_letter_for_keener|cq_note_for_gaevin|cq_horse_fungus;40|||cq_stoppered_wondrous_potion",
+    "CollectItemTemplate": "||cq_sealed_letter_for_keener|cq_note_for_gaevin||cq_horse_fungus||cq_stoppered_wondrous_potion"
+   },
+   "where": {
+    "ID": 20650
+   },
+   "why": "Black Plague's step-8 hand-in was an invented 'Malroch's Ladle'; the period item is the Stoppered Wondrous Potion (Allakhazam 1793: Sister Elaydith 'Do you have the Stoppered Wondrous Potion?'). v2: use the existing cq_stoppered_wondrous_potion that the Midgard (21245) and Hibernia (21425) Black Plague rows already use, instead of renaming the ladle into a second item of the same name"
+  },
+  {
+   "finding": "P05-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20650",
+    "Steps",
+    8,
+    "NeedsItem"
+   ],
+   "value": "cq_stoppered_wondrous_potion",
+   "why": "the step-8 lost-item check follows the hand-in to the shared Stoppered Wondrous Potion (Malroch the Cook stays the issuer)"
+  },
+  {
+   "finding": "P05-E7",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepItemTemplates": "|cq_sealed_letter||||cq_attack_plans"
+   },
+   "where": {
+    "ID": 20571
+   },
+   "why": "step 4 (deliver the sealed letter) handed out a second sealed letter as it began although step 2's kill already dropped it; CollectItemTemplate keeps the hand-in"
+  },
+  {
+   "finding": "P05-E7",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20571",
+    "Steps",
+    4
+   ],
+   "value": {
+    "NeedsItem": "cq_sealed_letter",
+    "Issuer": "Wandering Drakoran Scout"
+   },
+   "why": "a player who lost the sealed letter still gets it back (the scout is a monster issuer, so it is re-issued) now that step 4 no longer hands out a copy"
+  },
+  {
+   "finding": "P05-E7",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepItemTemplates": "|||||||||"
+   },
+   "where": {
+    "ID": 20587
+   },
+   "why": "step 9 (return the journal) handed out a second Brother Codeth's Journal as it began although step 1's Give already did; CollectItemTemplate and the step-9 NeedsItem keep the hand-in"
+  },
+  {
+   "finding": "P05-E7",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepItemTemplates": "|cq_granite_gem;50|||cq_prince_s_plans|"
+   },
+   "where": {
+    "ID": 20702
+   },
+   "why": "step 6 (return the soul stone) handed out a second empty soul stone as it began although step 4's Grant from Mystemas already did; CollectItemTemplate and the step-6 NeedsItem keep the hand-in"
+  },
+  {
+   "finding": "P05-E8",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20639",
+    "Steps",
+    4,
+    "Custom",
+    "NightOnly"
+   ],
+   "value": true,
+   "why": "the seven ley-crystal wells work only at night (Allakhazam 322, Gral Bermorn: 'All seven of the wells can only be activated using darkness'); data ready for the use_item NightOnly code request (today only 'say' reads NightOnly)"
+  },
+  {
+   "finding": "P05-E8",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20639",
+    "Steps",
+    5,
+    "Custom",
+    "NightOnly"
+   ],
+   "value": true,
+   "why": "the seven ley-crystal wells work only at night (Allakhazam 322, Gral Bermorn: 'All seven of the wells can only be activated using darkness'); data ready for the use_item NightOnly code request (today only 'say' reads NightOnly)"
+  },
+  {
+   "finding": "P05-E8",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20639",
+    "Steps",
+    6,
+    "Custom",
+    "NightOnly"
+   ],
+   "value": true,
+   "why": "the seven ley-crystal wells work only at night (Allakhazam 322, Gral Bermorn: 'All seven of the wells can only be activated using darkness'); data ready for the use_item NightOnly code request (today only 'say' reads NightOnly)"
+  },
+  {
+   "finding": "P05-E8",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20639",
+    "Steps",
+    7,
+    "Custom",
+    "NightOnly"
+   ],
+   "value": true,
+   "why": "the seven ley-crystal wells work only at night (Allakhazam 322, Gral Bermorn: 'All seven of the wells can only be activated using darkness'); data ready for the use_item NightOnly code request (today only 'say' reads NightOnly)"
+  },
+  {
+   "finding": "P05-E8",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20639",
+    "Steps",
+    8,
+    "Custom",
+    "NightOnly"
+   ],
+   "value": true,
+   "why": "the seven ley-crystal wells work only at night (Allakhazam 322, Gral Bermorn: 'All seven of the wells can only be activated using darkness'); data ready for the use_item NightOnly code request (today only 'say' reads NightOnly)"
+  },
+  {
+   "finding": "P05-E8",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20639",
+    "Steps",
+    9,
+    "Custom",
+    "NightOnly"
+   ],
+   "value": true,
+   "why": "the seven ley-crystal wells work only at night (Allakhazam 322, Gral Bermorn: 'All seven of the wells can only be activated using darkness'); data ready for the use_item NightOnly code request (today only 'say' reads NightOnly)"
+  },
+  {
+   "finding": "P05-E8",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20639",
+    "Steps",
+    10,
+    "Custom",
+    "NightOnly"
+   ],
+   "value": true,
+   "why": "the seven ley-crystal wells work only at night (Allakhazam 322, Gral Bermorn: 'All seven of the wells can only be activated using darkness'); data ready for the use_item NightOnly code request (today only 'say' reads NightOnly)"
+  }
+ ]
+}

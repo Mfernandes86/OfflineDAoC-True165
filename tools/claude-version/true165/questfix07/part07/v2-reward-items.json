@@ -1,0 +1,61 @@
+{
+ "fixer": "part07",
+ "about": "v2 P07-D3 residual (Drakoran Watchers armour with Object_Type 0 / AF 0) and P07-D2/D3b model residual (rewards showing the 1.64 'All purpose bag' model 488)",
+ "entries": [
+  {
+   "finding": "P07-D3",
+   "kind": "update",
+   "table": "ItemTemplate",
+   "set": {
+    "Object_Type": 33,
+    "DPS_AF": 32,
+    "SPD_ABS": 10
+   },
+   "where": {
+    "Id_nb": "cq_alb_ariach_s_gloves"
+   },
+   "source": "Allakhazam item citem 6129 'Ariach's Gloves': Hands, Armor Factor 32, Armor Absorb 10 (leather), Dex 6, Hits 12, level 14 (allakhazam-live copy; the Wayback 2003-10-19 copy has the same bonuses and level but says 'Incomplete info given' and shows no AF)",
+   "why": "Drakoran Watchers reward had Object_Type 0 and AF 0, so it was not armour; the item page gives AF 32 / absorb 10, which is leather (eObjectType.Leather 33, absorb 10 like the other Albion leather gloves); bonuses and level already match"
+  },
+  {
+   "finding": "P07-D3",
+   "kind": "update",
+   "table": "ItemTemplate",
+   "set": {
+    "Object_Type": 32,
+    "DPS_AF": 15
+   },
+   "where": {
+    "Id_nb": "cq_alb_stolen_robes_of_arawn"
+   },
+   "source": "Allakhazam item citem 5910 'Stolen Robes of Arawn': Torso, Requires Skill Armor: Cloth, Armor Factor 15, Int 6, Death Servant +2, level 14 (allakhazam-live copy; the Wayback 2003-10-19 copy has the same bonuses and level)",
+   "why": "Drakoran Watchers reward had Object_Type 0 and AF 0, so it was not armour; the item page gives cloth (eObjectType.Cloth 32) with AF 15 (absorb 0, as other level-15 cloth vests); bonuses and level already match"
+  },
+  {
+   "finding": "P07-D2",
+   "kind": "update",
+   "table": "ItemTemplate",
+   "set": {
+    "Model": 423
+   },
+   "where": {
+    "Id_nb": "cq_hib_silver_reinforced_vest"
+   },
+   "source": "1.64 client gamedata objects.csv: model 488 = 'All purpose bag', 423 = 'Celtic Reinforced 3 Vest'; the sibling Crace's Desire reward cq_hib_silver_scaled_hauberk uses 428 'Celtic Scaled 3 Vest'",
+   "why": "the reinforced vest (now Object_Type 37) still showed model 488, the 1.64 client's 'All purpose bag'; 423 is the Celtic reinforced vest of the same tier as its scale sibling (428); look only, no stats change"
+  },
+  {
+   "finding": "P07-D3b",
+   "kind": "update",
+   "table": "ItemTemplate",
+   "set": {
+    "Model": 867
+   },
+   "where": {
+    "Id_nb": "cq_alb_onyx_tipped_cat_o_nine_tails"
+   },
+   "source": "1.64 client gamedata objects.csv: model 488 = 'All purpose bag', 867 = 'Alb Flex Whip' (no cat-o'-nine-tails model exists in the 1.64 client)",
+   "why": "the flexible weapon (now Object_Type 24) still showed model 488, the 1.64 client's 'All purpose bag'; a cat o' nine tails is a whip, so the plain Albion flex whip model; look only, no stats change"
+  }
+ ]
+}

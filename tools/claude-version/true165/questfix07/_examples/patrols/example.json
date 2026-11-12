@@ -1,0 +1,50 @@
+{
+ "fixer": "patrols",
+ "about": "WORKED EXAMPLE ONLY (the loader ignores _examples); values are test data, not real fixes",
+ "entries": [
+  {
+   "finding": "PAT-1",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000001",
+    "PathID": "qf07_patrols_test_route",
+    "RegionID": 1,
+    "PathType": 2
+   },
+   "why": "TEST: a patrol path"
+  },
+  {
+   "finding": "PAT-1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000001",
+    "PathID": "qf07_patrols_test_route",
+    "Step": 1,
+    "X": 329919,
+    "Y": 661839,
+    "Z": 2804,
+    "MaxSpeed": 0,
+    "WaitTime": 0
+   },
+   "why": "TEST: patrol point 1"
+  },
+  {
+   "finding": "PAT-1",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000002",
+    "PathID": "qf07_patrols_test_route",
+    "Step": 2,
+    "X": 330419,
+    "Y": 661839,
+    "Z": 2804,
+    "MaxSpeed": 0,
+    "WaitTime": 0
+   },
+   "why": "TEST: patrol point 2"
+  }
+ ]
+}

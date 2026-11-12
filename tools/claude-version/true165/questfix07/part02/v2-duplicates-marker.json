@@ -1,0 +1,50 @@
+{
+ "fixer": "part02",
+ "about": "v2: open verifier notes for part02 (E9 duplicate kill tasks, B3 hound marker)",
+ "entries": [
+  {
+   "finding": "P02-E9",
+   "kind": "remove",
+   "table": "DataQuest",
+   "where": "ID = 362 AND StartType = 1",
+   "why": "Cervodeth Antlers XP Item at Sarah duplicates the period task DataQuest 21456 'Cervideth Antlers -- Kill Task' at the same NPC (same cervideth monsters, its own 15% classic drop); the same rule as the archived duplicates 237, 142 and 394; the P02-A1-362 Cervideth_Antlers drop was withdrawn with it so no orphan item drops",
+   "source": "Allakhazam quest list cquest=551 'Cervideth Antlers -- Kill Task' (one period task, giver Sarah)"
+  },
+  {
+   "finding": "P02-E9",
+   "kind": "remove",
+   "table": "DataQuest",
+   "where": "ID = 330 AND StartType = 1",
+   "why": "Venom Sac XP Item at Mitri duplicates the period task DataQuest 20979 'Cutthroat Vine Poison Sac -- Kill Task' at the same NPC (Mitri, Droighaid) on the same monster (cutthroat vines); the period item is the Cutthroat Vine Poison Sac, so the Atlas 'Venom Sac' row goes, as 237, 142 and 394 did",
+   "source": "Allakhazam cquest 668 'Cutthroat Vine Poison Sac -- Kill Task' (Start NPC Mitri, Droighaid, Related NPCs Cutthroat Vines, Min 38 Max 42)"
+  },
+  {
+   "finding": "P02-E9",
+   "kind": "drop",
+   "mob": "cutthroat vines",
+   "remove": [
+    "venom_sac"
+   ],
+   "why": "with quest 330 archived nobody accepts venom_sac; cutthroat vines keep the period Cutthroat Vine Poison Sac through quest 20979's classic drop"
+  },
+  {
+   "finding": "P02-B3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20078",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 379946,
+    "Y": 487965,
+    "Z": 5277
+   },
+   "why": "step 4's hill hound now spawns at the player beside the Fallen One (P02-B3 Spawn, TriggerRadius 0), but the marker still pointed 15k away at the standing hill hounds (396620,496545); it now marks the Fallen One's stone (Mob c5b8ce63 at 379946,487965,5277), like steps 3 and 5"
+  }
+ ]
+}

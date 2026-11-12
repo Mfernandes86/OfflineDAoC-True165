@@ -1,0 +1,164 @@
+{
+ "fixer": "part03",
+ "about": "v2: open verifier notes for part03 (P03-C4 Mad Sprite circles the dead oak)",
+ "entries": [
+  {
+   "finding": "P03-C4",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00070305-0000-4000-8000-000000000001",
+    "PathID": "qf07_part03_mad_sprite_dead_oak",
+    "RegionID": 200,
+    "PathType": 3
+   },
+   "why": "the Mad Sprite stood still beside the dead oak; period trainer text says he circles it non-stop: a closed 8-point loop of radius 200 round the client's Dead Tree fixture (zone 200 #979, local 12032,28928), all points on walkable navmesh ground, no swimming, no guards near",
+   "source": "Allakhazam quest 76 'Strange Matters Indeed' (Wayback 2004-10-13): Blathnaid: the Mad Sprite 'circles it non-stop'; walkthrough: 'near a large dead tree along the north bank'; CapnBry sighting Lough Derg 12019,29142 (the realm-3 spawn); client zone200 fixtures.csv #979 'Dead Tree' (Hdeadtree.nif) at local 12032,28928"
+  },
+  {
+   "finding": "P03-C4",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070306-0000-4000-8000-000000000001",
+    "PathID": "qf07_part03_mad_sprite_dead_oak",
+    "Step": 1,
+    "X": 331520,
+    "Y": 512456,
+    "Z": 4446,
+    "MaxSpeed": 100,
+    "WaitTime": 0
+   },
+   "why": "qf07_part03_mad_sprite_dead_oak point 1: navmesh ground 200 units from the Dead Tree fixture (world 331520,512256)"
+  },
+  {
+   "finding": "P03-C4",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070306-0000-4000-8000-000000000002",
+    "PathID": "qf07_part03_mad_sprite_dead_oak",
+    "Step": 2,
+    "X": 331661,
+    "Y": 512397,
+    "Z": 4447,
+    "MaxSpeed": 100,
+    "WaitTime": 0
+   },
+   "why": "qf07_part03_mad_sprite_dead_oak point 2: navmesh ground 200 units from the Dead Tree fixture (world 331520,512256)"
+  },
+  {
+   "finding": "P03-C4",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070306-0000-4000-8000-000000000003",
+    "PathID": "qf07_part03_mad_sprite_dead_oak",
+    "Step": 3,
+    "X": 331720,
+    "Y": 512256,
+    "Z": 4452,
+    "MaxSpeed": 100,
+    "WaitTime": 0
+   },
+   "why": "qf07_part03_mad_sprite_dead_oak point 3: navmesh ground 200 units from the Dead Tree fixture (world 331520,512256)"
+  },
+  {
+   "finding": "P03-C4",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070306-0000-4000-8000-000000000004",
+    "PathID": "qf07_part03_mad_sprite_dead_oak",
+    "Step": 4,
+    "X": 331661,
+    "Y": 512114,
+    "Z": 4480,
+    "MaxSpeed": 100,
+    "WaitTime": 0
+   },
+   "why": "qf07_part03_mad_sprite_dead_oak point 4: navmesh ground 200 units from the Dead Tree fixture (world 331520,512256)"
+  },
+  {
+   "finding": "P03-C4",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070306-0000-4000-8000-000000000005",
+    "PathID": "qf07_part03_mad_sprite_dead_oak",
+    "Step": 5,
+    "X": 331520,
+    "Y": 512056,
+    "Z": 4495,
+    "MaxSpeed": 100,
+    "WaitTime": 0
+   },
+   "why": "qf07_part03_mad_sprite_dead_oak point 5: navmesh ground 200 units from the Dead Tree fixture (world 331520,512256)"
+  },
+  {
+   "finding": "P03-C4",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070306-0000-4000-8000-000000000006",
+    "PathID": "qf07_part03_mad_sprite_dead_oak",
+    "Step": 6,
+    "X": 331378,
+    "Y": 512114,
+    "Z": 4486,
+    "MaxSpeed": 100,
+    "WaitTime": 0
+   },
+   "why": "qf07_part03_mad_sprite_dead_oak point 6: navmesh ground 200 units from the Dead Tree fixture (world 331520,512256)"
+  },
+  {
+   "finding": "P03-C4",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070306-0000-4000-8000-000000000007",
+    "PathID": "qf07_part03_mad_sprite_dead_oak",
+    "Step": 7,
+    "X": 331320,
+    "Y": 512256,
+    "Z": 4457,
+    "MaxSpeed": 100,
+    "WaitTime": 0
+   },
+   "why": "qf07_part03_mad_sprite_dead_oak point 7: navmesh ground 200 units from the Dead Tree fixture (world 331520,512256)"
+  },
+  {
+   "finding": "P03-C4",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070306-0000-4000-8000-000000000008",
+    "PathID": "qf07_part03_mad_sprite_dead_oak",
+    "Step": 8,
+    "X": 331378,
+    "Y": 512397,
+    "Z": 4448,
+    "MaxSpeed": 100,
+    "WaitTime": 0
+   },
+   "why": "qf07_part03_mad_sprite_dead_oak point 8: navmesh ground 200 units from the Dead Tree fixture (world 331520,512256)"
+  },
+  {
+   "finding": "P03-C4",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_part03_mad_sprite_dead_oak",
+    "RoamingRange": 0,
+    "X": 331520,
+    "Y": 512456,
+    "Z": 4446
+   },
+   "where": {
+    "Mob_ID": "9a645f3c-cdd5-5ea1-a692-5844240669f9"
+   },
+   "why": "the realm-3 Mad Sprite (the copy the 20251-20254 markers use, CapnBry spot local 12019,29142) walks the loop round the dead oak from its first point, 14 units from the old spawn; the quest markers stay valid (radius 200). The midnight-to-midday window is not modelled (he circles all day)",
+   "source": "Allakhazam quest 76 'Strange Matters Indeed' (Wayback 2004-10-13): Blathnaid: the Mad Sprite 'circles it non-stop'; walkthrough: 'near a large dead tree along the north bank'; CapnBry sighting Lough Derg 12019,29142 (the realm-3 spawn); client zone200 fixtures.csv #979 'Dead Tree' (Hdeadtree.nif) at local 12032,28928"
+  }
+ ]
+}

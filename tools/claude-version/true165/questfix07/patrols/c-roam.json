@@ -1,0 +1,249 @@
+{
+ "fixer": "patrols",
+ "about": "quest monsters the period says roam or wander without a route: a roaming range instead of a path",
+ "entries": [
+  {
+   "finding": "P04-C10",
+   "why": "Erich stood still; period 'a woman the roams among the undead' (part04 C10): a small roaming range (part04 B3 moves her spot)",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "RoamingRange": 300
+   },
+   "where": {
+    "Mob_ID": "e7fae601-c6b4-5edd-b694-b1a42a5e1303"
+   }
+  },
+  {
+   "finding": "P05-C3",
+   "why": "the Wandering Drakoran Scout did not wander (roam 0); the period gives only 'found around 47324, 21517', which is its spot: a roaming range round it",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "RoamingRange": 400
+   },
+   "where": {
+    "Mob_ID": "6ef9d596-3180-56db-b52d-0081bd9f8824"
+   }
+  },
+  {
+   "finding": "P05-C4",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "RoamingRange": 400
+   },
+   "where": {
+    "Name": "decaying marshman",
+    "Region": 51
+   },
+   "why": "all 46 decaying marshmen stood still (roam 0) round Wearyall Village; Allakhazam 1782 'decaying marshmen who can be found roaming around Wearyall Village': a roaming range of 400"
+  },
+  {
+   "finding": "P05-C2",
+   "why": "The Blademaster stood still (Bri Leith 410811,538011, roam 0); Allakhazam 180 'The Blademaster wanders around here': the quest's The Blademaster roams (200, like the twin did)",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "RoamingRange": 200
+   },
+   "where": {
+    "Mob_ID": "d40c6b35-2ad1-5f42-a85c-0c7215f459e0"
+   }
+  },
+  {
+   "finding": "P05-C2",
+   "kind": "remove",
+   "table": "Mob",
+   "where": "Mob_ID = 'a7bfb7b6-21dd-4216-b88b-d38104968b4b' AND Name = 'Blademaster'",
+   "why": "a second, roaming level 15 'Blademaster' (Public_DB) stood 320 units from the quest's 'The Blademaster'; killing it never counted for Cad Goddeau A (TargetName 'The Blademaster;200'): one Blademaster kept, the twin archived"
+  },
+  {
+   "finding": "P06-C4",
+   "why": "Saemus only drifted (roam 200) in the Bog of Cullen; period 'He roams the Bog of Cullen' / 'moves around some, but in the water': a wider roaming range",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "RoamingRange": 500
+   },
+   "where": {
+    "Mob_ID": "d5e0035d-8dd6-412c-b59b-d9ca3cabde10"
+   }
+  },
+  {
+   "finding": "P06-C5",
+   "why": "the hag stood still (Bog of Cullen 42200,17100, roam 0); period 'She roams the Bog of Cullen': a small roaming range",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "RoamingRange": 300
+   },
+   "where": {
+    "Mob_ID": "2eb037a6-dea6-5470-bed3-fd32da29c4fb"
+   }
+  },
+  {
+   "finding": "P06-C7",
+   "why": "Scuttle stood still alone (Silvermine 15694,52756, roam 0); period 'He was trailed by another bear cub': a small roaming range and a fishing bear cub (a copy of the Lough Derg ones) that trails him",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "RoamingRange": 300
+   },
+   "where": {
+    "Mob_ID": "347b4cb0-4b4e-5142-affd-82ad1766ea3f"
+   }
+  },
+  {
+   "finding": "P06-C7",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "fishing bear cub",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 335272,
+    "Y": 601620,
+    "Z": 5376,
+    "Speed": 180,
+    "Heading": 1584,
+    "Region": 200,
+    "Model": 96,
+    "Size": 39,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 0,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 12,
+    "Realm": 0,
+    "EquipmentTemplateID": null,
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 60160891,
+    "Race": 2000,
+    "Flags": 0,
+    "AggroLevel": 5,
+    "AggroRange": 500,
+    "MeleeDamageType": 0,
+    "RespawnInterval": 80,
+    "FactionID": 0,
+    "BodyType": 1,
+    "HouseNumber": 0,
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071101-0000-4000-8000-000000000020"
+   },
+   "why": "Scuttle 'was trailed by another bear cub' but stood alone (a copy of fishing bear cub 1bbd6160-3294-419f-907d-aa960cf5e7d7, same template and stats, walking with Scuttle)",
+   "source": "Allakhazam quest 97 Scuttle: 'a Fishing Bear Cub named Scuttle'; period comment 'He was trailed by another bear cub'"
+  },
+  {
+   "finding": "P06-C7",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "00071101-0000-4000-8000-000000000020"
+   ],
+   "value": "Scuttle",
+   "why": "new fishing bear cub (00071101-0000-4000-8000-000000000020) is a fellow of Scuttle"
+  },
+  {
+   "finding": "P08-C1",
+   "why": "the Undead Patrol was a static all-day spawn; walkthrough 194 'Kill a roaming undead patrol ... They only spawn near midnight', our step text 'Slay a roaming undead patrol': a night spawn with a roaming range",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "RoamingRange": 500,
+    "ClassType": "DOL.GS.NightSpawn"
+   },
+   "where": {
+    "Mob_ID": "b0d6a21e-33c1-550f-994b-c3bca650227a"
+   }
+  },
+  {
+   "finding": "P08-C3",
+   "why": "Siv Alfevson stood still; walkthrough 208 'he appears to roam around the island': a roaming range",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "RoamingRange": 400
+   },
+   "where": {
+    "Mob_ID": "15aa66d2-93ea-4cd2-a409-cfc2b56094ec"
+   }
+  },
+  {
+   "finding": "P08-C3",
+   "why": "Jodis Rindasdottir stood still; walkthrough 1768 'roaming around on top of a hill': a roaming range",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "RoamingRange": 400
+   },
+   "where": {
+    "Mob_ID": "2f8ce216-15a7-4683-bb9c-78abdcd08c75"
+   }
+  },
+  {
+   "finding": "P08-C3",
+   "why": "Strykel stood still; walkthrough 'said to roam a fiery island': a roaming range",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "RoamingRange": 400
+   },
+   "where": {
+    "Mob_ID": "7305c038-e1d3-5cef-931e-f2d1d1c19804"
+   }
+  },
+  {
+   "finding": "P04-C6",
+   "why": "the Nisse's Lair Haunt never moved (roam -1); walkthrough 509 'The haunt patrols within sight of the ramp from the Shaman room': a small roaming range in its room (a navmesh roam stays on connected floor)",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "RoamingRange": 300
+   },
+   "where": {
+    "Mob_ID": "c8bc4a4a-ac59-46c7-9c10-4858d071fa84"
+   }
+  },
+  {
+   "finding": "P04-C6",
+   "why": "Hnaki never moved (roam -1); walkthrough 509 'He patrols not deep in to the new area of Nisse's Lair': a small roaming range",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "RoamingRange": 300
+   },
+   "where": {
+    "Mob_ID": "93c1776b-a711-4df3-8c45-bd55ba5bf68b"
+   }
+  },
+  {
+   "finding": "P04-C6",
+   "why": "Skirr never moved (roam -1); walkthrough 509 'He patrols around the Warlord's room'; CapnBry radar saw him at three spots 250 apart there: a small roaming range",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "RoamingRange": 300
+   },
+   "where": {
+    "Mob_ID": "269b4890-8f37-4a2d-b721-c0a26ffd9132"
+   }
+  }
+ ]
+}

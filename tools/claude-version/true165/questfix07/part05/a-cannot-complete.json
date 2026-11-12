@@ -1,0 +1,637 @@
+{
+ "fixer": "part05",
+ "about": "Part 05 section A: Hunt for Arachneida target/marker, Secret Orders Celain target (A3/A4 are Bounty: OFF in True 1.65)",
+ "entries": [
+  {
+   "finding": "P05-A1",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET TargetName = replace(TargetName, '|arachnid;224|', '|Arachneida;1|') WHERE ID BETWEEN 20607 AND 20621 AND TargetName LIKE '%|arachnid;224|%'",
+   "why": "step 2 ('Kill Arachneida, who spawns with the bloated spiders') targeted 'arachnid' in region 224 (Treibh Caillte, a Hibernian dungeon); the real Arachneida spawn is in Campacorentin (region 1, 535124,609621 = loc 51.8k,28.0k; Allakhazam quest 87: 'She spawns at 52k, 29k')"
+  },
+  {
+   "finding": "P05-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20607",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 535124,
+    "Y": 609621,
+    "Z": 2473
+   },
+   "why": "step-2 marker pointed into region 224 (Treibh Caillte); it now points at the Campacorentin Arachneida spawn c528ca3a"
+  },
+  {
+   "finding": "P05-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20608",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 535124,
+    "Y": 609621,
+    "Z": 2473
+   },
+   "why": "step-2 marker pointed into region 224 (Treibh Caillte); it now points at the Campacorentin Arachneida spawn c528ca3a"
+  },
+  {
+   "finding": "P05-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20609",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 535124,
+    "Y": 609621,
+    "Z": 2473
+   },
+   "why": "step-2 marker pointed into region 224 (Treibh Caillte); it now points at the Campacorentin Arachneida spawn c528ca3a"
+  },
+  {
+   "finding": "P05-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20610",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 535124,
+    "Y": 609621,
+    "Z": 2473
+   },
+   "why": "step-2 marker pointed into region 224 (Treibh Caillte); it now points at the Campacorentin Arachneida spawn c528ca3a"
+  },
+  {
+   "finding": "P05-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20611",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 535124,
+    "Y": 609621,
+    "Z": 2473
+   },
+   "why": "step-2 marker pointed into region 224 (Treibh Caillte); it now points at the Campacorentin Arachneida spawn c528ca3a"
+  },
+  {
+   "finding": "P05-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20612",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 535124,
+    "Y": 609621,
+    "Z": 2473
+   },
+   "why": "step-2 marker pointed into region 224 (Treibh Caillte); it now points at the Campacorentin Arachneida spawn c528ca3a"
+  },
+  {
+   "finding": "P05-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20613",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 535124,
+    "Y": 609621,
+    "Z": 2473
+   },
+   "why": "step-2 marker pointed into region 224 (Treibh Caillte); it now points at the Campacorentin Arachneida spawn c528ca3a"
+  },
+  {
+   "finding": "P05-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20614",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 535124,
+    "Y": 609621,
+    "Z": 2473
+   },
+   "why": "step-2 marker pointed into region 224 (Treibh Caillte); it now points at the Campacorentin Arachneida spawn c528ca3a"
+  },
+  {
+   "finding": "P05-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20615",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 535124,
+    "Y": 609621,
+    "Z": 2473
+   },
+   "why": "step-2 marker pointed into region 224 (Treibh Caillte); it now points at the Campacorentin Arachneida spawn c528ca3a"
+  },
+  {
+   "finding": "P05-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20616",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 535124,
+    "Y": 609621,
+    "Z": 2473
+   },
+   "why": "step-2 marker pointed into region 224 (Treibh Caillte); it now points at the Campacorentin Arachneida spawn c528ca3a"
+  },
+  {
+   "finding": "P05-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20617",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 535124,
+    "Y": 609621,
+    "Z": 2473
+   },
+   "why": "step-2 marker pointed into region 224 (Treibh Caillte); it now points at the Campacorentin Arachneida spawn c528ca3a"
+  },
+  {
+   "finding": "P05-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20618",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 535124,
+    "Y": 609621,
+    "Z": 2473
+   },
+   "why": "step-2 marker pointed into region 224 (Treibh Caillte); it now points at the Campacorentin Arachneida spawn c528ca3a"
+  },
+  {
+   "finding": "P05-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20619",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 535124,
+    "Y": 609621,
+    "Z": 2473
+   },
+   "why": "step-2 marker pointed into region 224 (Treibh Caillte); it now points at the Campacorentin Arachneida spawn c528ca3a"
+  },
+  {
+   "finding": "P05-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20620",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 535124,
+    "Y": 609621,
+    "Z": 2473
+   },
+   "why": "step-2 marker pointed into region 224 (Treibh Caillte); it now points at the Campacorentin Arachneida spawn c528ca3a"
+  },
+  {
+   "finding": "P05-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20621",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 535124,
+    "Y": 609621,
+    "Z": 2473
+   },
+   "why": "step-2 marker pointed into region 224 (Treibh Caillte); it now points at the Campacorentin Arachneida spawn c528ca3a"
+  },
+  {
+   "finding": "P05-A1",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "c528ca3a-0fa6-4c9c-a81a-059a5ae0d428",
+   "why": "Arachneida is now the quest's kill target: gamebots must leave the named spider alone"
+  },
+  {
+   "finding": "P05-A2",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET TargetName = replace(replace(TargetName, '|Celain Elrich;1|', '|Celain Eirich;1|'), '|Armsman Commander;1|', '|Arawn Commander;1|'), StepText = replace(StepText, 'Celain Elrich', 'Celain Eirich') WHERE ID BETWEEN 20652 AND 20660 AND TargetName LIKE '%|Celain Elrich;1|%'",
+   "why": "step 3 targeted 'Celain Elrich', a hidden model-1 GameNPC with Flags 13 (GHOST|DONTSHOWNAME|CANTTARGET) nobody can target; the visible Prima encounter necromancer is 'Celain Eirich' (CelainEirich165, L36, 220 units away; Prima Atlas 'Celain Eirich [36]', Uthgard 'Celain Eirich' 36-38). The same statement does P05-B3: step 14 targeted 'Armsman Commander' (five realm keep GuardCommanders, an enemy one once a keep changes hands) and now targets the new neutral 'Arawn Commander' (Allakhazam 351)"
+  },
+  {
+   "finding": "P05-A2",
+   "kind": "remove",
+   "table": "Mob",
+   "where": "Mob_ID = 'd35abfa5-af49-5fae-982e-34d9079a7408'",
+   "why": "hidden untargetable duplicate 'Celain Elrich' (model 1, Flags 13, PackageID ClassicQuest) standing 220 units from the real Celain Eirich encounter; the quest now targets Celain Eirich"
+  },
+  {
+   "finding": "P05-A2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20652",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 587009,
+    "Y": 588247,
+    "Z": 2187
+   },
+   "why": "step-3 marker pointed at the hidden duplicate; it now points at Celain Eirich (c866c1b9, the SE outer stone of Stonehenge)"
+  },
+  {
+   "finding": "P05-A2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20652",
+    "Steps",
+    4,
+    "Issuer"
+   ],
+   "value": "Celain Eirich",
+   "why": "the necromancer's orders come from the step-3 kill, now Celain Eirich (a monster issuer, so a lost copy is re-issued)"
+  },
+  {
+   "finding": "P05-A2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20653",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 587009,
+    "Y": 588247,
+    "Z": 2187
+   },
+   "why": "step-3 marker pointed at the hidden duplicate; it now points at Celain Eirich (c866c1b9, the SE outer stone of Stonehenge)"
+  },
+  {
+   "finding": "P05-A2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20653",
+    "Steps",
+    4,
+    "Issuer"
+   ],
+   "value": "Celain Eirich",
+   "why": "the necromancer's orders come from the step-3 kill, now Celain Eirich (a monster issuer, so a lost copy is re-issued)"
+  },
+  {
+   "finding": "P05-A2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20654",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 587009,
+    "Y": 588247,
+    "Z": 2187
+   },
+   "why": "step-3 marker pointed at the hidden duplicate; it now points at Celain Eirich (c866c1b9, the SE outer stone of Stonehenge)"
+  },
+  {
+   "finding": "P05-A2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20654",
+    "Steps",
+    4,
+    "Issuer"
+   ],
+   "value": "Celain Eirich",
+   "why": "the necromancer's orders come from the step-3 kill, now Celain Eirich (a monster issuer, so a lost copy is re-issued)"
+  },
+  {
+   "finding": "P05-A2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20655",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 587009,
+    "Y": 588247,
+    "Z": 2187
+   },
+   "why": "step-3 marker pointed at the hidden duplicate; it now points at Celain Eirich (c866c1b9, the SE outer stone of Stonehenge)"
+  },
+  {
+   "finding": "P05-A2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20655",
+    "Steps",
+    4,
+    "Issuer"
+   ],
+   "value": "Celain Eirich",
+   "why": "the necromancer's orders come from the step-3 kill, now Celain Eirich (a monster issuer, so a lost copy is re-issued)"
+  },
+  {
+   "finding": "P05-A2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20656",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 587009,
+    "Y": 588247,
+    "Z": 2187
+   },
+   "why": "step-3 marker pointed at the hidden duplicate; it now points at Celain Eirich (c866c1b9, the SE outer stone of Stonehenge)"
+  },
+  {
+   "finding": "P05-A2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20656",
+    "Steps",
+    4,
+    "Issuer"
+   ],
+   "value": "Celain Eirich",
+   "why": "the necromancer's orders come from the step-3 kill, now Celain Eirich (a monster issuer, so a lost copy is re-issued)"
+  },
+  {
+   "finding": "P05-A2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20657",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 587009,
+    "Y": 588247,
+    "Z": 2187
+   },
+   "why": "step-3 marker pointed at the hidden duplicate; it now points at Celain Eirich (c866c1b9, the SE outer stone of Stonehenge)"
+  },
+  {
+   "finding": "P05-A2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20657",
+    "Steps",
+    4,
+    "Issuer"
+   ],
+   "value": "Celain Eirich",
+   "why": "the necromancer's orders come from the step-3 kill, now Celain Eirich (a monster issuer, so a lost copy is re-issued)"
+  },
+  {
+   "finding": "P05-A2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20658",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 587009,
+    "Y": 588247,
+    "Z": 2187
+   },
+   "why": "step-3 marker pointed at the hidden duplicate; it now points at Celain Eirich (c866c1b9, the SE outer stone of Stonehenge)"
+  },
+  {
+   "finding": "P05-A2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20658",
+    "Steps",
+    4,
+    "Issuer"
+   ],
+   "value": "Celain Eirich",
+   "why": "the necromancer's orders come from the step-3 kill, now Celain Eirich (a monster issuer, so a lost copy is re-issued)"
+  },
+  {
+   "finding": "P05-A2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20659",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 587009,
+    "Y": 588247,
+    "Z": 2187
+   },
+   "why": "step-3 marker pointed at the hidden duplicate; it now points at Celain Eirich (c866c1b9, the SE outer stone of Stonehenge)"
+  },
+  {
+   "finding": "P05-A2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20659",
+    "Steps",
+    4,
+    "Issuer"
+   ],
+   "value": "Celain Eirich",
+   "why": "the necromancer's orders come from the step-3 kill, now Celain Eirich (a monster issuer, so a lost copy is re-issued)"
+  },
+  {
+   "finding": "P05-A2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20660",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 587009,
+    "Y": 588247,
+    "Z": 2187
+   },
+   "why": "step-3 marker pointed at the hidden duplicate; it now points at Celain Eirich (c866c1b9, the SE outer stone of Stonehenge)"
+  },
+  {
+   "finding": "P05-A2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20660",
+    "Steps",
+    4,
+    "Issuer"
+   ],
+   "value": "Celain Eirich",
+   "why": "the necromancer's orders come from the step-3 kill, now Celain Eirich (a monster issuer, so a lost copy is re-issued)"
+  },
+  {
+   "finding": "P05-A2",
+   "kind": "quest",
+   "op": "remove_value",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "d35abfa5-af49-5fae-982e-34d9079a7408",
+   "why": "the hidden Celain Elrich duplicate is archived"
+  },
+  {
+   "finding": "P05-A2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "c866c1b9-f221-4a2b-9ace-8de25a36e80e",
+   "why": "Celain Eirich is the Secret Orders kill target: gamebots must leave him alone"
+  }
+ ]
+}

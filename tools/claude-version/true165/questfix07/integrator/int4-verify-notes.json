@@ -1,0 +1,94 @@
+{
+ "fixer": "integrator",
+ "about": "The smaller notes of the 0.7 verifiers: leftover drops, stale kill-task item text, Arachneida's Prima level.",
+ "entries": [
+  {
+   "finding": "INT-4",
+   "kind": "update",
+   "sql": "UPDATE ItemTemplate SET Description = replace(Description, 'Talk to Lenia Fletcher', 'Talk to Allia Fletcher') WHERE Id_nb = 'Blood_Red_Berry_Wine'",
+   "why": "the item still sent the player to Lenia Fletcher; kill task 109 is Allia Fletcher's since P01-E-109 (she stands beside Lenia)"
+  },
+  {
+   "finding": "INT-4",
+   "kind": "update",
+   "sql": "UPDATE ItemTemplate SET Description = replace(Description, 'Minimum Level: 35 Maximum Level: 41', 'Minimum Level: 28 Maximum Level: 37') WHERE Id_nb = 'Glowing_Soul_Gem'",
+   "why": "the item text kept the old range; kill task 117 is 28-37 since P01-E-117"
+  },
+  {
+   "finding": "INT-4",
+   "kind": "update",
+   "sql": "UPDATE ItemTemplate SET Description = replace(Description, 'Minimum Level: 31 Maximum Level: 36', 'Minimum Level: 34 Maximum Level: 40') WHERE Id_nb = 'Cultist_Staff'",
+   "why": "the item text kept the old range; kill task 225 is 34-40"
+  },
+  {
+   "finding": "INT-4",
+   "kind": "update",
+   "sql": "UPDATE ItemTemplate SET Description = replace(Description, 'Minimum Level: 41 Maximum Level: 47', 'Minimum Level: 41 Maximum Level: 43') WHERE Id_nb = 'Drakulv_Scale'",
+   "why": "the item text kept the old range; kill task 242 is 41-43"
+  },
+  {
+   "finding": "INT-4",
+   "kind": "update",
+   "sql": "UPDATE ItemTemplate SET Description = replace(Description, 'Minimum Level: 37 Maximum Level: 41', 'Minimum Level: 39 Maximum Level: 43') WHERE Id_nb = 'Ice_Creature_Corpse'",
+   "why": "the item text kept the old range; kill task 244 is 39-43"
+  },
+  {
+   "finding": "INT-4",
+   "kind": "update",
+   "sql": "UPDATE ItemTemplate SET Description = replace(Description, 'Chelseigh Stilman', 'Chelseigh Stillman') WHERE Id_nb = 'skin_cream'",
+   "why": "the item text kept the misspelt name; the Camelot merchant and kill task 169 are Chelseigh Stillman"
+  },
+  {
+   "finding": "INT-4",
+   "kind": "remove",
+   "table": "LootTemplate",
+   "where": "TemplateName = 'Tylwyth Teg Rover' AND ItemTemplateID = 'Unused_Arrowhead'",
+   "why": "the kill-task Unused Arrowhead has no taker since task 142 was removed (P01-E-142); quest 20699 uses cq_unused_arrowhead"
+  },
+  {
+   "finding": "INT-4",
+   "kind": "drop",
+   "mob": "farmer",
+   "remove": [
+    "Sack_of_Grain_165l4"
+   ],
+   "why": "the junk twin \"sack of grain\" stood in for the kill-task Sack of Grain that P01-A1-114 restored: two look-alike items, one accepted"
+  },
+  {
+   "finding": "INT-4",
+   "kind": "update",
+   "sql": "UPDATE NpcTemplate SET Level = '12' WHERE TemplateId = 12445 AND Name = 'Arachneida'",
+   "why": "Prima Atlas (Campacorentin Forest loot table): \"Arachneida [12]\"; she was 22, purple to the level 14 the quest is for",
+   "source": "Dark Age of Camelot: The Atlas (Prima) \"Arachneida [12] (60%) Bloated Spider Carapace\"; Uthgard bestiary Campacorentin 12-13"
+  },
+  {
+   "finding": "INT-4",
+   "kind": "add_edit",
+   "file": "add-restoredspawns165.json",
+   "id": "c528ca3a-0fa6-4c9c-a81a-059a5ae0d428",
+   "set": {
+    "Level": 12
+   },
+   "why": "Arachneida's spawn row follows her template: Prima Atlas level 12",
+   "source": "Dark Age of Camelot: The Atlas (Prima) \"Arachneida [12]\""
+  },
+  {
+   "finding": "INT-4",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "MaxLevel": 50
+   },
+   "where": {
+    "ID": 21042
+   },
+   "why": "Rasczel's Nose had MinLevel and MaxLevel 11, as Rasczel's Bane did before P10-E4: a Berserker who reached 12 first could never get it; Prima's \"11\" is the start level and the other guild quests use MaxLevel 50"
+  },
+  {
+   "finding": "INT-4",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StepText = replace(StepText, ' Allakhazam spells the monster ''billious goo''; the server''s monster is ''bilious goo'' (same creature, Dales of Devwy).', '') WHERE ID = 20694",
+   "why": "the journal of Billious Goo Pieces showed a developer note about the monster's spelling; the step keeps 'Kill bilious goo and bring Achae Smith the Billious Goo Piece.'"
+  }
+ ]
+}

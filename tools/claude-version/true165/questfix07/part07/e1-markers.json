@@ -1,0 +1,2685 @@
+{
+ "fixer": "part07",
+ "about": "E1: map markers moved to the period hunting grounds",
+ "entries": [
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20939",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20939",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20939",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20939",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20939",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20939",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 402146,
+    "Y": 215128,
+    "Z": 3154
+   },
+   "why": "waterstrider hatchling marker stood 30.5k off; walkthrough '(loc=58000, 51100 Allta Fearann)'; nearest spawn 205 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20940",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20940",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20940",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20940",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20940",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20940",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 402146,
+    "Y": 215128,
+    "Z": 3154
+   },
+   "why": "waterstrider hatchling marker stood 30.5k off; walkthrough '(loc=58000, 51100 Allta Fearann)'; nearest spawn 205 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20941",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20941",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20941",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20941",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20941",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20941",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 402146,
+    "Y": 215128,
+    "Z": 3154
+   },
+   "why": "waterstrider hatchling marker stood 30.5k off; walkthrough '(loc=58000, 51100 Allta Fearann)'; nearest spawn 205 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20942",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20942",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20942",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20942",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20942",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20942",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 402146,
+    "Y": 215128,
+    "Z": 3154
+   },
+   "why": "waterstrider hatchling marker stood 30.5k off; walkthrough '(loc=58000, 51100 Allta Fearann)'; nearest spawn 205 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20943",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20943",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20943",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20943",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20943",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20943",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 402146,
+    "Y": 215128,
+    "Z": 3154
+   },
+   "why": "waterstrider hatchling marker stood 30.5k off; walkthrough '(loc=58000, 51100 Allta Fearann)'; nearest spawn 205 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20944",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20944",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20944",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20944",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20944",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20944",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 402146,
+    "Y": 215128,
+    "Z": 3154
+   },
+   "why": "waterstrider hatchling marker stood 30.5k off; walkthrough '(loc=58000, 51100 Allta Fearann)'; nearest spawn 205 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20945",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20945",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20945",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20945",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20945",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20945",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 402146,
+    "Y": 215128,
+    "Z": 3154
+   },
+   "why": "waterstrider hatchling marker stood 30.5k off; walkthrough '(loc=58000, 51100 Allta Fearann)'; nearest spawn 205 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20946",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20946",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20946",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20946",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20946",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20946",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 402146,
+    "Y": 215128,
+    "Z": 3154
+   },
+   "why": "waterstrider hatchling marker stood 30.5k off; walkthrough '(loc=58000, 51100 Allta Fearann)'; nearest spawn 205 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20947",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20947",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20947",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20947",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20947",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 403755,
+    "Y": 207372,
+    "Z": 4500
+   },
+   "why": "Xaxnxi kill marker stood 48k from the period hunting ground; walkthrough 'kill 5 ... to west of him (loc=59300,43100, Allta Fearann)'; nearest arboreal remnant defender spawn 582 away (Allta Fearann 59691,43532)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20947",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 402146,
+    "Y": 215128,
+    "Z": 3154
+   },
+   "why": "waterstrider hatchling marker stood 30.5k off; walkthrough '(loc=58000, 51100 Allta Fearann)'; nearest spawn 205 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20910",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20910",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20910",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20910",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20910",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20910",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20911",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20911",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20911",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20911",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20911",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20911",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20912",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20912",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20912",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20912",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20912",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20912",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20913",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20913",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20913",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20913",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20913",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20913",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20914",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20914",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20914",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20914",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20914",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20914",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20915",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20915",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20915",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20915",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20915",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20915",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20916",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20916",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20916",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20916",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20916",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20916",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20917",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20917",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20917",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20917",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20917",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20917",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20918",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20918",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20918",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20918",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20918",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20918",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20919",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20919",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20919",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20919",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20919",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20919",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20920",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20920",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20920",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20920",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20920",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20920",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20921",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20921",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20921",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20921",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20921",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20921",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 356942,
+    "Y": 405493,
+    "Z": 4387
+   },
+   "why": "Missing Tapestry kill marker stood 38k from the settlement; walkthrough 'Wipe out the Fomorian settlement West of Droighaid (loc=29893, 45423)'; nearest fomorian bonic 735 away"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20960",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 420305,
+    "Y": 325817,
+    "Z": 3082
+   },
+   "why": "Twisted Evil vines marker stood 27k off; walkthrough 'SW of Necht, kill two cutthroat vines loc: 45k, 30k'; nearest cutthroat vines spawn 1.8k away (Vigilant Rock 43473,30905)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20960",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 420305,
+    "Y": 325817,
+    "Z": 3082
+   },
+   "why": "Twisted Evil vines marker stood 27k off; walkthrough 'SW of Necht, kill two cutthroat vines loc: 45k, 30k'; nearest cutthroat vines spawn 1.8k away (Vigilant Rock 43473,30905)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20972",
+    "Steps",
+    11,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 386172,
+    "Y": 279247,
+    "Z": 3355
+   },
+   "why": "botonid marker stood 23k off; walkthrough 'botonids are farther back, off the road, S of the Octonid forest area, 42.5k 48.5k'; nearest botonid rencanraider 1.4k away (World's End 42108,49871)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20972",
+    "Steps",
+    12,
+    "Marker"
+   ],
+   "value": {
+    "Region": 181,
+    "X": 386172,
+    "Y": 279247,
+    "Z": 3355
+   },
+   "why": "botonid marker stood 23k off; walkthrough 'botonids are farther back, off the road, S of the Octonid forest area, 42.5k 48.5k'; nearest botonid rencanraider 1.4k away (World's End 42108,49871)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20961",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 230254,
+    "Y": 458225,
+    "Z": 1563
+   },
+   "why": "koalinth marker stood 11.3k off; walkthrough 'Cliffs of Mohr & kill a Koalinth Slinker there for seaweed (loc 9.5k by 40k)'; nearest koalinth slinker 610 away (Cliffs of Moher 9070,40433)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20962",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 230254,
+    "Y": 458225,
+    "Z": 1563
+   },
+   "why": "koalinth marker stood 11.3k off; walkthrough 'Cliffs of Mohr & kill a Koalinth Slinker there for seaweed (loc 9.5k by 40k)'; nearest koalinth slinker 610 away (Cliffs of Moher 9070,40433)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20963",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 230254,
+    "Y": 458225,
+    "Z": 1563
+   },
+   "why": "koalinth marker stood 11.3k off; walkthrough 'Cliffs of Mohr & kill a Koalinth Slinker there for seaweed (loc 9.5k by 40k)'; nearest koalinth slinker 610 away (Cliffs of Moher 9070,40433)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20964",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 230254,
+    "Y": 458225,
+    "Z": 1563
+   },
+   "why": "koalinth marker stood 11.3k off; walkthrough 'Cliffs of Mohr & kill a Koalinth Slinker there for seaweed (loc 9.5k by 40k)'; nearest koalinth slinker 610 away (Cliffs of Moher 9070,40433)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20965",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 230254,
+    "Y": 458225,
+    "Z": 1563
+   },
+   "why": "koalinth marker stood 11.3k off; walkthrough 'Cliffs of Mohr & kill a Koalinth Slinker there for seaweed (loc 9.5k by 40k)'; nearest koalinth slinker 610 away (Cliffs of Moher 9070,40433)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20966",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 230254,
+    "Y": 458225,
+    "Z": 1563
+   },
+   "why": "koalinth marker stood 11.3k off; walkthrough 'Cliffs of Mohr & kill a Koalinth Slinker there for seaweed (loc 9.5k by 40k)'; nearest koalinth slinker 610 away (Cliffs of Moher 9070,40433)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20967",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 230254,
+    "Y": 458225,
+    "Z": 1563
+   },
+   "why": "koalinth marker stood 11.3k off; walkthrough 'Cliffs of Mohr & kill a Koalinth Slinker there for seaweed (loc 9.5k by 40k)'; nearest koalinth slinker 610 away (Cliffs of Moher 9070,40433)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20968",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 230254,
+    "Y": 458225,
+    "Z": 1563
+   },
+   "why": "koalinth marker stood 11.3k off; walkthrough 'Cliffs of Mohr & kill a Koalinth Slinker there for seaweed (loc 9.5k by 40k)'; nearest koalinth slinker 610 away (Cliffs of Moher 9070,40433)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20969",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 230254,
+    "Y": 458225,
+    "Z": 1563
+   },
+   "why": "koalinth marker stood 11.3k off; walkthrough 'Cliffs of Mohr & kill a Koalinth Slinker there for seaweed (loc 9.5k by 40k)'; nearest koalinth slinker 610 away (Cliffs of Moher 9070,40433)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20970",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 230254,
+    "Y": 458225,
+    "Z": 1563
+   },
+   "why": "koalinth marker stood 11.3k off; walkthrough 'Cliffs of Mohr & kill a Koalinth Slinker there for seaweed (loc 9.5k by 40k)'; nearest koalinth slinker 610 away (Cliffs of Moher 9070,40433)"
+  },
+  {
+   "finding": "P07-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20971",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 230254,
+    "Y": 458225,
+    "Z": 1563
+   },
+   "why": "koalinth marker stood 11.3k off; walkthrough 'Cliffs of Mohr & kill a Koalinth Slinker there for seaweed (loc 9.5k by 40k)'; nearest koalinth slinker 610 away (Cliffs of Moher 9070,40433)"
+  }
+ ]
+}

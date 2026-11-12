@@ -1,0 +1,401 @@
+{
+ "fixer": "part06",
+ "about": "part06 B1-B8: wrong NPCs, spawn spots and directions",
+ "entries": [
+  {
+   "finding": "P06-B1",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET TargetName = replace(TargetName, 'Breeda;200|', 'Torrance;200|') WHERE ID = 20836",
+   "why": "step 1 sent Naturalists to Breeda (Naturalist trainer, Mag Mell) although the text and period walkthrough say the Druid trainer at the tower over the bridge from Connla: Torrance (Druid Trainer, Shannon Estuary 22931,30813; CapnBry 23028,30945)"
+  },
+  {
+   "finding": "P06-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20836",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "why": "step 1 marker moved from Breeda to Torrance",
+   "value": {
+    "Region": 200,
+    "X": 309651,
+    "Y": 645213,
+    "Z": 4848
+   }
+  },
+  {
+   "finding": "P06-B2",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 329220,
+    "Y": 442292,
+    "Z": 5732
+   },
+   "where": {
+    "Mob_ID": "34944c7a-83f1-5c0b-a4b1-b12bedb2b99e"
+   },
+   "why": "Sraoi stood at Connacht 45500,33200, the rock clipper's loc from the same walkthrough; period Sraoi loc is Connacht 42500,24500 north toward the Basar bridge (also 39370,21391); Z from the navmesh (groundz165)"
+  },
+  {
+   "finding": "P06-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20902",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "why": "step 7 marker follows Sraoi to Connacht 42500,24500",
+   "value": {
+    "Region": 200,
+    "X": 329220,
+    "Y": 442292,
+    "Z": 5732
+   }
+  },
+  {
+   "finding": "P06-B3",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20837",
+    "Steps",
+    1
+   ],
+   "why": "step 1 had no marker and no lough wolf lives near Caoimhe's Ardee house; the marker shows the nearest lough wolf group east of Mag Mell (CapnBry lough wolf sightings Lough Derg 30.7k,4.7k / 33.1k,3.7k), inside the existing use area",
+   "value": {
+    "Marker": {
+     "Region": 200,
+     "X": 356000,
+     "Y": 488500,
+     "Z": 6495
+    }
+   }
+  },
+  {
+   "finding": "P06-B3",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StepText = replace(replace(StepText, 'lough wolves near Caoimhe''s house.', 'lough wolves east of Mag Mell.'), 'Return to Caoimhe in Mag Mell.', 'Return to Caoimhe in Ardee.'), SourceText = replace(SourceText, 'lough wolves near Caoimhe''s house.', 'lough wolves east of Mag Mell.') WHERE ID = 20837",
+   "why": "Caoimhe stands in Ardee (Connacht 54155,49251, CapnBry identical) and the nearest lough wolves are east of Mag Mell, so 'near Caoimhe's house' and 'Return to Caoimhe in Mag Mell' sent players to the wrong places"
+  },
+  {
+   "finding": "P06-B4",
+   "kind": "quest",
+   "op": "delete",
+   "path": [
+    "Quests",
+    "20903",
+    "Steps",
+    11,
+    "Spawn"
+   ],
+   "why": "the step-11 event Rat-catcher appeared at the rat lair (17973,21192, beside the friendly one); the period rescue is at the black-horse farm 57.6k,26.1k, where a hostile period Rat-catcher (restored spawn) already stands"
+  },
+  {
+   "finding": "P06-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20903",
+    "Steps",
+    11,
+    "Marker"
+   ],
+   "why": "step 11 marker moved to the farm Rat-catcher at Lough Gur 57541,25795 (period 'You can find the place in question at 57.6k, 26.1k')",
+   "value": {
+    "Region": 200,
+    "X": 344261,
+    "Y": 705731,
+    "Z": 6351
+   }
+  },
+  {
+   "finding": "P06-B4",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "why": "the farm Rat-catcher is now The Piper's Price step-11 target: gamebots must leave him alone",
+   "value": "aea0abe2-0944-4a41-ab68-f33ca7b3fe65"
+  },
+  {
+   "finding": "P06-B5",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 415731,
+    "Y": 541513,
+    "Z": 6246
+   },
+   "where": {
+    "Mob_ID": "100030955"
+   },
+   "why": "Mikka stood beside the Old Hermit (Bri Leith 27107,54672); period: 'Mikka is alone in a tent encampment in Bri Leith near Caille. (the /loc is 30707 58185)'; Z from the navmesh"
+  },
+  {
+   "finding": "P06-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20731",
+    "Steps",
+    9,
+    "Marker"
+   ],
+   "why": "step 9 marker follows Mikka to Bri Leith 30707,58185",
+   "value": {
+    "Region": 200,
+    "X": 415731,
+    "Y": 541513,
+    "Z": 6246
+   }
+  },
+  {
+   "finding": "P06-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20732",
+    "Steps",
+    9,
+    "Marker"
+   ],
+   "why": "step 9 marker follows Mikka to Bri Leith 30707,58185",
+   "value": {
+    "Region": 200,
+    "X": 415731,
+    "Y": 541513,
+    "Z": 6246
+   }
+  },
+  {
+   "finding": "P06-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20733",
+    "Steps",
+    9,
+    "Marker"
+   ],
+   "why": "step 9 marker follows Mikka to Bri Leith 30707,58185",
+   "value": {
+    "Region": 200,
+    "X": 415731,
+    "Y": 541513,
+    "Z": 6246
+   }
+  },
+  {
+   "finding": "P06-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20734",
+    "Steps",
+    9,
+    "Marker"
+   ],
+   "why": "step 9 marker follows Mikka to Bri Leith 30707,58185",
+   "value": {
+    "Region": 200,
+    "X": 415731,
+    "Y": 541513,
+    "Z": 6246
+   }
+  },
+  {
+   "finding": "P06-B6",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StepText = replace(StepText, 'stone obelisk northwest of Mag Mell', 'stone obelisk east of Mag Mell'), SourceText = replace(SourceText, 'stone obelisk northwest of Mag Mell', 'stone obelisk east of Mag Mell') WHERE ID = 20835",
+   "why": "the summoner spawn is CapnBry-correct (Lough Derg 36-38k,11-12k), east of Mag Mell; the skeleton camp northwest of Mag Mell has no summoner, so 'northwest' sent players to the wrong camp"
+  },
+  {
+   "finding": "P06-B7",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET TargetName = replace(TargetName, 'Banon;201|', 'Sarff;200|'), StepText = replace(StepText, 'Go see the smith.|', 'Go see the smith in Connla.|') WHERE ID = 20777",
+   "why": "Ranger branch: period walkthrough (from a Ranger) 'Step 2). Go see the smith in Connla.'; Sarff is the Connla smith"
+  },
+  {
+   "finding": "P06-B7",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET TargetName = replace(TargetName, 'Banon;201|', 'Siobhan;200|'), StepText = replace(StepText, 'Go see the smith.|', 'Go see the smith Siobhan in Innis Carthaig.|') WHERE ID = 20779",
+   "why": "Hero branch: period walkthrough 'Hero: Step #2- Speak with the smith Siobahn in Innis Carthaig'; Siobhan is the Innis Carthaig smith"
+  },
+  {
+   "finding": "P06-B7",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20777",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "why": "Ranger step 2 marker on Sarff in Connla",
+   "value": {
+    "Region": 200,
+    "X": 296039,
+    "Y": 641279,
+    "Z": 4872
+   }
+  },
+  {
+   "finding": "P06-B7",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20779",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "why": "Hero step 2 marker on Siobhan in Innis Carthaig",
+   "value": {
+    "Region": 200,
+    "X": 333968,
+    "Y": 720879,
+    "Z": 4320
+   }
+  },
+  {
+   "finding": "P06-B8",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 24126,
+    "Y": 30720,
+    "Z": 7084
+   },
+   "where": {
+    "Mob_ID": "5bf25058-953f-4d5d-a890-b8ba6730b444"
+   },
+   "why": "Labhaoise (Sraoi's Heart) stood at Tir na Nog 15654,27059; CapnBry saw her at 15934,22528,7082; Z from the navmesh"
+  },
+  {
+   "finding": "P06-B8",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 28078,
+    "Y": 35307,
+    "Z": 7237
+   },
+   "where": {
+    "Mob_ID": "686198d3-9817-46c2-87da-efb2182498c2"
+   },
+   "why": "Kennocha (Sea Shell Sleeves) stood at Tir na Nog 22812,25895; CapnBry saw her at 19886,27115,7235; Z from the navmesh"
+  },
+  {
+   "finding": "P06-B8",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20902",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "why": "Labhaoise markers follow her to her CapnBry spot",
+   "value": {
+    "Region": 201,
+    "X": 24126,
+    "Y": 30720,
+    "Z": 7084
+   }
+  },
+  {
+   "finding": "P06-B8",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20902",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "why": "Labhaoise markers follow her to her CapnBry spot",
+   "value": {
+    "Region": 201,
+    "X": 24126,
+    "Y": 30720,
+    "Z": 7084
+   }
+  },
+  {
+   "finding": "P06-B8",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20902",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "why": "Labhaoise markers follow her to her CapnBry spot",
+   "value": {
+    "Region": 201,
+    "X": 24126,
+    "Y": 30720,
+    "Z": 7084
+   }
+  },
+  {
+   "finding": "P06-B8",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20902",
+    "Steps",
+    8,
+    "Marker"
+   ],
+   "why": "Labhaoise markers follow her to her CapnBry spot",
+   "value": {
+    "Region": 201,
+    "X": 24126,
+    "Y": 30720,
+    "Z": 7084
+   }
+  },
+  {
+   "finding": "P06-B8",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20901",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "why": "Kennocha marker follows her to her CapnBry spot",
+   "value": {
+    "Region": 201,
+    "X": 28078,
+    "Y": 35307,
+    "Z": 7237
+   }
+  }
+ ]
+}

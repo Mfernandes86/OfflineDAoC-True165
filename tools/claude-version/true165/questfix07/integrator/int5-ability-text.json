@@ -1,0 +1,18 @@
+{
+ "fixer": "integrator",
+ "about": "GitHub #46: realm ability descriptions that left out their training requirement.",
+ "entries": [
+  {
+   "finding": "INT-5",
+   "kind": "update",
+   "sql": "UPDATE Ability SET Description = Description || ' Requires Augmented Acuity 2.' WHERE KeyName = 'AtlasOF_Serenity' AND Description NOT LIKE '%Requires%'",
+   "why": "GitHub #46: Serenity can only be trained with Augmented Acuity 2 (AtlasOF_SerenityAbility.CheckRequirement) but its description did not say so; the other abilities with a prerequisite end with 'Requires ...' (Mastery of Healing: 'Requires Augmented Acuity 2.')"
+  },
+  {
+   "finding": "INT-5",
+   "kind": "update",
+   "sql": "UPDATE Ability SET Description = Description || '. Requires level 40.' WHERE KeyName = 'AtlasOF_StrikingTheSoul' AND Description NOT LIKE '%Requires%'",
+   "why": "the same gap as GitHub #46: Striking the Soul can only be trained from level 40 (AtlasOF_StrikingTheSoul.CheckRequirement) and its description did not say so"
+  }
+ ]
+}

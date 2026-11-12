@@ -1,0 +1,856 @@
+{
+ "fixer": "part03",
+ "about": "part03 section D: rewards",
+ "entries": [
+  {
+   "finding": "P03-D1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "FinalRewardItemTemplates": "cq_mid_emerald_flecked_jerkin"
+   },
+   "where": {
+    "ID": 20341
+   },
+   "why": "Thane/Skald/Savage versions gave no item; period: 'You receive the Emerald Flecked Jerkin from Dalea Gronholm!' (studded jerkin, all three wear studded), same as the Berserker version 20340"
+  },
+  {
+   "finding": "P03-D1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "FinalRewardItemTemplates": "cq_mid_emerald_flecked_jerkin"
+   },
+   "where": {
+    "ID": 20342
+   },
+   "why": "Thane/Skald/Savage versions gave no item; period: 'You receive the Emerald Flecked Jerkin from Dalea Gronholm!' (studded jerkin, all three wear studded), same as the Berserker version 20340"
+  },
+  {
+   "finding": "P03-D1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "FinalRewardItemTemplates": "cq_mid_emerald_flecked_jerkin"
+   },
+   "where": {
+    "ID": 20343
+   },
+   "why": "Thane/Skald/Savage versions gave no item; period: 'You receive the Emerald Flecked Jerkin from Dalea Gronholm!' (studded jerkin, all three wear studded), same as the Berserker version 20340"
+  },
+  {
+   "finding": "P03-D2",
+   "kind": "row",
+   "table": "ItemTemplate",
+   "row": {
+    "Id_nb": "qf07_part03_sword_of_the_keeper",
+    "TranslationId": null,
+    "Name": "Sword of the Keeper",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "Level": 27,
+    "Durability": 50000,
+    "MaxDurability": 50000,
+    "IsNotLosingDur": 0,
+    "Condition": 50000,
+    "MaxCondition": 50000,
+    "Quality": 100,
+    "DPS_AF": 92,
+    "SPD_ABS": 23,
+    "Hand": 2,
+    "Type_Damage": 2,
+    "Object_Type": 19,
+    "Item_Type": 11,
+    "Color": 0,
+    "Emblem": 0,
+    "Effect": 0,
+    "Weight": 18,
+    "SalvageExtension": null,
+    "Model": 446,
+    "Extension": 0,
+    "Bonus": 10,
+    "Bonus1": 4,
+    "Bonus2": 12,
+    "Bonus3": 0,
+    "Bonus4": 0,
+    "Bonus5": 0,
+    "Bonus6": 0,
+    "Bonus7": 0,
+    "Bonus8": 0,
+    "Bonus9": 0,
+    "Bonus10": 0,
+    "ExtraBonus": 0,
+    "Bonus1Type": 72,
+    "Bonus2Type": 10,
+    "Bonus3Type": 0,
+    "Bonus4Type": 0,
+    "Bonus5Type": 0,
+    "Bonus6Type": 0,
+    "Bonus7Type": 0,
+    "Bonus8Type": 0,
+    "Bonus9Type": 0,
+    "Bonus10Type": 0,
+    "ExtraBonusType": 0,
+    "CanUseEvery": 0,
+    "SpellID": 0,
+    "Charges": 0,
+    "MaxCharges": 0,
+    "SpellID1": 0,
+    "Charges1": 0,
+    "MaxCharges1": 0,
+    "ProcChance": 0,
+    "ProcSpellID": 0,
+    "ProcSpellID1": 0,
+    "PoisonSpellID": 0,
+    "PoisonCharges": 0,
+    "PoisonMaxCharges": 0,
+    "IsPickable": 1,
+    "IsDropable": 1,
+    "CanDropAsLoot": 0,
+    "IsTradable": 1,
+    "Price": 120960,
+    "MaxCount": 1,
+    "IsIndestructible": 0,
+    "PackSize": 1,
+    "Realm": 3,
+    "AllowedClasses": "0",
+    "Flags": 0,
+    "BonusLevel": 0,
+    "LevelRequirement": 0,
+    "PackageID": "ClassicQuest",
+    "Description": "Classic quest reward (Sile's Sight)",
+    "ClassType": null,
+    "SalvageYieldID": 0,
+    "ItemTemplate_ID": "qf07_part03_sword_of_the_keeper"
+   },
+   "source": "Allakhazam item 1515 'Sword of the Keeper' (Wayback 2003-10-13): Hibernia, right hand usable in left, Blades, Slash, DPS 9.2, delay 2.3, Blades +4, Hits 12, bonus 10%, level 27",
+   "why": "the real reward of Sile's Sight had no ItemTemplate; built from the period item page"
+  },
+  {
+   "finding": "P03-D2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "FinalRewardItemTemplates": "cq_hib_pot_of_enamel|qf07_part03_sword_of_the_keeper"
+   },
+   "where": {
+    "ID": 20312
+   },
+   "why": "period: 'the Sword of the Keeper has appeared in your inventory' when Oran is told; the Pot of Enamel (Sile's gift) stays"
+  },
+  {
+   "finding": "P03-D3",
+   "kind": "row",
+   "table": "ItemTemplate",
+   "row": {
+    "Id_nb": "qf07_part03_osier_s_spectral_necklace",
+    "TranslationId": null,
+    "Name": "Osier's Spectral Necklace",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "Level": 19,
+    "Durability": 50000,
+    "MaxDurability": 50000,
+    "IsNotLosingDur": 0,
+    "Condition": 50000,
+    "MaxCondition": 50000,
+    "Quality": 100,
+    "DPS_AF": 0,
+    "SPD_ABS": 0,
+    "Hand": 0,
+    "Type_Damage": 0,
+    "Object_Type": 41,
+    "Item_Type": 29,
+    "Color": 0,
+    "Emblem": 0,
+    "Effect": 0,
+    "Weight": 1,
+    "SalvageExtension": null,
+    "Model": 101,
+    "Extension": 0,
+    "Bonus": 10,
+    "Bonus1": 6,
+    "Bonus2": 2,
+    "Bonus3": 0,
+    "Bonus4": 0,
+    "Bonus5": 0,
+    "Bonus6": 0,
+    "Bonus7": 0,
+    "Bonus8": 0,
+    "Bonus9": 0,
+    "Bonus10": 0,
+    "ExtraBonus": 0,
+    "Bonus1Type": 8,
+    "Bonus2Type": 70,
+    "Bonus3Type": 0,
+    "Bonus4Type": 0,
+    "Bonus5Type": 0,
+    "Bonus6Type": 0,
+    "Bonus7Type": 0,
+    "Bonus8Type": 0,
+    "Bonus9Type": 0,
+    "Bonus10Type": 0,
+    "ExtraBonusType": 0,
+    "CanUseEvery": 0,
+    "SpellID": 0,
+    "Charges": 0,
+    "MaxCharges": 0,
+    "SpellID1": 0,
+    "Charges1": 0,
+    "MaxCharges1": 0,
+    "ProcChance": 0,
+    "ProcSpellID": 0,
+    "ProcSpellID1": 0,
+    "PoisonSpellID": 0,
+    "PoisonCharges": 0,
+    "PoisonMaxCharges": 0,
+    "IsPickable": 1,
+    "IsDropable": 1,
+    "CanDropAsLoot": 0,
+    "IsTradable": 1,
+    "Price": 38400,
+    "MaxCount": 1,
+    "IsIndestructible": 0,
+    "PackSize": 1,
+    "Realm": 3,
+    "AllowedClasses": "0",
+    "Flags": 0,
+    "BonusLevel": 0,
+    "LevelRequirement": 0,
+    "PackageID": "ClassicQuest",
+    "Description": "Classic quest reward (Freeing Osier)",
+    "ClassType": null,
+    "SalvageYieldID": 0,
+    "ItemTemplate_ID": "qf07_part03_osier_s_spectral_necklace"
+   },
+   "source": "Allakhazam item 1752 'Osier's Spectral Necklace' (Wayback 2003-08-18): Hibernia, neck, Charisma 6, Enchantment +2, bonus 10%, level to attain 19",
+   "why": "the reward of Freeing Osier had no ItemTemplate; built from the period item page (the 2010 page with STR/CON/DEX 15 is post-period)"
+  },
+  {
+   "finding": "P03-D3",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "FinalRewardItemTemplates": "qf07_part03_osier_s_spectral_necklace"
+   },
+   "where": {
+    "ID": 20316
+   },
+   "why": "period: 'You receive a Osier's Spectral Necklace from Odharnait!'"
+  },
+  {
+   "finding": "P03-D4",
+   "kind": "row",
+   "table": "ItemTemplate",
+   "row": {
+    "Id_nb": "qf07_part03_ibicus_soft_lined_cap",
+    "TranslationId": null,
+    "Name": "Ibicus Soft Lined Cap",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "Level": 8,
+    "Durability": 50000,
+    "MaxDurability": 50000,
+    "IsNotLosingDur": 0,
+    "Condition": 50000,
+    "MaxCondition": 50000,
+    "Quality": 100,
+    "DPS_AF": 15,
+    "SPD_ABS": 0,
+    "Hand": 0,
+    "Type_Damage": 0,
+    "Object_Type": 32,
+    "Item_Type": 21,
+    "Color": 0,
+    "Emblem": 0,
+    "Effect": 0,
+    "Weight": 4,
+    "SalvageExtension": null,
+    "Model": 825,
+    "Extension": 0,
+    "Bonus": 5,
+    "Bonus1": 0,
+    "Bonus2": 0,
+    "Bonus3": 0,
+    "Bonus4": 0,
+    "Bonus5": 0,
+    "Bonus6": 0,
+    "Bonus7": 0,
+    "Bonus8": 0,
+    "Bonus9": 0,
+    "Bonus10": 0,
+    "ExtraBonus": 0,
+    "Bonus1Type": 0,
+    "Bonus2Type": 0,
+    "Bonus3Type": 0,
+    "Bonus4Type": 0,
+    "Bonus5Type": 0,
+    "Bonus6Type": 0,
+    "Bonus7Type": 0,
+    "Bonus8Type": 0,
+    "Bonus9Type": 0,
+    "Bonus10Type": 0,
+    "ExtraBonusType": 0,
+    "CanUseEvery": 0,
+    "SpellID": 0,
+    "Charges": 0,
+    "MaxCharges": 0,
+    "SpellID1": 0,
+    "Charges1": 0,
+    "MaxCharges1": 0,
+    "ProcChance": 0,
+    "ProcSpellID": 0,
+    "ProcSpellID1": 0,
+    "PoisonSpellID": 0,
+    "PoisonCharges": 0,
+    "PoisonMaxCharges": 0,
+    "IsPickable": 1,
+    "IsDropable": 1,
+    "CanDropAsLoot": 0,
+    "IsTradable": 1,
+    "Price": 3360,
+    "MaxCount": 1,
+    "IsIndestructible": 0,
+    "PackSize": 1,
+    "Realm": 2,
+    "AllowedClasses": "0",
+    "Flags": 0,
+    "BonusLevel": 0,
+    "LevelRequirement": 0,
+    "PackageID": "ClassicQuest",
+    "Description": "Classic quest reward (Ibicus)",
+    "ClassType": null,
+    "SalvageYieldID": 0,
+    "ItemTemplate_ID": "qf07_part03_ibicus_soft_lined_cap"
+   },
+   "source": "Allakhazam item 5012 (Wayback 2003-09-06): cloth helm, AF 15, bonus 5%, level 8; the period page lists no magical bonuses (the 2009 page's PIE/power pool is not used)",
+   "why": "Ibicus gave no reward; the period quest lists Ibicus Soft Lined Cap, Blade of Ibicus, Ibicus Studded Sleeves and Claw of Ibicus (none existed); Wrap of Ibicus is a Catacombs item and is left out"
+  },
+  {
+   "finding": "P03-D4",
+   "kind": "row",
+   "table": "ItemTemplate",
+   "row": {
+    "Id_nb": "qf07_part03_blade_of_ibicus",
+    "TranslationId": null,
+    "Name": "Blade of Ibicus",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "Level": 12,
+    "Durability": 50000,
+    "MaxDurability": 50000,
+    "IsNotLosingDur": 0,
+    "Condition": 50000,
+    "MaxCondition": 50000,
+    "Quality": 100,
+    "DPS_AF": 54,
+    "SPD_ABS": 25,
+    "Hand": 0,
+    "Type_Damage": 2,
+    "Object_Type": 11,
+    "Item_Type": 10,
+    "Color": 0,
+    "Emblem": 0,
+    "Effect": 0,
+    "Weight": 15,
+    "SalvageExtension": null,
+    "Model": 313,
+    "Extension": 0,
+    "Bonus": 5,
+    "Bonus1": 3,
+    "Bonus2": 2,
+    "Bonus3": 0,
+    "Bonus4": 0,
+    "Bonus5": 0,
+    "Bonus6": 0,
+    "Bonus7": 0,
+    "Bonus8": 0,
+    "Bonus9": 0,
+    "Bonus10": 0,
+    "ExtraBonus": 0,
+    "Bonus1Type": 4,
+    "Bonus2Type": 52,
+    "Bonus3Type": 0,
+    "Bonus4Type": 0,
+    "Bonus5Type": 0,
+    "Bonus6Type": 0,
+    "Bonus7Type": 0,
+    "Bonus8Type": 0,
+    "Bonus9Type": 0,
+    "Bonus10Type": 0,
+    "ExtraBonusType": 0,
+    "CanUseEvery": 0,
+    "SpellID": 0,
+    "Charges": 0,
+    "MaxCharges": 0,
+    "SpellID1": 0,
+    "Charges1": 0,
+    "MaxCharges1": 0,
+    "ProcChance": 0,
+    "ProcSpellID": 0,
+    "ProcSpellID1": 0,
+    "PoisonSpellID": 0,
+    "PoisonCharges": 0,
+    "PoisonMaxCharges": 0,
+    "IsPickable": 1,
+    "IsDropable": 1,
+    "CanDropAsLoot": 0,
+    "IsTradable": 1,
+    "Price": 8171,
+    "MaxCount": 1,
+    "IsIndestructible": 0,
+    "PackSize": 1,
+    "Realm": 2,
+    "AllowedClasses": "0",
+    "Flags": 0,
+    "BonusLevel": 0,
+    "LevelRequirement": 0,
+    "PackageID": "ClassicQuest",
+    "Description": "Classic quest reward (Ibicus)",
+    "ClassType": null,
+    "SalvageYieldID": 0,
+    "ItemTemplate_ID": "qf07_part03_blade_of_ibicus"
+   },
+   "source": "Allakhazam item 5105 (Wayback 2003-09-06): sword, Slash, DPS 5.4, delay 2.5, Quickness 3, Sword +2, bonus 5%, level 12",
+   "why": "Ibicus gave no reward; the period quest lists Ibicus Soft Lined Cap, Blade of Ibicus, Ibicus Studded Sleeves and Claw of Ibicus (none existed); Wrap of Ibicus is a Catacombs item and is left out"
+  },
+  {
+   "finding": "P03-D4",
+   "kind": "row",
+   "table": "ItemTemplate",
+   "row": {
+    "Id_nb": "qf07_part03_ibicus_studded_sleeves",
+    "TranslationId": null,
+    "Name": "Ibicus Studded Sleeves",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "Level": 12,
+    "Durability": 50000,
+    "MaxDurability": 50000,
+    "IsNotLosingDur": 0,
+    "Condition": 50000,
+    "MaxCondition": 50000,
+    "Quality": 100,
+    "DPS_AF": 30,
+    "SPD_ABS": 19,
+    "Hand": 0,
+    "Type_Damage": 0,
+    "Object_Type": 34,
+    "Item_Type": 28,
+    "Color": 0,
+    "Emblem": 0,
+    "Effect": 0,
+    "Weight": 36,
+    "SalvageExtension": null,
+    "Model": 272,
+    "Extension": 0,
+    "Bonus": 5,
+    "Bonus1": 4,
+    "Bonus2": 4,
+    "Bonus3": 4,
+    "Bonus4": 0,
+    "Bonus5": 0,
+    "Bonus6": 0,
+    "Bonus7": 0,
+    "Bonus8": 0,
+    "Bonus9": 0,
+    "Bonus10": 0,
+    "ExtraBonus": 0,
+    "Bonus1Type": 3,
+    "Bonus2Type": 11,
+    "Bonus3Type": 13,
+    "Bonus4Type": 0,
+    "Bonus5Type": 0,
+    "Bonus6Type": 0,
+    "Bonus7Type": 0,
+    "Bonus8Type": 0,
+    "Bonus9Type": 0,
+    "Bonus10Type": 0,
+    "ExtraBonusType": 0,
+    "CanUseEvery": 0,
+    "SpellID": 0,
+    "Charges": 0,
+    "MaxCharges": 0,
+    "SpellID1": 0,
+    "Charges1": 0,
+    "MaxCharges1": 0,
+    "ProcChance": 0,
+    "ProcSpellID": 0,
+    "ProcSpellID1": 0,
+    "PoisonSpellID": 0,
+    "PoisonCharges": 0,
+    "PoisonMaxCharges": 0,
+    "IsPickable": 1,
+    "IsDropable": 1,
+    "CanDropAsLoot": 0,
+    "IsTradable": 1,
+    "Price": 8171,
+    "MaxCount": 1,
+    "IsIndestructible": 0,
+    "PackSize": 1,
+    "Realm": 2,
+    "AllowedClasses": "0",
+    "Flags": 0,
+    "BonusLevel": 0,
+    "LevelRequirement": 0,
+    "PackageID": "ClassicQuest",
+    "Description": "Classic quest reward (Ibicus)",
+    "ClassType": null,
+    "SalvageYieldID": 0,
+    "ItemTemplate_ID": "qf07_part03_ibicus_studded_sleeves"
+   },
+   "source": "Allakhazam item 5207 (Wayback 2003-09-06): studded arms, AF 30, ABS 19, Constitution 4, Body 4%, Crush 4%, bonus 5%, level 12",
+   "why": "Ibicus gave no reward; the period quest lists Ibicus Soft Lined Cap, Blade of Ibicus, Ibicus Studded Sleeves and Claw of Ibicus (none existed); Wrap of Ibicus is a Catacombs item and is left out"
+  },
+  {
+   "finding": "P03-D4",
+   "kind": "row",
+   "table": "ItemTemplate",
+   "row": {
+    "Id_nb": "qf07_part03_claw_of_ibicus",
+    "TranslationId": null,
+    "Name": "Claw of Ibicus",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "Level": 12,
+    "Durability": 50000,
+    "MaxDurability": 50000,
+    "IsNotLosingDur": 0,
+    "Condition": 50000,
+    "MaxCondition": 50000,
+    "Quality": 100,
+    "DPS_AF": 54,
+    "SPD_ABS": 25,
+    "Hand": 2,
+    "Type_Damage": 2,
+    "Object_Type": 25,
+    "Item_Type": 11,
+    "Color": 0,
+    "Emblem": 0,
+    "Effect": 0,
+    "Weight": 15,
+    "SalvageExtension": null,
+    "Model": 961,
+    "Extension": 0,
+    "Bonus": 5,
+    "Bonus1": 3,
+    "Bonus2": 2,
+    "Bonus3": 0,
+    "Bonus4": 0,
+    "Bonus5": 0,
+    "Bonus6": 0,
+    "Bonus7": 0,
+    "Bonus8": 0,
+    "Bonus9": 0,
+    "Bonus10": 0,
+    "ExtraBonus": 0,
+    "Bonus1Type": 1,
+    "Bonus2Type": 92,
+    "Bonus3Type": 0,
+    "Bonus4Type": 0,
+    "Bonus5Type": 0,
+    "Bonus6Type": 0,
+    "Bonus7Type": 0,
+    "Bonus8Type": 0,
+    "Bonus9Type": 0,
+    "Bonus10Type": 0,
+    "ExtraBonusType": 0,
+    "CanUseEvery": 0,
+    "SpellID": 0,
+    "Charges": 0,
+    "MaxCharges": 0,
+    "SpellID1": 0,
+    "Charges1": 0,
+    "MaxCharges1": 0,
+    "ProcChance": 0,
+    "ProcSpellID": 0,
+    "ProcSpellID1": 0,
+    "PoisonSpellID": 0,
+    "PoisonCharges": 0,
+    "PoisonMaxCharges": 0,
+    "IsPickable": 1,
+    "IsDropable": 1,
+    "CanDropAsLoot": 0,
+    "IsTradable": 1,
+    "Price": 8171,
+    "MaxCount": 1,
+    "IsIndestructible": 0,
+    "PackSize": 1,
+    "Realm": 2,
+    "AllowedClasses": "0",
+    "Flags": 0,
+    "BonusLevel": 0,
+    "LevelRequirement": 0,
+    "PackageID": "ClassicQuest",
+    "Description": "Classic quest reward (Ibicus)",
+    "ClassType": null,
+    "SalvageYieldID": 0,
+    "ItemTemplate_ID": "qf07_part03_claw_of_ibicus"
+   },
+   "source": "Allakhazam item 6179 (Wayback 2003-09-16): Hand to Hand (Savage), usable in left hand, Slash, DPS 5.4, delay 2.5, Strength 3, Hand to Hand +2, bonus 5%, level 12",
+   "why": "Ibicus gave no reward; the period quest lists Ibicus Soft Lined Cap, Blade of Ibicus, Ibicus Studded Sleeves and Claw of Ibicus (none existed); Wrap of Ibicus is a Catacombs item and is left out"
+  },
+  {
+   "finding": "P03-D4",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepType": "0|2|9",
+    "StepText": "Kill Ibicus near the stone bridge north of Aegirhamn, behind the boobrie hatchlings.|Return the carcass of Ibicus to Karle Alfevson.|Choose your reward: whisper Karle Alfevson the name of the item you want (Ibicus Soft Lined Cap, Blade of Ibicus, Ibicus Studded Sleeves, Claw of Ibicus).",
+    "SourceText": "It's known as Ibicus. When you kill it, bring me it's carcass, and you will be well rewarded.||Choose your reward: [Ibicus Soft Lined Cap], [Blade of Ibicus], [Ibicus Studded Sleeves], [Claw of Ibicus].",
+    "TargetName": "Ibicus;151|Karle Alfevson;151|Karle Alfevson;151",
+    "StepItemTemplates": "|cq_ibicus_carcass|",
+    "CollectItemTemplate": "|cq_ibicus_carcass|",
+    "AdvanceText": "||",
+    "TargetText": "||",
+    "RewardMoney": "0|0|0",
+    "RewardXP": "0|0|61600",
+    "FinishText": "Ah! I must tell you, Longbeard and Ota have been crawling all over each other and everyone else in the town to get this beast! They both want to claim it as their prize! Ha! Well, not that I want to get involved in the in-fighting on the dwarven kobold expedition, but really, somebody had to end this Ibicus obsession once and for all. I figured it'd be a better thing for me to have Ibicus. That way, Longbeard and Ota can't spend precious time trying to outdo each other. Oh! But imagine the looks they will have when they see Ibicus! Just a small benefit from all this! Here, I promised you a reward, though. Thanks. You've be a great help!"
+   },
+   "where": {
+    "ID": 20121
+   },
+   "why": "no reward item and a journal promising four turn-ins the engine refused: the carcass now goes to Karle (the only target), then a choose step offers the four period rewards (the multi-path quest's NPC choice); Karle's recorded lines had 'Ibicus' replaced by <Player>, restored from the period page",
+   "source": "Allakhazam quest page (Wayback copy, quest_pages.jsonl.gz) 'Ibicus' archived 2004-10-13 (Karle Alfevson's lines and the four rewards)"
+  },
+  {
+   "finding": "P03-D4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20121",
+    "Steps",
+    3
+   ],
+   "why": "new step 3: choose one of the four period Ibicus rewards at Karle Alfevson (same form as the Roane Skin / Gormghlaith choose steps)",
+   "value": {
+    "Marker": {
+     "Region": 151,
+     "X": 291360,
+     "Y": 355202,
+     "Z": 3870
+    },
+    "Custom": {
+     "Kind": "choose",
+     "Target": "Karle Alfevson",
+     "Choices": {
+      "Ibicus Soft Lined Cap": "qf07_part03_ibicus_soft_lined_cap",
+      "Blade of Ibicus": "qf07_part03_blade_of_ibicus",
+      "Ibicus Studded Sleeves": "qf07_part03_ibicus_studded_sleeves",
+      "Claw of Ibicus": "qf07_part03_claw_of_ibicus"
+     }
+    }
+   },
+   "create": true
+  },
+  {
+   "finding": "P03-D4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20121",
+    "XpShares"
+   ],
+   "why": "XP share moves to the new final step (3 steps now)",
+   "value": [
+    0.0,
+    0.0,
+    0.11
+   ]
+  },
+  {
+   "finding": "P03-D6",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "FinalRewardItemTemplates": "cq_mid_wyrm_sleeves"
+   },
+   "where": {
+    "ID": 20137
+   },
+   "why": "Final gave both cq_wyrm_sleeves and cq_mid_wyrm_sleeves (identical AF 62 STR 18): two wearable copies; period reward is one Wyrm Sleeves"
+  },
+  {
+   "finding": "P03-D6",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "FinalRewardItemTemplates": "cq_alb_belt_of_animation"
+   },
+   "where": {
+    "ID": 20207
+   },
+   "why": "Final gave both cq_belt_of_animation and cq_alb_belt_of_animation (identical): two copies; period reward is one Belt of Animation"
+  },
+  {
+   "finding": "P03-D6",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepItemTemplates": "||"
+   },
+   "where": {
+    "ID": 20208
+   },
+   "why": "the step 2 kill handed out the full-stat cq_gyrg_s_cloak and the finish cq_alb_gyrg_s_cloak: two cloaks; no later step needs the step copy"
+  },
+  {
+   "finding": "P03-D6",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepItemTemplates": "|"
+   },
+   "where": {
+    "ID": 20209
+   },
+   "why": "the step 1 kill handed out the full-stat cq_quicksilver_bracer and the finish cq_alb_quicksilver_bracer: two bracers; no later step needs the step copy"
+  },
+  {
+   "finding": "P03-D6",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepItemTemplates": "||cq_clump_of_seaweed;50|||"
+   },
+   "where": {
+    "ID": 20320
+   },
+   "why": "the step 5 kill handed out the full-stat cq_yellow_silken_robes and the finish cq_hib_yellow_silken_robes: two robes; no later step needs the step copy"
+  },
+  {
+   "finding": "P03-D7",
+   "kind": "update",
+   "table": "ItemTemplate",
+   "set": {
+    "Object_Type": 41,
+    "Item_Type": 24
+   },
+   "where": {
+    "Id_nb": "cq_hib_jewel_of_absorption"
+   },
+   "why": "stored as a backpack item (Item_Type 40) so it could not be worn; the reward is chosen as a jewel 'for poison' and Allakhazam item 15808 shows Slot: Jewelry with CON 3, Hits 3, Body 4% (our values; the 2004 capture's 'Inventory' slot was later corrected)"
+  },
+  {
+   "finding": "P03-D8",
+   "kind": "update",
+   "table": "ItemTemplate",
+   "set": {
+    "Object_Type": 45,
+    "DPS_AF": 2
+   },
+   "where": {
+    "Id_nb": "cq_hib_lute_of_the_sea"
+   },
+   "why": "Object_Type 0 is no instrument; Allakhazam item 1865: Two Hand, Instrument Type Lute, Requires Instruments, Bard; instruments are Object_Type 45 with the type in DPS_AF (lute = 2), as every other Hibernian lute"
+  },
+  {
+   "finding": "P03-D9",
+   "kind": "update",
+   "table": "ItemTemplate",
+   "set": {
+    "Object_Type": 7,
+    "Type_Damage": 2
+   },
+   "where": {
+    "Id_nb": "cq_alb_lifetaker"
+   },
+   "why": "Object_Type 0 (no weapon skill); Allakhazam item 974 (Wayback 2004): Two Hand, Requires Skill Polearms, Damage Type Slash, Armsman"
+  },
+  {
+   "finding": "P03-D9",
+   "kind": "update",
+   "table": "ItemTemplate",
+   "set": {
+    "Object_Type": 24,
+    "Type_Damage": 2
+   },
+   "where": {
+    "Id_nb": "cq_alb_blood_encrusted_whip"
+   },
+   "why": "Object_Type 0 (no weapon skill) and no damage type; Allakhazam item 6138 (Wayback 2003-12-28): Requires Skill Flexible Weapons, Reaver; whips are slash (like the other flexible whips)"
+  },
+  {
+   "finding": "P03-D9",
+   "kind": "update",
+   "table": "ItemTemplate",
+   "set": {
+    "Object_Type": 24
+   },
+   "where": {
+    "Id_nb": "cq_alb_flail_of_fallen_graces"
+   },
+   "why": "Object_Type 0 (no weapon skill); Allakhazam item 6258 (Wayback 2004-06-20): Requires Skill Flexible Weapons, Crush, Reaver"
+  },
+  {
+   "finding": "P03-D11",
+   "kind": "update",
+   "table": "ItemTemplate",
+   "set": {
+    "AllowedClasses": "48"
+   },
+   "where": {
+    "Id_nb": "cq_hib_ring_of_song"
+   },
+   "why": "any class could wear it; Allakhazam item 631 (Wayback 2003-08-18): Requires Class Bard, Charisma 1, Bard Music +2 (our stats match; the CHA 9 version is a later change, noted as 'now' on 2003-11-28)"
+  },
+  {
+   "finding": "P03-D11",
+   "kind": "update",
+   "table": "ItemTemplate",
+   "set": {
+    "AllowedClasses": "45"
+   },
+   "where": {
+    "Id_nb": "cq_hib_bracer_of_station"
+   },
+   "why": "any class could wear it; Allakhazam item 1330 (Wayback 2003-05-08): Requires Class Champion, INT 3, QUI 2 (our stats match; the Parry/STR version is a later page)"
+  },
+  {
+   "finding": "P03-D11",
+   "kind": "update",
+   "table": "ItemTemplate",
+   "set": {
+    "AllowedClasses": "22"
+   },
+   "where": {
+    "Id_nb": "cq_mid_blessed_warrior_gauntlets"
+   },
+   "why": "any class could wear it; Allakhazam item 644 (Wayback 2003-10-27): Requires Class Warrior, AF 22, DEX 3, STR 4 (our stats match; the AF 26 Shield/Parry version is a 2009 page)"
+  },
+  {
+   "finding": "P03-D11",
+   "kind": "update",
+   "table": "ItemTemplate",
+   "set": {
+    "Level": 10,
+    "Bonus": 0,
+    "Bonus1Type": 14,
+    "Bonus1": 6,
+    "Bonus2Type": 0,
+    "Bonus2": 0,
+    "Bonus3Type": 0,
+    "Bonus3": 0,
+    "Price": 4880
+   },
+   "where": {
+    "Id_nb": "cq_hib_spinner_s_cloak"
+   },
+   "why": "Spinner's Cloak gave the level-31 'Returning for More' cloak (CON 10, Heat 6, Energy 6, same as cq_hib_improved_spinner_s_cloak); Allakhazam item 1863 (Wayback 2003-10-13) 'Spinner's Cloak (level 9)': Energy Resist 6%, bonus 0%, level to attain 10 (the level-19 version is a 2005 change)"
+  },
+  {
+   "finding": "P03-D11",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "MinLevel": 10
+   },
+   "where": {
+    "ID": 20309
+   },
+   "why": "period quest page (Wayback 2004-10-13): Min Level 10 with the level-9 cloak; the 17 came with the 2005 change to the level-19 cloak"
+  }
+ ]
+}

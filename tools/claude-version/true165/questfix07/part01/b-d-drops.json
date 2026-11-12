@@ -1,0 +1,107 @@
+{
+ "fixer": "part01",
+ "about": "B/D: drop sources moved to the period monsters; Atlas duplicates of period kill tasks archived",
+ "entries": [
+  {
+   "finding": "P01-B-237",
+   "kind": "remove",
+   "table": "DataQuest",
+   "where": "ID = 237 AND StartType = 1",
+   "why": "Yellowed Bone Beads XP Item (Anakoll) is an Atlas duplicate of the period task DataQuest 21280 'Yellowed Skeleton Bones -- Kill Task' at the same NPC, which already sends players to the yellowed skeletons of Delling Crater for the period item (sack of bones, Allakhazam zam 566 comment Jan 2003; classic-quests Custom drop 15%); 237 instead took brittle skeleton vendor trash from mainland Myrkwood (level 27-28) - like the archived duplicate 390 = 234"
+  },
+  {
+   "finding": "P01-B-237",
+   "kind": "update",
+   "table": "ItemTemplate",
+   "set": {
+    "Description": ""
+   },
+   "where": {
+    "Id_nb": "yellowed_bone_beads"
+   },
+   "why": "with 237 gone the item is only the brittle skeletons' period vendor trash (Uthgard item 3516 'yellowed bone beads', level 0, brittle skeleton 17.9%, kept in drops165); its Atlas description still told players Anakoll wants it"
+  },
+  {
+   "finding": "P01-E-142",
+   "kind": "remove",
+   "table": "DataQuest",
+   "where": "ID = 142 AND StartType = 1",
+   "why": "Unused Arrow Heads XP Item sat on Yetta Fletcher, but the period giver is Samwell Hornly (Allakhazam zam 471, Uthgard item 7417) and the period task already exists as DataQuest 20699 'Unused Arrowheads -- Kill Task' on Samwell Hornly (tylwyth teg rovers, 41-45); pointing 142 at Samwell would give him two turn-ins for one period task"
+  },
+  {
+   "finding": "P01-B-157",
+   "kind": "drop",
+   "mob": "thrawn ogre thresher",
+   "add": [
+    [
+     "bronze_thrawn_ogre_thresher_spear_tip",
+     6
+    ]
+   ],
+   "why": "the spear tips dropped only from the 7 thrawn ogre guardsmen; the period task (and the item name) is for the polearm Thrawn Ogre Threshers (68 in Aldland/Gwyddneau); the guardsman row stays (both are Related NPCs)",
+   "source": "Allakhazam zam 615 Bronze Thrawn Ogre Thresher Spear Tip -- Kill Task: Related NPCs Thrawn Ogre Guardsman, Thrawn Ogre Thresher; 2004 comment: kill the ones with the polearms"
+  },
+  {
+   "finding": "P01-B-115",
+   "kind": "drop",
+   "mob": "bwca",
+   "remove": [
+    "Bucca_Silver_Mirror"
+   ],
+   "why": "bwca (141 in Snowdonia, level 24) dropped the Bucca Silver Mirror at 9%, an item for Jack Landrey's Cornwall task whose only period monster is the bucca (which keeps its drop); a bwca/bucca name mix-up",
+   "source": "Uthgard item 6501 Bucca Silver Mirror: bucca only (1.1%); Allakhazam zam 407 Related NPCs: Bucca only"
+  },
+  {
+   "finding": "P01-D-159",
+   "kind": "drop",
+   "mob": "grasping ghoul",
+   "add": [
+    [
+     "ghostly_soul_shroud",
+     6
+    ]
+   ],
+   "why": "period players got Ghostly Soul Shrouds mostly from Grasping Ghouls (62 in Caldey); ours dropped only from phantom magi; 6% median",
+   "source": "Allakhazam zam 661 Ghostly Soul Shroud -- Kill Task: Related NPCs Grasping Ghoul, Phantom Magi; comments Mar 29 2003 'I've only found Soul Shroud drops off of Grasping Ghouls' and May 12 2004 'They drop from both'"
+  },
+  {
+   "finding": "P01-D-235",
+   "kind": "drop",
+   "mob": "werewolf churl",
+   "add": [
+    [
+     "Lost_Pearl",
+     3
+    ]
+   ],
+   "why": "the main period source of Lost Pearls, the werewolf churls of Varulvhamn (17 spawns), did not drop them",
+   "source": "Uthgard item 6264 Lost Pearl (Ysunoic): werewolf churl 3.3% (47 drops), crazed lycantic 3%, Faz 5.3%; Allakhazam zam 464: 'A werewolf churl took my pearl necklace down into Varulvhamn'"
+  },
+  {
+   "finding": "P01-D-242",
+   "kind": "drop",
+   "mob": "drakulv missionary",
+   "add": [
+    [
+     "Drakulv_Scale",
+     1
+    ]
+   ],
+   "why": "the drakulv missionary is a period source of the scale (58 missionaries in Malmohus) next to the axehand and patrolling drakulv that already drop it at 1%",
+   "source": "Uthgard item 5276 Drakulv Scale (Nikgor, Galplen, 41-43): patrolling drakulv 0.7%, drakulv missionary 1.2%, drakulv axehand 0.4%; Allakhazam zam 375 Related NPCs include Drakulv Missionary"
+  },
+  {
+   "finding": "P01-E-318",
+   "kind": "drop",
+   "mob": "greater anglator",
+   "add": [
+    [
+     "Greater_Angler_Tail",
+     6
+    ]
+   ],
+   "why": "the tails dropped only from level-41 tidal anglers at Vigilant Rock for a 33-50 task given in Caillte Garran; the period monster is the greater anglator (2 spawns, level 33-34, in Caillte Garran next to Dymphna); the tidal angler row (killtask restore) stays",
+   "source": "Allakhazam zam 667 Greater Angler Tails -- Kill Task: comment Oct 14 2003 'They are actually called Greater Anglators'"
+  }
+ ]
+}

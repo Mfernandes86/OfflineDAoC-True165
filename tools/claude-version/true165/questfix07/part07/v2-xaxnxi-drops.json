@@ -1,0 +1,1266 @@
+{
+ "fixer": "part07",
+ "about": "v2 P07-E6: arboreal remnants and foragers also drop the Bag of Eitn Ot Pyrk on Xaxnxi's Quest steps 1-5",
+ "entries": [
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20939",
+    "Steps",
+    1,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20939",
+    "Steps",
+    2,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20939",
+    "Steps",
+    3,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20939",
+    "Steps",
+    4,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20939",
+    "Steps",
+    5,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20940",
+    "Steps",
+    1,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20940",
+    "Steps",
+    2,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20940",
+    "Steps",
+    3,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20940",
+    "Steps",
+    4,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20940",
+    "Steps",
+    5,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20941",
+    "Steps",
+    1,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20941",
+    "Steps",
+    2,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20941",
+    "Steps",
+    3,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20941",
+    "Steps",
+    4,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20941",
+    "Steps",
+    5,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20942",
+    "Steps",
+    1,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20942",
+    "Steps",
+    2,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20942",
+    "Steps",
+    3,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20942",
+    "Steps",
+    4,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20942",
+    "Steps",
+    5,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20943",
+    "Steps",
+    1,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20943",
+    "Steps",
+    2,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20943",
+    "Steps",
+    3,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20943",
+    "Steps",
+    4,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20943",
+    "Steps",
+    5,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20944",
+    "Steps",
+    1,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20944",
+    "Steps",
+    2,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20944",
+    "Steps",
+    3,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20944",
+    "Steps",
+    4,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20944",
+    "Steps",
+    5,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20945",
+    "Steps",
+    1,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20945",
+    "Steps",
+    2,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20945",
+    "Steps",
+    3,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20945",
+    "Steps",
+    4,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20945",
+    "Steps",
+    5,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20946",
+    "Steps",
+    1,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20946",
+    "Steps",
+    2,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20946",
+    "Steps",
+    3,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20946",
+    "Steps",
+    4,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20946",
+    "Steps",
+    5,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20947",
+    "Steps",
+    1,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20947",
+    "Steps",
+    2,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20947",
+    "Steps",
+    3,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20947",
+    "Steps",
+    4,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  },
+  {
+   "finding": "P07-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20947",
+    "Steps",
+    5,
+    "Custom"
+   ],
+   "value": {
+    "Drops": [
+     {
+      "Mob": "arboreal remnant",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     },
+     {
+      "Mob": "arboreal remnant forager",
+      "Item": "cq_bag_of_eitn_ot_pyrk",
+      "Chance": 40
+     }
+    ]
+   },
+   "why": "period walkthrough (Allakhazam Xaxnxi's Quest, Meri of Bedevere note): 'Arboreal remnant defender, arboreal remnant, and arboreal forager ... all ... drop the bag' (Related NPCs: Arboreal Remnant, Arboreal Remnant Defender, Arboreal Remnant Forager); with ClassicQuests commit 2574660 a Drops entry whose item is the kill step's own item (cq_bag_of_eitn_ot_pyrk;40) advances the step like the defender, at the step's 40% chance",
+   "source": "Allakhazam quest 1807 'Xaxnxi's Quest' walkthrough (Hosenite / Meri of Bedevere note)"
+  }
+ ]
+}

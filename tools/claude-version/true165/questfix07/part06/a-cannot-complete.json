@@ -1,0 +1,467 @@
+{
+ "fixer": "part06",
+ "about": "part06 A1-A3: Moonstone B / Criostoin's Promise loop, The Feud's Crag, Information is the Key (Elf)",
+ "entries": [
+  {
+   "finding": "P06-A1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "QuestDependency": ""
+   },
+   "where": {
+    "ID": 20793
+   },
+   "why": "Criostoin's Promise needed Seek the Moonstone B finished while B step 3 (custom 'quest' step) needs Criostoin's Promise finished: neither could ever happen; period walkthrough 'Do Criostoin's Promise here and return' (a sub-quest during B)"
+  },
+  {
+   "finding": "P06-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20793",
+    "OnlyDuring"
+   ],
+   "why": "Criostoin's Promise is offered only while Seek the Moonstone B is in progress (the Growler's Necklace mechanism), replacing the circular QuestDependency",
+   "value": [
+    "Seek the Moonstone B"
+   ]
+  },
+  {
+   "finding": "P06-A1",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20739",
+    "Steps",
+    3
+   ],
+   "why": "B step 3 had no map marker; it now points at Kimba (Lough Gur), who gives Criostoin's Promise",
+   "value": {
+    "Marker": {
+     "Region": 200,
+     "X": 298433,
+     "Y": 687562,
+     "Z": 5069
+    }
+   }
+  },
+  {
+   "finding": "P06-A1",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20740",
+    "Steps",
+    3
+   ],
+   "why": "B step 3 had no map marker; it now points at Kimba (Lough Gur), who gives Criostoin's Promise",
+   "value": {
+    "Marker": {
+     "Region": 200,
+     "X": 298433,
+     "Y": 687562,
+     "Z": 5069
+    }
+   }
+  },
+  {
+   "finding": "P06-A1",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20741",
+    "Steps",
+    3
+   ],
+   "why": "B step 3 had no map marker; it now points at Kimba (Lough Gur), who gives Criostoin's Promise",
+   "value": {
+    "Marker": {
+     "Region": 200,
+     "X": 298433,
+     "Y": 687562,
+     "Z": 5069
+    }
+   }
+  },
+  {
+   "finding": "P06-A1",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "20742",
+    "Steps",
+    3
+   ],
+   "why": "B step 3 had no map marker; it now points at Kimba (Lough Gur), who gives Criostoin's Promise",
+   "value": {
+    "Marker": {
+     "Region": 200,
+     "X": 298433,
+     "Y": 687562,
+     "Z": 5069
+    }
+   }
+  },
+  {
+   "finding": "P06-A1",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StepText = replace(replace(StepText, 'Help Criostoin, then return.', 'Help Criostoin (Kimba in Lough Gur gives Criostoin''s Promise), then return.'), 'Find Watcher Rylie by the Moonstone Lake.', 'Find Watcher Rylie by the Moonstone Lake (by day: at night he cannot be found).') WHERE ID BETWEEN 20739 AND 20742",
+   "why": "the journal never said who starts the sub-quest step 3 waits for (Kimba, the period start NPC of Criostoin's Promise); same cell also carries finding P06-E4: WatcherRylieBrain makes Rylie untargetable, nameless and peaceful at night (scripts/mobs/HiberniaMobs/WatcherRylie.cs), so step 2 works only by day and the journal never said so"
+  },
+  {
+   "finding": "P06-A2",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET TargetName = replace(TargetName, 'scrag;236', 'Crag;200') WHERE ID BETWEEN 20872 AND 20874",
+   "why": "step 5 target scrag;236 (Hills of Claret: no ZonePoint, Teleport or JumpPoint) could never be reached; step text and period walkthrough name the deamhan creig Crag in Silvermine ('his location is 48K, 58K'), Mob Crag stands at 49007,57877"
+  },
+  {
+   "finding": "P06-A2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20872",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "why": "step 5 marker was in region 236; now on Crag (region 200, Silvermine 49007,57877)",
+   "value": {
+    "Region": 200,
+    "X": 368495,
+    "Y": 606741,
+    "Z": 7432
+   }
+  },
+  {
+   "finding": "P06-A2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20873",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "why": "step 5 marker was in region 236; now on Crag (region 200, Silvermine 49007,57877)",
+   "value": {
+    "Region": 200,
+    "X": 368495,
+    "Y": 606741,
+    "Z": 7432
+   }
+  },
+  {
+   "finding": "P06-A2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20874",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "why": "step 5 marker was in region 236; now on Crag (region 200, Silvermine 49007,57877)",
+   "value": {
+    "Region": 200,
+    "X": 368495,
+    "Y": 606741,
+    "Z": 7432
+   }
+  },
+  {
+   "finding": "P06-A2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "why": "Crag is The Feud's named kill target: gamebots must leave him alone",
+   "value": "3bf2f2b1-9117-4c0e-a874-f344cd681b6e"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "AllowedClasses": "53"
+   },
+   "where": {
+    "ID": 20821
+   },
+   "why": "Elf version allowed only an advanced class at levels 3-4, but True 1.65 characters stay base class until 5; period spec H60 gives it to every class of the Elf/Lurikeen races from the Tir na Nog trainers, so this trainer's row now serves its base class (Naturalist)"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "AllowedClasses": "52"
+   },
+   "where": {
+    "ID": 20822
+   },
+   "why": "Elf version allowed only an advanced class at levels 3-4, but True 1.65 characters stay base class until 5; period spec H60 gives it to every class of the Elf/Lurikeen races from the Tir na Nog trainers, so this trainer's row now serves its base class (Guardian)"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "AllowedClasses": "52"
+   },
+   "where": {
+    "ID": 20823
+   },
+   "why": "Elf version allowed only an advanced class at levels 3-4, but True 1.65 characters stay base class until 5; period spec H60 gives it to every class of the Elf/Lurikeen races from the Tir na Nog trainers, so this trainer's row now serves its base class (Guardian)"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "AllowedClasses": "53"
+   },
+   "where": {
+    "ID": 20824
+   },
+   "why": "Elf version allowed only an advanced class at levels 3-4, but True 1.65 characters stay base class until 5; period spec H60 gives it to every class of the Elf/Lurikeen races from the Tir na Nog trainers, so this trainer's row now serves its base class (Naturalist)"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "AllowedClasses": "51"
+   },
+   "where": {
+    "ID": 20825
+   },
+   "why": "Elf version allowed only an advanced class at levels 3-4, but True 1.65 characters stay base class until 5; period spec H60 gives it to every class of the Elf/Lurikeen races from the Tir na Nog trainers, so this trainer's row now serves its base class (Magician)"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "AllowedClasses": "51"
+   },
+   "where": {
+    "ID": 20826
+   },
+   "why": "Elf version allowed only an advanced class at levels 3-4, but True 1.65 characters stay base class until 5; period spec H60 gives it to every class of the Elf/Lurikeen races from the Tir na Nog trainers, so this trainer's row now serves its base class (Magician)"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "AllowedClasses": "52"
+   },
+   "where": {
+    "ID": 20827
+   },
+   "why": "Elf version allowed only an advanced class at levels 3-4, but True 1.65 characters stay base class until 5; period spec H60 gives it to every class of the Elf/Lurikeen races from the Tir na Nog trainers, so this trainer's row now serves its base class (Guardian)"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "AllowedClasses": "51"
+   },
+   "where": {
+    "ID": 20828
+   },
+   "why": "Elf version allowed only an advanced class at levels 3-4, but True 1.65 characters stay base class until 5; period spec H60 gives it to every class of the Elf/Lurikeen races from the Tir na Nog trainers, so this trainer's row now serves its base class (Magician)"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "AllowedClasses": "54"
+   },
+   "where": {
+    "ID": 20829
+   },
+   "why": "Elf version allowed only an advanced class at levels 3-4, but True 1.65 characters stay base class until 5; period spec H60 gives it to every class of the Elf/Lurikeen races from the Tir na Nog trainers, so this trainer's row now serves its base class (Stalker)"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "AllowedClasses": "54"
+   },
+   "where": {
+    "ID": 20830
+   },
+   "why": "Elf version allowed only an advanced class at levels 3-4, but True 1.65 characters stay base class until 5; period spec H60 gives it to every class of the Elf/Lurikeen races from the Tir na Nog trainers, so this trainer's row now serves its base class (Stalker)"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "AllowedClasses": "53"
+   },
+   "where": {
+    "ID": 20832
+   },
+   "why": "Elf version allowed only an advanced class at levels 3-4, but True 1.65 characters stay base class until 5; period spec H60 gives it to every class of the Elf/Lurikeen races from the Tir na Nog trainers, so this trainer's row now serves its base class (Naturalist)"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "20821",
+    "ExcludedBy"
+   ],
+   "why": "three trainers now offer the Elf version to each base class; once one is started or finished the others are not offered again",
+   "value": "Information is the Key"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "20822",
+    "ExcludedBy"
+   ],
+   "why": "three trainers now offer the Elf version to each base class; once one is started or finished the others are not offered again",
+   "value": "Information is the Key"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "20823",
+    "ExcludedBy"
+   ],
+   "why": "three trainers now offer the Elf version to each base class; once one is started or finished the others are not offered again",
+   "value": "Information is the Key"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "20824",
+    "ExcludedBy"
+   ],
+   "why": "three trainers now offer the Elf version to each base class; once one is started or finished the others are not offered again",
+   "value": "Information is the Key"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "20825",
+    "ExcludedBy"
+   ],
+   "why": "three trainers now offer the Elf version to each base class; once one is started or finished the others are not offered again",
+   "value": "Information is the Key"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "20826",
+    "ExcludedBy"
+   ],
+   "why": "three trainers now offer the Elf version to each base class; once one is started or finished the others are not offered again",
+   "value": "Information is the Key"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "20827",
+    "ExcludedBy"
+   ],
+   "why": "three trainers now offer the Elf version to each base class; once one is started or finished the others are not offered again",
+   "value": "Information is the Key"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "20828",
+    "ExcludedBy"
+   ],
+   "why": "three trainers now offer the Elf version to each base class; once one is started or finished the others are not offered again",
+   "value": "Information is the Key"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "20829",
+    "ExcludedBy"
+   ],
+   "why": "three trainers now offer the Elf version to each base class; once one is started or finished the others are not offered again",
+   "value": "Information is the Key"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "20830",
+    "ExcludedBy"
+   ],
+   "why": "three trainers now offer the Elf version to each base class; once one is started or finished the others are not offered again",
+   "value": "Information is the Key"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "20832",
+    "ExcludedBy"
+   ],
+   "why": "three trainers now offer the Elf version to each base class; once one is started or finished the others are not offered again",
+   "value": "Information is the Key"
+  },
+  {
+   "finding": "P06-A3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "20819",
+    "Races"
+   ],
+   "why": "Sylvans had neither version; the Celt version is the one the server already gave every other race (ClassicQuests.QuestInfo.Races note: Information is the Key (Celt) went to every Hibernian race, owner check 2026-10-07)",
+   "value": "Sylvan"
+  }
+ ]
+}

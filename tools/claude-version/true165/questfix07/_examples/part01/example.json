@@ -1,0 +1,83 @@
+{
+ "fixer": "part01",
+ "about": "WORKED EXAMPLE ONLY (the loader ignores _examples); values are test data, not real fixes",
+ "entries": [
+  {
+   "finding": "P01-A2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StartName": "Chelseigh Stillman"
+   },
+   "where": {
+    "ID": 169
+   },
+   "why": "TEST: StartName misspelled (Stilman); the Camelot spawn is Chelseigh Stillman"
+  },
+  {
+   "finding": "P01-A1",
+   "kind": "drop",
+   "mob": "farmer",
+   "add": [
+    [
+     "Sack_of_Grain",
+     6
+    ]
+   ],
+   "why": "TEST: kill-task item 114 drops from nothing; period Allakhazam kill task names Farmer",
+   "source": "Allakhazam zam 426"
+  },
+  {
+   "finding": "P01-A1b",
+   "kind": "drop",
+   "mob": "abominable snowman",
+   "remove": [
+    "Water_Opal"
+   ],
+   "drop_count": 6,
+   "why": "TEST: remove a drops165 item and raise the cap"
+  },
+  {
+   "finding": "P01-X1",
+   "kind": "row",
+   "table": "ItemTemplate",
+   "source": "TEST: Allakhazam item page (stats)",
+   "row": {
+    "Id_nb": "qf07_part01_test_item",
+    "Name": "Test Item",
+    "Level": 5,
+    "Item_Type": 40,
+    "Model": 497,
+    "Weight": 1,
+    "Quality": 100,
+    "Durability": 50000,
+    "MaxDurability": 50000,
+    "Condition": 50000,
+    "MaxCondition": 50000,
+    "IsPickable": true,
+    "IsDropable": true,
+    "CanDropAsLoot": false,
+    "IsTradable": true,
+    "Price": 0,
+    "MaxCount": 1,
+    "PackSize": 1,
+    "PackageID": "ClassicQuest",
+    "Description": "Classic quest item"
+   },
+   "why": "TEST: a new quest item row"
+  },
+  {
+   "finding": "P01-X2",
+   "kind": "row",
+   "table": "LootTemplate",
+   "row": {
+    "LootTemplate_ID": "00070103-0000-4000-8000-000000000001",
+    "TemplateName": "farmer",
+    "ItemTemplateID": "qf07_part01_test_item",
+    "Chance": 5,
+    "Count": 1
+   },
+   "why": "TEST: a loot row for the new item"
+  }
+ ]
+}

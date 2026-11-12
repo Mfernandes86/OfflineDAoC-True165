@@ -1,0 +1,236 @@
+{
+ "fixer": "part09",
+ "about": "part09 E: other issues",
+ "entries": [
+  {
+   "finding": "P09-E2",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET TargetName = replace(TargetName, 'Gris;101', 'Dahn;100'), StepText = replace(StepText, 'to the smith (Audliten or Huginfell) to craft an amulet.', 'to Dahn, the smith in Audliten, to craft an amulet.') WHERE ID = 21256",
+   "why": "the step sent the player to 'the smith (Audliten or Huginfell)' but the target was Gris in Jordheim; the period smith is Dahn in Audliten, who exists in our world",
+   "source": "Allakhazam quest 693 Price of Excellence: 'bring them to a smith (may be Dahn in Audliten or the smith in Huginfel)'; CapnBry radar: Dahn, East Svealand 3732,24268 (our row)"
+  },
+  {
+   "finding": "P09-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21256",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 724643,
+    "Y": 761530,
+    "Z": 4584
+   },
+   "why": "the marker follows the smith to Dahn in Audliten"
+  },
+  {
+   "finding": "P09-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21256",
+    "Steps",
+    4,
+    "Issuer"
+   ],
+   "value": "Dahn",
+   "why": "a lost Amulet of Loki is re-issued by the smith who made it, now Dahn",
+   "source": "Allakhazam quest 693 Price of Excellence: 'bring them to a smith (may be Dahn in Audliten or the smith in Huginfel)'; CapnBry radar: Dahn, East Svealand 3732,24268 (our row)"
+  },
+  {
+   "finding": "P09-E3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "57376970-a5fe-4bc7-82b7-73213291b5c2",
+   "why": "quest NPC Shiake (starts 21238-21244, 21265-21277) is realm 0 and aggressive, so gamebot camp goals could kill it and leave it missing for the player; gamebots now leave it alone"
+  },
+  {
+   "finding": "P09-E3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "100020238",
+   "why": "quest NPC Torlieva (21281) is realm 0 and aggressive, so gamebot camp goals could kill it and leave it missing for the player; gamebots now leave it alone"
+  },
+  {
+   "finding": "P09-E3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "100020227",
+   "why": "quest NPC Rith (21283) is realm 0 and aggressive, so gamebot camp goals could kill it and leave it missing for the player; gamebots now leave it alone"
+  },
+  {
+   "finding": "P09-E3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "d480c3b8-1205-4ffc-9de4-3757ad7c725e",
+   "why": "quest NPC Kreg (21246) is realm 0 and aggressive, so gamebot camp goals could kill it and leave it missing for the player; gamebots now leave it alone"
+  },
+  {
+   "finding": "P09-E3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "f64d80b7-accb-4927-a4b0-e9c14ba48705",
+   "why": "quest NPC Vorkald (21257-21261 turn-in) is realm 0 and aggressive, so gamebot camp goals could kill it and leave it missing for the player; gamebots now leave it alone"
+  },
+  {
+   "finding": "P09-E3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "8fb0d1d6-63f8-402f-abdf-2707520d3b1e",
+   "why": "quest NPC Thraxia (21226-21237) is realm 0 and aggressive, so gamebot camp goals could kill it and leave it missing for the player; gamebots now leave it alone"
+  },
+  {
+   "finding": "P09-E3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "a0a7c6c6-fe27-479b-bacf-857c7143127a",
+   "why": "quest NPC Adelon (21372) is realm 0 and aggressive, so gamebot camp goals could kill it and leave it missing for the player; gamebots now leave it alone"
+  },
+  {
+   "finding": "P09-E3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "2ac6e436-212b-4427-b311-f709714d485e",
+   "why": "quest NPC lifeless creation (21372) is realm 0 and aggressive, so gamebot camp goals could kill it and leave it missing for the player; gamebots now leave it alone"
+  },
+  {
+   "finding": "P09-E3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "7e847296-31f2-58b4-90a3-c53e39b04fd5",
+   "why": "quest NPC svartalf dark forester (21262) is realm 0 and aggressive, so gamebot camp goals could kill it and leave it missing for the player; gamebots now leave it alone"
+  },
+  {
+   "finding": "P09-E3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "645038d0-5c96-4050-b39b-7671d923c09d",
+   "why": "quest NPC aquilifer (21318-21321) is realm 0 and aggressive, so gamebot camp goals could kill it and leave it missing for the player; gamebots now leave it alone"
+  },
+  {
+   "finding": "P09-E3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "d2743119-0413-445e-8808-74e6550370f5",
+   "why": "quest NPC draconarius (21318-21321) is realm 0 and aggressive, so gamebot camp goals could kill it and leave it missing for the player; gamebots now leave it alone"
+  },
+  {
+   "finding": "P09-E3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "763431a2-b401-409d-97a6-a73f079bce7c",
+   "why": "quest NPC imaginifer (21318-21321) is realm 0 and aggressive, so gamebot camp goals could kill it and leave it missing for the player; gamebots now leave it alone"
+  },
+  {
+   "finding": "P09-E3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "8ab01d34-b87c-4896-91ae-49c2e54b8e39",
+   "why": "quest NPC signifier (21318-21321) is realm 0 and aggressive, so gamebot camp goals could kill it and leave it missing for the player; gamebots now leave it alone"
+  },
+  {
+   "finding": "P09-E4",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StartName = 'Nanna', TargetName = replace(TargetName, 'Anya Vinsdottir;101', 'Nanna;101') WHERE ID IN (21245, 21262) AND StartName = 'Anya Vinsdottir'",
+   "why": "Black Plague and Strange Bedfellows were given by Anya Vinsdottir (a weapon merchant) while the text says Nanna; the period giver is Nanna Vinsdottir, the healer beside her, who is our NPC 'Nanna'",
+   "source": "Allakhazam quests 1801 Strange Bedfellows (Mid) and Black Plague (Mid): 'Quest begins with Nanna Vinsdottir' / 'go back to Nanna'; CapnBry radar: Nanna Vinsdottir (Healer) Jordheim 26615,22777 = our healer 'Nanna', next to the weapon merchant Anya Vinsdottir"
+  },
+  {
+   "finding": "P09-E4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21245",
+    "Steps",
+    6,
+    "Marker"
+   ],
+   "value": {
+    "Region": 101,
+    "X": 34804,
+    "Y": 30993,
+    "Z": 8307
+   },
+   "why": "the marker follows the giver to Nanna the healer"
+  },
+  {
+   "finding": "P09-E4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21245",
+    "Steps",
+    8,
+    "Marker"
+   ],
+   "value": {
+    "Region": 101,
+    "X": 34804,
+    "Y": 30993,
+    "Z": 8307
+   },
+   "why": "the marker follows the giver to Nanna the healer"
+  },
+  {
+   "finding": "P09-E5",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StepText = replace(StepText, 'Volkstad in Dellingstad', 'Vorkald in Dellingstad') WHERE ID BETWEEN 21257 AND 21261",
+   "why": "the text named 'Volkstad', who does not exist; the Dellingstad NPC who sends the player and takes the whisker is Vorkald (the walkthrough's slip)",
+   "source": "Allakhazam quest Mammoth Hunt: 'Per Patch 1.62: Vorkald will now give Furry Boned Legs'; CapnBry radar: Vorkald, Delling Crater 20137,59339"
+  },
+  {
+   "finding": "P09-E8",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET SourceName = replace(SourceName, 'SEARCH;9;;23;40960;40960;32768;5', 'SEARCH;9;;23;31814;34328;400;5') WHERE ID BETWEEN 21318 AND 21321",
+   "why": "'wear the four relics and stand in the centre of the room' was a search over the whole Catacombs zone; the area is now the centre of the round room of the four Roman standard-bearers (radius 400)",
+   "source": "Allakhazam quest 187 The Craft of Retribution: 'Once you have all 4 items, wear them and stand in the center of the room'"
+  }
+ ]
+}

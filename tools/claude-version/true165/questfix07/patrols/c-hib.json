@@ -1,0 +1,1936 @@
+{
+ "fixer": "patrols",
+ "about": "Hibernia quest monsters that the period describes walking a route (CapnBry radar sightings first, then walkthroughs)",
+ "entries": [
+  {
+   "finding": "P02-C1",
+   "why": "Achaius stood still at the Tir na mBeo end of his route (Lough Derg 23606,43867); step 2 'the wandering weapons merchant', walkthrough 'He never reaches Mag Mell, but stops short and heads back'; CapnBry radar saw him at 8 spots on a 34k line (23617,43885 / 23238,38197 / 26025,21050 / 27490,16463 / 27927,15081 / 27774,11404 / 22550,9783): a there-and-back walk through those spots with a minute's stop at each end (patrol path, 10 points, 38507 units, there and back)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000025",
+    "PathID": "qf07_patrols_achaius_tirnambeo_magmell",
+    "RegionID": 200,
+    "PathType": 2
+   }
+  },
+  {
+   "finding": "P02-C1",
+   "why": "qf07_patrols_achaius_tirnambeo_magmell point 1: navmesh ground at zone 200 local 23617,43885",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000178",
+    "PathID": "qf07_patrols_achaius_tirnambeo_magmell",
+    "Step": 1,
+    "X": 343105,
+    "Y": 527213,
+    "Z": 5450,
+    "MaxSpeed": 130,
+    "WaitTime": 600
+   }
+  },
+  {
+   "finding": "P02-C1",
+   "why": "qf07_patrols_achaius_tirnambeo_magmell point 2: navmesh ground at zone 200 local 23238,38197",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000179",
+    "PathID": "qf07_patrols_achaius_tirnambeo_magmell",
+    "Step": 2,
+    "X": 342726,
+    "Y": 521525,
+    "Z": 5382,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P02-C1",
+   "why": "qf07_patrols_achaius_tirnambeo_magmell point 3: navmesh ground at zone 200 local 24119,34098",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000180",
+    "PathID": "qf07_patrols_achaius_tirnambeo_magmell",
+    "Step": 3,
+    "X": 343607,
+    "Y": 517426,
+    "Z": 5780,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P02-C1",
+   "why": "qf07_patrols_achaius_tirnambeo_magmell point 4: navmesh ground at zone 200 local 25000,30000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000181",
+    "PathID": "qf07_patrols_achaius_tirnambeo_magmell",
+    "Step": 4,
+    "X": 344488,
+    "Y": 513328,
+    "Z": 5828,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P02-C1",
+   "why": "qf07_patrols_achaius_tirnambeo_magmell point 5: navmesh ground at zone 200 local 25512,25525",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000182",
+    "PathID": "qf07_patrols_achaius_tirnambeo_magmell",
+    "Step": 5,
+    "X": 345000,
+    "Y": 508853,
+    "Z": 5736,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P02-C1",
+   "why": "qf07_patrols_achaius_tirnambeo_magmell point 6: navmesh ground at zone 200 local 26025,21050",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000183",
+    "PathID": "qf07_patrols_achaius_tirnambeo_magmell",
+    "Step": 6,
+    "X": 345513,
+    "Y": 504378,
+    "Z": 4980,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P02-C1",
+   "why": "qf07_patrols_achaius_tirnambeo_magmell point 7: navmesh ground at zone 200 local 27490,16463",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000184",
+    "PathID": "qf07_patrols_achaius_tirnambeo_magmell",
+    "Step": 7,
+    "X": 346978,
+    "Y": 499791,
+    "Z": 4858,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P02-C1",
+   "why": "qf07_patrols_achaius_tirnambeo_magmell point 8: navmesh ground at zone 200 local 27927,15081",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000185",
+    "PathID": "qf07_patrols_achaius_tirnambeo_magmell",
+    "Step": 8,
+    "X": 347415,
+    "Y": 498409,
+    "Z": 4732,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P02-C1",
+   "why": "qf07_patrols_achaius_tirnambeo_magmell point 9: navmesh ground at zone 200 local 27774,11404",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000186",
+    "PathID": "qf07_patrols_achaius_tirnambeo_magmell",
+    "Step": 9,
+    "X": 347262,
+    "Y": 494732,
+    "Z": 5170,
+    "MaxSpeed": 130,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P02-C1",
+   "why": "qf07_patrols_achaius_tirnambeo_magmell point 10: navmesh ground at zone 200 local 22550,9783",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000187",
+    "PathID": "qf07_patrols_achaius_tirnambeo_magmell",
+    "Step": 10,
+    "X": 342038,
+    "Y": 493111,
+    "Z": 5174,
+    "MaxSpeed": 130,
+    "WaitTime": 600
+   }
+  },
+  {
+   "finding": "P02-C1",
+   "why": "Achaius stood still at the Tir na mBeo end of his route (Lough Derg 23606,43867); step 2 'the wandering weapons merchant', walkthrough 'He never reaches Mag Mell, but stops short and heads back'; CapnBry radar saw him at 8 spots on a 34k line (23617,43885 / 23238,38197 / 26025,21050 / 27490,16463 / 27927,15081 / 27774,11404 / 22550,9783): a there-and-back walk through those spots with a minute's stop at each end; Achaius walks qf07_patrols_achaius_tirnambeo_magmell from its first point (was 343094,527195)",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_achaius_tirnambeo_magmell",
+    "RoamingRange": 0,
+    "X": 343105,
+    "Y": 527213,
+    "Z": 5450
+   },
+   "where": {
+    "Mob_ID": "7af0a7c6-a0af-4fb8-8b80-716404d025f8"
+   }
+  },
+  {
+   "finding": "P02-C2",
+   "why": "the Silvermine Tracker stood still (349745,555157); wayback 2004 'The Tracker is an Elven woman in blue armor, who wanders across the hills due West of Howth'; CapnBry radar saw her at 11 spots (28899,5322 / 21395,14979 / 18037,18959 / 16212,21379 / 15165,25135 / 13059,35221 / 14877,40370): a there-and-back walk through those spots ending beside Merle the Old's hut (patrol path, 14 points, 43866 units, there and back)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000026",
+    "PathID": "qf07_patrols_tracker_silvermine_hills",
+    "RegionID": 200,
+    "PathType": 2
+   }
+  },
+  {
+   "finding": "P02-C2",
+   "why": "qf07_patrols_tracker_silvermine_hills point 1: navmesh ground at zone 201 local 30257,6293",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000188",
+    "PathID": "qf07_patrols_tracker_silvermine_hills",
+    "Step": 1,
+    "X": 349745,
+    "Y": 555157,
+    "Z": 5135,
+    "MaxSpeed": 140,
+    "WaitTime": 600
+   }
+  },
+  {
+   "finding": "P02-C2",
+   "why": "qf07_patrols_tracker_silvermine_hills point 2: navmesh ground at zone 201 local 28899,5322",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000189",
+    "PathID": "qf07_patrols_tracker_silvermine_hills",
+    "Step": 2,
+    "X": 348387,
+    "Y": 554186,
+    "Z": 5116,
+    "MaxSpeed": 140,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P02-C2",
+   "why": "qf07_patrols_tracker_silvermine_hills point 3: navmesh ground at zone 201 local 28752,6496",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000190",
+    "PathID": "qf07_patrols_tracker_silvermine_hills",
+    "Step": 3,
+    "X": 348240,
+    "Y": 555360,
+    "Z": 5210,
+    "MaxSpeed": 140,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P02-C2",
+   "why": "qf07_patrols_tracker_silvermine_hills point 4: navmesh ground at zone 201 local 25073,10737",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000191",
+    "PathID": "qf07_patrols_tracker_silvermine_hills",
+    "Step": 4,
+    "X": 344561,
+    "Y": 559601,
+    "Z": 7530,
+    "MaxSpeed": 140,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P02-C2",
+   "why": "qf07_patrols_tracker_silvermine_hills point 5: navmesh ground at zone 201 local 21395,14979",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000192",
+    "PathID": "qf07_patrols_tracker_silvermine_hills",
+    "Step": 5,
+    "X": 340883,
+    "Y": 563843,
+    "Z": 7035,
+    "MaxSpeed": 140,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P02-C2",
+   "why": "qf07_patrols_tracker_silvermine_hills point 6: navmesh ground at zone 201 local 18037,18959",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000193",
+    "PathID": "qf07_patrols_tracker_silvermine_hills",
+    "Step": 6,
+    "X": 337525,
+    "Y": 567823,
+    "Z": 5741,
+    "MaxSpeed": 140,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P02-C2",
+   "why": "qf07_patrols_tracker_silvermine_hills point 7: navmesh ground at zone 201 local 16212,21379",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000194",
+    "PathID": "qf07_patrols_tracker_silvermine_hills",
+    "Step": 7,
+    "X": 335700,
+    "Y": 570243,
+    "Z": 6573,
+    "MaxSpeed": 140,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P02-C2",
+   "why": "qf07_patrols_tracker_silvermine_hills point 8: navmesh ground at zone 201 local 15165,25135",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000195",
+    "PathID": "qf07_patrols_tracker_silvermine_hills",
+    "Step": 8,
+    "X": 334653,
+    "Y": 573999,
+    "Z": 5233,
+    "MaxSpeed": 140,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P02-C2",
+   "why": "qf07_patrols_tracker_silvermine_hills point 9: navmesh ground at zone 201 local 14737,27183",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000196",
+    "PathID": "qf07_patrols_tracker_silvermine_hills",
+    "Step": 9,
+    "X": 334225,
+    "Y": 576047,
+    "Z": 5238,
+    "MaxSpeed": 140,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P02-C2",
+   "why": "qf07_patrols_tracker_silvermine_hills point 10: navmesh ground at zone 201 local 13898,31202",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000197",
+    "PathID": "qf07_patrols_tracker_silvermine_hills",
+    "Step": 10,
+    "X": 333386,
+    "Y": 580066,
+    "Z": 6093,
+    "MaxSpeed": 140,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P02-C2",
+   "why": "qf07_patrols_tracker_silvermine_hills point 11: navmesh ground at zone 201 local 13059,35221",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000198",
+    "PathID": "qf07_patrols_tracker_silvermine_hills",
+    "Step": 11,
+    "X": 332547,
+    "Y": 584085,
+    "Z": 6875,
+    "MaxSpeed": 140,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P02-C2",
+   "why": "qf07_patrols_tracker_silvermine_hills point 12: navmesh ground at zone 201 local 13296,37118",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000199",
+    "PathID": "qf07_patrols_tracker_silvermine_hills",
+    "Step": 12,
+    "X": 332784,
+    "Y": 585982,
+    "Z": 7629,
+    "MaxSpeed": 140,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P02-C2",
+   "why": "qf07_patrols_tracker_silvermine_hills point 13: navmesh ground at zone 201 local 14877,40370",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000200",
+    "PathID": "qf07_patrols_tracker_silvermine_hills",
+    "Step": 13,
+    "X": 334365,
+    "Y": 589234,
+    "Z": 8645,
+    "MaxSpeed": 140,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P02-C2",
+   "why": "qf07_patrols_tracker_silvermine_hills point 14: navmesh ground at zone 201 local 14325,42100",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000201",
+    "PathID": "qf07_patrols_tracker_silvermine_hills",
+    "Step": 14,
+    "X": 333813,
+    "Y": 590964,
+    "Z": 8748,
+    "MaxSpeed": 140,
+    "WaitTime": 600
+   }
+  },
+  {
+   "finding": "P02-C2",
+   "why": "the Silvermine Tracker stood still (349745,555157); wayback 2004 'The Tracker is an Elven woman in blue armor, who wanders across the hills due West of Howth'; CapnBry radar saw her at 11 spots (28899,5322 / 21395,14979 / 18037,18959 / 16212,21379 / 15165,25135 / 13059,35221 / 14877,40370): a there-and-back walk through those spots ending beside Merle the Old's hut; Tracker walks qf07_patrols_tracker_silvermine_hills",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_tracker_silvermine_hills",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "ad37c7c4-e69a-4935-b9ce-ce1cf5fd84ac"
+   }
+  },
+  {
+   "finding": "P02-C3",
+   "why": "Fearan only drifted (roam 200) at Bri Leith 16807,30128; walkthrough Hib 174 'also seen at 18K/34K running along the crest of the hill' and the 24k,27.5k loc: a run along the crest from his spot through 18000,34000 to 24000,27500 (patrol path, 4 points, 12904 units, there and back)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000027",
+    "PathID": "qf07_patrols_fearan_bri_leith_crest",
+    "RegionID": 200,
+    "PathType": 2
+   }
+  },
+  {
+   "finding": "P02-C3",
+   "why": "qf07_patrols_fearan_bri_leith_crest point 1: navmesh ground at zone 206 local 16807,30128",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000202",
+    "PathID": "qf07_patrols_fearan_bri_leith_crest",
+    "Step": 1,
+    "X": 401831,
+    "Y": 513456,
+    "Z": 6435,
+    "MaxSpeed": 180,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P02-C3",
+   "why": "qf07_patrols_fearan_bri_leith_crest point 2: navmesh ground at zone 206 local 18000,34000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000203",
+    "PathID": "qf07_patrols_fearan_bri_leith_crest",
+    "Step": 2,
+    "X": 403024,
+    "Y": 517328,
+    "Z": 6128,
+    "MaxSpeed": 180,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P02-C3",
+   "why": "qf07_patrols_fearan_bri_leith_crest point 3: navmesh ground at zone 206 local 21000,31000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000204",
+    "PathID": "qf07_patrols_fearan_bri_leith_crest",
+    "Step": 3,
+    "X": 406024,
+    "Y": 514328,
+    "Z": 7836,
+    "MaxSpeed": 180,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P02-C3",
+   "why": "qf07_patrols_fearan_bri_leith_crest point 4: navmesh ground at zone 206 local 24000,27500",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000205",
+    "PathID": "qf07_patrols_fearan_bri_leith_crest",
+    "Step": 4,
+    "X": 409024,
+    "Y": 510828,
+    "Z": 8026,
+    "MaxSpeed": 180,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P02-C3",
+   "why": "Fearan only drifted (roam 200) at Bri Leith 16807,30128; walkthrough Hib 174 'also seen at 18K/34K running along the crest of the hill' and the 24k,27.5k loc: a run along the crest from his spot through 18000,34000 to 24000,27500; Fearan walks qf07_patrols_fearan_bri_leith_crest",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_fearan_bri_leith_crest",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "3043bbcd-f4af-4fb7-af97-a7c3cbc71b53"
+   }
+  },
+  {
+   "finding": "P10-C2",
+   "why": "Wug stood still outside his period range (Lough Derg 15576,52567); Allakhazam 50 'tends to wander just behind the town near the circle of flat stone rocks (loc 18, 49) and on the hill to the left of there. He wanders anywhere from 17k to 20k and 53k to 59k': moved to the stone circle, walking a loop through that range (patrol path, 6 points, 21268 units, loop)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000028",
+    "PathID": "qf07_patrols_wug_stone_circle",
+    "RegionID": 200,
+    "PathType": 3
+   }
+  },
+  {
+   "finding": "P10-C2",
+   "why": "qf07_patrols_wug_stone_circle point 1: navmesh ground at zone 200 local 18000,49000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000206",
+    "PathID": "qf07_patrols_wug_stone_circle",
+    "Step": 1,
+    "X": 337488,
+    "Y": 532328,
+    "Z": 5526,
+    "MaxSpeed": 100,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P10-C2",
+   "why": "qf07_patrols_wug_stone_circle point 2: navmesh ground at zone 200 local 17500,53000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000207",
+    "PathID": "qf07_patrols_wug_stone_circle",
+    "Step": 2,
+    "X": 336988,
+    "Y": 536328,
+    "Z": 5924,
+    "MaxSpeed": 100,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C2",
+   "why": "qf07_patrols_wug_stone_circle point 3: navmesh ground at zone 200 local 17200,56500",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000208",
+    "PathID": "qf07_patrols_wug_stone_circle",
+    "Step": 3,
+    "X": 336688,
+    "Y": 539828,
+    "Z": 5553,
+    "MaxSpeed": 100,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C2",
+   "why": "qf07_patrols_wug_stone_circle point 4: navmesh ground at zone 200 local 19000,59000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000209",
+    "PathID": "qf07_patrols_wug_stone_circle",
+    "Step": 4,
+    "X": 338488,
+    "Y": 542328,
+    "Z": 5156,
+    "MaxSpeed": 100,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C2",
+   "why": "qf07_patrols_wug_stone_circle point 5: navmesh ground at zone 200 local 20000,55500",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000210",
+    "PathID": "qf07_patrols_wug_stone_circle",
+    "Step": 5,
+    "X": 339488,
+    "Y": 538828,
+    "Z": 5851,
+    "MaxSpeed": 100,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C2",
+   "why": "qf07_patrols_wug_stone_circle point 6: navmesh ground at zone 200 local 19800,52000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000211",
+    "PathID": "qf07_patrols_wug_stone_circle",
+    "Step": 6,
+    "X": 339288,
+    "Y": 535328,
+    "Z": 5847,
+    "MaxSpeed": 100,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C2",
+   "why": "Wug stood still outside his period range (Lough Derg 15576,52567); Allakhazam 50 'tends to wander just behind the town near the circle of flat stone rocks (loc 18, 49) and on the hill to the left of there. He wanders anywhere from 17k to 20k and 53k to 59k': moved to the stone circle, walking a loop through that range; Wug walks qf07_patrols_wug_stone_circle from its first point (was 335064,535895)",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_wug_stone_circle",
+    "RoamingRange": 0,
+    "X": 337488,
+    "Y": 532328,
+    "Z": 5526
+   },
+   "where": {
+    "Mob_ID": "c16ff508-c4db-57bf-ab7a-c0b89bc8b4fd"
+   }
+  },
+  {
+   "finding": "P10-C4",
+   "why": "Aoife only drifted (roam 200) at Cliffs of Moher 45794,39486; period 'Found Aoife loc 47k,37k ... at 4/5h AM (also ... 51k,41k at 18h and 44715,37578 at 18:30h and 48.6,40.3 at noon)': a loop through those spots (patrol path, 5 points, 15627 units, loop)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000029",
+    "PathID": "qf07_patrols_aoife_moher_wander",
+    "RegionID": 200,
+    "PathType": 3
+   }
+  },
+  {
+   "finding": "P10-C4",
+   "why": "qf07_patrols_aoife_moher_wander point 1: navmesh ground at zone 203 local 45794,39486",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000212",
+    "PathID": "qf07_patrols_aoife_moher_wander",
+    "Step": 1,
+    "X": 266978,
+    "Y": 457278,
+    "Z": 6635,
+    "MaxSpeed": 150,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P10-C4",
+   "why": "qf07_patrols_aoife_moher_wander point 2: navmesh ground at zone 203 local 44715,37578",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000213",
+    "PathID": "qf07_patrols_aoife_moher_wander",
+    "Step": 2,
+    "X": 265899,
+    "Y": 455370,
+    "Z": 7017,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C4",
+   "why": "qf07_patrols_aoife_moher_wander point 3: navmesh ground at zone 203 local 47000,37000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000214",
+    "PathID": "qf07_patrols_aoife_moher_wander",
+    "Step": 3,
+    "X": 268184,
+    "Y": 454792,
+    "Z": 7274,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C4",
+   "why": "qf07_patrols_aoife_moher_wander point 4: navmesh ground at zone 203 local 51000,41000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000215",
+    "PathID": "qf07_patrols_aoife_moher_wander",
+    "Step": 4,
+    "X": 272184,
+    "Y": 458792,
+    "Z": 6888,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C4",
+   "why": "qf07_patrols_aoife_moher_wander point 5: navmesh ground at zone 203 local 48600,40300",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000216",
+    "PathID": "qf07_patrols_aoife_moher_wander",
+    "Step": 5,
+    "X": 269784,
+    "Y": 458092,
+    "Z": 6804,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C4",
+   "why": "Aoife only drifted (roam 200) at Cliffs of Moher 45794,39486; period 'Found Aoife loc 47k,37k ... at 4/5h AM (also ... 51k,41k at 18h and 44715,37578 at 18:30h and 48.6,40.3 at noon)': a loop through those spots; Aoife walks qf07_patrols_aoife_moher_wander",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_aoife_moher_wander",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "100030649"
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "Ceard (Search For The Missing Smith) had no NPC (created here; part10 B2 retargets the steps); Allakhazam 565 'Ceard route: 35.6k, 39.2k -West-> 24.5k,30.8k -South-> 22k,48.4k -North-> 27.8k,23.8k -South-> 28k,36.4k -West-NorthWest-> 12.5k,26.4k -SouthEast-> 24k,37.6k -SouthEast-> 25.6k,40.2k -NorthWest-> 23.8k,36.8k -West-NorthWest-> 15.8k,33.4k -NorthEast-> 26.4k,25.6k -South-SouthWest-> 23k,35k', 'Best loc to find Ceard is 20014,29078 as he wanders back and forth': his period wander route as a loop from 20014,29078, for the Ceard NPC to walk (PathID qf07_patrols_ceard_moher_wander) (patrol path, 36 points, 168037 units, loop)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000030",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "RegionID": 200,
+    "PathType": 3
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 1: navmesh ground at zone 203 local 20014,29078",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000217",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 1,
+    "X": 241198,
+    "Y": 446870,
+    "Z": 3816,
+    "MaxSpeed": 150,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 2: navmesh ground at zone 203 local 23910,31608",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000218",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 2,
+    "X": 245094,
+    "Y": 449400,
+    "Z": 3984,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 3: navmesh ground at zone 203 local 27807,34139",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000219",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 3,
+    "X": 248991,
+    "Y": 451931,
+    "Z": 4476,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 4: navmesh ground at zone 203 local 31703,36669",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000220",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 4,
+    "X": 252887,
+    "Y": 454461,
+    "Z": 5102,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 5: navmesh ground at zone 203 local 35600,39200",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000221",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 5,
+    "X": 256784,
+    "Y": 456992,
+    "Z": 5203,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 6: navmesh ground at zone 203 local 31900,36400",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000222",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 6,
+    "X": 253084,
+    "Y": 454192,
+    "Z": 5139,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 7: navmesh ground at zone 203 local 28200,33600",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000223",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 7,
+    "X": 249384,
+    "Y": 451392,
+    "Z": 4562,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 8: navmesh ground at zone 203 local 24500,30800",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000224",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 8,
+    "X": 245684,
+    "Y": 448592,
+    "Z": 4214,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 9: navmesh ground at zone 203 local 23666,36666",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000225",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 9,
+    "X": 244850,
+    "Y": 454458,
+    "Z": 4590,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 10: navmesh ground at zone 203 local 22833,42533",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000226",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 10,
+    "X": 244017,
+    "Y": 460325,
+    "Z": 5303,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 11: navmesh ground at zone 203 local 22000,48400",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000227",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 11,
+    "X": 243184,
+    "Y": 466192,
+    "Z": 5320,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 12: navmesh ground at zone 203 local 23160,43480",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000228",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 12,
+    "X": 244344,
+    "Y": 461272,
+    "Z": 5312,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 13: navmesh ground at zone 203 local 24320,38560",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000229",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 13,
+    "X": 245504,
+    "Y": 456352,
+    "Z": 5204,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 14: navmesh ground at zone 203 local 25480,33640",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000230",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 14,
+    "X": 246664,
+    "Y": 451432,
+    "Z": 4098,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 15: navmesh ground at zone 203 local 26640,28720",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000231",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 15,
+    "X": 247824,
+    "Y": 446512,
+    "Z": 4708,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 16: navmesh ground at zone 203 local 27800,23800",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000232",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 16,
+    "X": 248984,
+    "Y": 441592,
+    "Z": 5410,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 17: navmesh ground at zone 203 local 27866,28000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000233",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 17,
+    "X": 249050,
+    "Y": 445792,
+    "Z": 5011,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 18: navmesh ground at zone 203 local 27933,32200",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000234",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 18,
+    "X": 249117,
+    "Y": 449992,
+    "Z": 4442,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 19: navmesh ground at zone 203 local 28000,36400",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000235",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 19,
+    "X": 249184,
+    "Y": 454192,
+    "Z": 4848,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 20: navmesh ground at zone 203 local 24125,33900",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000236",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 20,
+    "X": 245309,
+    "Y": 451692,
+    "Z": 3976,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 21: navmesh ground at zone 203 local 20250,31400",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000237",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 21,
+    "X": 241434,
+    "Y": 449192,
+    "Z": 3477,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 22: navmesh ground at zone 203 local 16375,28900",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000238",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 22,
+    "X": 237559,
+    "Y": 446692,
+    "Z": 2994,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 23: navmesh ground at zone 203 local 12500,26400",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000239",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 23,
+    "X": 233684,
+    "Y": 444192,
+    "Z": 2079,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 24: navmesh ground at zone 203 local 16333,30133",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000240",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 24,
+    "X": 237517,
+    "Y": 447925,
+    "Z": 2986,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 25: navmesh ground at zone 203 local 20166,33866",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000241",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 25,
+    "X": 241350,
+    "Y": 451658,
+    "Z": 3963,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 26: navmesh ground at zone 203 local 24000,37600",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000242",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 26,
+    "X": 245184,
+    "Y": 455392,
+    "Z": 5009,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 27: navmesh ground at zone 203 local 25600,40200",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000243",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 27,
+    "X": 246784,
+    "Y": 457992,
+    "Z": 5243,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 28: navmesh ground at zone 203 local 23800,36800",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000244",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 28,
+    "X": 244984,
+    "Y": 454592,
+    "Z": 4640,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 29: navmesh ground at zone 203 local 19800,35100",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000245",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 29,
+    "X": 240984,
+    "Y": 452892,
+    "Z": 4865,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 30: navmesh ground at zone 203 local 15800,33400",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000246",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 30,
+    "X": 236984,
+    "Y": 451192,
+    "Z": 2886,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 31: navmesh ground at zone 203 local 19333,30800",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000247",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 31,
+    "X": 240517,
+    "Y": 448592,
+    "Z": 3356,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 32: navmesh ground at zone 203 local 22866,28200",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000248",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 32,
+    "X": 244050,
+    "Y": 445992,
+    "Z": 4397,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 33: navmesh ground at zone 203 local 26400,25600",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000249",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 33,
+    "X": 247584,
+    "Y": 443392,
+    "Z": 5405,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 34: navmesh ground at zone 203 local 24700,30300",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000250",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 34,
+    "X": 245884,
+    "Y": 448092,
+    "Z": 4347,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 35: navmesh ground at zone 203 local 23000,35000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000251",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 35,
+    "X": 244184,
+    "Y": 452792,
+    "Z": 3942,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "why": "qf07_patrols_ceard_moher_wander point 36: navmesh ground at zone 203 local 21507,32039",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000252",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "Step": 36,
+    "X": 242691,
+    "Y": 449831,
+    "Z": 3619,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P10-C3",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": "",
+    "Name": "Ceard",
+    "Suffix": "",
+    "Guild": "",
+    "ExamineArticle": "",
+    "MessageArticle": "",
+    "X": 241198,
+    "Y": 446870,
+    "Z": 3816,
+    "Speed": 200,
+    "Heading": 2951,
+    "Region": 200,
+    "Model": 374,
+    "Size": 50,
+    "Strength": 30,
+    "Constitution": 30,
+    "Dexterity": 30,
+    "Quickness": 30,
+    "Intelligence": 30,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 50,
+    "Realm": 3,
+    "EquipmentTemplateID": "90d80e0a-774c-4116-965a-5e95cea82136",
+    "ItemsListTemplateID": "HibRobeDyeMerchant",
+    "NPCTemplateID": -1,
+    "Race": 0,
+    "Flags": 16,
+    "AggroLevel": 0,
+    "AggroRange": 0,
+    "MeleeDamageType": 2,
+    "RespawnInterval": 300,
+    "FactionID": 0,
+    "BodyType": 0,
+    "HouseNumber": 0,
+    "Brain": "",
+    "PathID": "qf07_patrols_ceard_moher_wander",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071101-0000-4000-8000-000000000017"
+   },
+   "why": "Search For The Missing Smith needs Ceard, 'the confused smith wandering the beach past the fogs in the Cliffs of Moher'; no Ceard existed (part10 B2 retargets steps 2 and 4 from the Shrouded Isles NPC Cead to 'Ceard;200'): a peaceful Hibernian Ceard with the look of the Cead row the quest used, walking his period route",
+   "source": "Allakhazam quest 565 Search For The Missing Smith: 'After finding Ceard (loc=20014,29078, he does wander though) on the beach'; 'Ceard route: 35.6k, 39.2k -West-> 24.5k,30.8k ...'"
+  },
+  {
+   "finding": "P06-C1",
+   "why": "Rioldna stood still (Bog of Cullen 44200,52400, roam 0); period 'a banshee named Rioldna who roams in the water northwest of Alainn Binn': a short loop in the water round her spot (patrol path, 4 points, 4597 units, loop)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000031",
+    "PathID": "qf07_patrols_rioldna_bog_water",
+    "RegionID": 200,
+    "PathType": 3
+   }
+  },
+  {
+   "finding": "P06-C1",
+   "why": "qf07_patrols_rioldna_bog_water point 1: navmesh water at zone 205 local 44200,52400",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000253",
+    "PathID": "qf07_patrols_rioldna_bog_water",
+    "Step": 1,
+    "X": 396456,
+    "Y": 765104,
+    "Z": 4890,
+    "MaxSpeed": 120,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P06-C1",
+   "why": "qf07_patrols_rioldna_bog_water point 2: navmesh water at zone 205 local 43300,51700",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000254",
+    "PathID": "qf07_patrols_rioldna_bog_water",
+    "Step": 2,
+    "X": 395556,
+    "Y": 764404,
+    "Z": 4890,
+    "MaxSpeed": 120,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P06-C1",
+   "why": "qf07_patrols_rioldna_bog_water point 3: navmesh water at zone 205 local 43900,50900",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000255",
+    "PathID": "qf07_patrols_rioldna_bog_water",
+    "Step": 3,
+    "X": 396156,
+    "Y": 763604,
+    "Z": 4890,
+    "MaxSpeed": 120,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P06-C1",
+   "why": "qf07_patrols_rioldna_bog_water point 4: navmesh water at zone 205 local 45000,51500",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000256",
+    "PathID": "qf07_patrols_rioldna_bog_water",
+    "Step": 4,
+    "X": 397256,
+    "Y": 764204,
+    "Z": 4890,
+    "MaxSpeed": 120,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P06-C1",
+   "why": "Rioldna stood still (Bog of Cullen 44200,52400, roam 0); period 'a banshee named Rioldna who roams in the water northwest of Alainn Binn': a short loop in the water round her spot; Rioldna walks qf07_patrols_rioldna_bog_water",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_rioldna_bog_water",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "50c43a14-1a57-5f53-ac63-1e424fa33f41"
+   }
+  },
+  {
+   "finding": "P06-C2",
+   "why": "Nasco stood still alone (Shannon Estuary 26650,60468, roam 0); Aziliz 'He wanders around Shannon Estuary, and is guarded by his Ambushers and Waylayers': a loop round his spot with an Eriu ambusher and an Eriu waylayer (copies of the Shannon Estuary ones) (patrol path, 5 points, 10894 units, loop)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000032",
+    "PathID": "qf07_patrols_nasco_shannon_wander",
+    "RegionID": 200,
+    "PathType": 3
+   }
+  },
+  {
+   "finding": "P06-C2",
+   "why": "qf07_patrols_nasco_shannon_wander point 1: navmesh ground at zone 202 local 26650,60468",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000257",
+    "PathID": "qf07_patrols_nasco_shannon_wander",
+    "Step": 1,
+    "X": 313370,
+    "Y": 674868,
+    "Z": 5106,
+    "MaxSpeed": 140,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P06-C2",
+   "why": "qf07_patrols_nasco_shannon_wander point 2: navmesh ground at zone 202 local 28500,59200",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000258",
+    "PathID": "qf07_patrols_nasco_shannon_wander",
+    "Step": 2,
+    "X": 315220,
+    "Y": 673600,
+    "Z": 5686,
+    "MaxSpeed": 140,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P06-C2",
+   "why": "qf07_patrols_nasco_shannon_wander point 3: navmesh ground at zone 202 local 30500,60300",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000259",
+    "PathID": "qf07_patrols_nasco_shannon_wander",
+    "Step": 3,
+    "X": 317220,
+    "Y": 674700,
+    "Z": 5673,
+    "MaxSpeed": 140,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P06-C2",
+   "why": "qf07_patrols_nasco_shannon_wander point 4: navmesh ground at zone 202 local 29200,62200 (verify fix 2026-11-11: point 4 moved from 315920,676600, 641 units from the realm NPC Filidh Mairtin with the loop passing at 547, to 316300,677300 on walkable ground: the loop now stays 1,035 or more from him, outside his 500 aggro range even for the escorts)",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000260",
+    "PathID": "qf07_patrols_nasco_shannon_wander",
+    "Step": 4,
+    "X": 316300,
+    "Y": 677300,
+    "Z": 5835,
+    "MaxSpeed": 140,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P06-C2",
+   "why": "qf07_patrols_nasco_shannon_wander point 5: navmesh ground at zone 202 local 27000,62300",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000261",
+    "PathID": "qf07_patrols_nasco_shannon_wander",
+    "Step": 5,
+    "X": 313720,
+    "Y": 676700,
+    "Z": 5481,
+    "MaxSpeed": 140,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P06-C2",
+   "why": "Nasco stood still alone (Shannon Estuary 26650,60468, roam 0); Aziliz 'He wanders around Shannon Estuary, and is guarded by his Ambushers and Waylayers': a loop round his spot with an Eriu ambusher and an Eriu waylayer (copies of the Shannon Estuary ones); Nasco walks qf07_patrols_nasco_shannon_wander",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_nasco_shannon_wander",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "9d077978-bb69-5a47-b4f0-4480d7886589"
+   }
+  },
+  {
+   "finding": "P06-C2",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "eriu ambusher",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 313460,
+    "Y": 674868,
+    "Z": 5118,
+    "Speed": 180,
+    "Heading": 2662,
+    "Region": 200,
+    "Model": 338,
+    "Size": 51,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 0,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 29,
+    "Realm": 0,
+    "EquipmentTemplateID": "f0967e90-aa3c-459f-89e3-a0695e607e2a",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 60160563,
+    "Race": 2005,
+    "Flags": 2,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 0,
+    "RespawnInterval": 80,
+    "FactionID": 107,
+    "BodyType": 6,
+    "HouseNumber": 0,
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071101-0000-4000-8000-000000000018"
+   },
+   "why": "Aziliz (period dialogue) 'He wanders around Shannon Estuary, and is guarded by his Ambushers and Waylayers'; none stood with him (a copy of eriu ambusher 5044b789-abd8-4a7f-b28e-ad6e368f1d93, same template and stats, walking with Nasco)",
+   "source": "Allakhazam quest 339 Search for Nasco's Spear: Aziliz says 'There is a Siabra chief by the name of Nasco. He wanders around Shannon Estuary, and is guarded by his Ambushers and Waylayers'"
+  },
+  {
+   "finding": "P06-C2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "00071101-0000-4000-8000-000000000018"
+   ],
+   "value": "Nasco",
+   "why": "new eriu ambusher (00071101-0000-4000-8000-000000000018) is a fellow of Nasco"
+  },
+  {
+   "finding": "P06-C2",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "eriu waylayer",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 313280,
+    "Y": 674868,
+    "Z": 5103,
+    "Speed": 180,
+    "Heading": 226,
+    "Region": 200,
+    "Model": 338,
+    "Size": 52,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 66,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 33,
+    "Realm": 0,
+    "EquipmentTemplateID": "f0967e90-aa3c-459f-89e3-a0695e607e2a",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 60160567,
+    "Race": 2005,
+    "Flags": 0,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 2,
+    "RespawnInterval": 80,
+    "FactionID": 107,
+    "BodyType": 6,
+    "HouseNumber": 0,
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071101-0000-4000-8000-000000000019"
+   },
+   "why": "Aziliz (period dialogue) 'He wanders around Shannon Estuary, and is guarded by his Ambushers and Waylayers'; none stood with him (a copy of eriu waylayer f3038cee-067d-48e6-a33a-aec40398f918, same template and stats, walking with Nasco)",
+   "source": "Allakhazam quest 339 Search for Nasco's Spear: Aziliz says 'There is a Siabra chief by the name of Nasco. He wanders around Shannon Estuary, and is guarded by his Ambushers and Waylayers'"
+  },
+  {
+   "finding": "P06-C2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "00071101-0000-4000-8000-000000000019"
+   ],
+   "value": "Nasco",
+   "why": "new eriu waylayer (00071101-0000-4000-8000-000000000019) is a fellow of Nasco"
+  },
+  {
+   "finding": "P06-C3",
+   "why": "the cronicorn at the siabra camp only drifted (roam 200, Bog of Cullen 31582,38430); period 'He often wanders out of the Siabra camp into the water': a walk from the camp into the water to the north and back (the other cronicorn keeps its roam) (patrol path, 3 points, 3500 units, there and back)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000033",
+    "PathID": "qf07_patrols_cronicorn_siabra_camp_water",
+    "RegionID": 200,
+    "PathType": 2
+   }
+  },
+  {
+   "finding": "P06-C3",
+   "why": "qf07_patrols_cronicorn_siabra_camp_water point 1: navmesh ground at zone 205 local 31582,38430",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000262",
+    "PathID": "qf07_patrols_cronicorn_siabra_camp_water",
+    "Step": 1,
+    "X": 383838,
+    "Y": 751134,
+    "Z": 4978,
+    "MaxSpeed": 150,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P06-C3",
+   "why": "qf07_patrols_cronicorn_siabra_camp_water point 2: navmesh water at zone 205 local 31500,36800",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000263",
+    "PathID": "qf07_patrols_cronicorn_siabra_camp_water",
+    "Step": 2,
+    "X": 383756,
+    "Y": 749504,
+    "Z": 4890,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P06-C3",
+   "why": "qf07_patrols_cronicorn_siabra_camp_water point 3: navmesh water at zone 205 local 31000,35000",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000264",
+    "PathID": "qf07_patrols_cronicorn_siabra_camp_water",
+    "Step": 3,
+    "X": 383256,
+    "Y": 747704,
+    "Z": 4890,
+    "MaxSpeed": 150,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P06-C3",
+   "why": "the cronicorn at the siabra camp only drifted (roam 200, Bog of Cullen 31582,38430); period 'He often wanders out of the Siabra camp into the water': a walk from the camp into the water to the north and back (the other cronicorn keeps its roam); cronicorn walks qf07_patrols_cronicorn_siabra_camp_water",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_cronicorn_siabra_camp_water",
+    "RoamingRange": 0
+   },
+   "where": {
+    "Mob_ID": "100030788"
+   }
+  },
+  {
+   "finding": "P06-C6",
+   "why": "Duana and Edan only drifted (roam 200) near the Tir na mBeo tower ruins; period 'they can be found wandering around the tower with the Dergans'; CapnBry radar saw Duana at 60423,13309 and Edan at 59180,15082 / 59651,13664: a loop round the tower through those spots, Duana leading and Edan walking with her (patrol path, 5 points, 8253 units, loop)",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00071105-0000-4000-8000-000000000034",
+    "PathID": "qf07_patrols_duana_edan_tower",
+    "RegionID": 200,
+    "PathType": 3
+   }
+  },
+  {
+   "finding": "P06-C6",
+   "why": "qf07_patrols_duana_edan_tower point 1: navmesh ground at zone 200 local 60423,13309",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000265",
+    "PathID": "qf07_patrols_duana_edan_tower",
+    "Step": 1,
+    "X": 379911,
+    "Y": 496637,
+    "Z": 5364,
+    "MaxSpeed": 120,
+    "WaitTime": 300
+   }
+  },
+  {
+   "finding": "P06-C6",
+   "why": "qf07_patrols_duana_edan_tower point 2: navmesh ground at zone 200 local 61500,14800",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000266",
+    "PathID": "qf07_patrols_duana_edan_tower",
+    "Step": 2,
+    "X": 380988,
+    "Y": 498128,
+    "Z": 5233,
+    "MaxSpeed": 120,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P06-C6",
+   "why": "qf07_patrols_duana_edan_tower point 3: navmesh ground at zone 200 local 60500,16600",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000267",
+    "PathID": "qf07_patrols_duana_edan_tower",
+    "Step": 3,
+    "X": 379988,
+    "Y": 499928,
+    "Z": 5224,
+    "MaxSpeed": 120,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P06-C6",
+   "why": "qf07_patrols_duana_edan_tower point 4: navmesh ground at zone 200 local 59180,15082",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000268",
+    "PathID": "qf07_patrols_duana_edan_tower",
+    "Step": 4,
+    "X": 378668,
+    "Y": 498410,
+    "Z": 5413,
+    "MaxSpeed": 120,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P06-C6",
+   "why": "qf07_patrols_duana_edan_tower point 5: navmesh ground at zone 200 local 59651,13664",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00071106-0000-4000-8000-000000000269",
+    "PathID": "qf07_patrols_duana_edan_tower",
+    "Step": 5,
+    "X": 379139,
+    "Y": 496992,
+    "Z": 5409,
+    "MaxSpeed": 120,
+    "WaitTime": 0
+   }
+  },
+  {
+   "finding": "P06-C6",
+   "why": "Duana and Edan only drifted (roam 200) near the Tir na mBeo tower ruins; period 'they can be found wandering around the tower with the Dergans'; CapnBry radar saw Duana at 60423,13309 and Edan at 59180,15082 / 59651,13664: a loop round the tower through those spots, Duana leading and Edan walking with her; Duana walks qf07_patrols_duana_edan_tower from its first point (was 380393,497084)",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "PathID": "qf07_patrols_duana_edan_tower",
+    "RoamingRange": 0,
+    "X": 379911,
+    "Y": 496637,
+    "Z": 5364
+   },
+   "where": {
+    "Mob_ID": "a37f66ce-ba62-451b-af3e-4f9988abe8e6"
+   }
+  },
+  {
+   "finding": "P06-C6",
+   "why": "Edan walks with Duana (QuestFellowBrain + classic-quests Fellows, as Fjall's fellows), starting beside the leader's spawn",
+   "kind": "add_edit",
+   "file": "add-restoredspawns165.json",
+   "id": "100f1106-be67-4c61-85d3-159af8ae73bb",
+   "set": {
+    "Brain": "DOL.AI.Brain.QuestFellowBrain",
+    "RoamingRange": 0,
+    "X": 380001,
+    "Y": 496637,
+    "Z": 5360
+   }
+  },
+  {
+   "finding": "P06-C6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Fellows",
+    "100f1106-be67-4c61-85d3-159af8ae73bb"
+   ],
+   "value": "Duana",
+   "why": "Edan (100f1106-be67-4c61-85d3-159af8ae73bb) is a fellow of Duana"
+  }
+ ]
+}

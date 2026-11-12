@@ -1,0 +1,238 @@
+{
+ "fixer": "integrator",
+ "about": "Problems the 0.7 verifiers found that break or visibly glitch a quest.",
+ "entries": [
+  {
+   "finding": "INT-3",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET SourceText = SourceText || '|' WHERE ID = 21188 AND (length(SourceText) - length(replace(SourceText, '|', ''))) < (length(StepType) - length(replace(StepType, '|', '')))",
+   "why": "the new choose step had no SourceText entry: the step advance sent \"Error retrieving source text\" to the player (verifier, part08)"
+  },
+  {
+   "finding": "INT-3",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET SourceText = SourceText || '|' WHERE ID = 21211 AND (length(SourceText) - length(replace(SourceText, '|', ''))) < (length(StepType) - length(replace(StepType, '|', '')))",
+   "why": "the new choose step had no SourceText entry: the step advance sent \"Error retrieving source text\" to the player (verifier, part08)"
+  },
+  {
+   "finding": "INT-3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21441",
+    "Steps",
+    8,
+    "Custom",
+    "Consume"
+   ],
+   "value": false,
+   "why": "step 8 consumed Dagda's Harp but step 10 gives it to Lobais (\"Return to Lobais ... and give him the harp\"): the harp is kept (verifier, part10)"
+  },
+  {
+   "finding": "INT-3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21442",
+    "Steps",
+    8,
+    "Custom",
+    "Consume"
+   ],
+   "value": false,
+   "why": "step 8 consumed Dagda's Harp but step 10 gives it to Lobais (\"Return to Lobais ... and give him the harp\"): the harp is kept (verifier, part10)"
+  },
+  {
+   "finding": "INT-3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21443",
+    "Steps",
+    8,
+    "Custom",
+    "Consume"
+   ],
+   "value": false,
+   "why": "step 8 consumed Dagda's Harp but step 10 gives it to Lobais (\"Return to Lobais ... and give him the harp\"): the harp is kept (verifier, part10)"
+  },
+  {
+   "finding": "INT-3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21444",
+    "Steps",
+    8,
+    "Custom",
+    "Consume"
+   ],
+   "value": false,
+   "why": "step 8 consumed Dagda's Harp but step 10 gives it to Lobais (\"Return to Lobais ... and give him the harp\"): the harp is kept (verifier, part10)"
+  },
+  {
+   "finding": "INT-3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21445",
+    "Steps",
+    8,
+    "Custom",
+    "Consume"
+   ],
+   "value": false,
+   "why": "step 8 consumed Dagda's Harp but step 10 gives it to Lobais (\"Return to Lobais ... and give him the harp\"): the harp is kept (verifier, part10)"
+  },
+  {
+   "finding": "INT-3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21446",
+    "Steps",
+    8,
+    "Custom",
+    "Consume"
+   ],
+   "value": false,
+   "why": "step 8 consumed Dagda's Harp but step 10 gives it to Lobais (\"Return to Lobais ... and give him the harp\"): the harp is kept (verifier, part10)"
+  },
+  {
+   "finding": "INT-3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21447",
+    "Steps",
+    8,
+    "Custom",
+    "Consume"
+   ],
+   "value": false,
+   "why": "step 8 consumed Dagda's Harp but step 10 gives it to Lobais (\"Return to Lobais ... and give him the harp\"): the harp is kept (verifier, part10)"
+  },
+  {
+   "finding": "INT-3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21448",
+    "Steps",
+    8,
+    "Custom",
+    "Consume"
+   ],
+   "value": false,
+   "why": "step 8 consumed Dagda's Harp but step 10 gives it to Lobais (\"Return to Lobais ... and give him the harp\"): the harp is kept (verifier, part10)"
+  },
+  {
+   "finding": "INT-3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21449",
+    "Steps",
+    8,
+    "Custom",
+    "Consume"
+   ],
+   "value": false,
+   "why": "step 8 consumed Dagda's Harp but step 10 gives it to Lobais (\"Return to Lobais ... and give him the harp\"): the harp is kept (verifier, part10)"
+  },
+  {
+   "finding": "INT-3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21450",
+    "Steps",
+    8,
+    "Custom",
+    "Consume"
+   ],
+   "value": false,
+   "why": "step 8 consumed Dagda's Harp but step 10 gives it to Lobais (\"Return to Lobais ... and give him the harp\"): the harp is kept (verifier, part10)"
+  },
+  {
+   "finding": "INT-3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21451",
+    "Steps",
+    8,
+    "Custom",
+    "Consume"
+   ],
+   "value": false,
+   "why": "step 8 consumed Dagda's Harp but step 10 gives it to Lobais (\"Return to Lobais ... and give him the harp\"): the harp is kept (verifier, part10)"
+  },
+  {
+   "finding": "INT-3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21452",
+    "Steps",
+    8,
+    "Custom",
+    "Consume"
+   ],
+   "value": false,
+   "why": "step 8 consumed Dagda's Harp but step 10 gives it to Lobais (\"Return to Lobais ... and give him the harp\"): the harp is kept (verifier, part10)"
+  },
+  {
+   "finding": "INT-3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21453",
+    "Steps",
+    8,
+    "Custom",
+    "Consume"
+   ],
+   "value": false,
+   "why": "step 8 consumed Dagda's Harp but step 10 gives it to Lobais (\"Return to Lobais ... and give him the harp\"): the harp is kept (verifier, part10)"
+  },
+  {
+   "finding": "INT-3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21454",
+    "Steps",
+    8,
+    "Custom",
+    "Consume"
+   ],
+   "value": false,
+   "why": "step 8 consumed Dagda's Harp but step 10 gives it to Lobais (\"Return to Lobais ... and give him the harp\"): the harp is kept (verifier, part10)"
+  },
+  {
+   "finding": "INT-3",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "MaxLevel": 50
+   },
+   "where_sql": "ID IN (20163, 20164, 20165, 20166)",
+   "why": "MaxLevel 16 on the quest that opens Legend of the Lake locked the epic line for good once out-levelled (verifier, part09)"
+  }
+ ]
+}

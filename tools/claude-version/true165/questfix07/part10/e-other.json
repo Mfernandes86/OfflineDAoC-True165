@@ -1,0 +1,654 @@
+{
+ "fixer": "part10",
+ "about": "E2 one version per player, E3 Sarah gives the cervideth kill task, E4 Rasczel's Bane level cap, E9 Nimue gives the level 25 reward",
+ "entries": [
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21407",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21408",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21409",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21410",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21411",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21412",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21413",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21414",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21415",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21416",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21417",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21418",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21515",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21516",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21517",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21518",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21519",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21520",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21521",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21522",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21523",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21524",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21525",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21526",
+    "ExcludedBy"
+   ],
+   "value": "Occupation of Lough Gur",
+   "why": "two versions of \"Occupation of Lough Gur\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21322",
+    "ExcludedBy"
+   ],
+   "value": "Traveler's Way -- Supply Run",
+   "why": "two versions of \"Traveler's Way -- Supply Run\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21323",
+    "ExcludedBy"
+   ],
+   "value": "Traveler's Way -- Supply Run",
+   "why": "two versions of \"Traveler's Way -- Supply Run\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21324",
+    "ExcludedBy"
+   ],
+   "value": "Traveler's Way -- Supply Run",
+   "why": "two versions of \"Traveler's Way -- Supply Run\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21325",
+    "ExcludedBy"
+   ],
+   "value": "Traveler's Way -- Supply Run",
+   "why": "two versions of \"Traveler's Way -- Supply Run\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21498",
+    "ExcludedBy"
+   ],
+   "value": "Traveler's Way -- Supply Run",
+   "why": "two versions of \"Traveler's Way -- Supply Run\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21499",
+    "ExcludedBy"
+   ],
+   "value": "Traveler's Way -- Supply Run",
+   "why": "two versions of \"Traveler's Way -- Supply Run\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21500",
+    "ExcludedBy"
+   ],
+   "value": "Traveler's Way -- Supply Run",
+   "why": "two versions of \"Traveler's Way -- Supply Run\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21501",
+    "ExcludedBy"
+   ],
+   "value": "Traveler's Way -- Supply Run",
+   "why": "two versions of \"Traveler's Way -- Supply Run\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21326",
+    "ExcludedBy"
+   ],
+   "value": "Traveler's Way -- Stones of Power",
+   "why": "two versions of \"Traveler's Way -- Stones of Power\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21327",
+    "ExcludedBy"
+   ],
+   "value": "Traveler's Way -- Stones of Power",
+   "why": "two versions of \"Traveler's Way -- Stones of Power\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21328",
+    "ExcludedBy"
+   ],
+   "value": "Traveler's Way -- Stones of Power",
+   "why": "two versions of \"Traveler's Way -- Stones of Power\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21502",
+    "ExcludedBy"
+   ],
+   "value": "Traveler's Way -- Stones of Power",
+   "why": "two versions of \"Traveler's Way -- Stones of Power\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21503",
+    "ExcludedBy"
+   ],
+   "value": "Traveler's Way -- Stones of Power",
+   "why": "two versions of \"Traveler's Way -- Stones of Power\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E2",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "Quests",
+    "21504",
+    "ExcludedBy"
+   ],
+   "value": "Traveler's Way -- Stones of Power",
+   "why": "two versions of \"Traveler's Way -- Stones of Power\" with the same giver and rewards were both offered and both could be finished (two rewards); Allakhazam keeps them as version 1/2 with \"Your Steps and Tasks may be different\": a player gets one. Once either version is started or finished, the other is no longer offered (ExcludedBy matches the shared name; the quest being done is never re-checked)"
+  },
+  {
+   "finding": "P10-E3",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StartName": "Sarah",
+    "TargetName": "Sarah;181",
+    "StepText": "Kill cervideth (ghostly giant elks) outside the Grove of Aalid Feie and bring Sarah the Cervideth Antlers.",
+    "SourceText": "Kill cervideth (ghostly giant elks) outside the Grove of Aalid Feie and bring Sarah the Cervideth Antlers."
+   },
+   "where": {
+    "ID": 21456
+   },
+   "source": "Allakhazam quest Cervideth Antlers -- Kill Task (551): Start NPC Sarah, \"Sarah in the Grove of Aalid Feie wants skeletal elk antlers\"",
+   "why": "the kill task was given by the merchant Miniine and the journal showed the generator note \"Giver not recorded...\"; the period giver Sarah stands in the Grove of Aalid Feie (Vale of Balor 49645,25611)"
+  },
+  {
+   "finding": "P10-E3",
+   "kind": "quest",
+   "op": "merge",
+   "path": [
+    "Quests",
+    "21456",
+    "Steps",
+    1
+   ],
+   "value": {
+    "Marker": {
+     "Region": 181,
+     "X": 311789,
+     "Y": 353291,
+     "Z": 3626
+    },
+    "Custom": {
+     "Kind": "trade",
+     "Target": "Sarah",
+     "Trades": {
+      "cq_cervideth_antlers": ""
+     },
+     "Drops": [
+      {
+       "Mob": "cervideth",
+       "Item": "cq_cervideth_antlers",
+       "Chance": 15
+      }
+     ]
+    }
+   },
+   "why": "the antlers are handed to Sarah (trade target and marker moved from Miniine); the drop is unchanged"
+  },
+  {
+   "finding": "P10-E4",
+   "kind": "add_edit",
+   "file": "add-primaquests165.json",
+   "id": 21531,
+   "set": {
+    "MaxLevel": 50
+   },
+   "why": "MinLevel and MaxLevel were both 11, so a Berserker who reached 12 first could never get Rasczel's Bane; Prima's \"11\" is the start level and the other guild quests use MaxLevel 50"
+  },
+  {
+   "finding": "P10-E9",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Sir Verin;1|Magess Islia;10|Lady Nimue;1|Lady Nimue;1",
+    "StepText": "Return to Sir Verin at Swanton Keep.|Return to Magess Islia in Merlin's Tower.|Return to Lady Nimue.|Speak with Lady Nimue again to receive your reward. Afterwards Loremaster Alain at the Academy in Camelot asks you to return at level 30."
+   },
+   "where": {
+    "ID": 21476
+   },
+   "source": "Allakhazam quest Legend of the Lake (level 25) (186): \"Return to Lady Nimue to receive a Master of Arms Platemail Breastplate or Scout reward ... After 25, you have to visit Loremaster Alain at the Academy in Camelot - he tells you to come back when you are lvl 30\"",
+   "why": "the level 25 reward was handed out by Loremaster Alain; in the period Lady Nimue gives it and Alain only says to come back at 30. The finishing step (step 4) now targets Lady Nimue (kept as a fourth step so a player already on it is not stuck)"
+  },
+  {
+   "finding": "P10-E9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21476",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the reward step now points at Lady Nimue; the same spot part09 (P09-B4) gives her step-3 marker, her period night spot in the Avalon Marsh lake"
+  },
+  {
+   "finding": "P10-E9",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Sir Verin;1|Magess Islia;10|Lady Nimue;1|Lady Nimue;1",
+    "StepText": "Return to Sir Verin at Swanton Keep.|Return to Magess Islia in Merlin's Tower.|Return to Lady Nimue.|Speak with Lady Nimue again to receive your reward. Afterwards Loremaster Alain at the Academy in Camelot asks you to return at level 30."
+   },
+   "where": {
+    "ID": 21477
+   },
+   "source": "Allakhazam quest Legend of the Lake (level 25) (186): \"Return to Lady Nimue to receive a Master of Arms Platemail Breastplate or Scout reward ... After 25, you have to visit Loremaster Alain at the Academy in Camelot - he tells you to come back when you are lvl 30\"",
+   "why": "the level 25 reward was handed out by Loremaster Alain; in the period Lady Nimue gives it and Alain only says to come back at 30. The finishing step (step 4) now targets Lady Nimue (kept as a fourth step so a player already on it is not stuck)"
+  },
+  {
+   "finding": "P10-E9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21477",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the reward step now points at Lady Nimue; the same spot part09 (P09-B4) gives her step-3 marker, her period night spot in the Avalon Marsh lake"
+  },
+  {
+   "finding": "P10-E9",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Sir Verin;1|Magess Islia;10|Lady Nimue;1|Lady Nimue;1",
+    "StepText": "Return to Sir Verin at Swanton Keep.|Return to Magess Islia in Merlin's Tower.|Return to Lady Nimue.|Speak with Lady Nimue again to receive your reward. Afterwards Loremaster Alain at the Academy in Camelot asks you to return at level 30."
+   },
+   "where": {
+    "ID": 21478
+   },
+   "source": "Allakhazam quest Legend of the Lake (level 25) (186): \"Return to Lady Nimue to receive a Master of Arms Platemail Breastplate or Scout reward ... After 25, you have to visit Loremaster Alain at the Academy in Camelot - he tells you to come back when you are lvl 30\"",
+   "why": "the level 25 reward was handed out by Loremaster Alain; in the period Lady Nimue gives it and Alain only says to come back at 30. The finishing step (step 4) now targets Lady Nimue (kept as a fourth step so a player already on it is not stuck)"
+  },
+  {
+   "finding": "P10-E9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21478",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the reward step now points at Lady Nimue; the same spot part09 (P09-B4) gives her step-3 marker, her period night spot in the Avalon Marsh lake"
+  },
+  {
+   "finding": "P10-E9",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Sir Verin;1|Magess Islia;10|Lady Nimue;1|Lady Nimue;1",
+    "StepText": "Return to Sir Verin at Swanton Keep.|Return to Magess Islia in Merlin's Tower.|Return to Lady Nimue.|Speak with Lady Nimue again to receive your reward. Afterwards Loremaster Alain at the Academy in Camelot asks you to return at level 30."
+   },
+   "where": {
+    "ID": 21479
+   },
+   "source": "Allakhazam quest Legend of the Lake (level 25) (186): \"Return to Lady Nimue to receive a Master of Arms Platemail Breastplate or Scout reward ... After 25, you have to visit Loremaster Alain at the Academy in Camelot - he tells you to come back when you are lvl 30\"",
+   "why": "the level 25 reward was handed out by Loremaster Alain; in the period Lady Nimue gives it and Alain only says to come back at 30. The finishing step (step 4) now targets Lady Nimue (kept as a fourth step so a player already on it is not stuck)"
+  },
+  {
+   "finding": "P10-E9",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21479",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 445423,
+    "Y": 659426,
+    "Z": 1584
+   },
+   "why": "the reward step now points at Lady Nimue; the same spot part09 (P09-B4) gives her step-3 marker, her period night spot in the Avalon Marsh lake"
+  }
+ ]
+}

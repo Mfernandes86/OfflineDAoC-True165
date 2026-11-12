@@ -1,0 +1,299 @@
+{
+ "fixer": "integrator",
+ "about": "Quest data that uses the engine features of 2026-11-11 (whisper choice, own spawn only).",
+ "entries": [
+  {
+   "finding": "INT-6",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepType": "4|4|0|2|4|4|4|4|4|0|4|0|4|8|5"
+   },
+   "where": {
+    "ID": 20652
+   },
+   "why": "Secret Orders step 14: the Arawn Commander's riddle. The journal says to answer [knowledge] or [power], but the step was an Interact and ended on a right-click (verifier P05-B3). It is now a custom whisper step (StepType 8, completed by the engine)",
+   "source": "Allakhazam quest 351: the Arawn Commander asks KNOWLEDGE or POWER (no period data on a lesser reward for one answer, so both answers go on)"
+  },
+  {
+   "finding": "INT-6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20652",
+    "Steps",
+    14,
+    "Custom"
+   ],
+   "value": {
+    "Kind": "whisper",
+    "Target": "Arawn Commander",
+    "Words": "knowledge|power"
+   },
+   "why": "the riddle takes either word, whispered or clicked (new engine step kind 'whisper')"
+  },
+  {
+   "finding": "INT-6",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepType": "4|4|0|2|4|4|4|4|4|0|4|0|4|8|5"
+   },
+   "where": {
+    "ID": 20653
+   },
+   "why": "Secret Orders step 14: the Arawn Commander's riddle. The journal says to answer [knowledge] or [power], but the step was an Interact and ended on a right-click (verifier P05-B3). It is now a custom whisper step (StepType 8, completed by the engine)",
+   "source": "Allakhazam quest 351: the Arawn Commander asks KNOWLEDGE or POWER (no period data on a lesser reward for one answer, so both answers go on)"
+  },
+  {
+   "finding": "INT-6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20653",
+    "Steps",
+    14,
+    "Custom"
+   ],
+   "value": {
+    "Kind": "whisper",
+    "Target": "Arawn Commander",
+    "Words": "knowledge|power"
+   },
+   "why": "the riddle takes either word, whispered or clicked (new engine step kind 'whisper')"
+  },
+  {
+   "finding": "INT-6",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepType": "4|4|0|2|4|4|4|4|4|0|4|0|4|8|5"
+   },
+   "where": {
+    "ID": 20654
+   },
+   "why": "Secret Orders step 14: the Arawn Commander's riddle. The journal says to answer [knowledge] or [power], but the step was an Interact and ended on a right-click (verifier P05-B3). It is now a custom whisper step (StepType 8, completed by the engine)",
+   "source": "Allakhazam quest 351: the Arawn Commander asks KNOWLEDGE or POWER (no period data on a lesser reward for one answer, so both answers go on)"
+  },
+  {
+   "finding": "INT-6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20654",
+    "Steps",
+    14,
+    "Custom"
+   ],
+   "value": {
+    "Kind": "whisper",
+    "Target": "Arawn Commander",
+    "Words": "knowledge|power"
+   },
+   "why": "the riddle takes either word, whispered or clicked (new engine step kind 'whisper')"
+  },
+  {
+   "finding": "INT-6",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepType": "4|4|0|2|4|4|4|4|4|0|4|0|4|8|5"
+   },
+   "where": {
+    "ID": 20655
+   },
+   "why": "Secret Orders step 14: the Arawn Commander's riddle. The journal says to answer [knowledge] or [power], but the step was an Interact and ended on a right-click (verifier P05-B3). It is now a custom whisper step (StepType 8, completed by the engine)",
+   "source": "Allakhazam quest 351: the Arawn Commander asks KNOWLEDGE or POWER (no period data on a lesser reward for one answer, so both answers go on)"
+  },
+  {
+   "finding": "INT-6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20655",
+    "Steps",
+    14,
+    "Custom"
+   ],
+   "value": {
+    "Kind": "whisper",
+    "Target": "Arawn Commander",
+    "Words": "knowledge|power"
+   },
+   "why": "the riddle takes either word, whispered or clicked (new engine step kind 'whisper')"
+  },
+  {
+   "finding": "INT-6",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepType": "4|4|0|2|4|4|4|4|4|0|4|0|4|8|5"
+   },
+   "where": {
+    "ID": 20656
+   },
+   "why": "Secret Orders step 14: the Arawn Commander's riddle. The journal says to answer [knowledge] or [power], but the step was an Interact and ended on a right-click (verifier P05-B3). It is now a custom whisper step (StepType 8, completed by the engine)",
+   "source": "Allakhazam quest 351: the Arawn Commander asks KNOWLEDGE or POWER (no period data on a lesser reward for one answer, so both answers go on)"
+  },
+  {
+   "finding": "INT-6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20656",
+    "Steps",
+    14,
+    "Custom"
+   ],
+   "value": {
+    "Kind": "whisper",
+    "Target": "Arawn Commander",
+    "Words": "knowledge|power"
+   },
+   "why": "the riddle takes either word, whispered or clicked (new engine step kind 'whisper')"
+  },
+  {
+   "finding": "INT-6",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepType": "4|4|0|2|4|4|4|4|4|0|4|0|4|8|5"
+   },
+   "where": {
+    "ID": 20657
+   },
+   "why": "Secret Orders step 14: the Arawn Commander's riddle. The journal says to answer [knowledge] or [power], but the step was an Interact and ended on a right-click (verifier P05-B3). It is now a custom whisper step (StepType 8, completed by the engine)",
+   "source": "Allakhazam quest 351: the Arawn Commander asks KNOWLEDGE or POWER (no period data on a lesser reward for one answer, so both answers go on)"
+  },
+  {
+   "finding": "INT-6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20657",
+    "Steps",
+    14,
+    "Custom"
+   ],
+   "value": {
+    "Kind": "whisper",
+    "Target": "Arawn Commander",
+    "Words": "knowledge|power"
+   },
+   "why": "the riddle takes either word, whispered or clicked (new engine step kind 'whisper')"
+  },
+  {
+   "finding": "INT-6",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepType": "4|4|0|2|4|4|4|4|4|0|4|0|4|8|5"
+   },
+   "where": {
+    "ID": 20658
+   },
+   "why": "Secret Orders step 14: the Arawn Commander's riddle. The journal says to answer [knowledge] or [power], but the step was an Interact and ended on a right-click (verifier P05-B3). It is now a custom whisper step (StepType 8, completed by the engine)",
+   "source": "Allakhazam quest 351: the Arawn Commander asks KNOWLEDGE or POWER (no period data on a lesser reward for one answer, so both answers go on)"
+  },
+  {
+   "finding": "INT-6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20658",
+    "Steps",
+    14,
+    "Custom"
+   ],
+   "value": {
+    "Kind": "whisper",
+    "Target": "Arawn Commander",
+    "Words": "knowledge|power"
+   },
+   "why": "the riddle takes either word, whispered or clicked (new engine step kind 'whisper')"
+  },
+  {
+   "finding": "INT-6",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepType": "4|4|0|2|4|4|4|4|4|0|4|0|4|8|5"
+   },
+   "where": {
+    "ID": 20659
+   },
+   "why": "Secret Orders step 14: the Arawn Commander's riddle. The journal says to answer [knowledge] or [power], but the step was an Interact and ended on a right-click (verifier P05-B3). It is now a custom whisper step (StepType 8, completed by the engine)",
+   "source": "Allakhazam quest 351: the Arawn Commander asks KNOWLEDGE or POWER (no period data on a lesser reward for one answer, so both answers go on)"
+  },
+  {
+   "finding": "INT-6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20659",
+    "Steps",
+    14,
+    "Custom"
+   ],
+   "value": {
+    "Kind": "whisper",
+    "Target": "Arawn Commander",
+    "Words": "knowledge|power"
+   },
+   "why": "the riddle takes either word, whispered or clicked (new engine step kind 'whisper')"
+  },
+  {
+   "finding": "INT-6",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepType": "4|4|0|2|4|4|4|4|4|0|4|0|4|8|5"
+   },
+   "where": {
+    "ID": 20660
+   },
+   "why": "Secret Orders step 14: the Arawn Commander's riddle. The journal says to answer [knowledge] or [power], but the step was an Interact and ended on a right-click (verifier P05-B3). It is now a custom whisper step (StepType 8, completed by the engine)",
+   "source": "Allakhazam quest 351: the Arawn Commander asks KNOWLEDGE or POWER (no period data on a lesser reward for one answer, so both answers go on)"
+  },
+  {
+   "finding": "INT-6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20660",
+    "Steps",
+    14,
+    "Custom"
+   ],
+   "value": {
+    "Kind": "whisper",
+    "Target": "Arawn Commander",
+    "Words": "knowledge|power"
+   },
+   "why": "the riddle takes either word, whispered or clicked (new engine step kind 'whisper')"
+  },
+  {
+   "finding": "INT-6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21256",
+    "Steps",
+    5,
+    "OwnSpawnOnly"
+   ],
+   "value": true,
+   "why": "Price of Excellence: only the quest's own Ulfgar at the period loc (Yggdra 51110,12156) counts; the permanent Ulfgar of the Prima Atlas list stands 50k away and a kill of it finished the quest (audit P09-B12). The permanent one stays (Prima-backed)"
+  }
+ ]
+}

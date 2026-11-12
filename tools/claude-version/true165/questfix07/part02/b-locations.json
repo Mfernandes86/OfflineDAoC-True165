@@ -1,0 +1,161 @@
+{
+ "fixer": "part02",
+ "about": "B1 Varrin the crier, B3 hill hound event spawn (B2 Lady Nimue belongs to part09)",
+ "entries": [
+  {
+   "finding": "P02-B1",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": "",
+    "Name": "Varrin the crier",
+    "Suffix": "",
+    "Guild": "",
+    "ExamineArticle": "",
+    "MessageArticle": "",
+    "X": 530441,
+    "Y": 479543,
+    "Z": 2200,
+    "Speed": 200,
+    "Heading": 2048,
+    "Region": 1,
+    "Model": 10,
+    "Size": 48,
+    "Strength": 30,
+    "Constitution": 30,
+    "Dexterity": 30,
+    "Quickness": 30,
+    "Intelligence": 30,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 5,
+    "Realm": 1,
+    "EquipmentTemplateID": "e4b7450f-9d52-4020-87c1-2b065edef9fa",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": -1,
+    "Race": 0,
+    "Flags": 0,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 2,
+    "RespawnInterval": 0,
+    "FactionID": 0,
+    "BodyType": 0,
+    "HouseNumber": 0,
+    "Brain": "",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00070201-0000-4000-8000-000000000001"
+   },
+   "source": "Allakhazam walkthrough 'Association' (Alb 260): \"Varrin the crier is located in front of the tavern\"; CapnBry sighting 1111 Varrin the crier, zone 2 local 47113,45367 z 2200, level 5",
+   "why": "Association step 2 sends the note to the crier in front of the Ludlow tavern, but no crier stands in Ludlow (the target Grin the crier is in Campacorentin Forest, 115k away); Varrin spawned at his CapnBry spot with Grin's look/level (both level-5 town criers) (verify fix 2026-11-11: no NPC template - Grin's template renamed him \"Grin the crier\" and step 2 found nobody)"
+  },
+  {
+   "finding": "P02-B1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Hunter Ceron;1|Varrin the crier;1|Commander Buin;1|Master Torr;1"
+   },
+   "where": {
+    "ID": 20012
+   },
+   "why": "step 2 target was Grin the crier (Campacorentin Forest); the period crier is Varrin in Ludlow, and the step's own item is cq_note_from_varrin"
+  },
+  {
+   "finding": "P02-B1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetText": "|Aye! The bandits in the north are causing problems once again. Seek out Commander Buin at the tower just east of here and deliver this message to him. Then, return to your trainer for your reward.||"
+   },
+   "where": {
+    "ID": 20012
+   },
+   "source": "Allakhazam walkthrough 'Association' (Alb 260), recorded line of Varrin the crier",
+   "why": "Varrin's recorded answer when he takes Hunter Ceron's note (the step had no text)"
+  },
+  {
+   "finding": "P02-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20012",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 530441,
+    "Y": 479543,
+    "Z": 2200
+   },
+   "why": "marker followed Grin the crier into Campacorentin Forest; now on Varrin in front of the Ludlow tavern"
+  },
+  {
+   "finding": "P02-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20012",
+    "Steps",
+    2,
+    "Greet"
+   ],
+   "value": "Do you have a note for me?",
+   "source": "Allakhazam walkthrough 'Association' (Alb 260): Varrin the crier says, \"Do you have a note for me?\"",
+   "why": "Varrin's recorded greeting before the note is handed in"
+  },
+  {
+   "finding": "P02-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20012",
+    "Steps",
+    3,
+    "Issuer"
+   ],
+   "value": "Varrin the crier",
+   "why": "the lost-note re-issue named Grin the crier; Varrin hands out cq_note_from_varrin now"
+  },
+  {
+   "finding": "P02-B3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20078",
+    "Steps",
+    4,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "hill hound",
+    "TemplateId": 60162145,
+    "Level": 0,
+    "Model": 102,
+    "Region": 200,
+    "X": 379946,
+    "Y": 487965,
+    "Z": 5277,
+    "TriggerRadius": 0,
+    "DespawnSeconds": 600,
+    "Count": 1
+   },
+   "source": "Allakhazam walkthrough 'Essence of Hostility' (Hib 167): \"Give the Fallen One the cursed bracer, and hill hound(s) will spawn. I only got one spawn\"",
+   "why": "step 4 is a kill of any hill hound but the nearest stands 15.4k from the Fallen One; the period hound appears when the bracer is given, so one hill hound (world template 60162145, level 18-20) now comes for the player"
+  }
+ ]
+}

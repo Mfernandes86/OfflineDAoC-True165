@@ -1,0 +1,28 @@
+{
+ "fixer": "part10",
+ "about": "A4 Fighter-line classes for Growler Mace and Mathien's Metal (20216 belongs to part03)",
+ "entries": [
+  {
+   "finding": "P10-A4",
+   "kind": "add_edit",
+   "file": "add-primaquests165.json",
+   "id": 21539,
+   "set": {
+    "AllowedClasses": "2|1|11|19|6"
+   },
+   "source": "Prima Revised 2002 / Allakhazam Growler's Necklace and The Growling Ghost: Class \"Fighter, Cleric\"",
+   "why": "AllowedClasses 14|6 used the base class Fighter (14), which only exists at levels 1-4, while MinLevel is 13, so only Clerics qualified; the Fighter line in 1.65 is Armsman (2), Paladin (1), Mercenary (11) and Reaver (19, base class Fighter)"
+  },
+  {
+   "finding": "P10-A4",
+   "kind": "add_edit",
+   "file": "add-primaquests165.json",
+   "id": 21540,
+   "set": {
+    "AllowedClasses": "2|1|11|19|6"
+   },
+   "source": "Prima Revised 2002 / Allakhazam Growler's Necklace and The Growling Ghost: Class \"Fighter, Cleric\"",
+   "why": "AllowedClasses 14|6 used the base class Fighter (14), which only exists at levels 1-4, while MinLevel is 13, so only Clerics qualified; the Fighter line in 1.65 is Armsman (2), Paladin (1), Mercenary (11) and Reaver (19, base class Fighter)"
+  }
+ ]
+}

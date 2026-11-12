@@ -1,0 +1,1482 @@
+{
+ "fixer": "part08",
+ "about": "B1 Kaisa in Dyrfjell, B2 Gna Faste enchanter, B4 Gotar night dark hounds, B5 ice marker",
+ "entries": [
+  {
+   "finding": "P08-B1",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "Kaisa",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 277800,
+    "Y": 323900,
+    "Z": 5139,
+    "Speed": 191,
+    "Heading": 3600,
+    "Region": 151,
+    "Model": 798,
+    "Size": 49,
+    "Strength": 90,
+    "Constitution": 90,
+    "Dexterity": 90,
+    "Quickness": 90,
+    "Intelligence": 90,
+    "Piety": 90,
+    "Empathy": 90,
+    "Charisma": 90,
+    "Level": 50,
+    "Realm": 2,
+    "EquipmentTemplateID": "",
+    "ItemsListTemplateID": "",
+    "NPCTemplateID": -1,
+    "Race": 0,
+    "Flags": 16,
+    "AggroLevel": 0,
+    "AggroRange": 0,
+    "MeleeDamageType": 2,
+    "RespawnInterval": 30,
+    "FactionID": 0,
+    "BodyType": 0,
+    "HouseNumber": 0,
+    "Brain": null,
+    "PathID": null,
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 255,
+    "Mob_ID": "00070801-0000-4000-8000-000000000001"
+   },
+   "why": "Solving the Argument (SI, giver Skorri in Dyrfjell) sent players to Kaisa the Savage trainer in West Svealand; walkthrough 721: 'Kaisa ... in the small hut near Tjasse Vindrson in Dyrfjell' (she hears Ailsa and Olvaerr arguing from there). New peaceful Midgard Kaisa beside Tjasse Vindrson (region 151, ground Z from the navmesh); the mainland Savage trainer Kaisa is left alone",
+   "source": "Allakhazam quest 721 'Solving the Argument' (Step #1, Kaisa's lines); CapnBry Tjasse Vindrson zone 151 32465,12097"
+  },
+  {
+   "finding": "P08-B1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Kaisa;151|mammoth calf;151|morvalt ungdom;151|pysling;151|biting insect;151|Kaisa;151|Skorri;151",
+    "AllowedClasses": "22|27|28|31|35|36|37|38"
+   },
+   "where": {
+    "ID": 21142
+   },
+   "why": "Solving the Argument (SI, giver Skorri in Dyrfjell) sent players to Kaisa the Savage trainer in West Svealand; walkthrough 721: 'Kaisa ... in the small hut near Tjasse Vindrson in Dyrfjell' (she hears Ailsa and Olvaerr arguing from there). New peaceful Midgard Kaisa beside Tjasse Vindrson (region 151, ground Z from the navmesh); the mainland Savage trainer Kaisa is left alone; AllowedClasses: the classes with a documented reward get their own row (P08-D2), this row keeps the classes the period reward list does not name"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Halldis;100|Tomb Priestess;128|Halldis;100|Grjotgard;126|Halldis;100|Haeng;100||Serilyna;100"
+   },
+   "where": {
+    "ID": 21174
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Halldis;100|Tomb Priestess;128|Halldis;100|Grjotgard;126|Halldis;100|Haeng;100||Serilyna;100"
+   },
+   "where": {
+    "ID": 21175
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Halldis;100|Tomb Priestess;128|Halldis;100|Grjotgard;126|Halldis;100|Haeng;100||Serilyna;100"
+   },
+   "where": {
+    "ID": 21176
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Halldis;100|Tomb Priestess;128|Halldis;100|Grjotgard;126|Halldis;100|Haeng;100||Serilyna;100"
+   },
+   "where": {
+    "ID": 21177
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Halldis;100|Tomb Priestess;128|Halldis;100|Grjotgard;126|Halldis;100|Haeng;100||Serilyna;100"
+   },
+   "where": {
+    "ID": 21178
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Halldis;100|Tomb Priestess;128|Halldis;100|Grjotgard;126|Halldis;100|Haeng;100||Serilyna;100"
+   },
+   "where": {
+    "ID": 21179
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Halldis;100|Tomb Priestess;128|Halldis;100|Grjotgard;126|Halldis;100|Haeng;100||Serilyna;100"
+   },
+   "where": {
+    "ID": 21180
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Halldis;100|Tomb Priestess;128|Halldis;100|Grjotgard;126|Halldis;100|Haeng;100||Serilyna;100"
+   },
+   "where": {
+    "ID": 21181
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Halldis;100|Tomb Priestess;128|Halldis;100|Grjotgard;126|Halldis;100|Haeng;100||Serilyna;100"
+   },
+   "where": {
+    "ID": 21182
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Halldis;100|Tomb Priestess;128|Halldis;100|Grjotgard;126|Halldis;100|Haeng;100||Serilyna;100"
+   },
+   "where": {
+    "ID": 21183
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Halldis;100|Tomb Priestess;128|Halldis;100|Grjotgard;126|Halldis;100|Haeng;100||Serilyna;100"
+   },
+   "where": {
+    "ID": 21184
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Halldis;100|Tomb Priestess;128|Halldis;100|Grjotgard;126|Halldis;100|Haeng;100||Serilyna;100"
+   },
+   "where": {
+    "ID": 21185
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21174",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21174",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21174",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21174",
+    "Steps",
+    6,
+    "GrantFrom"
+   ],
+   "value": "Halldis",
+   "why": "the wrapped staff is handed over by the enchanter when the second half is returned (walkthrough 521), not by Bjame"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21175",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21175",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21175",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21175",
+    "Steps",
+    6,
+    "GrantFrom"
+   ],
+   "value": "Halldis",
+   "why": "the wrapped staff is handed over by the enchanter when the second half is returned (walkthrough 521), not by Bjame"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21176",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21176",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21176",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21176",
+    "Steps",
+    6,
+    "GrantFrom"
+   ],
+   "value": "Halldis",
+   "why": "the wrapped staff is handed over by the enchanter when the second half is returned (walkthrough 521), not by Bjame"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21177",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21177",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21177",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21177",
+    "Steps",
+    6,
+    "GrantFrom"
+   ],
+   "value": "Halldis",
+   "why": "the wrapped staff is handed over by the enchanter when the second half is returned (walkthrough 521), not by Bjame"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21178",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21178",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21178",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21178",
+    "Steps",
+    6,
+    "GrantFrom"
+   ],
+   "value": "Halldis",
+   "why": "the wrapped staff is handed over by the enchanter when the second half is returned (walkthrough 521), not by Bjame"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21179",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21179",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21179",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21179",
+    "Steps",
+    6,
+    "GrantFrom"
+   ],
+   "value": "Halldis",
+   "why": "the wrapped staff is handed over by the enchanter when the second half is returned (walkthrough 521), not by Bjame"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21180",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21180",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21180",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21180",
+    "Steps",
+    6,
+    "GrantFrom"
+   ],
+   "value": "Halldis",
+   "why": "the wrapped staff is handed over by the enchanter when the second half is returned (walkthrough 521), not by Bjame"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21181",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21181",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21181",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21181",
+    "Steps",
+    6,
+    "GrantFrom"
+   ],
+   "value": "Halldis",
+   "why": "the wrapped staff is handed over by the enchanter when the second half is returned (walkthrough 521), not by Bjame"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21182",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21182",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21182",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21182",
+    "Steps",
+    6,
+    "GrantFrom"
+   ],
+   "value": "Halldis",
+   "why": "the wrapped staff is handed over by the enchanter when the second half is returned (walkthrough 521), not by Bjame"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21183",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21183",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21183",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21183",
+    "Steps",
+    6,
+    "GrantFrom"
+   ],
+   "value": "Halldis",
+   "why": "the wrapped staff is handed over by the enchanter when the second half is returned (walkthrough 521), not by Bjame"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21184",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21184",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21184",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21184",
+    "Steps",
+    6,
+    "GrantFrom"
+   ],
+   "value": "Halldis",
+   "why": "the wrapped staff is handed over by the enchanter when the second half is returned (walkthrough 521), not by Bjame"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21185",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21185",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21185",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 789162,
+    "Y": 908437,
+    "Z": 4744
+   },
+   "why": "Protecting Myrkwood steps 1/3/5 'the enchanter in the Gna Faste guard tower' targeted Bjame, an aggressive realm-0 monster in Muspelheim. Walkthrough 521: the enchanter is a she in the Gna Faste guard tower; Bjame is the one who 'will spawn' after Haeng dies. Our Gna Faste tower (with Atzar, CapnBry zone 105 35366,39703) has Halldis, a female Enchanter (DOL.GS.Enchanter forwards ReceiveItem to its DataQuests)"
+  },
+  {
+   "finding": "P08-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21185",
+    "Steps",
+    6,
+    "GrantFrom"
+   ],
+   "value": "Halldis",
+   "why": "the wrapped staff is handed over by the enchanter when the second half is returned (walkthrough 521), not by Bjame"
+  },
+  {
+   "finding": "P08-B4",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.NightSpawn",
+    "TranslationId": null,
+    "Name": "dark hound",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 759086,
+    "Y": 826059,
+    "Z": 4558,
+    "Speed": 180,
+    "Heading": 1024,
+    "Region": 100,
+    "Model": 102,
+    "Size": 48,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 0,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 18,
+    "Realm": 0,
+    "EquipmentTemplateID": null,
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 60159706,
+    "Race": 2000,
+    "Flags": 0,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 3,
+    "RespawnInterval": 80,
+    "FactionID": 0,
+    "BodyType": 1,
+    "HouseNumber": 0,
+    "Brain": null,
+    "PathID": null,
+    "OwnerID": "",
+    "RoamingRange": 200,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00070801-0000-4000-8000-000000000002"
+   },
+   "why": "Helping the Arachites step 3 'Kill a dark hound in Gotar at night': all our dark hounds are in Myrkwood. Period walkthrough 1781 comment: 'dark hound for its tooth (loc=38190 23243 Gotar, at night only)' = global 759086,826059. Three NightSpawn copies of the Myrkwood dark hound (same template, level and aggro), ground Z from the navmesh",
+   "source": "Allakhazam quest 1781 'Helping the Arachites' (dark hound loc=38190 23243 Gotar, night only)"
+  },
+  {
+   "finding": "P08-B4",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.NightSpawn",
+    "TranslationId": null,
+    "Name": "dark hound",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 758700,
+    "Y": 825700,
+    "Z": 4510,
+    "Speed": 180,
+    "Heading": 2400,
+    "Region": 100,
+    "Model": 102,
+    "Size": 48,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 0,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 18,
+    "Realm": 0,
+    "EquipmentTemplateID": null,
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 60159706,
+    "Race": 2000,
+    "Flags": 0,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 3,
+    "RespawnInterval": 80,
+    "FactionID": 0,
+    "BodyType": 1,
+    "HouseNumber": 0,
+    "Brain": null,
+    "PathID": null,
+    "OwnerID": "",
+    "RoamingRange": 200,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00070801-0000-4000-8000-000000000003"
+   },
+   "why": "Helping the Arachites step 3 'Kill a dark hound in Gotar at night': all our dark hounds are in Myrkwood. Period walkthrough 1781 comment: 'dark hound for its tooth (loc=38190 23243 Gotar, at night only)' = global 759086,826059. Three NightSpawn copies of the Myrkwood dark hound (same template, level and aggro), ground Z from the navmesh",
+   "source": "Allakhazam quest 1781 'Helping the Arachites' (dark hound loc=38190 23243 Gotar, night only)"
+  },
+  {
+   "finding": "P08-B4",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.NightSpawn",
+    "TranslationId": null,
+    "Name": "dark hound",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 759500,
+    "Y": 826400,
+    "Z": 4578,
+    "Speed": 180,
+    "Heading": 3300,
+    "Region": 100,
+    "Model": 102,
+    "Size": 48,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 0,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 18,
+    "Realm": 0,
+    "EquipmentTemplateID": null,
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 60159706,
+    "Race": 2000,
+    "Flags": 0,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 3,
+    "RespawnInterval": 80,
+    "FactionID": 0,
+    "BodyType": 1,
+    "HouseNumber": 0,
+    "Brain": null,
+    "PathID": null,
+    "OwnerID": "",
+    "RoamingRange": 200,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00070801-0000-4000-8000-000000000004"
+   },
+   "why": "Helping the Arachites step 3 'Kill a dark hound in Gotar at night': all our dark hounds are in Myrkwood. Period walkthrough 1781 comment: 'dark hound for its tooth (loc=38190 23243 Gotar, at night only)' = global 759086,826059. Three NightSpawn copies of the Myrkwood dark hound (same template, level and aggro), ground Z from the navmesh",
+   "source": "Allakhazam quest 1781 'Helping the Arachites' (dark hound loc=38190 23243 Gotar, night only)"
+  },
+  {
+   "finding": "P08-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21148",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 759086,
+    "Y": 826059,
+    "Z": 4558
+   },
+   "why": "Helping the Arachites step 3 'Kill a dark hound in Gotar at night': all our dark hounds are in Myrkwood. Period walkthrough 1781 comment: 'dark hound for its tooth (loc=38190 23243 Gotar, at night only)' = global 759086,826059. Three NightSpawn copies of the Myrkwood dark hound (same template, level and aggro), ground Z from the navmesh"
+  },
+  {
+   "finding": "P08-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21149",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 759086,
+    "Y": 826059,
+    "Z": 4558
+   },
+   "why": "Helping the Arachites step 3 'Kill a dark hound in Gotar at night': all our dark hounds are in Myrkwood. Period walkthrough 1781 comment: 'dark hound for its tooth (loc=38190 23243 Gotar, at night only)' = global 759086,826059. Three NightSpawn copies of the Myrkwood dark hound (same template, level and aggro), ground Z from the navmesh"
+  },
+  {
+   "finding": "P08-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21150",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 759086,
+    "Y": 826059,
+    "Z": 4558
+   },
+   "why": "Helping the Arachites step 3 'Kill a dark hound in Gotar at night': all our dark hounds are in Myrkwood. Period walkthrough 1781 comment: 'dark hound for its tooth (loc=38190 23243 Gotar, at night only)' = global 759086,826059. Three NightSpawn copies of the Myrkwood dark hound (same template, level and aggro), ground Z from the navmesh"
+  },
+  {
+   "finding": "P08-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21151",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 759086,
+    "Y": 826059,
+    "Z": 4558
+   },
+   "why": "Helping the Arachites step 3 'Kill a dark hound in Gotar at night': all our dark hounds are in Myrkwood. Period walkthrough 1781 comment: 'dark hound for its tooth (loc=38190 23243 Gotar, at night only)' = global 759086,826059. Three NightSpawn copies of the Myrkwood dark hound (same template, level and aggro), ground Z from the navmesh"
+  },
+  {
+   "finding": "P08-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21152",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 759086,
+    "Y": 826059,
+    "Z": 4558
+   },
+   "why": "Helping the Arachites step 3 'Kill a dark hound in Gotar at night': all our dark hounds are in Myrkwood. Period walkthrough 1781 comment: 'dark hound for its tooth (loc=38190 23243 Gotar, at night only)' = global 759086,826059. Three NightSpawn copies of the Myrkwood dark hound (same template, level and aggro), ground Z from the navmesh"
+  },
+  {
+   "finding": "P08-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21153",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 759086,
+    "Y": 826059,
+    "Z": 4558
+   },
+   "why": "Helping the Arachites step 3 'Kill a dark hound in Gotar at night': all our dark hounds are in Myrkwood. Period walkthrough 1781 comment: 'dark hound for its tooth (loc=38190 23243 Gotar, at night only)' = global 759086,826059. Three NightSpawn copies of the Myrkwood dark hound (same template, level and aggro), ground Z from the navmesh"
+  },
+  {
+   "finding": "P08-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21154",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 759086,
+    "Y": 826059,
+    "Z": 4558
+   },
+   "why": "Helping the Arachites step 3 'Kill a dark hound in Gotar at night': all our dark hounds are in Myrkwood. Period walkthrough 1781 comment: 'dark hound for its tooth (loc=38190 23243 Gotar, at night only)' = global 759086,826059. Three NightSpawn copies of the Myrkwood dark hound (same template, level and aggro), ground Z from the navmesh"
+  },
+  {
+   "finding": "P08-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21155",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 759086,
+    "Y": 826059,
+    "Z": 4558
+   },
+   "why": "Helping the Arachites step 3 'Kill a dark hound in Gotar at night': all our dark hounds are in Myrkwood. Period walkthrough 1781 comment: 'dark hound for its tooth (loc=38190 23243 Gotar, at night only)' = global 759086,826059. Three NightSpawn copies of the Myrkwood dark hound (same template, level and aggro), ground Z from the navmesh"
+  },
+  {
+   "finding": "P08-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21156",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 759086,
+    "Y": 826059,
+    "Z": 4558
+   },
+   "why": "Helping the Arachites step 3 'Kill a dark hound in Gotar at night': all our dark hounds are in Myrkwood. Period walkthrough 1781 comment: 'dark hound for its tooth (loc=38190 23243 Gotar, at night only)' = global 759086,826059. Three NightSpawn copies of the Myrkwood dark hound (same template, level and aggro), ground Z from the navmesh"
+  },
+  {
+   "finding": "P08-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21157",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 759086,
+    "Y": 826059,
+    "Z": 4558
+   },
+   "why": "Helping the Arachites step 3 'Kill a dark hound in Gotar at night': all our dark hounds are in Myrkwood. Period walkthrough 1781 comment: 'dark hound for its tooth (loc=38190 23243 Gotar, at night only)' = global 759086,826059. Three NightSpawn copies of the Myrkwood dark hound (same template, level and aggro), ground Z from the navmesh"
+  },
+  {
+   "finding": "P08-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21158",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 759086,
+    "Y": 826059,
+    "Z": 4558
+   },
+   "why": "Helping the Arachites step 3 'Kill a dark hound in Gotar at night': all our dark hounds are in Myrkwood. Period walkthrough 1781 comment: 'dark hound for its tooth (loc=38190 23243 Gotar, at night only)' = global 759086,826059. Three NightSpawn copies of the Myrkwood dark hound (same template, level and aggro), ground Z from the navmesh"
+  },
+  {
+   "finding": "P08-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21159",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 759086,
+    "Y": 826059,
+    "Z": 4558
+   },
+   "why": "Helping the Arachites step 3 'Kill a dark hound in Gotar at night': all our dark hounds are in Myrkwood. Period walkthrough 1781 comment: 'dark hound for its tooth (loc=38190 23243 Gotar, at night only)' = global 759086,826059. Three NightSpawn copies of the Myrkwood dark hound (same template, level and aggro), ground Z from the navmesh"
+  },
+  {
+   "finding": "P08-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21095",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 673457,
+    "Y": 705543,
+    "Z": 5716
+   },
+   "why": "Tyria's recorded Greet sends the player to the blocks of ice in Yggdra's Forest; the step 4 marker pointed at the Uppland cluster. Moved to our Yggdra cluster (true165-restored spawns at 673457,705543)"
+  }
+ ]
+}

@@ -1,0 +1,52 @@
+{
+ "fixer": "part10",
+ "about": "A3 Werewolf Bane reward chosen at Averrius",
+ "entries": [
+  {
+   "finding": "P10-A3",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Averrius;100|wolfaur headsman;100|Averrius;100|werewolf lord;127|werewolf lord;127|werewolf lord;127||Averrius;100|mud crab warrior;100|Averrius;100|King Hresvelgr;127|Averrius;100",
+    "StepText": "Speak with Averrius on the top level of the hut in Gna Faste.|Retrieve a werewolf direction sense charm from a wolfaur headsman in the first hut in the ravine before the bridge.|Give Averrius the charm.|Kill the three werewolf lords in the new area of Varulvhamn and take their essences. (0/3)|Kill the three werewolf lords in the new area of Varulvhamn and take their essences. (1/3)|Kill the three werewolf lords in the new area of Varulvhamn and take their essences. (2/3)|Take each essence to the altar and use it to turn it into a gem.|Return the three gems to Averrius.|The arrow merchant outside says the belladonna comes from a mud crab warrior in Vanern Swamp.|Bring the belladonna to Averrius.|Kill the werewolf king Hresveigr in his regal chamber in Varulvhamn.|Return to Averrius in Gna Faste and choose your weapon: whisper him the name of the item you want (Varulbane 1H Sword, Varulbane 1H Axe, Varulbane 1H Hammer, Varulbane 2H Sword, Varulbane 2H Axe, Varulbane 2H Hammer, Varulbane Bow)."
+   },
+   "where": {
+    "ID": 21469
+   },
+   "why": "the weapon choice had to be whispered to King Hresvelgr, the hostile level 46 monster just killed (step type 9 has no talk truce); period: \"Head back to Averrius and he will ask you for your weapon choice\" - the choice is now made at Averrius"
+  },
+  {
+   "finding": "P10-A3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21469",
+    "Steps",
+    12
+   ],
+   "value": {
+    "Marker": {
+     "Region": 100,
+     "X": 757461,
+     "Y": 885180,
+     "Z": 5310
+    },
+    "Custom": {
+     "Kind": "choose",
+     "Target": "Averrius",
+     "Choices": {
+      "Varulbane 1H Sword": "cq_mid_varulbane_1h_sword",
+      "Varulbane 1H Axe": "cq_mid_varulbane_1h_axe",
+      "Varulbane 1H Hammer": "cq_mid_varulbane_1h_hammer",
+      "Varulbane 2H Sword": "cq_mid_varulbane_2h_sword",
+      "Varulbane 2H Axe": "cq_mid_varulbane_2h_axe",
+      "Varulbane 2H Hammer": "cq_mid_varulbane_2h_hammer",
+      "Varulbane Bow": "cq_mid_varulbane_bow"
+     }
+    }
+   },
+   "why": "choose target and marker move from King Hresvelgr (Varulvhamn) to Averrius in Gna Faste; the seven Varulbane choices are unchanged"
+  }
+ ]
+}

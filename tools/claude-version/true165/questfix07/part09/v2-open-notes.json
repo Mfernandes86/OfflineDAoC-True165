@@ -1,0 +1,45 @@
+{
+ "fixer": "part09",
+ "about": "part09 v2: open verifier notes closed with data (Lladron Gloves period bonuses, Goblin Hunting coin, Heretic rows, Crushed Faith NF wording)",
+ "entries": [
+  {
+   "finding": "P09-D4",
+   "kind": "update",
+   "table": "ItemTemplate",
+   "set": {"Bonus1": 3, "Bonus2": 4, "Bonus3": 4, "Bonus4": 4},
+   "where": {"Id_nb": "cq_alb_lladron_gloves"},
+   "why": "the row had half of every period bonus (Dual Wield 1, Critical Strike 2, Dex 2, Thrust 2%); the period page gives Dual Wield +3, Critical Strike +4, Dexterity 4, Thrust Resist 4% (bonus types 28/23/2/19 unchanged; Level 13, AF 76, ABS 10 already match the page)",
+   "source": "Allakhazam item citem=5127 'Lladron Gloves' (Wayback capture 2003-08-26, period-data/archive/wayback-allakhazam/period_items.jsonl.gz): Leather hands, AF 76, Absorb 10, Dexterity 4 pts, Critical Strikes +4 pts, Dual Wield +3 pts, Thrust Resist 4%, Level to Attain 13, from Spirits of the Orchard"
+  },
+  {
+   "finding": "P09-D8",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {"RewardMoney": "0|0|0|200"},
+   "where": {"ID": 21334},
+   "why": "Goblin Hunting paid no coin; the period head says 'Grants Coin: Yes' and two players on the period page report 2 silver at the turn-in ('I got some XP and 2 silver pcs', 'All I have to show for the effort is 2sp'), so the finish step pays 2 silver (200 copper)",
+   "source": "Allakhazam quest 47 'Goblin Hunting' (Wayback capture 2004-10-14, quest_pages.jsonl.gz), player comments of 2001-2003"
+  },
+  {
+   "finding": "P09-E7",
+   "kind": "remove",
+   "table": "DataQuest",
+   "where": "ID = 21309",
+   "why": "Regal Nobility (25) row for Heretic (class 33), a Catacombs class disabled in True 1.65; the same cleanup as P04-E5 (20438, 20458, 20472, 20481); the row can never be offered"
+  },
+  {
+   "finding": "P09-E7",
+   "kind": "remove",
+   "table": "DataQuest",
+   "where": "ID = 21494",
+   "why": "Regal Nobility (30) row for Heretic (class 33), a Catacombs class disabled in True 1.65; the same cleanup as P04-E5; the row can never be offered"
+  },
+  {
+   "finding": "P09-B2",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StepText = replace(StepText, 'Kill Dash, who appears at night south of Caer Boldiam tower 3 by the grimwoods and cockatrices.', 'Kill Dash, who appears only at night in the Pennine Mountains.') WHERE ID = 21370",
+   "why": "the journal sent players to 'Caer Boldiam tower 3', a New Frontiers tower (towers do not exist in the 1.65 old frontiers); the 2004 period page says only 'Dash (loc=4k, 12k, only spawns at night) ... in Pennine Mountains', which matches the existing spawn and marker at Pennine 5737,9927 (the 21418,11817 loc is from the post-NF page)",
+   "source": "Allakhazam quest 273 'Crushed Faith' (Wayback capture 2004-10-14): '6)Finally he will tell you that it is Dash (loc=4k, 12k, only spawns at night.) you need to kill in Pennine Mountains'; 2002 comment 'Found Dash in Penn. Mtns 4k, 12k'"
+  }
+ ]
+}

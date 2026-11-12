@@ -1,0 +1,1114 @@
+{
+ "fixer": "part05",
+ "about": "Part 05 section B: border watcher camp, neutral Arawn Commander, markers for cythrauls / ebony fellwoods / druid seer (B2 skipped: camp location not confirmed)",
+ "entries": [
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20562",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20562",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20562",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20563",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20563",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20563",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20564",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20564",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20564",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20565",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20565",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20565",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20566",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20566",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20566",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20567",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20567",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20567",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20568",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20568",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20568",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20569",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20569",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20569",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 51,
+    "X": 503644,
+    "Y": 530972,
+    "Z": 3115
+   },
+   "why": "kill-step marker moved from the lone watcher to the period border-watcher camp (Allakhazam 588: loc 12124,39452)"
+  },
+  {
+   "finding": "P05-B3",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": "",
+    "Name": "Arawn Commander",
+    "Suffix": "",
+    "Guild": "",
+    "ExamineArticle": "",
+    "MessageArticle": "",
+    "X": 604160,
+    "Y": 360965,
+    "Z": 5806,
+    "Speed": 180,
+    "Heading": 1000,
+    "Region": 1,
+    "Model": 32,
+    "Size": 52,
+    "Strength": 67,
+    "Constitution": 67,
+    "Dexterity": 77,
+    "Quickness": 77,
+    "Intelligence": 77,
+    "Piety": 77,
+    "Empathy": 77,
+    "Charisma": 77,
+    "Level": 50,
+    "Realm": 0,
+    "EquipmentTemplateID": "5336bfa0-611c-427c-8c29-21aac1d683dd",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 0,
+    "Race": 2005,
+    "Flags": 0,
+    "AggroLevel": 0,
+    "AggroRange": 0,
+    "MeleeDamageType": 2,
+    "RespawnInterval": 300,
+    "FactionID": 0,
+    "BodyType": 6,
+    "HouseNumber": 0,
+    "Brain": "",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 34,
+    "Mob_ID": "00070501-0000-4000-8000-000000000004"
+   },
+   "why": "Secret Orders step 14 needs the neutral Arawn commander on the hill NE of Caer Sursbrooke; no such NPC existed, so the step pointed at keep Armsman Commanders that change with keep ownership. Level 50 neutral per Uthgard; look borrowed from the isolationist paladin (model 32 with its plate equipment) as no period source gives his model",
+   "source": "Allakhazam quest 351 Secret Orders: 'some Arawn Commander that will be neutral to you (location is Pennine Mountains 38912, 8709). Located NE of Caer Sursbrook, on top of a hill' = region 1 X 604160 Y 360965 (Z from the navmesh); Uthgard bestiary monster 25626 'Arawn Commander' Pennine Mountains, level 50, neutral"
+  },
+  {
+   "finding": "P05-B3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20652",
+    "Steps",
+    14,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 604160,
+    "Y": 360965,
+    "Z": 5806
+   },
+   "why": "step-14 marker pointed inside Caer Erasleigh; it now points at the Arawn Commander on the hill NE of Caer Sursbrooke (Allakhazam 351: Pennine 38912,8709)"
+  },
+  {
+   "finding": "P05-B3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20653",
+    "Steps",
+    14,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 604160,
+    "Y": 360965,
+    "Z": 5806
+   },
+   "why": "step-14 marker pointed inside Caer Erasleigh; it now points at the Arawn Commander on the hill NE of Caer Sursbrooke (Allakhazam 351: Pennine 38912,8709)"
+  },
+  {
+   "finding": "P05-B3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20654",
+    "Steps",
+    14,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 604160,
+    "Y": 360965,
+    "Z": 5806
+   },
+   "why": "step-14 marker pointed inside Caer Erasleigh; it now points at the Arawn Commander on the hill NE of Caer Sursbrooke (Allakhazam 351: Pennine 38912,8709)"
+  },
+  {
+   "finding": "P05-B3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20655",
+    "Steps",
+    14,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 604160,
+    "Y": 360965,
+    "Z": 5806
+   },
+   "why": "step-14 marker pointed inside Caer Erasleigh; it now points at the Arawn Commander on the hill NE of Caer Sursbrooke (Allakhazam 351: Pennine 38912,8709)"
+  },
+  {
+   "finding": "P05-B3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20656",
+    "Steps",
+    14,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 604160,
+    "Y": 360965,
+    "Z": 5806
+   },
+   "why": "step-14 marker pointed inside Caer Erasleigh; it now points at the Arawn Commander on the hill NE of Caer Sursbrooke (Allakhazam 351: Pennine 38912,8709)"
+  },
+  {
+   "finding": "P05-B3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20657",
+    "Steps",
+    14,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 604160,
+    "Y": 360965,
+    "Z": 5806
+   },
+   "why": "step-14 marker pointed inside Caer Erasleigh; it now points at the Arawn Commander on the hill NE of Caer Sursbrooke (Allakhazam 351: Pennine 38912,8709)"
+  },
+  {
+   "finding": "P05-B3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20658",
+    "Steps",
+    14,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 604160,
+    "Y": 360965,
+    "Z": 5806
+   },
+   "why": "step-14 marker pointed inside Caer Erasleigh; it now points at the Arawn Commander on the hill NE of Caer Sursbrooke (Allakhazam 351: Pennine 38912,8709)"
+  },
+  {
+   "finding": "P05-B3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20659",
+    "Steps",
+    14,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 604160,
+    "Y": 360965,
+    "Z": 5806
+   },
+   "why": "step-14 marker pointed inside Caer Erasleigh; it now points at the Arawn Commander on the hill NE of Caer Sursbrooke (Allakhazam 351: Pennine 38912,8709)"
+  },
+  {
+   "finding": "P05-B3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20660",
+    "Steps",
+    14,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 604160,
+    "Y": 360965,
+    "Z": 5806
+   },
+   "why": "step-14 marker pointed inside Caer Erasleigh; it now points at the Arawn Commander on the hill NE of Caer Sursbrooke (Allakhazam 351: Pennine 38912,8709)"
+  },
+  {
+   "finding": "P05-B3",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "00070501-0000-4000-8000-000000000004",
+   "why": "the neutral Arawn Commander is a quest NPC: gamebots must leave him alone"
+  },
+  {
+   "finding": "P05-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20622",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 451714,
+    "Y": 421859,
+    "Z": 5213
+   },
+   "why": "step-2 marker pointed at a lone level-0 cythraul (Llyn Barfog 46307,34619); it now points at the 18-cythraul skeleton group (Llyn Barfog ~33.9k,53.2k; Allakhazam 329: 'a group of skeletons in Llyn Barfog, loc = 33314 50612')"
+  },
+  {
+   "finding": "P05-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20623",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 451714,
+    "Y": 421859,
+    "Z": 5213
+   },
+   "why": "step-2 marker pointed at a lone level-0 cythraul (Llyn Barfog 46307,34619); it now points at the 18-cythraul skeleton group (Llyn Barfog ~33.9k,53.2k; Allakhazam 329: 'a group of skeletons in Llyn Barfog, loc = 33314 50612')"
+  },
+  {
+   "finding": "P05-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20624",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 451714,
+    "Y": 421859,
+    "Z": 5213
+   },
+   "why": "step-2 marker pointed at a lone level-0 cythraul (Llyn Barfog 46307,34619); it now points at the 18-cythraul skeleton group (Llyn Barfog ~33.9k,53.2k; Allakhazam 329: 'a group of skeletons in Llyn Barfog, loc = 33314 50612')"
+  },
+  {
+   "finding": "P05-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20625",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 451714,
+    "Y": 421859,
+    "Z": 5213
+   },
+   "why": "step-2 marker pointed at a lone level-0 cythraul (Llyn Barfog 46307,34619); it now points at the 18-cythraul skeleton group (Llyn Barfog ~33.9k,53.2k; Allakhazam 329: 'a group of skeletons in Llyn Barfog, loc = 33314 50612')"
+  },
+  {
+   "finding": "P05-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20626",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 451714,
+    "Y": 421859,
+    "Z": 5213
+   },
+   "why": "step-2 marker pointed at a lone level-0 cythraul (Llyn Barfog 46307,34619); it now points at the 18-cythraul skeleton group (Llyn Barfog ~33.9k,53.2k; Allakhazam 329: 'a group of skeletons in Llyn Barfog, loc = 33314 50612')"
+  },
+  {
+   "finding": "P05-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20627",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 451714,
+    "Y": 421859,
+    "Z": 5213
+   },
+   "why": "step-2 marker pointed at a lone level-0 cythraul (Llyn Barfog 46307,34619); it now points at the 18-cythraul skeleton group (Llyn Barfog ~33.9k,53.2k; Allakhazam 329: 'a group of skeletons in Llyn Barfog, loc = 33314 50612')"
+  },
+  {
+   "finding": "P05-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20628",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 451714,
+    "Y": 421859,
+    "Z": 5213
+   },
+   "why": "step-2 marker pointed at a lone level-0 cythraul (Llyn Barfog 46307,34619); it now points at the 18-cythraul skeleton group (Llyn Barfog ~33.9k,53.2k; Allakhazam 329: 'a group of skeletons in Llyn Barfog, loc = 33314 50612')"
+  },
+  {
+   "finding": "P05-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20629",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 451714,
+    "Y": 421859,
+    "Z": 5213
+   },
+   "why": "step-2 marker pointed at a lone level-0 cythraul (Llyn Barfog 46307,34619); it now points at the 18-cythraul skeleton group (Llyn Barfog ~33.9k,53.2k; Allakhazam 329: 'a group of skeletons in Llyn Barfog, loc = 33314 50612')"
+  },
+  {
+   "finding": "P05-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20630",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 451714,
+    "Y": 421859,
+    "Z": 5213
+   },
+   "why": "step-2 marker pointed at a lone level-0 cythraul (Llyn Barfog 46307,34619); it now points at the 18-cythraul skeleton group (Llyn Barfog ~33.9k,53.2k; Allakhazam 329: 'a group of skeletons in Llyn Barfog, loc = 33314 50612')"
+  },
+  {
+   "finding": "P05-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20631",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 451714,
+    "Y": 421859,
+    "Z": 5213
+   },
+   "why": "step-2 marker pointed at a lone level-0 cythraul (Llyn Barfog 46307,34619); it now points at the 18-cythraul skeleton group (Llyn Barfog ~33.9k,53.2k; Allakhazam 329: 'a group of skeletons in Llyn Barfog, loc = 33314 50612')"
+  },
+  {
+   "finding": "P05-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20632",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 451714,
+    "Y": 421859,
+    "Z": 5213
+   },
+   "why": "step-2 marker pointed at a lone level-0 cythraul (Llyn Barfog 46307,34619); it now points at the 18-cythraul skeleton group (Llyn Barfog ~33.9k,53.2k; Allakhazam 329: 'a group of skeletons in Llyn Barfog, loc = 33314 50612')"
+  },
+  {
+   "finding": "P05-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20633",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 451714,
+    "Y": 421859,
+    "Z": 5213
+   },
+   "why": "step-2 marker pointed at a lone level-0 cythraul (Llyn Barfog 46307,34619); it now points at the 18-cythraul skeleton group (Llyn Barfog ~33.9k,53.2k; Allakhazam 329: 'a group of skeletons in Llyn Barfog, loc = 33314 50612')"
+  },
+  {
+   "finding": "P05-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20634",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 451714,
+    "Y": 421859,
+    "Z": 5213
+   },
+   "why": "step-2 marker pointed at a lone level-0 cythraul (Llyn Barfog 46307,34619); it now points at the 18-cythraul skeleton group (Llyn Barfog ~33.9k,53.2k; Allakhazam 329: 'a group of skeletons in Llyn Barfog, loc = 33314 50612')"
+  },
+  {
+   "finding": "P05-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20635",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 451714,
+    "Y": 421859,
+    "Z": 5213
+   },
+   "why": "step-2 marker pointed at a lone level-0 cythraul (Llyn Barfog 46307,34619); it now points at the 18-cythraul skeleton group (Llyn Barfog ~33.9k,53.2k; Allakhazam 329: 'a group of skeletons in Llyn Barfog, loc = 33314 50612')"
+  },
+  {
+   "finding": "P05-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20636",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 451714,
+    "Y": 421859,
+    "Z": 5213
+   },
+   "why": "step-2 marker pointed at a lone level-0 cythraul (Llyn Barfog 46307,34619); it now points at the 18-cythraul skeleton group (Llyn Barfog ~33.9k,53.2k; Allakhazam 329: 'a group of skeletons in Llyn Barfog, loc = 33314 50612')"
+  },
+  {
+   "finding": "P05-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20640",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 541818,
+    "Y": 600143,
+    "Z": 1943
+   },
+   "why": "ebony-fellwood marker pointed into Forest Sauvage; it now points at the main Campacorentin fellwood group (Campacorentin ~58.5k,18.5k; CapnBry ebony fellwood sightings zone 8 around 58k,19k; Allakhazam 147 'ebony fellwoods in Campocorentin Forest')"
+  },
+  {
+   "finding": "P05-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20588",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 541818,
+    "Y": 600143,
+    "Z": 1943
+   },
+   "why": "ebony-fellwood marker pointed into Forest Sauvage; it now points at the main Campacorentin fellwood group (Campacorentin ~58.5k,18.5k; CapnBry ebony fellwood sightings zone 8 around 58k,19k; Allakhazam 147 'ebony fellwoods in Campocorentin Forest')"
+  },
+  {
+   "finding": "P05-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20589",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 541818,
+    "Y": 600143,
+    "Z": 1943
+   },
+   "why": "ebony-fellwood marker pointed into Forest Sauvage; it now points at the main Campacorentin fellwood group (Campacorentin ~58.5k,18.5k; CapnBry ebony fellwood sightings zone 8 around 58k,19k; Allakhazam 147 'ebony fellwoods in Campocorentin Forest')"
+  },
+  {
+   "finding": "P05-B6",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "druid seer",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 579514,
+    "Y": 598364,
+    "Z": 2302,
+    "Speed": 180,
+    "Heading": 2600,
+    "Region": 1,
+    "Model": 263,
+    "Size": 50,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 0,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 0,
+    "Empathy": 0,
+    "Charisma": 0,
+    "Level": 0,
+    "Realm": 0,
+    "EquipmentTemplateID": "71153f1e-57db-4042-b38c-c0224415b490",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 12679,
+    "Race": 2005,
+    "Flags": 0,
+    "AggroLevel": 90,
+    "AggroRange": 0,
+    "MeleeDamageType": 1,
+    "RespawnInterval": 80,
+    "FactionID": 235,
+    "BodyType": 6,
+    "HouseNumber": 0,
+    "Brain": "",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 200,
+    "IsCloakHoodUp": 0,
+    "Gender": 1,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 34,
+    "Mob_ID": "00070501-0000-4000-8000-000000000005"
+   },
+   "why": "Druid Medicine's druid seer stands in the period grove of trees with the filidhs (our filidhs at Salisbury ~30.8k,49.7k); our only seers were in the druid camp ~5k south. A copy of seer 03e4f169 (template 12679) at the grove; the camp seers stay",
+   "source": "Allakhazam quest 219 Druid Medicine: 'The druid seer is located to the east of the tower, in a grove of trees, along with a group of approx 5 fildhs ... small group of trees loc 29k, 49k'"
+  },
+  {
+   "finding": "P05-B6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20605",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 1,
+    "X": 579514,
+    "Y": 598364,
+    "Z": 2302
+   },
+   "why": "step-1 marker now points at the druid seer in the period grove (Allakhazam 219: loc 29k,49k, with the filidhs)"
+  }
+ ]
+}

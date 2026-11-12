@@ -1,0 +1,162 @@
+{
+ "fixer": "part04",
+ "about": "part04 v3: Golga's band walks into Huginfell to Saydyn (Protecting the Healer, engine Spawn.PathId + Escort)",
+ "entries": [
+  {
+   "finding": "P04-E3",
+   "kind": "row",
+   "table": "Path",
+   "row": {
+    "Path_ID": "00070405-0000-4000-8000-000000000002",
+    "PathID": "qf07_part04_golga_to_saydyn",
+    "RegionID": 100,
+    "PathType": 1
+   },
+   "why": "walkthrough 138: Golga and 4 chanters 'make their way to Healer Saydyn into town'; a one-way walk from the open ground west of Huginfell (toward Golga's kobold camp; PRN guide: 'the Kobold Camp to your right after you leave town') to Saydyn, 3.5k long, on the navmesh and more than 700 from every Viking Huscarl"
+  },
+  {
+   "finding": "P04-E3",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070406-0000-4000-8000-000000000005",
+    "PathID": "qf07_part04_golga_to_saydyn",
+    "Step": 1,
+    "X": 706888,
+    "Y": 785842,
+    "Z": 4524,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part04_golga_to_saydyn point 1: West Svealand 51528,48562 (outside town, on the line to Golga's camp)"
+  },
+  {
+   "finding": "P04-E3",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070406-0000-4000-8000-000000000006",
+    "PathID": "qf07_part04_golga_to_saydyn",
+    "Step": 2,
+    "X": 707499,
+    "Y": 785502,
+    "Z": 4613,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part04_golga_to_saydyn point 2: West Svealand 52139,48222 (around the healer's building, on the navmesh)"
+  },
+  {
+   "finding": "P04-E3",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070406-0000-4000-8000-000000000007",
+    "PathID": "qf07_part04_golga_to_saydyn",
+    "Step": 3,
+    "X": 708111,
+    "Y": 785162,
+    "Z": 4674,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part04_golga_to_saydyn point 3: West Svealand 52751,47882 (around the healer's building, on the navmesh)"
+  },
+  {
+   "finding": "P04-E3",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070406-0000-4000-8000-000000000008",
+    "PathID": "qf07_part04_golga_to_saydyn",
+    "Step": 4,
+    "X": 708723,
+    "Y": 784822,
+    "Z": 4675,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part04_golga_to_saydyn point 4: West Svealand 53363,47542 (around the healer's building, on the navmesh)"
+  },
+  {
+   "finding": "P04-E3",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070406-0000-4000-8000-000000000009",
+    "PathID": "qf07_part04_golga_to_saydyn",
+    "Step": 5,
+    "X": 708994,
+    "Y": 784716,
+    "Z": 4675,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part04_golga_to_saydyn point 5: West Svealand 53634,47436 (around the healer's building, on the navmesh)"
+  },
+  {
+   "finding": "P04-E3",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070406-0000-4000-8000-000000000010",
+    "PathID": "qf07_part04_golga_to_saydyn",
+    "Step": 6,
+    "X": 709050,
+    "Y": 784725,
+    "Z": 4675,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part04_golga_to_saydyn point 6: West Svealand 53690,47445 (around the healer's building, on the navmesh)"
+  },
+  {
+   "finding": "P04-E3",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070406-0000-4000-8000-000000000011",
+    "PathID": "qf07_part04_golga_to_saydyn",
+    "Step": 7,
+    "X": 709295,
+    "Y": 784884,
+    "Z": 4675,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part04_golga_to_saydyn point 7: West Svealand 53935,47604 (around the healer's building, on the navmesh)"
+  },
+  {
+   "finding": "P04-E3",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070406-0000-4000-8000-000000000012",
+    "PathID": "qf07_part04_golga_to_saydyn",
+    "Step": 8,
+    "X": 709609,
+    "Y": 784551,
+    "Z": 4730,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part04_golga_to_saydyn point 8: West Svealand 54249,47271 (around the healer's building, on the navmesh)"
+  },
+  {
+   "finding": "P04-E3",
+   "kind": "row",
+   "table": "PathPoints",
+   "row": {
+    "PathPoints_ID": "00070406-0000-4000-8000-000000000013",
+    "PathID": "qf07_part04_golga_to_saydyn",
+    "Step": 9,
+    "X": 709335,
+    "Y": 784482,
+    "Z": 4730,
+    "MaxSpeed": 150,
+    "WaitTime": 0
+   },
+   "why": "qf07_part04_golga_to_saydyn point 9: West Svealand 53975,47202 (beside Saydyn)"
+  }
+ ]
+}

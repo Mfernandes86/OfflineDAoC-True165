@@ -1,0 +1,326 @@
+{
+ "fixer": "part01",
+ "about": "E: period level ranges, period giver, giver names and item names in the task text",
+ "entries": [
+  {
+   "finding": "P01-E-117",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "MinLevel": 28,
+    "MaxLevel": 37
+   },
+   "where": {
+    "ID": 117
+   },
+   "why": "35-41 is the patch 1.92 (2008) range ('Per patch 1.92 ... can now be turned in between levels 35 and 41'), so players at the boogeys' level (25-30) could not turn in; 2002-03 comments show a lower range (a level 42 got no XP, Oct 2002); Min = item level 28 (as in 176 of 227 kill tasks), 9-level spread like the other Classic 20s/30s tasks (104 22-31, 105 30-39, 109 27-36)",
+   "source": "Allakhazam zam 449 Glowing Soul Gem -- Kill Task, comments Oct 18 2002 and Jun 26 2003"
+  },
+  {
+   "finding": "P01-E-244",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "MinLevel": 39,
+    "MaxLevel": 43
+   },
+   "where": {
+    "ID": 244
+   },
+   "why": "Ice Creature Corpse task was 37-41; Allakhazam and Uthgard both give 39-43",
+   "source": "Allakhazam zam 457 (Min 39 Max 43); Uthgard item 7648 Ice Creature Corpse (Jordan of Svealand East, Minimum Level 39 Maximum Level 43)"
+  },
+  {
+   "finding": "P01-E-242",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "MinLevel": 41,
+    "MaxLevel": 43
+   },
+   "where": {
+    "ID": 242
+   },
+   "why": "Drakulv Scale task was 41-47; Allakhazam and both Uthgard records give 41-43",
+   "source": "Allakhazam zam 375 (Min 41 Max 43); Uthgard items 5276 and 7730 (Nikgor, Minimum Level 41 Maximum Level 43)"
+  },
+  {
+   "finding": "P01-E-levels",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "MinLevel": 34,
+    "MaxLevel": 40
+   },
+   "where": {
+    "ID": 225
+   },
+   "why": "Cultist Staff task was 31-36, below its item level 34; the period page gives Min 34 (Wayback capture 2004-10-13, page last updated Oct 2003) and the Allakhazam page 34-40",
+   "source": "Allakhazam zam 620 Cultist Staves -- Kill Task (Wayback 2004-10-13: Min Level 34; live page Min 34 Max 40)"
+  },
+  {
+   "finding": "P01-E-109",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StartName": "Allia Fletcher"
+   },
+   "where": {
+    "ID": 109
+   },
+   "why": "Blood Red Berry Wine task sat on Lenia Fletcher; the period giver is Allia Fletcher of Castle Sauvage, who stands next to Lenia in region 1 (Lenia keeps her period task 129 Decorative Arrows)",
+   "source": "Allakhazam zam 421 'Talk to Allia Fletcher in Castle Sauvage'; Uthgard item 6756 'Allia Fletcher of Forest Sauvage is offering a reward'; CapnBry Allia Fletcher zone 11 20336,59913"
+  },
+  {
+   "finding": "P01-E-226",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "FinishText": "Beni doesn't need Vial of Ice Water anymore."
+   },
+   "where": {
+    "ID": 226
+   },
+   "why": "FinishText named Maerta (the Shrouded Isles Ice Water giver, DataQuest 21279) instead of the giver Beni"
+  },
+  {
+   "finding": "P01-E-248",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "Name": "Ice Cold Giant Blood XP Item",
+    "Description": "Hey, I am looking for Ice Cold Giant Blood, do you have some?",
+    "FinishText": "Jolgeir doesn't need Ice Cold Giant Blood anymore."
+   },
+   "where": {
+    "ID": 248
+   },
+   "why": "the task asked for 'Frost Giant Blood' but the item it takes is Ice Cold Giant Blood, the period name",
+   "source": "Allakhazam zam 456 Ice Cold Giant Blood -- Kill Task; Uthgard item 5362 Ice Cold Giant Blood (Jolgeir)"
+  },
+  {
+   "finding": "P01-E-finishtext",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "FinishText": "Eafa Thatcher doesn't need Drakoran Skirmisher Head anymore."
+   },
+   "where": {
+    "ID": 2
+   },
+   "why": "FinishText named the giver differently from StartName and the NPC 'Eafa Thatcher' (the CapnBry radar spelling)"
+  },
+  {
+   "finding": "P01-E-finishtext",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "FinishText": "Aric Barlow doesn't need Stolen Signet Ring anymore."
+   },
+   "where": {
+    "ID": 108
+   },
+   "why": "FinishText named the giver differently from StartName and the NPC 'Aric Barlow' (the CapnBry radar spelling)"
+  },
+  {
+   "finding": "P01-E-finishtext",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "FinishText": "Lieutenant Niane doesn't need Faerie Frog Eye anymore."
+   },
+   "where": {
+    "ID": 110
+   },
+   "why": "FinishText named the giver differently from StartName and the NPC 'Lieutenant Niane' (the CapnBry radar spelling)"
+  },
+  {
+   "finding": "P01-E-finishtext",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "FinishText": "Jack Landrey doesn't need Bucca Silver Mirror anymore."
+   },
+   "where": {
+    "ID": 115
+   },
+   "why": "FinishText named the giver differently from StartName and the NPC 'Jack Landrey' (the CapnBry radar spelling)"
+  },
+  {
+   "finding": "P01-E-finishtext",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "FinishText": "Gregor Lannis doesn't need Cornish Hen Tail anymore."
+   },
+   "where": {
+    "ID": 120
+   },
+   "why": "FinishText named the giver differently from StartName and the NPC 'Gregor Lannis' (the CapnBry radar spelling)"
+  },
+  {
+   "finding": "P01-E-finishtext",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "FinishText": "Blair Aldar doesn't need Dunter Head anymore."
+   },
+   "where": {
+    "ID": 122
+   },
+   "why": "FinishText named the giver differently from StartName and the NPC 'Blair Aldar' (the CapnBry radar spelling)"
+  },
+  {
+   "finding": "P01-E-finishtext",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "FinishText": "Jolis doesn't need Rusted Pendants anymore."
+   },
+   "where": {
+    "ID": 123
+   },
+   "why": "FinishText named the giver differently from StartName and the NPC 'Jolis' (the CapnBry radar spelling)"
+  },
+  {
+   "finding": "P01-E-finishtext",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "FinishText": "Eugene Aldar doesn't need Ancient Granite Stone anymore."
+   },
+   "where": {
+    "ID": 131
+   },
+   "why": "FinishText named the giver differently from StartName and the NPC 'Eugene Aldar' (the CapnBry radar spelling)"
+  },
+  {
+   "finding": "P01-E-finishtext",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "FinishText": "Wina Wyman doesn't need Danaoin Fishing Fly anymore."
+   },
+   "where": {
+    "ID": 137
+   },
+   "why": "FinishText named the giver differently from StartName and the NPC 'Wina Wyman' (the CapnBry radar spelling)"
+  },
+  {
+   "finding": "P01-E-finishtext",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "FinishText": "Sinmora doesn't need Polished Obsidian anymore."
+   },
+   "where": {
+    "ID": 210
+   },
+   "why": "FinishText named the giver differently from StartName and the NPC 'Sinmora' (the CapnBry radar spelling)"
+  },
+  {
+   "finding": "P01-E-finishtext",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "FinishText": "Aingeal doesn't need Sett Fur anymore."
+   },
+   "where": {
+    "ID": 307
+   },
+   "why": "FinishText named the giver differently from StartName and the NPC 'Aingeal' (the CapnBry radar spelling)"
+  },
+  {
+   "finding": "P01-E-descnames",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "Description": "Hey, I am looking for Scimitar Cat Pelt, do you have some?",
+    "FinishText": "Styr doesn't need Scimitar Cat Pelt anymore."
+   },
+   "where": {
+    "ID": 202
+   },
+   "why": "the NPC asked for 'Scimitar Cat Skin' but the item the task takes is named 'Scimitar Cat Pelt'"
+  },
+  {
+   "finding": "P01-E-descnames",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "Description": "Hey, I am looking for Mottled Boobrie Egg, do you have some?",
+    "FinishText": "Bosi doesn't need Mottled Boobrie Egg anymore."
+   },
+   "where": {
+    "ID": 204
+   },
+   "why": "the NPC asked for 'Boobrie Egg' but the item the task takes is named 'Mottled Boobrie Egg'"
+  },
+  {
+   "finding": "P01-E-descnames",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "Description": "Hey, I am looking for Crater Cicada Leg, do you have some?",
+    "FinishText": "Blan doesn't need Crater Cicada Leg anymore."
+   },
+   "where": {
+    "ID": 232
+   },
+   "why": "the NPC asked for 'Cicada Legs' but the item the task takes is named 'Crater Cicada Leg'"
+  },
+  {
+   "finding": "P01-E-descnames",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "Description": "Hey, I am looking for Cockatrice Feather, do you have some?",
+    "FinishText": "Haylei doesn't need Cockatrice Feather anymore."
+   },
+   "where": {
+    "ID": 278
+   },
+   "why": "the NPC asked for 'Feather' but the item the task takes is named 'Cockatrice Feather'"
+  },
+  {
+   "finding": "P01-E-descnames",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "Description": "Hey, I am looking for Wind Swept Leaves, do you have some?",
+    "FinishText": "Amhlaoibh doesn't need Wind Swept Leaves anymore."
+   },
+   "where": {
+    "ID": 303
+   },
+   "why": "the NPC asked for 'Wind Swept Leaf' but the item the task takes is named 'Wind Swept Leaves'"
+  },
+  {
+   "finding": "P01-E-descnames",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "Description": "Hey, I am looking for Arbordon Arm, do you have some?",
+    "FinishText": "Paddonia doesn't need Arbordon Arm anymore."
+   },
+   "where": {
+    "ID": 317
+   },
+   "why": "the NPC asked for 'Arbordon Abductor Arm' but the item the task takes is named 'Arbordon Arm'"
+  },
+  {
+   "finding": "P01-E-descnames",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "Name": "Rack of Megaloceros Antlers XP Item",
+    "Description": "Hey, I am looking for Rack of Megaloceros Antlers, do you have some?",
+    "FinishText": "Trude doesn't need Rack of Megaloceros Antlers anymore."
+   },
+   "where": {
+    "ID": 270
+   },
+   "why": "quest name said 'Claw' and the text 'megaloceros antlers' while the item is Rack of Megaloceros Antlers (period: Trude takes Megaloceros Antlers, zam 726)"
+  }
+ ]
+}

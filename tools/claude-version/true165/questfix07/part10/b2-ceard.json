@@ -1,0 +1,64 @@
+{
+ "fixer": "part10",
+ "about": "B2 Search For The Missing Smith targets Ceard in the Cliffs of Moher",
+ "entries": [
+  {
+   "finding": "P10-B2",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET TargetName = replace(TargetName, 'Cead;181', 'Ceard;200') WHERE ID = 21426",
+   "why": "steps 2 and 4 targeted Cead, an unrelated level 50 NPC in Caillte Garran (Shrouded Isles); the text and the period name Ceard, \"the confused smith wandering the beach past the fogs in the Cliffs of Moher\" (Allakhazam Search For The Missing Smith); Ceard himself and his wandering route are created by the patrols fixer (ownership: \"Ceard's route\")"
+  },
+  {
+   "finding": "P10-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21426",
+    "Steps",
+    5,
+    "Issuer"
+   ],
+   "value": "Ceard",
+   "why": "the cursed ring Ceard hands back for Cleary was re-issued by Cead; Ceard is the step NPC"
+  },
+  {
+   "finding": "P10-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21426",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 241198,
+    "Y": 446870,
+    "Z": 3816
+   },
+   "why": "marker pointed at Hy Brasil (Cead, region 181); now at the period Ceard spot \"loc=20014,29078\" in the Cliffs of Moher (he wanders; ground height from the navmesh)"
+  },
+  {
+   "finding": "P10-B2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21426",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 241198,
+    "Y": 446870,
+    "Z": 3816
+   },
+   "why": "marker pointed at Hy Brasil (Cead, region 181); now at the period Ceard spot \"loc=20014,29078\" in the Cliffs of Moher (he wanders; ground height from the navmesh)"
+  }
+ ]
+}

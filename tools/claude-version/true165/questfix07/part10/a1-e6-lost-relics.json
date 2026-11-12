@@ -1,0 +1,980 @@
+{
+ "fixer": "part10",
+ "about": "A1 Master Mentalist for The Lost Relics; E6 Abbadona as the harp event spawn",
+ "entries": [
+  {
+   "finding": "P10-A1",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": "",
+    "Name": "Master Mentalist",
+    "Suffix": "",
+    "Guild": "",
+    "ExamineArticle": "",
+    "MessageArticle": "",
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189,
+    "Speed": 200,
+    "Heading": 2690,
+    "Region": 201,
+    "Model": 344,
+    "Size": 50,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 0,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 51,
+    "Realm": 3,
+    "EquipmentTemplateID": "HibRobe",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 0,
+    "Race": 0,
+    "Flags": 16,
+    "AggroLevel": 0,
+    "AggroRange": 0,
+    "MeleeDamageType": 2,
+    "RespawnInterval": 0,
+    "FactionID": 0,
+    "BodyType": 0,
+    "HouseNumber": 0,
+    "Brain": "",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071001-0000-4000-8000-000000000001"
+   },
+   "source": "CapnBry radar: Master Mentalist (mob 2302), Tir na Nog zone 209 local 15219,20602 z 7187, level 51; Allakhazam quest The Lost Relics (1796): \"he sends you to the Master Mentalist in the Chamber of Magic\"",
+   "why": "no Master Mentalist existed, so steps 4 and 7 pointed at realm-1 Albion Master Elementalists in Emain Macha; a peaceful Hibernian Master Mentalist now stands at his CapnBry spot in the Chamber of Magic (beside the Mentalist/Enchanter/Eldritch trainers), copied from the trainer Ena's row"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET TargetName = replace(TargetName, 'Master Elementalist;200', 'Master Mentalist;201') WHERE ID BETWEEN 21441 AND 21454 AND Name = 'The Lost Relics'",
+   "why": "steps 4 and 7 (\"ask the master mentalist in the Chamber of Magic\") targeted Master Elementalist;200 (Albion NPCs in Emain Macha); they now target the Hibernian Master Mentalist in Tir na Nog"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21441",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21441",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21442",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21442",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21443",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21443",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21444",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21444",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21445",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21445",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21446",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21446",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21447",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21447",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21448",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21448",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21449",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21449",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21450",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21450",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21451",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21451",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21452",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21452",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21453",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21453",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21454",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21454",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 201,
+    "X": 23411,
+    "Y": 28794,
+    "Z": 7189
+   },
+   "why": "marker followed the Emain Macha Master Elementalist; now on the Master Mentalist in the Tir na Nog Chamber of Magic"
+  },
+  {
+   "finding": "P10-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21441",
+    "Steps",
+    9,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Abbadona",
+    "TemplateId": 970710001,
+    "Level": 45,
+    "Model": 342,
+    "Region": 200,
+    "X": 342720,
+    "Y": 658400,
+    "Z": 6487,
+    "TriggerRadius": 1500,
+    "Count": 1,
+    "DespawnSeconds": 600
+   },
+   "why": "period: playing Dagda's Harp at the four stone slabs makes Abbadona appear and attack (Allakhazam The Lost Relics); she now appears for the player on step 9 (same level 45 and model 342 as the old spawn; her combat profile comes from NpcTemplate 970710001, a copy of the archived Mob row: part10/v2-e6-abbadona-template.json)"
+  },
+  {
+   "finding": "P10-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21442",
+    "Steps",
+    9,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Abbadona",
+    "TemplateId": 970710001,
+    "Level": 45,
+    "Model": 342,
+    "Region": 200,
+    "X": 342720,
+    "Y": 658400,
+    "Z": 6487,
+    "TriggerRadius": 1500,
+    "Count": 1,
+    "DespawnSeconds": 600
+   },
+   "why": "period: playing Dagda's Harp at the four stone slabs makes Abbadona appear and attack (Allakhazam The Lost Relics); she now appears for the player on step 9 (same level 45 and model 342 as the old spawn; her combat profile comes from NpcTemplate 970710001, a copy of the archived Mob row: part10/v2-e6-abbadona-template.json)"
+  },
+  {
+   "finding": "P10-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21443",
+    "Steps",
+    9,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Abbadona",
+    "TemplateId": 970710001,
+    "Level": 45,
+    "Model": 342,
+    "Region": 200,
+    "X": 342720,
+    "Y": 658400,
+    "Z": 6487,
+    "TriggerRadius": 1500,
+    "Count": 1,
+    "DespawnSeconds": 600
+   },
+   "why": "period: playing Dagda's Harp at the four stone slabs makes Abbadona appear and attack (Allakhazam The Lost Relics); she now appears for the player on step 9 (same level 45 and model 342 as the old spawn; her combat profile comes from NpcTemplate 970710001, a copy of the archived Mob row: part10/v2-e6-abbadona-template.json)"
+  },
+  {
+   "finding": "P10-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21444",
+    "Steps",
+    9,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Abbadona",
+    "TemplateId": 970710001,
+    "Level": 45,
+    "Model": 342,
+    "Region": 200,
+    "X": 342720,
+    "Y": 658400,
+    "Z": 6487,
+    "TriggerRadius": 1500,
+    "Count": 1,
+    "DespawnSeconds": 600
+   },
+   "why": "period: playing Dagda's Harp at the four stone slabs makes Abbadona appear and attack (Allakhazam The Lost Relics); she now appears for the player on step 9 (same level 45 and model 342 as the old spawn; her combat profile comes from NpcTemplate 970710001, a copy of the archived Mob row: part10/v2-e6-abbadona-template.json)"
+  },
+  {
+   "finding": "P10-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21445",
+    "Steps",
+    9,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Abbadona",
+    "TemplateId": 970710001,
+    "Level": 45,
+    "Model": 342,
+    "Region": 200,
+    "X": 342720,
+    "Y": 658400,
+    "Z": 6487,
+    "TriggerRadius": 1500,
+    "Count": 1,
+    "DespawnSeconds": 600
+   },
+   "why": "period: playing Dagda's Harp at the four stone slabs makes Abbadona appear and attack (Allakhazam The Lost Relics); she now appears for the player on step 9 (same level 45 and model 342 as the old spawn; her combat profile comes from NpcTemplate 970710001, a copy of the archived Mob row: part10/v2-e6-abbadona-template.json)"
+  },
+  {
+   "finding": "P10-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21446",
+    "Steps",
+    9,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Abbadona",
+    "TemplateId": 970710001,
+    "Level": 45,
+    "Model": 342,
+    "Region": 200,
+    "X": 342720,
+    "Y": 658400,
+    "Z": 6487,
+    "TriggerRadius": 1500,
+    "Count": 1,
+    "DespawnSeconds": 600
+   },
+   "why": "period: playing Dagda's Harp at the four stone slabs makes Abbadona appear and attack (Allakhazam The Lost Relics); she now appears for the player on step 9 (same level 45 and model 342 as the old spawn; her combat profile comes from NpcTemplate 970710001, a copy of the archived Mob row: part10/v2-e6-abbadona-template.json)"
+  },
+  {
+   "finding": "P10-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21447",
+    "Steps",
+    9,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Abbadona",
+    "TemplateId": 970710001,
+    "Level": 45,
+    "Model": 342,
+    "Region": 200,
+    "X": 342720,
+    "Y": 658400,
+    "Z": 6487,
+    "TriggerRadius": 1500,
+    "Count": 1,
+    "DespawnSeconds": 600
+   },
+   "why": "period: playing Dagda's Harp at the four stone slabs makes Abbadona appear and attack (Allakhazam The Lost Relics); she now appears for the player on step 9 (same level 45 and model 342 as the old spawn; her combat profile comes from NpcTemplate 970710001, a copy of the archived Mob row: part10/v2-e6-abbadona-template.json)"
+  },
+  {
+   "finding": "P10-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21448",
+    "Steps",
+    9,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Abbadona",
+    "TemplateId": 970710001,
+    "Level": 45,
+    "Model": 342,
+    "Region": 200,
+    "X": 342720,
+    "Y": 658400,
+    "Z": 6487,
+    "TriggerRadius": 1500,
+    "Count": 1,
+    "DespawnSeconds": 600
+   },
+   "why": "period: playing Dagda's Harp at the four stone slabs makes Abbadona appear and attack (Allakhazam The Lost Relics); she now appears for the player on step 9 (same level 45 and model 342 as the old spawn; her combat profile comes from NpcTemplate 970710001, a copy of the archived Mob row: part10/v2-e6-abbadona-template.json)"
+  },
+  {
+   "finding": "P10-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21449",
+    "Steps",
+    9,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Abbadona",
+    "TemplateId": 970710001,
+    "Level": 45,
+    "Model": 342,
+    "Region": 200,
+    "X": 342720,
+    "Y": 658400,
+    "Z": 6487,
+    "TriggerRadius": 1500,
+    "Count": 1,
+    "DespawnSeconds": 600
+   },
+   "why": "period: playing Dagda's Harp at the four stone slabs makes Abbadona appear and attack (Allakhazam The Lost Relics); she now appears for the player on step 9 (same level 45 and model 342 as the old spawn; her combat profile comes from NpcTemplate 970710001, a copy of the archived Mob row: part10/v2-e6-abbadona-template.json)"
+  },
+  {
+   "finding": "P10-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21450",
+    "Steps",
+    9,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Abbadona",
+    "TemplateId": 970710001,
+    "Level": 45,
+    "Model": 342,
+    "Region": 200,
+    "X": 342720,
+    "Y": 658400,
+    "Z": 6487,
+    "TriggerRadius": 1500,
+    "Count": 1,
+    "DespawnSeconds": 600
+   },
+   "why": "period: playing Dagda's Harp at the four stone slabs makes Abbadona appear and attack (Allakhazam The Lost Relics); she now appears for the player on step 9 (same level 45 and model 342 as the old spawn; her combat profile comes from NpcTemplate 970710001, a copy of the archived Mob row: part10/v2-e6-abbadona-template.json)"
+  },
+  {
+   "finding": "P10-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21451",
+    "Steps",
+    9,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Abbadona",
+    "TemplateId": 970710001,
+    "Level": 45,
+    "Model": 342,
+    "Region": 200,
+    "X": 342720,
+    "Y": 658400,
+    "Z": 6487,
+    "TriggerRadius": 1500,
+    "Count": 1,
+    "DespawnSeconds": 600
+   },
+   "why": "period: playing Dagda's Harp at the four stone slabs makes Abbadona appear and attack (Allakhazam The Lost Relics); she now appears for the player on step 9 (same level 45 and model 342 as the old spawn; her combat profile comes from NpcTemplate 970710001, a copy of the archived Mob row: part10/v2-e6-abbadona-template.json)"
+  },
+  {
+   "finding": "P10-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21452",
+    "Steps",
+    9,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Abbadona",
+    "TemplateId": 970710001,
+    "Level": 45,
+    "Model": 342,
+    "Region": 200,
+    "X": 342720,
+    "Y": 658400,
+    "Z": 6487,
+    "TriggerRadius": 1500,
+    "Count": 1,
+    "DespawnSeconds": 600
+   },
+   "why": "period: playing Dagda's Harp at the four stone slabs makes Abbadona appear and attack (Allakhazam The Lost Relics); she now appears for the player on step 9 (same level 45 and model 342 as the old spawn; her combat profile comes from NpcTemplate 970710001, a copy of the archived Mob row: part10/v2-e6-abbadona-template.json)"
+  },
+  {
+   "finding": "P10-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21453",
+    "Steps",
+    9,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Abbadona",
+    "TemplateId": 970710001,
+    "Level": 45,
+    "Model": 342,
+    "Region": 200,
+    "X": 342720,
+    "Y": 658400,
+    "Z": 6487,
+    "TriggerRadius": 1500,
+    "Count": 1,
+    "DespawnSeconds": 600
+   },
+   "why": "period: playing Dagda's Harp at the four stone slabs makes Abbadona appear and attack (Allakhazam The Lost Relics); she now appears for the player on step 9 (same level 45 and model 342 as the old spawn; her combat profile comes from NpcTemplate 970710001, a copy of the archived Mob row: part10/v2-e6-abbadona-template.json)"
+  },
+  {
+   "finding": "P10-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21454",
+    "Steps",
+    9,
+    "Spawn"
+   ],
+   "value": {
+    "Name": "Abbadona",
+    "TemplateId": 970710001,
+    "Level": 45,
+    "Model": 342,
+    "Region": 200,
+    "X": 342720,
+    "Y": 658400,
+    "Z": 6487,
+    "TriggerRadius": 1500,
+    "Count": 1,
+    "DespawnSeconds": 600
+   },
+   "why": "period: playing Dagda's Harp at the four stone slabs makes Abbadona appear and attack (Allakhazam The Lost Relics); she now appears for the player on step 9 (same level 45 and model 342 as the old spawn; her combat profile comes from NpcTemplate 970710001, a copy of the archived Mob row: part10/v2-e6-abbadona-template.json)"
+  },
+  {
+   "finding": "P10-E6",
+   "kind": "remove",
+   "table": "Mob",
+   "where": "Mob_ID = 'cfdfdd2e-dc6d-5115-8c32-58aa8f74950d'",
+   "why": "Abbadona stood permanently at the Shannon harp stones (respawn 300 s) and could be farmed without the quest; she is now the step-9 event spawn of The Lost Relics (archived, restorable)"
+  },
+  {
+   "finding": "P10-E6",
+   "kind": "quest",
+   "op": "remove_value",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "cfdfdd2e-dc6d-5115-8c32-58aa8f74950d",
+   "why": "the permanent Abbadona spawn is archived; event spawns are quest monsters by themselves"
+  }
+ ]
+}

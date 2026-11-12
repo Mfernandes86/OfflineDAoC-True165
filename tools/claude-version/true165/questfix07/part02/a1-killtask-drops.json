@@ -1,0 +1,280 @@
+{
+ "fixer": "part02",
+ "about": "A1 (and E9 for 394): kill-task XP-item quests 320-398 whose turn-in item dropped from nothing",
+ "entries": [
+  {
+   "finding": "P02-A1-335",
+   "kind": "drop",
+   "mob": "ghostly Midgard invader",
+   "add": [
+    [
+     "Shadowy_Helm",
+     6
+    ]
+   ],
+   "why": "Collection quest 335 asks for Shadowy_Helm but no monster drops it since the Atlas timed-drop row was archived; restored as a normal 6% drop (median Uthgard kill-task rate; no period rate recorded) on the monster the period kill-task page names",
+   "source": "Allakhazam quest list (period-data/quests/allakhazam_quests.csv) + quest page cquest=433 (Related NPCs: Ghostly Midgard Invader)"
+  },
+  {
+   "finding": "P02-A1-337",
+   "kind": "drop",
+   "mob": "curmudgeon puggard",
+   "add": [
+    [
+     "Yellow_Curmudgeon_Tooth",
+     6
+    ]
+   ],
+   "why": "Collection quest 337 asks for Yellow_Curmudgeon_Tooth but no monster drops it since the Atlas timed-drop row was archived; restored as a normal 6% drop (median Uthgard kill-task rate; no period rate recorded) on the monster the period kill-task page names",
+   "source": "Allakhazam quest list (period-data/quests/allakhazam_quests.csv) + quest page cquest=492 (Related NPCs: Curmudgeon Puggard, Curmudgeon Scrapper); player comments 2002-09-27"
+  },
+  {
+   "finding": "P02-A1-337",
+   "kind": "drop",
+   "mob": "curmudgeon scrapper",
+   "add": [
+    [
+     "Yellow_Curmudgeon_Tooth",
+     6
+    ]
+   ],
+   "why": "Collection quest 337 asks for Yellow_Curmudgeon_Tooth but no monster drops it since the Atlas timed-drop row was archived; restored as a normal 6% drop (median Uthgard kill-task rate; no period rate recorded) on the monster the period kill-task page names",
+   "source": "Allakhazam quest list (period-data/quests/allakhazam_quests.csv) + quest page cquest=492 (Related NPCs: Curmudgeon Puggard, Curmudgeon Scrapper); player comments 2002-09-27"
+  },
+  {
+   "finding": "P02-A1-339",
+   "kind": "drop",
+   "mob": "ixthiar plaguebringer",
+   "add": [
+    [
+     "Ixthiar_Plaguebringer_Satchel",
+     6
+    ]
+   ],
+   "why": "Collection quest 339 asks for Ixthiar_Plaguebringer_Satchel but no monster drops it since the Atlas timed-drop row was archived; restored as a normal 6% drop (median Uthgard kill-task rate; no period rate recorded) on the monster the period kill-task page names",
+   "source": "Allakhazam quest list (period-data/quests/allakhazam_quests.csv) + quest page cquest=553 (Related NPCs: Ixthiar Plaguebringer); XP quote 10,485,760 per satchel (2004-10, pre-1.72)"
+  },
+  {
+   "finding": "P02-A1-340",
+   "kind": "drop",
+   "mob": "ixthiar decimater",
+   "add": [
+    [
+     "Ixthiar_Wing",
+     6
+    ]
+   ],
+   "why": "Collection quest 340 asks for Ixthiar_Wing but no monster drops it since the Atlas timed-drop row was archived; restored as a normal 6% drop (median Uthgard kill-task rate; no period rate recorded) on the monster the period kill-task page names",
+   "source": "Allakhazam quest list (period-data/quests/allakhazam_quests.csv) + quest page cquest=633 (Related NPCs: Ixthiar Decimater)"
+  },
+  {
+   "finding": "P02-A1-345",
+   "kind": "drop",
+   "mob": "vehement guardian",
+   "add": [
+    [
+     "Vehement_Gizzard",
+     6
+    ]
+   ],
+   "why": "Collection quest 345 asks for Vehement_Gizzard but no monster drops it since the Atlas timed-drop row was archived; restored as a normal 6% drop (median Uthgard kill-task rate; no period rate recorded) on the monster the period kill-task page names",
+   "source": "Allakhazam quest list (period-data/quests/allakhazam_quests.csv) + quest page cquest=525 (Related NPCs: Vehement Guardian)"
+  },
+  {
+   "finding": "P02-A1-347",
+   "kind": "drop",
+   "mob": "speghoul",
+   "add": [
+    [
+     "Speghoul_Heart",
+     6
+    ]
+   ],
+   "why": "Collection quest 347 asks for Speghoul_Heart but no monster drops it since the Atlas timed-drop row was archived; restored as a normal 6% drop (median Uthgard kill-task rate; no period rate recorded) on the monster the period kill-task page names",
+   "source": "Allakhazam quest list (period-data/quests/allakhazam_quests.csv) + quest page cquest=513 (Related NPCs: Faeghoul, Speghoul (level 40-44 task: Speghoul 40-44, Faeghoul 34-36))"
+  },
+  {
+   "finding": "P02-A1-351",
+   "kind": "drop",
+   "mob": "ixthiar doomcaller",
+   "add": [
+    [
+     "Ixthiar_Doomcaller_Beads",
+     6
+    ]
+   ],
+   "why": "Collection quest 351 asks for Ixthiar_Doomcaller_Beads but no monster drops it since the Atlas timed-drop row was archived; restored as a normal 6% drop (median Uthgard kill-task rate; no period rate recorded) on the monster the period kill-task page names",
+   "source": "Allakhazam quest list (period-data/quests/allakhazam_quests.csv) + quest page cquest=559 (Related NPCs: Ixthiar Doomcaller)"
+  },
+  {
+   "finding": "P02-A1-357",
+   "kind": "drop",
+   "mob": "mature skimmer",
+   "add": [
+    [
+     "Mature_Skimmer_Hide",
+     6
+    ]
+   ],
+   "why": "Collection quest 357 asks for Mature_Skimmer_Hide but no monster drops it since the Atlas timed-drop row was archived; restored as a normal 6% drop (median Uthgard kill-task rate; no period rate recorded) on the monster the period kill-task page names",
+   "source": "Allakhazam quest list (period-data/quests/allakhazam_quests.csv) + quest page cquest=678 (Related NPCs: Mature Skimmer); player comment 2003-11-22"
+  },
+  {
+   "finding": "P02-A1-358",
+   "kind": "drop",
+   "mob": "undead Briton invader",
+   "add": [
+    [
+     "death_robe",
+     6
+    ]
+   ],
+   "why": "Collection quest 358 asks for death_robe but no monster drops it since the Atlas timed-drop row was archived; restored as a normal 6% drop (median Uthgard kill-task rate; no period rate recorded) on the monster the period kill-task page names",
+   "source": "Allakhazam quest list (period-data/quests/allakhazam_quests.csv) + quest page cquest=431 (Related NPCs: Undead Briton Invader); same Death Robe for Brisen 358, Sissy 378, Raghnall 379 (cquest 435), Sorcha 380 (cquest 436): \"kill Undead Briton Invaders, in the Gorge, for death robes\""
+  },
+  {
+   "finding": "P02-A1-359",
+   "kind": "drop",
+   "mob": "skeletal dwarf invader",
+   "add": [
+    [
+     "Skeletal_Dwarf_Invader_Skull",
+     6
+    ]
+   ],
+   "why": "Collection quest 359 asks for Skeletal_Dwarf_Invader_Skull but no monster drops it since the Atlas timed-drop row was archived; restored as a normal 6% drop (median Uthgard kill-task rate; no period rate recorded) on the monster the period kill-task page names",
+   "source": "Allakhazam quest list (period-data/quests/allakhazam_quests.csv) + quest page cquest=512 (Related NPCs: Skeletal Dwarf Invader)"
+  },
+  {
+   "finding": "P02-A1-361",
+   "kind": "drop",
+   "mob": "bugbear nuisance",
+   "add": [
+    [
+     "Bug_Bear_Snout",
+     6
+    ]
+   ],
+   "why": "Collection quest 361 asks for Bug_Bear_Snout but no monster drops it since the Atlas timed-drop row was archived; restored as a normal 6% drop (median Uthgard kill-task rate; no period rate recorded) on the monster the period kill-task page names",
+   "source": "Allakhazam quest list (period-data/quests/allakhazam_quests.csv) + quest page cquest=554 (Related NPCs: Bugbear Nuisance); Wayback capture 2004-10-13 of the page last updated 2003-10-12"
+  },
+  {
+   "finding": "P02-A1-364",
+   "kind": "drop",
+   "mob": "ravaging marine shriller",
+   "add": [
+    [
+     "Ravaging_Marine_Shriller_Hide",
+     6
+    ]
+   ],
+   "why": "Collection quest 364 asks for Ravaging_Marine_Shriller_Hide but no monster drops it since the Atlas timed-drop row was archived; restored as a normal 6% drop (median Uthgard kill-task rate; no period rate recorded) on the monster the period kill-task page names",
+   "source": "Allakhazam quest list (period-data/quests/allakhazam_quests.csv) + quest page cquest=635 (Related NPCs: Ravaging Marine Shriller); player comment 2003-11-22"
+  },
+  {
+   "finding": "P02-A1-373",
+   "kind": "drop",
+   "mob": "tittering tree dervish",
+   "add": [
+    [
+     "Tittering_Tree_Dervish_Bark",
+     6
+    ]
+   ],
+   "why": "Collection quest 373 asks for Tittering_Tree_Dervish_Bark but no monster drops it since the Atlas timed-drop row was archived; restored as a normal 6% drop (median Uthgard kill-task rate; no period rate recorded) on the monster the period kill-task page names",
+   "source": "Allakhazam quest list (period-data/quests/allakhazam_quests.csv) + quest page cquest=1818 (Related NPCs: Tittering Tree Dervish); XP quote 31,786,880 at 49 (pre-1.72)"
+  },
+  {
+   "finding": "P02-A1-374",
+   "kind": "drop",
+   "mob": "dullahan",
+   "add": [
+    [
+     "Horseshoe",
+     6
+    ]
+   ],
+   "why": "Collection quest 374 asks for Horseshoe but no monster drops it since the Atlas timed-drop row was archived; restored as a normal 6% drop (median Uthgard kill-task rate; no period rate recorded) on the monster the period kill-task page names",
+   "source": "Allakhazam quest list (period-data/quests/allakhazam_quests.csv) + quest page cquest=753 (Related NPCs: Dullahan)"
+  },
+  {
+   "finding": "P02-A1-385",
+   "kind": "drop",
+   "mob": "gangrenous mass",
+   "add": [
+    [
+     "Gangrenous_Mass_Pustule",
+     6
+    ]
+   ],
+   "why": "Collection quest 385 asks for Gangrenous_Mass_Pustule but no monster drops it since the Atlas timed-drop row was archived; restored as a normal 6% drop (median Uthgard kill-task rate; no period rate recorded) on the monster the period kill-task page names",
+   "source": "Allakhazam quest list (period-data/quests/allakhazam_quests.csv) + quest page cquest=757 (Related NPCs: Gangrenous Mass (\"Pustules drop off of Gangrenous Masses in Caldey\"))"
+  },
+  {
+   "finding": "P02-A1-388",
+   "kind": "drop",
+   "mob": "fell geist",
+   "add": [
+    [
+     "Faint_Geist_Essence",
+     6
+    ]
+   ],
+   "why": "Collection quest 388 asks for Faint_Geist_Essence but no monster drops it since the Atlas timed-drop row was archived; restored as a normal 6% drop (median Uthgard kill-task rate; no period rate recorded) on the monster the period kill-task page names",
+   "source": "Allakhazam quest list (period-data/quests/allakhazam_quests.csv) + quest page cquest=690 (Related NPCs: Fell Geist); comment 2004-03-11: 40,164,890 xp at 49"
+  },
+  {
+   "finding": "P02-A1-391",
+   "kind": "drop",
+   "mob": "bilious goo",
+   "add": [
+    [
+     "Tattered_Rope_Threads",
+     6
+    ]
+   ],
+   "why": "Collection quest 391 asks for Tattered_Rope_Threads but no monster drops it since the Atlas timed-drop row was archived; restored as a normal 6% drop (median Uthgard kill-task rate; no period rate recorded) on the monster the period kill-task page names",
+   "source": "Allakhazam quest list (period-data/quests/allakhazam_quests.csv) + quest page cquest=708 (Related NPCs: Bilious Goo); comment 2004-03-20"
+  },
+  {
+   "finding": "P02-A1-396",
+   "kind": "drop",
+   "mob": "cave lioness",
+   "add": [
+    [
+     "Cave_Lioness_Pelt",
+     6
+    ]
+   ],
+   "why": "Collection quest 396 asks for Cave_Lioness_Pelt but no monster drops it since the Atlas timed-drop row was archived; restored as a normal 6% drop (median Uthgard kill-task rate; no period rate recorded) on the monster the period kill-task page names",
+   "source": "Allakhazam quest list (period-data/quests/allakhazam_quests.csv) + quest page cquest=581 (Related NPCs: Cave Lioness); comment 2004-04-10, 7,946,720 xp per pelt"
+  },
+  {
+   "finding": "P02-A1-397",
+   "kind": "drop",
+   "mob": "fomorian tremulare",
+   "add": [
+    [
+     "Fomorian_Hormone_Gland",
+     6
+    ]
+   ],
+   "why": "Collection quest 397 asks for Fomorian_Hormone_Gland but no monster drops it since the Atlas timed-drop row was archived; restored as a normal 6% drop (median Uthgard kill-task rate; no period rate recorded) on the monster the period kill-task page names",
+   "source": "Allakhazam quest list (period-data/quests/allakhazam_quests.csv) + quest page cquest=634 (Related NPCs: Fomorian Tremulare)"
+  },
+  {
+   "finding": "P02-A1-326",
+   "kind": "remove",
+   "table": "DataQuest",
+   "where": "ID = 326",
+   "why": "Treant Bark XP Item: its item is an Atlas-package XP item (drop audit grade REMOVE), the only Allakhazam page (cquest 3031, giver Milo, not Paud) was created after Catacombs pages (cquest 2673) with no comment before 2008, and the giver Paud is a hostile realm-0 monster: no period evidence, so the offer is retired instead of restoring a freeshard drop"
+  },
+  {
+   "finding": "P02-A1-394",
+   "kind": "remove",
+   "table": "DataQuest",
+   "where": "ID = 394",
+   "why": "second 'Tattered Rope Threads XP Item' at Achae Smith using Billious_Goo_Piece (an item also named Tattered Rope Threads); the period Billious Goo Pieces kill task (Allakhazam cquest 585, page updated 2003-10-12) is classic quest 20694 at the same NPC with its own drop, and Tattered Rope Threads is quest 391"
+  }
+ ]
+}

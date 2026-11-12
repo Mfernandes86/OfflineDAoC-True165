@@ -1,0 +1,138 @@
+{
+ "fixer": "part07",
+ "about": "A1: Grenlock Clan nested sub-quests were locked behind their own parent",
+ "entries": [
+  {
+   "finding": "P07-A1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "QuestDependency": ""
+   },
+   "where_sql": "ID BETWEEN 21096 AND 21099 AND Name = 'Siv''s Spirit'",
+   "why": "Siv's Spirit needed Grenlock Clan FINISHED, but Grenlock Clan step 2 waits for Siv's Spirit to be finished (deadlock, whole RM/SM/BD epic locked); period: 'This is the second part in a nested quest. You must start the Grenlock Clan quest first' (Allakhazam Siv's Spirit) - now offered only while Grenlock Clan is in progress (OnlyDuring)"
+  },
+  {
+   "finding": "P07-A1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "QuestDependency": "Siv's Spirit"
+   },
+   "where_sql": "ID BETWEEN 21017 AND 21020 AND Name = 'Coplin''s Spirit'",
+   "why": "Coplin's Spirit needed Grenlock Clan FINISHED (deadlock with Grenlock Clan step 2); period: 'After completing the first part of the Grenlock crest quest and reaching level 20, go back and speak to Anrid' (Allakhazam Coplin's Spirit) - the first part is Siv's Spirit"
+  },
+  {
+   "finding": "P07-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21096",
+    "OnlyDuring"
+   ],
+   "value": [
+    "Grenlock Clan"
+   ],
+   "why": "nested sub-quest of Grenlock Clan (Allakhazam: Grenlock Clan is the parent of Siv's Spirit, Coplin's Spirit, Fallen Warrior, Forgotten Journey): offered while Grenlock Clan is being done, so Grenlock Clan step 2 can be completed"
+  },
+  {
+   "finding": "P07-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21097",
+    "OnlyDuring"
+   ],
+   "value": [
+    "Grenlock Clan"
+   ],
+   "why": "nested sub-quest of Grenlock Clan (Allakhazam: Grenlock Clan is the parent of Siv's Spirit, Coplin's Spirit, Fallen Warrior, Forgotten Journey): offered while Grenlock Clan is being done, so Grenlock Clan step 2 can be completed"
+  },
+  {
+   "finding": "P07-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21098",
+    "OnlyDuring"
+   ],
+   "value": [
+    "Grenlock Clan"
+   ],
+   "why": "nested sub-quest of Grenlock Clan (Allakhazam: Grenlock Clan is the parent of Siv's Spirit, Coplin's Spirit, Fallen Warrior, Forgotten Journey): offered while Grenlock Clan is being done, so Grenlock Clan step 2 can be completed"
+  },
+  {
+   "finding": "P07-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21099",
+    "OnlyDuring"
+   ],
+   "value": [
+    "Grenlock Clan"
+   ],
+   "why": "nested sub-quest of Grenlock Clan (Allakhazam: Grenlock Clan is the parent of Siv's Spirit, Coplin's Spirit, Fallen Warrior, Forgotten Journey): offered while Grenlock Clan is being done, so Grenlock Clan step 2 can be completed"
+  },
+  {
+   "finding": "P07-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21017",
+    "OnlyDuring"
+   ],
+   "value": [
+    "Grenlock Clan"
+   ],
+   "why": "nested sub-quest of Grenlock Clan (Allakhazam: Grenlock Clan is the parent of Siv's Spirit, Coplin's Spirit, Fallen Warrior, Forgotten Journey): offered while Grenlock Clan is being done, so Grenlock Clan step 2 can be completed"
+  },
+  {
+   "finding": "P07-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21018",
+    "OnlyDuring"
+   ],
+   "value": [
+    "Grenlock Clan"
+   ],
+   "why": "nested sub-quest of Grenlock Clan (Allakhazam: Grenlock Clan is the parent of Siv's Spirit, Coplin's Spirit, Fallen Warrior, Forgotten Journey): offered while Grenlock Clan is being done, so Grenlock Clan step 2 can be completed"
+  },
+  {
+   "finding": "P07-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21019",
+    "OnlyDuring"
+   ],
+   "value": [
+    "Grenlock Clan"
+   ],
+   "why": "nested sub-quest of Grenlock Clan (Allakhazam: Grenlock Clan is the parent of Siv's Spirit, Coplin's Spirit, Fallen Warrior, Forgotten Journey): offered while Grenlock Clan is being done, so Grenlock Clan step 2 can be completed"
+  },
+  {
+   "finding": "P07-A1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21020",
+    "OnlyDuring"
+   ],
+   "value": [
+    "Grenlock Clan"
+   ],
+   "why": "nested sub-quest of Grenlock Clan (Allakhazam: Grenlock Clan is the parent of Siv's Spirit, Coplin's Spirit, Fallen Warrior, Forgotten Journey): offered while Grenlock Clan is being done, so Grenlock Clan step 2 can be completed"
+  }
+ ]
+}

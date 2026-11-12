@@ -1,0 +1,84 @@
+{
+ "fixer": "part07",
+ "about": "D7: statless twin rewards",
+ "entries": [
+  {
+   "finding": "P07-D7",
+   "kind": "quest",
+   "op": "delete",
+   "path": [
+    "Quests",
+    "20975",
+    "Steps",
+    8,
+    "Grant"
+   ],
+   "why": "step 8 handed out the statless twin cq_perfect_life_stone (Item_Type 40) on top of the real final reward; same cleanup as the true165 rule 'statless step item removed from the final reward' (no step collects it)"
+  },
+  {
+   "finding": "P07-D7",
+   "kind": "quest",
+   "op": "delete",
+   "path": [
+    "Quests",
+    "20975",
+    "Steps",
+    8,
+    "GrantFrom"
+   ],
+   "why": "GrantFrom of the removed statless grant"
+  },
+  {
+   "finding": "P07-D7",
+   "kind": "quest",
+   "op": "delete",
+   "path": [
+    "Quests",
+    "21021",
+    "Steps",
+    3,
+    "Grant"
+   ],
+   "why": "step 3 handed out the statless twin cq_pious_ring (Item_Type 40) on top of the real final reward; same cleanup as the true165 rule 'statless step item removed from the final reward' (no step collects it)"
+  },
+  {
+   "finding": "P07-D7",
+   "kind": "quest",
+   "op": "delete",
+   "path": [
+    "Quests",
+    "21021",
+    "Steps",
+    3,
+    "GrantFrom"
+   ],
+   "why": "GrantFrom of the removed statless grant"
+  },
+  {
+   "finding": "P07-D7",
+   "kind": "quest",
+   "op": "delete",
+   "path": [
+    "Quests",
+    "21022",
+    "Steps",
+    3,
+    "Grant"
+   ],
+   "why": "step 3 handed out the statless twin cq_pious_ring (Item_Type 40) on top of the real final reward; same cleanup as the true165 rule 'statless step item removed from the final reward' (no step collects it)"
+  },
+  {
+   "finding": "P07-D7",
+   "kind": "quest",
+   "op": "delete",
+   "path": [
+    "Quests",
+    "21022",
+    "Steps",
+    3,
+    "GrantFrom"
+   ],
+   "why": "GrantFrom of the removed statless grant"
+  }
+ ]
+}

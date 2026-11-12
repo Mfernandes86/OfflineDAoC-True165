@@ -1,0 +1,136 @@
+{
+ "fixer": "part03",
+ "about": "part03 section A: quests no player could finish",
+ "entries": [
+  {
+   "finding": "P03-A1",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "AllowedClasses": "2|1|11|19|3|9|4"
+   },
+   "where": {
+    "ID": 20212
+   },
+   "why": "AllowedClasses 14|17 (Fighter, Albion Rogue base classes) never match a level-12 character (DataQuest.cs exact class-ID check); period header 'Class: Fighter Rogue (Albion)' = Armsman, Paladin, Mercenary, Reaver, Scout, Infiltrator, Minstrel (period Barker page lists those classes)"
+  },
+  {
+   "finding": "P03-A2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "AllowedClasses": "2|1|11|19|6"
+   },
+   "where": {
+    "ID": 20213
+   },
+   "why": "AllowedClasses 14|6: base class Fighter (14) never matches a level-13 character, so only Clerics could get it; period header 'Class: Fighter Cleric' = Armsman, Paladin, Mercenary, Reaver + Cleric"
+  },
+  {
+   "finding": "P03-A2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "AllowedClasses": "2|1|11|19|6"
+   },
+   "where": {
+    "ID": 20216
+   },
+   "why": "AllowedClasses 14|6: base class Fighter (14) never matches a level-13 character, so only Clerics could get it; period header 'Class: Fighter Cleric' = Armsman, Paladin, Mercenary, Reaver + Cleric"
+  },
+  {
+   "finding": "P03-A3",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "Dustan",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 553164,
+    "Y": 562634,
+    "Z": 3100,
+    "Speed": 180,
+    "Heading": 1216,
+    "Region": 1,
+    "Model": 32,
+    "Size": 51,
+    "Strength": 266,
+    "Constitution": 38,
+    "Dexterity": 76,
+    "Quickness": 38,
+    "Intelligence": 30,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 15,
+    "Realm": 1,
+    "EquipmentTemplateID": "0dd13beb-6da4-41f3-a292-86f203151b19",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 0,
+    "Race": 0,
+    "Flags": 16,
+    "AggroLevel": 0,
+    "AggroRange": 0,
+    "MeleeDamageType": 2,
+    "RespawnInterval": 300,
+    "FactionID": 0,
+    "BodyType": 0,
+    "HouseNumber": 0,
+    "Brain": null,
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00070301-0000-4000-8000-000000000001"
+   },
+   "source": "Allakhazam 'The Captured Courier' (archived 2004-09-01): the druid holds Dustan hostage; 'Kill her and talk with Dustan; Give him the key and box'",
+   "why": "the hostage Dustan existed nowhere, so step 3 (talk with Dustan) could not be done; new peaceful Albion NPC next to the druid Zelsania Nodith (553064,562534), copied from an Albion townsman row (model 32)"
+  },
+  {
+   "finding": "P03-A3",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET TargetName = replace(TargetName, 'Dunstan;201', 'Dustan;1') WHERE ID = 20215",
+   "why": "step 3 target was Dunstan;201, a Hibernian armour master in Tir na Nog an Albion player cannot reach; the period hostage is Dustan beside the druid in region 1"
+  },
+  {
+   "finding": "P03-A3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20215",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "why": "step 3 marker pointed at Dunstan in Tir na Nog; now at the new Dustan beside Zelsania Nodith",
+   "value": {
+    "Region": 1,
+    "X": 553164,
+    "Y": 562634,
+    "Z": 3100
+   }
+  },
+  {
+   "finding": "P03-A3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20215",
+    "Steps",
+    4,
+    "Issuer"
+   ],
+   "why": "the pendant (step 4 item) comes from Dustan, not the Hibernian Dunstan",
+   "value": "Dustan"
+  }
+ ]
+}

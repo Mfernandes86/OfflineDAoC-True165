@@ -1,0 +1,945 @@
+{
+ "fixer": "part08",
+ "about": "E1 marker, E2 faction exclusions, E4 future guildmasters, E5 Eibhilin, E6 Alina duplicate, E7 rotation, E8 order, E9 dead rows",
+ "entries": [
+  {
+   "finding": "P08-E1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21086",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 705728,
+    "Y": 739922,
+    "Z": 6536
+   },
+   "why": "step 3 'Show Gunnolf the skull' pointed at a realm-0 level 50 monster also named Gunnolf in Malmohus; the quest's Gunnolf is the Shadowblade trainer in Vindsaul Faste (walkthrough 194, step 1 marker)"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21148",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Svartalfar",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21149",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Svartalfar",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21150",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Svartalfar",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21151",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Svartalfar",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21152",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Svartalfar",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21153",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Svartalfar",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21154",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Svartalfar",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21155",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Svartalfar",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21156",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Svartalfar",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21157",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Svartalfar",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21158",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Svartalfar",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21159",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Svartalfar",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21161",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Arachites",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21162",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Arachites",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21163",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Arachites",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21164",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Arachites",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21165",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Arachites",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21166",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Arachites",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21167",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Arachites",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21168",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Arachites",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21169",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Arachites",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21170",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Arachites",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21171",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Arachites",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21172",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Arachites",
+    "Helping the Werewolves"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E2",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20380",
+    "ExcludedBy"
+   ],
+   "value": [
+    "Helping the Arachites",
+    "Helping the Svartalfar"
+   ],
+   "why": "walkthrough 345 'you choose one faction to improve': Helping the Arachites, Helping the Svartalfar and Helping the Werewolves (Dunfjall) are one choice, so each excludes the other two once started or finished"
+  },
+  {
+   "finding": "P08-E4",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Thetus;100|Sarry;100|Vigdis;100"
+   },
+   "where": {
+    "ID": 21137
+   },
+   "why": "Knowledge of the Gods steps 1-2 'Ask a future guildmaster / another future guildmaster' targeted the giving trainer itself (spec M510: <future guild trainer>, <another guild trainer>; walkthrough 510 'inquire to each of your respective future guildmasters'). Vale of Mularn has no specialization trainers; the nearest full set is Fort Atla, whose Runemaster and Spiritmaster trainers (Thetus, Sarry) are this base class's future guildmasters"
+  },
+  {
+   "finding": "P08-E4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21137",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 749419,
+    "Y": 814223,
+    "Z": 4439
+   },
+   "why": "Knowledge of the Gods steps 1-2 'Ask a future guildmaster / another future guildmaster' targeted the giving trainer itself (spec M510: <future guild trainer>, <another guild trainer>; walkthrough 510 'inquire to each of your respective future guildmasters'). Vale of Mularn has no specialization trainers; the nearest full set is Fort Atla, whose Runemaster and Spiritmaster trainers (Thetus, Sarry) are this base class's future guildmasters"
+  },
+  {
+   "finding": "P08-E4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21137",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 750104,
+    "Y": 815081,
+    "Z": 4448
+   },
+   "why": "Knowledge of the Gods steps 1-2 'Ask a future guildmaster / another future guildmaster' targeted the giving trainer itself (spec M510: <future guild trainer>, <another guild trainer>; walkthrough 510 'inquire to each of your respective future guildmasters'). Vale of Mularn has no specialization trainers; the nearest full set is Fort Atla, whose Runemaster and Spiritmaster trainers (Thetus, Sarry) are this base class's future guildmasters"
+  },
+  {
+   "finding": "P08-E4",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Welgen;100|Korgan;100|Groa;100"
+   },
+   "where": {
+    "ID": 21138
+   },
+   "why": "Knowledge of the Gods steps 1-2 'Ask a future guildmaster / another future guildmaster' targeted the giving trainer itself (spec M510: <future guild trainer>, <another guild trainer>; walkthrough 510 'inquire to each of your respective future guildmasters'). Vale of Mularn has no specialization trainers; the nearest full set is Fort Atla, whose Healer and Shaman trainers (Welgen, Korgan) are this base class's future guildmasters"
+  },
+  {
+   "finding": "P08-E4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21138",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 749551,
+    "Y": 814691,
+    "Z": 4408
+   },
+   "why": "Knowledge of the Gods steps 1-2 'Ask a future guildmaster / another future guildmaster' targeted the giving trainer itself (spec M510: <future guild trainer>, <another guild trainer>; walkthrough 510 'inquire to each of your respective future guildmasters'). Vale of Mularn has no specialization trainers; the nearest full set is Fort Atla, whose Healer and Shaman trainers (Welgen, Korgan) are this base class's future guildmasters"
+  },
+  {
+   "finding": "P08-E4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21138",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 748329,
+    "Y": 816523,
+    "Z": 4408
+   },
+   "why": "Knowledge of the Gods steps 1-2 'Ask a future guildmaster / another future guildmaster' targeted the giving trainer itself (spec M510: <future guild trainer>, <another guild trainer>; walkthrough 510 'inquire to each of your respective future guildmasters'). Vale of Mularn has no specialization trainers; the nearest full set is Fort Atla, whose Healer and Shaman trainers (Welgen, Korgan) are this base class's future guildmasters"
+  },
+  {
+   "finding": "P08-E4",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Halker;100|Kalli;100|Skapi;100"
+   },
+   "where": {
+    "ID": 21139
+   },
+   "why": "Knowledge of the Gods steps 1-2 'Ask a future guildmaster / another future guildmaster' targeted the giving trainer itself (spec M510: <future guild trainer>, <another guild trainer>; walkthrough 510 'inquire to each of your respective future guildmasters'). Vale of Mularn has no specialization trainers; the nearest full set is Fort Atla, whose Warrior and Berserker trainers (Halker, Kalli) are this base class's future guildmasters"
+  },
+  {
+   "finding": "P08-E4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21139",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 748329,
+    "Y": 815080,
+    "Z": 4467
+   },
+   "why": "Knowledge of the Gods steps 1-2 'Ask a future guildmaster / another future guildmaster' targeted the giving trainer itself (spec M510: <future guild trainer>, <another guild trainer>; walkthrough 510 'inquire to each of your respective future guildmasters'). Vale of Mularn has no specialization trainers; the nearest full set is Fort Atla, whose Warrior and Berserker trainers (Halker, Kalli) are this base class's future guildmasters"
+  },
+  {
+   "finding": "P08-E4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21139",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 750005,
+    "Y": 814861,
+    "Z": 4448
+   },
+   "why": "Knowledge of the Gods steps 1-2 'Ask a future guildmaster / another future guildmaster' targeted the giving trainer itself (spec M510: <future guild trainer>, <another guild trainer>; walkthrough 510 'inquire to each of your respective future guildmasters'). Vale of Mularn has no specialization trainers; the nearest full set is Fort Atla, whose Warrior and Berserker trainers (Halker, Kalli) are this base class's future guildmasters"
+  },
+  {
+   "finding": "P08-E5",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "TargetName": "Gunnolf;100|Undead Patrol;100|Gunnolf;100|Masrim;100|sidhe draoi;100|Masrim;100|Eibhilin;100|Masrim;100|Morlin Caan;101|Morlin Caan;101"
+   },
+   "where": {
+    "ID": 21086
+   },
+   "why": "The War Continues step 7 killed an event-spawned 'Eibhlin'; the period name is Eibhilin (walkthrough 194, spec) and our world already has the period Eibhilin (CapnBry zone 111 22351,11487, L36, near Mjollner Faste), which did not count. Step retargeted to her, the misspelled event spawn dropped"
+  },
+  {
+   "finding": "P08-E5",
+   "kind": "quest",
+   "op": "delete",
+   "path": [
+    "Quests",
+    "21086",
+    "Steps",
+    7,
+    "Spawn"
+   ],
+   "why": "The War Continues step 7 killed an event-spawned 'Eibhlin'; the period name is Eibhilin (walkthrough 194, spec) and our world already has the period Eibhilin (CapnBry zone 111 22351,11487, L36, near Mjollner Faste), which did not count. Step retargeted to her, the misspelled event spawn dropped"
+  },
+  {
+   "finding": "P08-E5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21086",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 743247,
+    "Y": 617695,
+    "Z": 8539
+   },
+   "why": "The War Continues step 7 killed an event-spawned 'Eibhlin'; the period name is Eibhilin (walkthrough 194, spec) and our world already has the period Eibhilin (CapnBry zone 111 22351,11487, L36, near Mjollner Faste), which did not count. Step retargeted to her, the misspelled event spawn dropped"
+  },
+  {
+   "finding": "P08-E5",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "febe2477-ab38-5827-b6f2-3eb48f6e298f",
+   "why": "gamebots leave the quest target Eibhilin alone"
+  },
+  {
+   "finding": "P08-E6",
+   "kind": "remove",
+   "table": "Mob",
+   "where": "Mob_ID = '2867077f-8330-5cb3-97be-8146218a30b1'",
+   "why": "Alina runs DOL.GS.Alina, which turns her into 'Noble Werewolf Alina' (realm None, L22) at night; a second, permanent GameNPC of that name stood beside her day and night (step text: she wanders as a werewolf after sunset)"
+  },
+  {
+   "finding": "P08-E6",
+   "kind": "quest",
+   "op": "remove_value",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "2867077f-8330-5cb3-97be-8146218a30b1",
+   "why": "Alina runs DOL.GS.Alina, which turns her into 'Noble Werewolf Alina' (realm None, L22) at night; a second, permanent GameNPC of that name stood beside her day and night (step text: she wanders as a werewolf after sunset)"
+  },
+  {
+   "finding": "P08-E6",
+   "kind": "quest",
+   "op": "add_unique",
+   "path": [
+    "QuestMonsterIds"
+   ],
+   "value": "892843f8-a5c1-4fcc-a8b4-73b7aa205b7e",
+   "why": "gamebots leave Alina (the scripted night werewolf) alone"
+  },
+  {
+   "finding": "P08-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21198",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 777385,
+    "Y": 917857,
+    "Z": 5157
+   },
+   "why": "Alina runs DOL.GS.Alina, which turns her into 'Noble Werewolf Alina' (realm None, L22) at night; a second, permanent GameNPC of that name stood beside her day and night (step text: she wanders as a werewolf after sunset); marker on Alina"
+  },
+  {
+   "finding": "P08-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21199",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 777385,
+    "Y": 917857,
+    "Z": 5157
+   },
+   "why": "Alina runs DOL.GS.Alina, which turns her into 'Noble Werewolf Alina' (realm None, L22) at night; a second, permanent GameNPC of that name stood beside her day and night (step text: she wanders as a werewolf after sunset); marker on Alina"
+  },
+  {
+   "finding": "P08-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21200",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 777385,
+    "Y": 917857,
+    "Z": 5157
+   },
+   "why": "Alina runs DOL.GS.Alina, which turns her into 'Noble Werewolf Alina' (realm None, L22) at night; a second, permanent GameNPC of that name stood beside her day and night (step text: she wanders as a werewolf after sunset); marker on Alina"
+  },
+  {
+   "finding": "P08-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21201",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 777385,
+    "Y": 917857,
+    "Z": 5157
+   },
+   "why": "Alina runs DOL.GS.Alina, which turns her into 'Noble Werewolf Alina' (realm None, L22) at night; a second, permanent GameNPC of that name stood beside her day and night (step text: she wanders as a werewolf after sunset); marker on Alina"
+  },
+  {
+   "finding": "P08-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21202",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 777385,
+    "Y": 917857,
+    "Z": 5157
+   },
+   "why": "Alina runs DOL.GS.Alina, which turns her into 'Noble Werewolf Alina' (realm None, L22) at night; a second, permanent GameNPC of that name stood beside her day and night (step text: she wanders as a werewolf after sunset); marker on Alina"
+  },
+  {
+   "finding": "P08-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21203",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 777385,
+    "Y": 917857,
+    "Z": 5157
+   },
+   "why": "Alina runs DOL.GS.Alina, which turns her into 'Noble Werewolf Alina' (realm None, L22) at night; a second, permanent GameNPC of that name stood beside her day and night (step text: she wanders as a werewolf after sunset); marker on Alina"
+  },
+  {
+   "finding": "P08-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21204",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 777385,
+    "Y": 917857,
+    "Z": 5157
+   },
+   "why": "Alina runs DOL.GS.Alina, which turns her into 'Noble Werewolf Alina' (realm None, L22) at night; a second, permanent GameNPC of that name stood beside her day and night (step text: she wanders as a werewolf after sunset); marker on Alina"
+  },
+  {
+   "finding": "P08-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21205",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 777385,
+    "Y": 917857,
+    "Z": 5157
+   },
+   "why": "Alina runs DOL.GS.Alina, which turns her into 'Noble Werewolf Alina' (realm None, L22) at night; a second, permanent GameNPC of that name stood beside her day and night (step text: she wanders as a werewolf after sunset); marker on Alina"
+  },
+  {
+   "finding": "P08-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21206",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 777385,
+    "Y": 917857,
+    "Z": 5157
+   },
+   "why": "Alina runs DOL.GS.Alina, which turns her into 'Noble Werewolf Alina' (realm None, L22) at night; a second, permanent GameNPC of that name stood beside her day and night (step text: she wanders as a werewolf after sunset); marker on Alina"
+  },
+  {
+   "finding": "P08-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21207",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 777385,
+    "Y": 917857,
+    "Z": 5157
+   },
+   "why": "Alina runs DOL.GS.Alina, which turns her into 'Noble Werewolf Alina' (realm None, L22) at night; a second, permanent GameNPC of that name stood beside her day and night (step text: she wanders as a werewolf after sunset); marker on Alina"
+  },
+  {
+   "finding": "P08-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21208",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 777385,
+    "Y": 917857,
+    "Z": 5157
+   },
+   "why": "Alina runs DOL.GS.Alina, which turns her into 'Noble Werewolf Alina' (realm None, L22) at night; a second, permanent GameNPC of that name stood beside her day and night (step text: she wanders as a werewolf after sunset); marker on Alina"
+  },
+  {
+   "finding": "P08-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21209",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 777385,
+    "Y": 917857,
+    "Z": 5157
+   },
+   "why": "Alina runs DOL.GS.Alina, which turns her into 'Noble Werewolf Alina' (realm None, L22) at night; a second, permanent GameNPC of that name stood beside her day and night (step text: she wanders as a werewolf after sunset); marker on Alina"
+  },
+  {
+   "finding": "P08-E7",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "ClassType": "DOL.GS.HourWindowSpawn"
+   },
+   "where": {
+    "Mob_ID": "a32b6fd2-3c90-56b2-b4a3-19623956d17d"
+   },
+   "why": "skull-post rotation (walkthroughs 345/488): Thraxia 8am-4pm, Terje 4pm-midnight, Lord Lauur midnight-8am; each is an HourWindowSpawn (its hours by name, HourWindows), so one of the three stands at the post at any hour, as the step texts say (verify fix 2026-11-11: the first version used day/night spawns, 6-18 and 18-6, and the HourWindowSpawn written for this was unused)"
+  },
+  {
+   "finding": "P08-E7",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "ClassType": "DOL.GS.HourWindowSpawn"
+   },
+   "where": {
+    "Mob_ID": "25cc2721-8414-5402-ba3b-e60e61b4b4c3"
+   },
+   "why": "skull-post rotation (walkthroughs 345/488): Thraxia 8am-4pm, Terje 4pm-midnight, Lord Lauur midnight-8am; each is an HourWindowSpawn (its hours by name, HourWindows), so one of the three stands at the post at any hour, as the step texts say (verify fix 2026-11-11: the first version used day/night spawns, 6-18 and 18-6, and the HourWindowSpawn written for this was unused)"
+  },
+  {
+   "finding": "P08-E7",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "ClassType": "DOL.GS.HourWindowSpawn"
+   },
+   "where": {
+    "Mob_ID": "8fb0d1d6-63f8-402f-abdf-2707520d3b1e"
+   },
+   "why": "skull-post rotation (walkthroughs 345/488): Thraxia 8am-4pm, Terje 4pm-midnight, Lord Lauur midnight-8am; each is an HourWindowSpawn (its hours by name, HourWindows), so one of the three stands at the post at any hour, as the step texts say (verify fix 2026-11-11: the first version used day/night spawns, 6-18 and 18-6, and the HourWindowSpawn written for this was unused)"
+  },
+  {
+   "finding": "P08-E8",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepText": "Find the first sister, Jodis Rindasdottir.|Slay the werewolf shaman and take the sword hilt.|Return the hilt to Jodis.|Find the second sister in Yggdra Forest.|Recover the sister's drawings from a wyvern.|Recover her book from a bone-eater spine ripper.|Bring Edonia her drawings and book.|Give the book and drawings to Coplin's spirit.|Find the third sister, Norma, in Vanern Swamp; she needs a new water skin made from a battle scarred mauler's bladder, so slay one.|Give Norma the new water skin.|Have the smith in Vasudheim forge the sword.|Return the sword to Anrid.|Choose your reward: whisper Anrid the name of the item you want (Runic Staff of the Sisters, Suppressing Staff of the Sisters, Suppressive Staff of the Sisters)."
+   },
+   "where": {
+    "ID": 21082
+   },
+   "why": "The Three Sisters steps 9/10 read 'Bring Norma a new water skin...' before 'Find the third sister, Norma'; period walkthrough 1768 meets Norma in Vanern Swamp first. Journal texts reworded to the period order (no dialogue changed)"
+  },
+  {
+   "finding": "P08-E8",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepText": "Find the first sister, Jodis Rindasdottir.|Slay the werewolf shaman and take the sword hilt.|Return the hilt to Jodis.|Find the second sister in Yggdra Forest.|Recover the sister's drawings from a wyvern.|Recover her book from a bone-eater spine ripper.|Bring Edonia her drawings and book.|Give the book and drawings to Coplin's spirit.|Find the third sister, Norma, in Vanern Swamp; she needs a new water skin made from a battle scarred mauler's bladder, so slay one.|Give Norma the new water skin.|Have the smith in Vasudheim forge the sword.|Return the sword to Anrid."
+   },
+   "where": {
+    "ID": 21083
+   },
+   "why": "The Three Sisters steps 9/10 read 'Bring Norma a new water skin...' before 'Find the third sister, Norma'; period walkthrough 1768 meets Norma in Vanern Swamp first. Journal texts reworded to the period order (no dialogue changed)"
+  },
+  {
+   "finding": "P08-E8",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepText": "Find the first sister, Jodis Rindasdottir.|Slay the werewolf shaman and take the sword hilt.|Return the hilt to Jodis.|Find the second sister in Yggdra Forest.|Recover the sister's drawings from a wyvern.|Recover her book from a bone-eater spine ripper.|Bring Edonia her drawings and book.|Give the book and drawings to Coplin's spirit.|Find the third sister, Norma, in Vanern Swamp; she needs a new water skin made from a battle scarred mauler's bladder, so slay one.|Give Norma the new water skin.|Have the smith in Vasudheim forge the sword.|Return the sword to Anrid.|Choose your reward: whisper Anrid the name of the item you want (Boned Staff of Darkness, Boned Staff of the Ancestors, Boned Staff of Suppression)."
+   },
+   "where": {
+    "ID": 21084
+   },
+   "why": "The Three Sisters steps 9/10 read 'Bring Norma a new water skin...' before 'Find the third sister, Norma'; period walkthrough 1768 meets Norma in Vanern Swamp first. Journal texts reworded to the period order (no dialogue changed)"
+  },
+  {
+   "finding": "P08-E9",
+   "kind": "remove",
+   "table": "DataQuest",
+   "where": "ID IN (21075, 21081, 21085, 21099)",
+   "why": "rows for Valkyrie (34) and Warlock (59), Catacombs classes that cannot exist in True 1.65: dead data"
+  },
+  {
+   "finding": "P08-E9",
+   "kind": "remove",
+   "table": "DataQuest",
+   "where": "ID IN (21160, 21173, 21186, 21210, 21224)",
+   "why": "rows only for the base classes 35-38 (Viking/Mystic/Seer/Rogue) on level 19+ quests: a base class cannot pass level 5, so these rows can never be offered"
+  }
+ ]
+}

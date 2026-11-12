@@ -1,0 +1,1147 @@
+{
+ "fixer": "part10",
+ "about": "B1 B3 B4 B5 B7 B8 B10 B11 B12 locations (B2 = quest row in b2-ceard.json; B9/B13 owned by part09/patrols)",
+ "entries": [
+  {
+   "finding": "P10-B1",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 772696,
+    "Y": 750517,
+    "Z": 4554
+   },
+   "where": {
+    "Mob_ID": "4878bfb5-89bc-5547-a13f-572591f5897e"
+   },
+   "why": "wildling scouts were a generated camp 3,500 west of Erekith and 5,300+ from every road; period: \"on the road west out of town, not far from town\", Zam bestiary \"NW of Erik are the scouts, loc = 51607, 13138\"; spread along the road west of Vasudheim (East Svealand 50000-51800, 12800-13300), ground height from the navmesh"
+  },
+  {
+   "finding": "P10-B1",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 772346,
+    "Y": 750658,
+    "Z": 4554
+   },
+   "where": {
+    "Mob_ID": "28775160-cd60-5c3d-8d1c-89c6c0955541"
+   },
+   "why": "wildling scouts were a generated camp 3,500 west of Erekith and 5,300+ from every road; period: \"on the road west out of town, not far from town\", Zam bestiary \"NW of Erik are the scouts, loc = 51607, 13138\"; spread along the road west of Vasudheim (East Svealand 50000-51800, 12800-13300), ground height from the navmesh"
+  },
+  {
+   "finding": "P10-B1",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 771996,
+    "Y": 750362,
+    "Z": 4554
+   },
+   "where": {
+    "Mob_ID": "e7d2ca31-7cb8-55a6-9e0e-d3e3ae8ed8ce"
+   },
+   "why": "wildling scouts were a generated camp 3,500 west of Erekith and 5,300+ from every road; period: \"on the road west out of town, not far from town\", Zam bestiary \"NW of Erik are the scouts, loc = 51607, 13138\"; spread along the road west of Vasudheim (East Svealand 50000-51800, 12800-13300), ground height from the navmesh"
+  },
+  {
+   "finding": "P10-B1",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 771646,
+    "Y": 750400,
+    "Z": 4554
+   },
+   "where": {
+    "Mob_ID": "0a809d85-6918-5a90-bf12-a1abf0fda9a5"
+   },
+   "why": "wildling scouts were a generated camp 3,500 west of Erekith and 5,300+ from every road; period: \"on the road west out of town, not far from town\", Zam bestiary \"NW of Erik are the scouts, loc = 51607, 13138\"; spread along the road west of Vasudheim (East Svealand 50000-51800, 12800-13300), ground height from the navmesh"
+  },
+  {
+   "finding": "P10-B1",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 771296,
+    "Y": 750039,
+    "Z": 4554
+   },
+   "where": {
+    "Mob_ID": "d93a1b0f-b729-51b9-939d-6c3ded32718e"
+   },
+   "why": "wildling scouts were a generated camp 3,500 west of Erekith and 5,300+ from every road; period: \"on the road west out of town, not far from town\", Zam bestiary \"NW of Erik are the scouts, loc = 51607, 13138\"; spread along the road west of Vasudheim (East Svealand 50000-51800, 12800-13300), ground height from the navmesh"
+  },
+  {
+   "finding": "P10-B1",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 770946,
+    "Y": 750085,
+    "Z": 4554
+   },
+   "where": {
+    "Mob_ID": "165a9b9b-6183-5681-8837-70dc37a017e6"
+   },
+   "why": "wildling scouts were a generated camp 3,500 west of Erekith and 5,300+ from every road; period: \"on the road west out of town, not far from town\", Zam bestiary \"NW of Erik are the scouts, loc = 51607, 13138\"; spread along the road west of Vasudheim (East Svealand 50000-51800, 12800-13300), ground height from the navmesh"
+  },
+  {
+   "finding": "P10-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21463",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 772346,
+    "Y": 750658,
+    "Z": 4554
+   },
+   "why": "marker moves with the wildling scouts to the road west of Vasudheim"
+  },
+  {
+   "finding": "P10-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21463",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 772346,
+    "Y": 750658,
+    "Z": 4554
+   },
+   "why": "marker moves with the wildling scouts to the road west of Vasudheim"
+  },
+  {
+   "finding": "P10-B1",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21463",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 100,
+    "X": 772346,
+    "Y": 750658,
+    "Z": 4554
+   },
+   "why": "marker moves with the wildling scouts to the road west of Vasudheim"
+  },
+  {
+   "finding": "P10-B3",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "Bria",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 341120,
+    "Y": 460092,
+    "Z": 4854,
+    "Speed": 180,
+    "Heading": 73,
+    "Region": 200,
+    "Model": 365,
+    "Size": 50,
+    "Strength": 105,
+    "Constitution": 30,
+    "Dexterity": 30,
+    "Quickness": 30,
+    "Intelligence": 30,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 15,
+    "Realm": 3,
+    "EquipmentTemplateID": "092bd34e-3ff0-49d0-b063-abce2270722b",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 60158702,
+    "Race": 0,
+    "Flags": 0,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 2,
+    "RespawnInterval": 0,
+    "FactionID": 0,
+    "BodyType": 0,
+    "HouseNumber": 0,
+    "Brain": null,
+    "PathID": null,
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071001-0000-4000-8000-000000000003"
+   },
+   "why": "Bria's Savior (21406): period \"Bria is located on a farm north of the bridge near Ardee ... following the river\", but the only Bria stood in the far north-west corner of Connacht, 62k away. That spot is the parthanan farm where she stands with her son Davian for The Touch of Amadan Duhb (\"Bria in the back of the barn at the parthanan farm\"), so she stays there and a second Bria (a copy of her row) stands beside the curmudgeon harvesters' fields north of the Ardee river crossing (Connacht 54400,42300), 1.5k from the wandering curmudgeon she sends you to kill (verify fix 2026-11-11: the first version moved the one Bria and broke the other quest's location)"
+  },
+  {
+   "finding": "P10-B3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21406",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 341120,
+    "Y": 460092,
+    "Z": 4854
+   },
+   "why": "marker moves with Bria to the farm north of the Ardee bridge"
+  },
+  {
+   "finding": "P10-B3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21406",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 341120,
+    "Y": 460092,
+    "Z": 4854
+   },
+   "why": "marker moves with Bria to the farm north of the Ardee bridge"
+  },
+  {
+   "finding": "P10-B4",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 317712,
+    "Y": 457285,
+    "Z": 6319
+   },
+   "where": {
+    "Mob_ID": "7f066255-1f5c-4024-b2dc-b3ec8a5b2dbe"
+   },
+   "why": "the four changelings were 22-25k from all 15 CapnBry radar sightings (changeling, mob 2446, Connacht zone 207, centre 27678,39576; period \"northwest of Ardee (N of TnN), small camp of anger sprites\"); each now stands on a CapnBry sighting"
+  },
+  {
+   "finding": "P10-B4",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 316270,
+    "Y": 458210,
+    "Z": 6427
+   },
+   "where": {
+    "Mob_ID": "c976218c-e58a-4659-9879-a052e6f6253d"
+   },
+   "why": "the four changelings were 22-25k from all 15 CapnBry radar sightings (changeling, mob 2446, Connacht zone 207, centre 27678,39576; period \"northwest of Ardee (N of TnN), small camp of anger sprites\"); each now stands on a CapnBry sighting"
+  },
+  {
+   "finding": "P10-B4",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 312382,
+    "Y": 456299,
+    "Z": 5545
+   },
+   "where": {
+    "Mob_ID": "96c13e37-5658-4436-86ba-2020bb67d9d5"
+   },
+   "why": "the four changelings were 22-25k from all 15 CapnBry radar sightings (changeling, mob 2446, Connacht zone 207, centre 27678,39576; period \"northwest of Ardee (N of TnN), small camp of anger sprites\"); each now stands on a CapnBry sighting"
+  },
+  {
+   "finding": "P10-B4",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 317659,
+    "Y": 458839,
+    "Z": 6749
+   },
+   "where": {
+    "Mob_ID": "cc0ee933-b5b7-45ea-978a-f9e1a2b89698"
+   },
+   "why": "the four changelings were 22-25k from all 15 CapnBry radar sightings (changeling, mob 2446, Connacht zone 207, centre 27678,39576; period \"northwest of Ardee (N of TnN), small camp of anger sprites\"); each now stands on a CapnBry sighting"
+  },
+  {
+   "finding": "P10-B4",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21401",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 317712,
+    "Y": 457285,
+    "Z": 6319
+   },
+   "why": "marker moves to the changelings' CapnBry camp north-west of Ardee"
+  },
+  {
+   "finding": "P10-B5",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21405",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 381161,
+    "Y": 537242,
+    "Z": 4762
+   },
+   "why": "step 4 marker was 32k from the sentinel's tower; now on the permanent Driss at the pond west of the tower (Lough Derg 61673,53914)"
+  },
+  {
+   "finding": "P10-B5",
+   "kind": "quest",
+   "op": "delete",
+   "path": [
+    "Quests",
+    "21405",
+    "Steps",
+    4,
+    "Spawn"
+   ],
+   "why": "the step-4 event spawn of Driss was 32,549 from Sentinel Giolladhe's tower, while the period Driss (Prima batch restored spawn) already stands at \"the pond west of the tower\" and is killed there (\"killed off mist sheeries until he appeared\")"
+  },
+  {
+   "finding": "P10-B7",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 389800,
+    "Y": 496600,
+    "Z": 5728
+   },
+   "where": {
+    "Mob_ID": "d780ccf8-2679-5b72-8dff-7e444c896839"
+   },
+   "why": "Tangua stood at the Mag Mell road shops (the sett youngling loc 31845,35465 of the walkthrough); period: \"a rare spawn in a set of huts behind the parthanan farm ... its main group is Siog footpad and Siog piller\"; moved into the siog footpad/piller huts in Valley of Bri Leith (local 4776,13272; CapnBry siog footpad 2496 / siog piller 2508 at 4.4-5.6k, 11.1-15.4k)"
+  },
+  {
+   "finding": "P10-B7",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21403",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 389800,
+    "Y": 496600,
+    "Z": 5728
+   },
+   "why": "marker moves with Tangua to the siog huts"
+  },
+  {
+   "finding": "P10-B7",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21404",
+    "Steps",
+    4,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 389800,
+    "Y": 496600,
+    "Z": 5728
+   },
+   "why": "marker moves with Tangua to the siog huts"
+  },
+  {
+   "finding": "P10-B8",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 372638,
+    "Y": 551164,
+    "Z": 5155
+   },
+   "where": {
+    "Mob_ID": "9f7e43cf-0c5c-544b-ad8e-2b79d21c9827"
+   },
+   "why": "the siabra (knife) camp was generated 800 from the siabra enchanter camp in Lough Derg, 33k north of Silvermine; period: \"a house with Siabra's south of the Bri Leith Entrance on the East side of the lake ... just across into Silvermine\" and Allakhazam bestiary 2001 \"Northern edge of the Silvermine mountains on the East side of the lake ... gather around a hut that is just South of the dock\"; moved beside the hut at Silvermine 53-54k, 1-2k (the sheevra hut camp)"
+  },
+  {
+   "finding": "P10-B8",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 372988,
+    "Y": 551164,
+    "Z": 5157
+   },
+   "where": {
+    "Mob_ID": "80ec93a2-33b6-55ec-a7c1-fd0f0ff73941"
+   },
+   "why": "the siabra (knife) camp was generated 800 from the siabra enchanter camp in Lough Derg, 33k north of Silvermine; period: \"a house with Siabra's south of the Bri Leith Entrance on the East side of the lake ... just across into Silvermine\" and Allakhazam bestiary 2001 \"Northern edge of the Silvermine mountains on the East side of the lake ... gather around a hut that is just South of the dock\"; moved beside the hut at Silvermine 53-54k, 1-2k (the sheevra hut camp)"
+  },
+  {
+   "finding": "P10-B8",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 372813,
+    "Y": 551464,
+    "Z": 5157
+   },
+   "where": {
+    "Mob_ID": "6dfc5a3c-dd07-5dfc-8ae6-0d363c59feee"
+   },
+   "why": "the siabra (knife) camp was generated 800 from the siabra enchanter camp in Lough Derg, 33k north of Silvermine; period: \"a house with Siabra's south of the Bri Leith Entrance on the East side of the lake ... just across into Silvermine\" and Allakhazam bestiary 2001 \"Northern edge of the Silvermine mountains on the East side of the lake ... gather around a hut that is just South of the dock\"; moved beside the hut at Silvermine 53-54k, 1-2k (the sheevra hut camp)"
+  },
+  {
+   "finding": "P10-B8",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 372463,
+    "Y": 551464,
+    "Z": 5155
+   },
+   "where": {
+    "Mob_ID": "b6156ba5-c60b-5dc6-85bd-63e7177fd873"
+   },
+   "why": "the siabra (knife) camp was generated 800 from the siabra enchanter camp in Lough Derg, 33k north of Silvermine; period: \"a house with Siabra's south of the Bri Leith Entrance on the East side of the lake ... just across into Silvermine\" and Allakhazam bestiary 2001 \"Northern edge of the Silvermine mountains on the East side of the lake ... gather around a hut that is just South of the dock\"; moved beside the hut at Silvermine 53-54k, 1-2k (the sheevra hut camp)"
+  },
+  {
+   "finding": "P10-B8",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 372288,
+    "Y": 551164,
+    "Z": 5148
+   },
+   "where": {
+    "Mob_ID": "21ffd460-3469-5e9f-9d12-50d43477f1f6"
+   },
+   "why": "the siabra (knife) camp was generated 800 from the siabra enchanter camp in Lough Derg, 33k north of Silvermine; period: \"a house with Siabra's south of the Bri Leith Entrance on the East side of the lake ... just across into Silvermine\" and Allakhazam bestiary 2001 \"Northern edge of the Silvermine mountains on the East side of the lake ... gather around a hut that is just South of the dock\"; moved beside the hut at Silvermine 53-54k, 1-2k (the sheevra hut camp)"
+  },
+  {
+   "finding": "P10-B8",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 372463,
+    "Y": 550864,
+    "Z": 5147
+   },
+   "where": {
+    "Mob_ID": "927f260e-eab0-52ae-976e-66bc57051a1a"
+   },
+   "why": "the siabra (knife) camp was generated 800 from the siabra enchanter camp in Lough Derg, 33k north of Silvermine; period: \"a house with Siabra's south of the Bri Leith Entrance on the East side of the lake ... just across into Silvermine\" and Allakhazam bestiary 2001 \"Northern edge of the Silvermine mountains on the East side of the lake ... gather around a hut that is just South of the dock\"; moved beside the hut at Silvermine 53-54k, 1-2k (the sheevra hut camp)"
+  },
+  {
+   "finding": "P10-B8",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21400",
+    "Steps",
+    3,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 372638,
+    "Y": 551164,
+    "Z": 5155
+   },
+   "why": "marker moves with the siabra camp to the hut at the northern edge of Silvermine"
+  },
+  {
+   "finding": "P10-B10",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": null,
+    "Name": "empyrean guardian",
+    "Suffix": null,
+    "Guild": "",
+    "ExamineArticle": null,
+    "MessageArticle": null,
+    "X": 420024,
+    "Y": 462792,
+    "Z": 2231,
+    "Speed": 180,
+    "Heading": 2785,
+    "Region": 200,
+    "Model": 2110,
+    "Size": 53,
+    "Strength": 0,
+    "Constitution": 0,
+    "Dexterity": 74,
+    "Quickness": 0,
+    "Intelligence": 0,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 37,
+    "Realm": 0,
+    "EquipmentTemplateID": "",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 60160468,
+    "Race": 2005,
+    "Flags": 0,
+    "AggroLevel": 200,
+    "AggroRange": 500,
+    "MeleeDamageType": 2,
+    "RespawnInterval": 80,
+    "FactionID": 79,
+    "BodyType": 6,
+    "HouseNumber": 0,
+    "Brain": "",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 0,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 0,
+    "Mob_ID": "00071001-0000-4000-8000-000000000002"
+   },
+   "source": "Allakhazam Season of Remorse (1772): \"Speak the the Empyrean Guardian in the center of the standing ston ring north of Druim Cain 35k,45k\"",
+   "why": "no empyrean guardian stood at the Season of Remorse stone ring (the nearest Mount Collory guardian is 21k away and the marker was in Bri Leith); a guardian (copy of the Public_DB empyrean guardian, same level/faction) now stands at Mount Collory 35000,45000, north of Druim Cain"
+  },
+  {
+   "finding": "P10-B10",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21419",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 420024,
+    "Y": 462792,
+    "Z": 2231
+   },
+   "why": "markers for \"speak to / return to the empyrean guardian\" now point at the guardian in the stone ring north of Druim Cain"
+  },
+  {
+   "finding": "P10-B10",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21419",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 420024,
+    "Y": 462792,
+    "Z": 2231
+   },
+   "why": "markers for \"speak to / return to the empyrean guardian\" now point at the guardian in the stone ring north of Druim Cain"
+  },
+  {
+   "finding": "P10-B10",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21419",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 420024,
+    "Y": 462792,
+    "Z": 2231
+   },
+   "why": "markers for \"speak to / return to the empyrean guardian\" now point at the guardian in the stone ring north of Druim Cain"
+  },
+  {
+   "finding": "P10-B10",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21420",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 420024,
+    "Y": 462792,
+    "Z": 2231
+   },
+   "why": "markers for \"speak to / return to the empyrean guardian\" now point at the guardian in the stone ring north of Druim Cain"
+  },
+  {
+   "finding": "P10-B10",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21420",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 420024,
+    "Y": 462792,
+    "Z": 2231
+   },
+   "why": "markers for \"speak to / return to the empyrean guardian\" now point at the guardian in the stone ring north of Druim Cain"
+  },
+  {
+   "finding": "P10-B10",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21420",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 420024,
+    "Y": 462792,
+    "Z": 2231
+   },
+   "why": "markers for \"speak to / return to the empyrean guardian\" now point at the guardian in the stone ring north of Druim Cain"
+  },
+  {
+   "finding": "P10-B10",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21421",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 420024,
+    "Y": 462792,
+    "Z": 2231
+   },
+   "why": "markers for \"speak to / return to the empyrean guardian\" now point at the guardian in the stone ring north of Druim Cain"
+  },
+  {
+   "finding": "P10-B10",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21421",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 420024,
+    "Y": 462792,
+    "Z": 2231
+   },
+   "why": "markers for \"speak to / return to the empyrean guardian\" now point at the guardian in the stone ring north of Druim Cain"
+  },
+  {
+   "finding": "P10-B10",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21421",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 420024,
+    "Y": 462792,
+    "Z": 2231
+   },
+   "why": "markers for \"speak to / return to the empyrean guardian\" now point at the guardian in the stone ring north of Druim Cain"
+  },
+  {
+   "finding": "P10-B10",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21422",
+    "Steps",
+    1,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 420024,
+    "Y": 462792,
+    "Z": 2231
+   },
+   "why": "markers for \"speak to / return to the empyrean guardian\" now point at the guardian in the stone ring north of Druim Cain"
+  },
+  {
+   "finding": "P10-B10",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21422",
+    "Steps",
+    5,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 420024,
+    "Y": 462792,
+    "Z": 2231
+   },
+   "why": "markers for \"speak to / return to the empyrean guardian\" now point at the guardian in the stone ring north of Druim Cain"
+  },
+  {
+   "finding": "P10-B10",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21422",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 420024,
+    "Y": 462792,
+    "Z": 2231
+   },
+   "why": "markers for \"speak to / return to the empyrean guardian\" now point at the guardian in the stone ring north of Druim Cain"
+  },
+  {
+   "finding": "P10-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21392",
+    "Steps",
+    4
+   ],
+   "value": {
+    "Marker": {
+     "Region": 200,
+     "X": 332800,
+     "Y": 725016,
+     "Z": 4425
+    },
+    "Spawn": {
+     "Name": "dullahan",
+     "TemplateId": 60160221,
+     "Level": 51,
+     "Model": 380,
+     "Region": 200,
+     "X": 332800,
+     "Y": 725016,
+     "Z": 4425,
+     "TriggerRadius": 1500,
+     "Count": 1,
+     "DespawnSeconds": 600
+    }
+   },
+   "why": "period: \"Dullahans are a night spawn and can be found directly south west of Innis (around loc 45k 45k)\"; our Lough Gur dullahans are 9k+ west of that; a dullahan (the Public_DB dullahan template 60160221, level 51) now appears for the player on each kill step at Lough Gur 45000,45000, and any other dullahan still counts. No permanent level 51 camp was added beside the level 18-22 hunting ground outside Innis Carthaig"
+  },
+  {
+   "finding": "P10-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21392",
+    "Steps",
+    5
+   ],
+   "value": {
+    "Marker": {
+     "Region": 200,
+     "X": 332800,
+     "Y": 725016,
+     "Z": 4425
+    },
+    "Spawn": {
+     "Name": "dullahan",
+     "TemplateId": 60160221,
+     "Level": 51,
+     "Model": 380,
+     "Region": 200,
+     "X": 332800,
+     "Y": 725016,
+     "Z": 4425,
+     "TriggerRadius": 1500,
+     "Count": 1,
+     "DespawnSeconds": 600
+    }
+   },
+   "why": "period: \"Dullahans are a night spawn and can be found directly south west of Innis (around loc 45k 45k)\"; our Lough Gur dullahans are 9k+ west of that; a dullahan (the Public_DB dullahan template 60160221, level 51) now appears for the player on each kill step at Lough Gur 45000,45000, and any other dullahan still counts. No permanent level 51 camp was added beside the level 18-22 hunting ground outside Innis Carthaig"
+  },
+  {
+   "finding": "P10-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21393",
+    "Steps",
+    4
+   ],
+   "value": {
+    "Marker": {
+     "Region": 200,
+     "X": 332800,
+     "Y": 725016,
+     "Z": 4425
+    },
+    "Spawn": {
+     "Name": "dullahan",
+     "TemplateId": 60160221,
+     "Level": 51,
+     "Model": 380,
+     "Region": 200,
+     "X": 332800,
+     "Y": 725016,
+     "Z": 4425,
+     "TriggerRadius": 1500,
+     "Count": 1,
+     "DespawnSeconds": 600
+    }
+   },
+   "why": "period: \"Dullahans are a night spawn and can be found directly south west of Innis (around loc 45k 45k)\"; our Lough Gur dullahans are 9k+ west of that; a dullahan (the Public_DB dullahan template 60160221, level 51) now appears for the player on each kill step at Lough Gur 45000,45000, and any other dullahan still counts. No permanent level 51 camp was added beside the level 18-22 hunting ground outside Innis Carthaig"
+  },
+  {
+   "finding": "P10-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21393",
+    "Steps",
+    5
+   ],
+   "value": {
+    "Marker": {
+     "Region": 200,
+     "X": 332800,
+     "Y": 725016,
+     "Z": 4425
+    },
+    "Spawn": {
+     "Name": "dullahan",
+     "TemplateId": 60160221,
+     "Level": 51,
+     "Model": 380,
+     "Region": 200,
+     "X": 332800,
+     "Y": 725016,
+     "Z": 4425,
+     "TriggerRadius": 1500,
+     "Count": 1,
+     "DespawnSeconds": 600
+    }
+   },
+   "why": "period: \"Dullahans are a night spawn and can be found directly south west of Innis (around loc 45k 45k)\"; our Lough Gur dullahans are 9k+ west of that; a dullahan (the Public_DB dullahan template 60160221, level 51) now appears for the player on each kill step at Lough Gur 45000,45000, and any other dullahan still counts. No permanent level 51 camp was added beside the level 18-22 hunting ground outside Innis Carthaig"
+  },
+  {
+   "finding": "P10-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21394",
+    "Steps",
+    4
+   ],
+   "value": {
+    "Marker": {
+     "Region": 200,
+     "X": 332800,
+     "Y": 725016,
+     "Z": 4425
+    },
+    "Spawn": {
+     "Name": "dullahan",
+     "TemplateId": 60160221,
+     "Level": 51,
+     "Model": 380,
+     "Region": 200,
+     "X": 332800,
+     "Y": 725016,
+     "Z": 4425,
+     "TriggerRadius": 1500,
+     "Count": 1,
+     "DespawnSeconds": 600
+    }
+   },
+   "why": "period: \"Dullahans are a night spawn and can be found directly south west of Innis (around loc 45k 45k)\"; our Lough Gur dullahans are 9k+ west of that; a dullahan (the Public_DB dullahan template 60160221, level 51) now appears for the player on each kill step at Lough Gur 45000,45000, and any other dullahan still counts. No permanent level 51 camp was added beside the level 18-22 hunting ground outside Innis Carthaig"
+  },
+  {
+   "finding": "P10-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21394",
+    "Steps",
+    5
+   ],
+   "value": {
+    "Marker": {
+     "Region": 200,
+     "X": 332800,
+     "Y": 725016,
+     "Z": 4425
+    },
+    "Spawn": {
+     "Name": "dullahan",
+     "TemplateId": 60160221,
+     "Level": 51,
+     "Model": 380,
+     "Region": 200,
+     "X": 332800,
+     "Y": 725016,
+     "Z": 4425,
+     "TriggerRadius": 1500,
+     "Count": 1,
+     "DespawnSeconds": 600
+    }
+   },
+   "why": "period: \"Dullahans are a night spawn and can be found directly south west of Innis (around loc 45k 45k)\"; our Lough Gur dullahans are 9k+ west of that; a dullahan (the Public_DB dullahan template 60160221, level 51) now appears for the player on each kill step at Lough Gur 45000,45000, and any other dullahan still counts. No permanent level 51 camp was added beside the level 18-22 hunting ground outside Innis Carthaig"
+  },
+  {
+   "finding": "P10-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21395",
+    "Steps",
+    4
+   ],
+   "value": {
+    "Marker": {
+     "Region": 200,
+     "X": 332800,
+     "Y": 725016,
+     "Z": 4425
+    },
+    "Spawn": {
+     "Name": "dullahan",
+     "TemplateId": 60160221,
+     "Level": 51,
+     "Model": 380,
+     "Region": 200,
+     "X": 332800,
+     "Y": 725016,
+     "Z": 4425,
+     "TriggerRadius": 1500,
+     "Count": 1,
+     "DespawnSeconds": 600
+    }
+   },
+   "why": "period: \"Dullahans are a night spawn and can be found directly south west of Innis (around loc 45k 45k)\"; our Lough Gur dullahans are 9k+ west of that; a dullahan (the Public_DB dullahan template 60160221, level 51) now appears for the player on each kill step at Lough Gur 45000,45000, and any other dullahan still counts. No permanent level 51 camp was added beside the level 18-22 hunting ground outside Innis Carthaig"
+  },
+  {
+   "finding": "P10-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21395",
+    "Steps",
+    5
+   ],
+   "value": {
+    "Marker": {
+     "Region": 200,
+     "X": 332800,
+     "Y": 725016,
+     "Z": 4425
+    },
+    "Spawn": {
+     "Name": "dullahan",
+     "TemplateId": 60160221,
+     "Level": 51,
+     "Model": 380,
+     "Region": 200,
+     "X": 332800,
+     "Y": 725016,
+     "Z": 4425,
+     "TriggerRadius": 1500,
+     "Count": 1,
+     "DespawnSeconds": 600
+    }
+   },
+   "why": "period: \"Dullahans are a night spawn and can be found directly south west of Innis (around loc 45k 45k)\"; our Lough Gur dullahans are 9k+ west of that; a dullahan (the Public_DB dullahan template 60160221, level 51) now appears for the player on each kill step at Lough Gur 45000,45000, and any other dullahan still counts. No permanent level 51 camp was added beside the level 18-22 hunting ground outside Innis Carthaig"
+  },
+  {
+   "finding": "P10-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21396",
+    "Steps",
+    4
+   ],
+   "value": {
+    "Marker": {
+     "Region": 200,
+     "X": 332800,
+     "Y": 725016,
+     "Z": 4425
+    },
+    "Spawn": {
+     "Name": "dullahan",
+     "TemplateId": 60160221,
+     "Level": 51,
+     "Model": 380,
+     "Region": 200,
+     "X": 332800,
+     "Y": 725016,
+     "Z": 4425,
+     "TriggerRadius": 1500,
+     "Count": 1,
+     "DespawnSeconds": 600
+    }
+   },
+   "why": "period: \"Dullahans are a night spawn and can be found directly south west of Innis (around loc 45k 45k)\"; our Lough Gur dullahans are 9k+ west of that; a dullahan (the Public_DB dullahan template 60160221, level 51) now appears for the player on each kill step at Lough Gur 45000,45000, and any other dullahan still counts. No permanent level 51 camp was added beside the level 18-22 hunting ground outside Innis Carthaig"
+  },
+  {
+   "finding": "P10-B11",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21396",
+    "Steps",
+    5
+   ],
+   "value": {
+    "Marker": {
+     "Region": 200,
+     "X": 332800,
+     "Y": 725016,
+     "Z": 4425
+    },
+    "Spawn": {
+     "Name": "dullahan",
+     "TemplateId": 60160221,
+     "Level": 51,
+     "Model": 380,
+     "Region": 200,
+     "X": 332800,
+     "Y": 725016,
+     "Z": 4425,
+     "TriggerRadius": 1500,
+     "Count": 1,
+     "DespawnSeconds": 600
+    }
+   },
+   "why": "period: \"Dullahans are a night spawn and can be found directly south west of Innis (around loc 45k 45k)\"; our Lough Gur dullahans are 9k+ west of that; a dullahan (the Public_DB dullahan template 60160221, level 51) now appears for the player on each kill step at Lough Gur 45000,45000, and any other dullahan still counts. No permanent level 51 camp was added beside the level 18-22 hunting ground outside Innis Carthaig"
+  },
+  {
+   "finding": "P10-B12",
+   "kind": "update",
+   "table": "Mob",
+   "set": {
+    "X": 295720,
+    "Y": 705436,
+    "Z": 6458
+   },
+   "where": {
+    "Mob_ID": "2b717d8a-1275-4213-b283-6b06e7cdbce7"
+   },
+   "why": "period: \"kill a Luch Catcher in Gur, can be found a bit South/SouthWest of treibh caillite (9k, 25.5k)\"; the nearest spawn was 6.2k away; the luch catcher that stood under the old marker (Lough Gur 9952,38072) moves to 9000,25500"
+  },
+  {
+   "finding": "P10-B12",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "21424",
+    "Steps",
+    7,
+    "Marker"
+   ],
+   "value": {
+    "Region": 200,
+    "X": 295720,
+    "Y": 705436,
+    "Z": 6458
+   },
+   "why": "step 7 marker was 12.5k from the period luch catcher spot; now at Lough Gur 9000,25500"
+  }
+ ]
+}

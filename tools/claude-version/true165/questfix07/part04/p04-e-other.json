@@ -1,0 +1,106 @@
+{
+ "fixer": "part04",
+ "about": "E: other (Golga event spawn, Heretic rows, Balle's Potion sub-quest)",
+ "entries": [
+  {
+   "finding": "P04-E3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20377",
+    "Steps",
+    2,
+    "Spawn"
+   ],
+   "why": "walkthrough 138: 'Golga ... and 4 chanters will make their way to Healer Saydyn into town'; PRN guide: talking to Saydyn again 'releases the kobold mob'. Golga's own template, level 17 as at his camp (CapnBry zone 102 40653,54610); the camp Golga stays as the fallback. v3 (engine Spawn.PathId + Escort): Golga and 4 svartalf chanters (template 20008, as at his camp) now appear outside town west of Huginfell, on the line to the kobold camp, and walk path qf07_part04_golga_to_saydyn (v3-golga-path.json) to Saydyn instead of appearing beside the player among the merchants; the trigger radius (3500) reaches Saydyn, so talking to him still brings them",
+   "value": {
+    "Name": "Golga",
+    "TemplateId": 60161481,
+    "Level": 17,
+    "Model": 621,
+    "Region": 100,
+    "X": 706888,
+    "Y": 785842,
+    "Z": 4524,
+    "TriggerRadius": 3500,
+    "DespawnSeconds": 900,
+    "Count": 1,
+    "PathId": "qf07_part04_golga_to_saydyn",
+    "Escort": [
+     {
+      "Name": "svartalf chanter",
+      "TemplateId": 20008,
+      "Level": 0,
+      "Model": 0,
+      "Count": 4,
+      "Peaceful": false
+     }
+    ]
+   },
+   "create": true
+  },
+  {
+   "finding": "P04-E3",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20377",
+    "Steps",
+    2,
+    "Marker"
+   ],
+   "why": "the assassin comes to Saydyn, so the step marker stays on the healer",
+   "value": {
+    "Region": 100,
+    "X": 709510,
+    "Y": 784385,
+    "Z": 4728
+   }
+  },
+  {
+   "finding": "P04-E5",
+   "kind": "remove",
+   "table": "DataQuest",
+   "where": "ID = 20438",
+   "why": "Heretic (class 33) is a Catacombs class and disabled in True 1.65 (Classic165Mode disabled_classes); the row can never be offered"
+  },
+  {
+   "finding": "P04-E5",
+   "kind": "remove",
+   "table": "DataQuest",
+   "where": "ID = 20458",
+   "why": "Heretic (class 33) is a Catacombs class and disabled in True 1.65 (Classic165Mode disabled_classes); the row can never be offered"
+  },
+  {
+   "finding": "P04-E5",
+   "kind": "remove",
+   "table": "DataQuest",
+   "where": "ID = 20472",
+   "why": "Heretic (class 33) is a Catacombs class and disabled in True 1.65 (Classic165Mode disabled_classes); the row can never be offered"
+  },
+  {
+   "finding": "P04-E5",
+   "kind": "remove",
+   "table": "DataQuest",
+   "where": "ID = 20481",
+   "why": "Heretic (class 33) is a Catacombs class and disabled in True 1.65 (Classic165Mode disabled_classes); the row can never be offered"
+  },
+  {
+   "finding": "P04-E6",
+   "kind": "quest",
+   "op": "set",
+   "path": [
+    "Quests",
+    "20385",
+    "OnlyDuring"
+   ],
+   "why": "walkthrough 716: 'This is a sub quest for Dark Places of the Soul and not an individual quest' (DPotS 21264 step 18 needs it finished)",
+   "value": [
+    "Dark Places of the Soul"
+   ],
+   "create": true
+  }
+ ]
+}

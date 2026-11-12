@@ -1,0 +1,87 @@
+{
+ "fixer": "part01",
+ "about": "A2 Chelseigh StartName, A3 Asdis restored, A4 static Nyaegha archived, 259 freeshard task archived",
+ "entries": [
+  {
+   "finding": "P01-A2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StartName": "Chelseigh Stillman"
+   },
+   "where": {
+    "ID": 169
+   },
+   "why": "StartName 'Chelseigh Stilman' matches no NPC, so the Skin Cream task never attaches; the Camelot merchant (Mob 6271a188, region 10 36657/29331) is 'Chelseigh Stillman' (set by the vendor pass rules update) and QuestNames.Same compares exact names; the quest follows the NPC rather than renaming the Mob against the vendor generator"
+  },
+  {
+   "finding": "P01-A3",
+   "kind": "row",
+   "table": "Mob",
+   "row": {
+    "ClassType": "DOL.GS.GameNPC",
+    "TranslationId": "",
+    "Name": "Asdis",
+    "Suffix": "",
+    "Guild": "",
+    "ExamineArticle": "",
+    "MessageArticle": "",
+    "X": 771835,
+    "Y": 660896,
+    "Z": 6952,
+    "Speed": 180,
+    "Heading": 200,
+    "Region": 100,
+    "Model": 164,
+    "Size": 49,
+    "Strength": 0,
+    "Constitution": 30,
+    "Dexterity": 30,
+    "Quickness": 30,
+    "Intelligence": 30,
+    "Piety": 30,
+    "Empathy": 30,
+    "Charisma": 30,
+    "Level": 45,
+    "Realm": 2,
+    "EquipmentTemplateID": "c19ec062-0e02-444b-8e26-b6477be7ff35",
+    "ItemsListTemplateID": null,
+    "NPCTemplateID": 60158100,
+    "Race": 0,
+    "Flags": 16,
+    "AggroLevel": 0,
+    "AggroRange": 0,
+    "MeleeDamageType": 2,
+    "RespawnInterval": 0,
+    "FactionID": 0,
+    "BodyType": 0,
+    "HouseNumber": 0,
+    "Brain": "",
+    "PathID": "",
+    "OwnerID": "",
+    "RoamingRange": 0,
+    "IsCloakHoodUp": 0,
+    "Gender": 1,
+    "PackageID": "true165-questfix07",
+    "VisibleWeaponSlots": 34,
+    "Mob_ID": "00070101-0000-4000-8000-000000000001"
+   },
+   "source": "CapnBry radar mob Asdis: zone 111 (Uppland) 50939,54688 z 6947 level 45; Allakhazam zam 468: \"She can be found at Godrborg in Upland ... She is located at 50941, 54689\"",
+   "why": "kill task 217 giver Asdis was archived as a QuestWorld helper spawn (offline_true165_removed Id 640); restored from the archived row (model 164, NpcTemplate 60158100, equipment, realm 2) at the CapnBry/Allakhazam Godrborg spot (Uppland offset 88,74; navmesh ground z 6952), standing still, own package so the QuestWorld remove rule no longer matches"
+  },
+  {
+   "finding": "P01-A4",
+   "kind": "remove",
+   "table": "Mob",
+   "where": "Mob_ID = 'a065ab97-993d-4a0e-9211-76062e37b024' AND Name = 'Nyaegha'",
+   "why": "a permanent Nyaegha (SINeckBoss, region 51 349084/480377, 885 units from the Lost Stone of Arawn demon spot) stops LostStoneOfArawn.cs from spawning its own Nyaegha (it returns when any NPC of that name exists) and only the script copy grants step 5; period Illia bestiary (Wayback 2003-10-04, zam mob 6485): Nyaegha 'Only spawns when you have the Demon Scale from the Lost Stone of Arawn quest in your inventory'"
+  },
+  {
+   "finding": "P01-A1-259",
+   "kind": "remove",
+   "table": "DataQuest",
+   "where": "ID = 259 AND StartType = 1",
+   "why": "Digested Skull XP Item (Leim): no period source has this task (no Allakhazam kill-task page, no Uthgard item or drop; Leim is only an armor merchant in Audliten) and its item drops from nothing: an Atlas freeshard turn-in like IDs 200 and 400-408 (rules 'freeshard XP turn-ins')"
+  }
+ ]
+}

@@ -1,0 +1,30 @@
+{
+ "fixer": "part07",
+ "about": "E2, E4, E5",
+ "entries": [
+  {
+   "finding": "P07-E2",
+   "kind": "update",
+   "table": "DataQuest",
+   "set": {
+    "StepType": "0|0|0|0|0|0|4|0|0|0|0|0|4|7"
+   },
+   "where": {
+    "ID": 20972
+   },
+   "why": "the final choose step at Krazckz (realm 0, Krrzck faction, aggressive) was SearchFinish, which QuestTalkTruce.TalksTo does not cover, so he attacked players without Krrzck faction while they whispered their reward; WhisperFinish keeps the talk truce (AdvanceText is empty, so only the classic choose whisper finishes it)"
+  },
+  {
+   "finding": "P07-E4",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StepText = replace(StepText, 'their Skiethkona.||Give', 'their Skiethkona.|Now deal with Mista, the bad influence on Arica, in Vanern Swamp near Skona Ravine.|Give') WHERE ID BETWEEN 21008 AND 21013 AND Name = 'An End to the Daggers'",
+   "why": "step 3 (kill Mista) had an empty journal text; text from the period journal 'Seek Arica (the sister) and Mista (the bad influence, aprox. loc 62k, 60k) in Vanern Swamp, near Skona Ravine' (Allakhazam An End to the Daggers (level 45))"
+  },
+  {
+   "finding": "P07-E5",
+   "kind": "update",
+   "sql": "UPDATE DataQuest SET StepText = replace(StepText, 'Gordon Tuhan', 'Gordin Tuhan'), SourceText = replace(SourceText, 'Gordon Tuhan', 'Gordin Tuhan') WHERE ID BETWEEN 21065 AND 21069 AND Name = 'The Red Dagger'",
+   "why": "journal said 'Gordon Tuhan' but the step target and the Mularn spawn are 'Gordin Tuhan' (CapnBry radar records that name at Vale of Mularn 52477,51100); the text now names the NPC the player has to find"
+  }
+ ]
+}

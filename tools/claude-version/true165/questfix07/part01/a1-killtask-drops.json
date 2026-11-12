@@ -1,0 +1,299 @@
+{
+ "fixer": "part01",
+ "about": "A1: 22 kill-task XP items that dropped from nothing get their period monster back (259 is archived in a-quests.json)",
+ "entries": [
+  {
+   "finding": "P01-A1-114",
+   "kind": "drop",
+   "mob": "farmer",
+   "add": [
+    [
+     "Sack_of_Grain",
+     6
+    ]
+   ],
+   "why": "kill task 114 asks for Sack_of_Grain but no LootTemplate row or drops165 entry has it (taken by the freeshard drop clean-up, never restored); period monster Farmer (Lyonesse, 28 spawns); no measured rate, so the 6% median of killtask_drops_restored.json",
+   "source": "Allakhazam zam 426 (Pethos, Cornwall: Related NPC Farmer, Lyonesse)"
+  },
+  {
+   "finding": "P01-A1-127",
+   "kind": "drop",
+   "mob": "contraption",
+   "add": [
+    [
+     "Contraption_Pieces",
+     6
+    ]
+   ],
+   "why": "kill task 127 asks for Contraption_Pieces but no LootTemplate row or drops165 entry has it (taken by the freeshard drop clean-up, never restored); period monster Contraption (24 in Dales of Devwy); 6% median",
+   "source": "Allakhazam zam 604 (Aelbfled Smith, Fort Gwyntell: Related NPC Contraption)"
+  },
+  {
+   "finding": "P01-A1-160",
+   "kind": "drop",
+   "mob": "thrawn ogre thresher",
+   "add": [
+    [
+     "Gruesome_Thrawn_Ogre_Head",
+     6
+    ]
+   ],
+   "why": "kill task 160 asks for Gruesome_Thrawn_Ogre_Head but no LootTemplate row or drops165 entry has it (taken by the freeshard drop clean-up, never restored); period monster Thrawn Ogre Thresher (68 in Aldland/Gwyddneau); 6% median; cap 2 because threshers now carry two kill-task items (160 head, 157 spear tip)",
+   "source": "Allakhazam zam 2432 (Cnieda, Clifton: \"bounty for killing thrawn ogre threshers. Bring their heads\")",
+   "drop_count": 2
+  },
+  {
+   "finding": "P01-A1-168",
+   "kind": "drop",
+   "mob": "young brown drake",
+   "add": [
+    [
+     "Drake_Claw",
+     6
+    ]
+   ],
+   "why": "kill task 168 asks for Drake_Claw but no LootTemplate row or drops165 entry has it (taken by the freeshard drop clean-up, never restored); period monster Young Brown Drake (Pennine); 6% median",
+   "source": "Allakhazam zam 526 (Shayly Parke, Camelot: Related NPC Young Brown Drake, Pennine Mountains)"
+  },
+  {
+   "finding": "P01-A1-221",
+   "kind": "drop",
+   "mob": "little greeber",
+   "add": [
+    [
+     "Little_Greeber_Beak",
+     6
+    ]
+   ],
+   "why": "kill task 221 asks for Little_Greeber_Beak but no LootTemplate row or drops165 entry has it (taken by the freeshard drop clean-up, never restored); period monster Little Greeber (65 in Munin Sound); 6% median",
+   "source": "Allakhazam zam 619 (Tor, Knarr: \"have yourself a chase with the little greebers\")"
+  },
+  {
+   "finding": "P01-A1-225",
+   "kind": "drop",
+   "mob": "sjoalf cultist",
+   "add": [
+    [
+     "Cultist_Staff",
+     6
+    ]
+   ],
+   "why": "kill task 225 asks for Cultist_Staff but no LootTemplate row or drops165 entry has it (taken by the freeshard drop clean-up, never restored); period monster Sjoalf cultist (28 in Munin Sound); 6% median",
+   "source": "Allakhazam zam 620, Wayback capture 2004-10-13 (Nyvad, Knarr: Related NPC Sjoalf Cultist, \"return some cultist staves\")"
+  },
+  {
+   "finding": "P01-A1-230",
+   "kind": "drop",
+   "mob": "steam element",
+   "add": [
+    [
+     "Steam",
+     6
+    ]
+   ],
+   "why": "kill task 230 asks for Steam but no LootTemplate row or drops165 entry has it (taken by the freeshard drop clean-up, never restored); period monster Steam Element (46 in Delling Crater); 6% median",
+   "source": "Allakhazam zam 579 (Dgyve: Related NPC Steam Element)"
+  },
+  {
+   "finding": "P01-A1-231",
+   "kind": "drop",
+   "mob": "timberland badger",
+   "add": [
+    [
+     "Badger_Stomach",
+     6
+    ]
+   ],
+   "why": "kill task 231 asks for Badger_Stomach but no LootTemplate row or drops165 entry has it (taken by the freeshard drop clean-up, never restored); period monster Timberland Badger (26 in Skona Ravine); 6% median",
+   "source": "Allakhazam zam 534 (Ohar, Myrkwood: Related NPC Timberland Badger, Skona Ravine)"
+  },
+  {
+   "finding": "P01-A1-236",
+   "kind": "drop",
+   "mob": "morvalt beskydda",
+   "add": [
+    [
+     "Morvalt_Skydda_Eye",
+     6
+    ]
+   ],
+   "why": "kill task 236 asks for Morvalt_Skydda_Eye but no LootTemplate row or drops165 entry has it (taken by the freeshard drop clean-up, never restored); period monster Morvalt Beskydda (100 in Gripklosa); 6% median",
+   "source": "Allakhazam zam 1992 (Cadbg, Faraheim: Related NPC Morvalt Beskydda, Gripklosa)"
+  },
+  {
+   "finding": "P01-A1-245",
+   "kind": "drop",
+   "mob": "mammoth herdguard",
+   "add": [
+    [
+     "Mammoth_Herdguard_Skin",
+     6
+    ]
+   ],
+   "why": "kill task 245 asks for Mammoth_Herdguard_Skin but no LootTemplate row or drops165 entry has it (taken by the freeshard drop clean-up, never restored); period monster Mammoth Herdguard (34 spawns); 6% median",
+   "source": "Allakhazam zam 593 (Yvette: Related NPC Mammoth Herdguard, Delling Crater)"
+  },
+  {
+   "finding": "P01-A1-251",
+   "kind": "drop",
+   "mob": "griffon glider",
+   "add": [
+    [
+     "Griffon_Glider_Head",
+     6
+    ]
+   ],
+   "why": "kill task 251 asks for Griffon_Glider_Head but no LootTemplate row or drops165 entry has it (taken by the freeshard drop clean-up, never restored); period monster Griffon Glider (60 spawns); 6% median",
+   "source": "Allakhazam zam 592 (Yngvild, Bjarken: \"For each griffon glider in delling crater you kill\")"
+  },
+  {
+   "finding": "P01-A1-257",
+   "kind": "drop",
+   "mob": "hagbui shaman",
+   "add": [
+    [
+     "Jeweled_Shaman_Totem",
+     6
+    ]
+   ],
+   "why": "kill task 257 asks for Jeweled_Shaman_Totem but no LootTemplate row or drops165 entry has it (taken by the freeshard drop clean-up, never restored); period monster hagbui shaman (54 in Vanern); 6% median",
+   "source": "Allakhazam zam 1814 (Yosef Angor, Vasudheim: \"Jeweled Shaman Totems from shaman hagbui in Vanern Swamp\")"
+  },
+  {
+   "finding": "P01-A1-258",
+   "kind": "drop",
+   "mob": "bright aurora",
+   "add": [
+    [
+     "Aurora_Corpse",
+     6
+    ]
+   ],
+   "why": "kill task 258 asks for Aurora_Corpse but no LootTemplate row or drops165 entry has it (taken by the freeshard drop clean-up, never restored); period monster Bright Aurora (24 spawns; preferred over the Atlas hook monster aurora); 6% median",
+   "source": "Allakhazam zam 758 (Kvasir, Jordheim: Related NPC Bright Aurora, Odin's Gate)"
+  },
+  {
+   "finding": "P01-A1-262",
+   "kind": "drop",
+   "mob": "ghostly Hibernian invader",
+   "add": [
+    [
+     "Ghostly_Necklace",
+     6
+    ]
+   ],
+   "why": "kill task 262 asks for Ghostly_Necklace but no LootTemplate row or drops165 entry has it (taken by the freeshard drop clean-up, never restored); period monster Ghostly Hibernian Invader (80 spawns); 6% median",
+   "source": "Allakhazam zam 727 (Sydney, Fort Veldon: Related NPC Ghostly Hibernian Invader, Yggdra)"
+  },
+  {
+   "finding": "P01-A1-268",
+   "kind": "drop",
+   "mob": "hagbui spiritmaster",
+   "add": [
+    [
+     "Spirit_Stone1",
+     6
+    ]
+   ],
+   "why": "kill task 268 asks for Spirit_Stone1 but no LootTemplate row or drops165 entry has it (taken by the freeshard drop clean-up, never restored); period monster Hagbui Spiritmaster (36 spawns); 6% median",
+   "source": "Allakhazam zam 1822 (Lyna: Related NPC Hagbui Spiritmaster, Vanern Swamp)"
+  },
+  {
+   "finding": "P01-A1-270",
+   "kind": "drop",
+   "mob": "megaloceros",
+   "add": [
+    [
+     "rack_of_megaloceros_antlers",
+     6
+    ]
+   ],
+   "why": "kill task 270 asks for rack_of_megaloceros_antlers but no LootTemplate row or drops165 entry has it (taken by the freeshard drop clean-up, never restored); period monster Megaloceros (44 spawns); 6% median",
+   "source": "Allakhazam zam 726 (Trude, Dellingstad: \"Megaloceros can be found on the border of Gripklosa Mountains and Delling Crater\")"
+  },
+  {
+   "finding": "P01-A1-271",
+   "kind": "drop",
+   "mob": "fallen troll",
+   "add": [
+    [
+     "Troll_Teeth",
+     6
+    ]
+   ],
+   "why": "kill task 271 asks for Troll_Teeth but no LootTemplate row or drops165 entry has it (taken by the freeshard drop clean-up, never restored); period monster Fallen Troll (31 spawns); 6% median",
+   "source": "Allakhazam zam 744 (Hlif, Fort Veldon: \"Get some Troll Teeth from Fallen Trolls\")"
+  },
+  {
+   "finding": "P01-A1-273",
+   "kind": "drop",
+   "mob": "icestrider interceptor",
+   "add": [
+    [
+     "Red_Eye",
+     3
+    ]
+   ],
+   "why": "kill task 273 asks for Red_Eye but no LootTemplate row or drops165 entry has it (taken by the freeshard drop clean-up, never restored); period monster Icestrider Interceptor (85 spawns); Uthgard measured 2.6%",
+   "source": "Allakhazam zam 2436 (Kkor Borson: \"red eyes from icestrider interceptors\"); Uthgard item 3406 red eye: icestrider interceptor 2.6%"
+  },
+  {
+   "finding": "P01-A1-276",
+   "kind": "drop",
+   "mob": "large enslaved orm runner",
+   "add": [
+    [
+     "Silver_Gemmed_Collar",
+     6
+    ]
+   ],
+   "why": "kill task 276 asks for Silver_Gemmed_Collar but no LootTemplate row or drops165 entry has it (taken by the freeshard drop clean-up, never restored); period monster Large Enslaved Orm Runner (66 spawns); 6% median",
+   "source": "Allakhazam zam 3790 (Liv: Related NPC Large Enslaved Orm Runner, Vanern Swamp)"
+  },
+  {
+   "finding": "P01-A1-319",
+   "kind": "drop",
+   "mob": "torc",
+   "add": [
+    [
+     "torc_tooth",
+     6
+    ]
+   ],
+   "why": "kill task 319 asks for torc_tooth but no LootTemplate row or drops165 entry has it (taken by the freeshard drop clean-up, never restored); period monster Torc (40 spawns); 6% median",
+   "source": "Allakhazam zam 403 Torc Teeth -- Kill Task, Wayback capture 2004-10-13 (Alabhois: \"kill Torcs in Cruachan Gorge, for the teeth\"; Min 34 Max 37)"
+  },
+  {
+   "finding": "P01-A1-226",
+   "kind": "drop",
+   "mob": "snow giant",
+   "remove": [
+    "ice_water_165l31"
+   ],
+   "add": [
+    [
+     "Ice_Water",
+     4
+    ]
+   ],
+   "why": "kill task 226 (Beni) asks for Ice_Water but build_dropfix165 replaced the snow giant's period Vial of Ice Water with the junk twin ice_water_165l31 (the quest item is level 50 on a 31-37 task, so the level check took it for loot); killtask_drops_restored.json lists Snow Giant 4% (Uthgard measured)",
+   "source": "Allakhazam zam 533 (Beni: \"I must use the ice water from a snow giant\"); Uthgard item 7741 Vial of Ice Water (Beni of Svealand West, 31-37): snow giant 4.5%"
+  },
+  {
+   "finding": "P01-A1-267",
+   "kind": "drop",
+   "mob": "icestrider chiller",
+   "remove": [
+    "Frosted Grimel Root"
+   ],
+   "add": [
+    [
+     "Frosted_Gimel_Root",
+     6
+    ]
+   ],
+   "why": "kill task 267 (Runolf) takes Frosted_Gimel_Root, but the chillers drop the separate item 'Frosted Grimel Root' that no quest takes; same period drop and rate, now the item the quest accepts",
+   "source": "Uthgard item 5057 Frosted Grimel Root (Runolf of Svealand West, 43-45): icestrider chiller 5.8%; Allakhazam zam 519 (Runolf: killing Icestrider Chillers in Yggdra, Uppland and Raumarik)"
+  }
+ ]
+}
