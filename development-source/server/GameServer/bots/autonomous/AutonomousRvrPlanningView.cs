@@ -8,7 +8,7 @@ namespace DOL.GS
     {
         // One planning view per NPC phase, not one global population regrouping
         // per warband. No combat target, inventory, purchase, or route is cached.
-        private sealed record RvrPlanningView(GameBot[] Candidates, Dictionary<ushort, int[]> Population)
+        private sealed record RvrPlanningView(GameBot[] Candidates, Dictionary<ushort, int[]> Population, long BuiltTick)
         {
             public (int Allies, int Enemies) Count(ushort region, eRealm realm)
             {
@@ -20,7 +20,23 @@ namespace DOL.GS
         private static readonly Lock RvrPlanningLock = new();
         private static RvrPlanningView _rvrPlanningView;
 
-        public static void PrepareRvrPlanningTick() => Volatile.Write(ref _rvrPlanningView, null);
+        /// <summary>How long one planning view is shared (veteran review Q30: it was rebuilt with a full roster walk on
+        /// every tick it was used, up to 30 times a second). Users re-check every candidate live (alive, realm, frontier)
+        /// and read live positions, so a view up to 0.75 s old only delays who is counted, never what is attacked.</summary>
+        public const int RvrPlanningViewMilliseconds = 750;
+
+        public static void PrepareRvrPlanningTick()
+        {
+            RvrPlanningView view = Volatile.Read(ref _rvrPlanningView);
+            if (view != null && !RvrPlanningViewExpired(view.BuiltTick, GameLoop.GameLoopTime))
+                return;
+            Volatile.Write(ref _rvrPlanningView, null);
+        }
+
+        public static bool RvrPlanningViewExpired(long builtTick, long now) =>
+            now < builtTick || now - builtTick >= RvrPlanningViewMilliseconds;
+
+        private static void ResetRvrPlanningView() => Volatile.Write(ref _rvrPlanningView, null);
 
         private static RvrPlanningView GetRvrPlanningView()
         {
@@ -41,7 +57,7 @@ namespace DOL.GS
                     if (actor.Realm != eRealm.None && AutonomousObjectiveAssignments.Is(actor, eAutonomousObjectiveKind.RvR) && IsInFrontier(actor))
                         candidates.Add(actor);
                 }
-                view = new(candidates.ToArray(), population);
+                view = new(candidates.ToArray(), population, GameLoop.GameLoopTime);
                 Volatile.Write(ref _rvrPlanningView, view);
                 return view;
             }

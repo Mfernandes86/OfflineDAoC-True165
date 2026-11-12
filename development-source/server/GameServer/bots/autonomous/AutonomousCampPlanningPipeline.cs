@@ -228,7 +228,7 @@ namespace DOL.GS
         {
             StarterRouteFailures.Clear();
             ZoneHubs.Clear();
-            PrepareRvrPlanningTick();
+            ResetRvrPlanningView();
             _campBuilder?.Dispose();
             _campBuilder = null;
             _campDraft = _campProjected = null;
