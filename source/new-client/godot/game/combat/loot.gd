@@ -37,7 +37,7 @@ static func item(id: String) -> Dictionary:
 	return (data().get("items", {}) as Dictionary).get(id, {})
 
 
-## Autoloot (owner 2026-11-05: "add an autoloot option like old repo had with a toggle on and off in settings (default
+## Autoloot (owner 2026-11-05: an autoloot option "with a toggle on and off in settings (default
 ## off)" - a small quality-of-life addition, not in 1.65): Options > INTERFACE > AUTO LOOT, saved in settings [player]
 ## autoloot, OFF by default. The server keeps it for the session only, so the client tells it at every world entry
 ## (Server.zone_ready) and on every change: "/autoloot on quiet" / "/autoloot off quiet" (no chat line).

@@ -1,7 +1,7 @@
 namespace DOL.GS
 {
     /// <summary>
-    /// The launcher's two XP rate options (owner 2026-11-10: back from the old repo): Player XP rate (xp_rate) and
+    /// The launcher's two XP rate options (owner 2026-11-10): Player XP rate (xp_rate) and
     /// Gamebot XP rate (bot_xp_rate). Both default to 1x. A hired companion earns at the player rate, as in the old
     /// repo (bot_xp_rate never applied to companion helpers), so it keeps pace with the player it follows.
     /// </summary>

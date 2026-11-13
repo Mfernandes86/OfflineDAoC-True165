@@ -40,7 +40,7 @@ namespace DOL.GS
         public static Guild ShownGuild(GameBot bot)
         {
             if (bot == null) return null;
-            // A hired companion shows its player's guild, as cosmetics (owner 2026-11-05, as the old repo did); it never
+            // A hired companion shows its player's guild, as cosmetics (owner 2026-11-05); it never
             // joins the guild itself. An invited gamebot shows only its own guild (a /gc invite makes it a member).
             if (HiredCompanions165.IsHired(bot)) return bot.CompanionPlayer?.Guild;
             if (bot.IsAutonomousWorldBot) return GuildOf(bot.DatabaseID);

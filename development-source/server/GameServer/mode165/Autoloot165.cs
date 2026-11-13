@@ -1,7 +1,7 @@
 namespace DOL.GS
 {
     /// <summary>
-    /// True 1.65 Mode's autoloot (owner 2026-11-05: "add an autoloot option like old repo had with a toggle on and off in
+    /// True 1.65 Mode's autoloot (owner 2026-11-05: an autoloot option "with a toggle on and off in
     /// settings (default off)"). 1.65 had no autoloot, so it is an option, off unless the player turns it on: the new
     /// client's setting sends "/autoloot on|off quiet" when you enter the world and when you change it. The choice lives for
     /// the session only, so the character's old saved autoloot flag (on by default in the database) never turns it on by

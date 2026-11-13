@@ -5,7 +5,7 @@
       [--out banter165] [--share 0.5] [--only-share 0.25] [--ledger banter165/LIVING-SERVER-LINES.md] [--samples N]
 
 Living Server (github.com/chris4aker/OfflineDAoC-LivingServer, branch integration/1.2) keeps about 8,400 written chat
-lines, a lore bible and 419 chat scenes for the original Offline DAoC. This tool brings what the banter library can
+lines, a lore bible and 419 chat scenes. This tool brings what the banter library can
 say into it, under the library's own rules (BanterLibrary165.cs, validate_banter165.py):
 
 - every line is given one of the library's situations and its filters (channel, realm, level, classType, only);
