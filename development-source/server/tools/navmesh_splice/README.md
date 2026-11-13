@@ -31,6 +31,16 @@ Detour's search stops at a dead end when the only way to a far point first leads
 The server then falls back to a graph of short legs proven with its own corridor check
 (`AutonomousZoneRoads`): the corridor check, the zone itinerary and the bot mover all use it.
 Area ids match `seams.json` (both come from `navcomp`), so the same meshes must produce both.
+After rebuilding or splicing any mesh, first seal the keep gates again (the Recast build walks under gatehouse
+floors and round doorway slivers; see `..\navmesh_keepgate\README.md`), install its output, then regenerate:
+
+```
+python ..\navmesh_keepgate\seal_all.py <runtime\server\navmesh-165> <out folder> <world db>
+```
+
+Note: `navcomp` joins tiles only within climb + 16 at the edge middle, stricter than Detour (2 x climb at either end of
+the overlap, `navmesh_keepgate/navkit._overlap_slabs`), so a keep check built on `navcomp` can call a leaking gate sealed.
+
 Regenerate after rebuilding any mesh (server stopped, about a minute in all):
 
 ```
