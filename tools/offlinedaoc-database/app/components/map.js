@@ -105,7 +105,10 @@
   var imgCache = {};
   function loadImage(src, cb) {
     var e = imgCache[src];
-    if (e) { if (e.state === "loading") e.cbs.push(cb); else cb(e); return e; }
+    // A picture already loaded answers on the next turn, never inside this call: the caller keeps the returned entry
+    // (imgE = loadImage(...)) and checks it in the callback, so an answer before the return was thrown away and a
+    // map switched back to a picture it had shown (or one another map had loaded) stayed blank.
+    if (e) { if (e.state === "loading") e.cbs.push(cb); else setTimeout(function () { cb(e); }, 0); return e; }
     e = imgCache[src] = {state: "loading", img: new Image(), cbs: [cb]};
     e.img.onload = function () { e.state = "ok"; e.cbs.splice(0).forEach(function (f) { f(e); }); };
     e.img.onerror = function () { e.state = "error"; e.cbs.splice(0).forEach(function (f) { f(e); }); };
