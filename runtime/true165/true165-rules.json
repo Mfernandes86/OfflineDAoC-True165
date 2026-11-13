@@ -647,6 +647,24 @@
     "key": "LootTemplate_ID",
     "where": "TemplateName = 'Tylwyth Teg Rover' AND ItemTemplateID = 'Unused_Arrowhead'",
     "reason": "True 1.65 0.7 questfix07 INT-4 [integrator]: the kill-task Unused Arrowhead has no taker since task 142 was removed (P01-E-142); quest 20699 uses cq_unused_arrowhead"
+   },
+   {
+    "table": "Mob",
+    "key": "Mob_ID",
+    "where": "Region = 21 AND Mob_ID IN ('00b00c5f-b320-4223-9e78-e610f259d85e','01af6420-6ebd-4f93-9d70-7652f32d62b3','02b3ac65-0281-4470-b998-480019ced893','02b760b9-754f-4bba-a21b-656f3cd8d894','0838d0a1-0ed9-4f54-a4dd-f1dad058e792','087112f8-e699-4554-a020-90c29c852503','08bdff5c-19cc-4dac-9773-73bb6c851407','0900b446-c5cc-4d99-b5c3-9b238fbd8332','0a602614-82c7-4bda-afe4-23c0b87fb1bf','0bbc2fb2-47dc-4fea-8258-fe6240406b65','0da9acd2-75ca-4331-9eb7-bf8cc23ee154','11707c0d-6692-4978-9163-502f24703ec2','1249cb42-562c-40e9-91db-6591fc288e3f','13afa1d7-cc69-464a-87bb-6e93e349ddab','19a375a3-7318-44a9-8f27-e64c4e4f60bc','1a8b0090-96d1-4842-9324-7c2f5a18facb','1bb16fe1-dd73-4e51-90f1-fe883f59beb4','1c05949b-4abc-4480-8a0a-918cafdc461b','1f59f084-a049-4da4-bb32-6e964559ec73','20a17c9c-5a59-4669-9a9e-eda95e84364b','249a25fd-1adb-48b8-ab82-c0607af798a0','25b93faa-0668-496a-98ba-87488a895b17','26c47d35-3d6d-4aab-8f2b-36c44dc75202','2984517a-0d4b-4f8f-940f-e3542022efb9','2ca9c9d0-4ef6-4902-bae4-c1e2f12898f0','31ca5012-c36e-4a9a-b2ec-c6819c42f8d0','334fabb5-236d-49af-aeb2-5f5b0e25b29c','33686f74-97a0-4f5b-b8a2-69d92d5292af','3981363d-9853-493b-bdea-d43341cc6b20','3ac43164-9818-4d4e-b8fa-c73fdaa4814a','3d25f1c1-e84e-4e6c-b0ab-dfac5008707b','40f6393e-ad73-454b-910b-6dff199b1ba9','44de8d34-f99f-48e0-8367-a46277e0a23d','4932636b-d16e-4693-ae68-06f48b51617f','4b0a7670-0b10-4329-bd4a-6345ef144e85','4d018bbd-d61b-481f-a7fc-5c8679c71e9b','52138f9b-2594-459d-a994-bd5a2bbbe6dc','531fe0c4-b3e0-4ae8-9379-ffbd76951351','59ed972a-93e6-4635-b18b-194311ce3343','5fc438ad-48bb-46f2-9c93-7b8b5861297e','60834de6-0587-43b5-87a2-fb95743b7703','60949803-4f9a-40e1-8858-c61c76bf5e25','61bfd85e-35cd-47d9-87ce-98b949a9ecd4','632ada87-1ec4-4d97-9605-6aa9320be53a','63776a6c-626e-498a-b783-e765f82960ea','64b4b2a1-e04e-4e98-a7ad-cb2fa7447a30','65d61baa-fea9-4c30-b0b2-ea2005639788','6ac2bb46-8055-4f8b-8955-d00a1b91ba62','6dbd5384-bc7e-4030-ae6c-fcceb17c37e5','6dda58f1-b68e-4bf2-847d-dfb1aa4f3e49','6f02c4df-0ccf-416a-943d-c5fa3b161a99','788fc979-0f27-4d1b-853b-c2438d5fc5c6','7acaac88-4d00-4914-b506-4caa590f9212','7ae7a6a3-1ede-499a-86bc-9fb6115a6302','7d778431-832c-4e6d-bb8b-9da034c1794e','7d91b1f0-cb14-4d33-8386-292a8588eed0','7e426426-cd5d-44cd-9fb2-41e60d30ca1d','7fad0630-a815-4ba7-b664-a71f47643473','88a6ff3d-9779-4f3a-9102-01747c84420b','89376281-6108-43bc-9049-300048cf2abf','8bb75eba-04de-4ae4-b677-e6704ce2cf18','8f1065ea-c524-430a-b8a1-e12f66e23a9c','917b1ec5-adc1-4747-a907-ba32bfaedc4f','940d74b5-5a30-4cad-b14e-1e49a0920be3','97c1c417-529f-4e94-b48f-17bd307ac24f','99cb272a-2c8c-41f3-baf4-78028cb7b39a','9edac66c-04e1-41ac-b5e5-1e7500c9bf41','a1847e59-16ed-47bd-95c2-a780fa84ea3c','a459e98b-1ec0-4ffd-a57d-9b0d4119d402','a48a589d-5cfb-4ea0-9673-bd17d1a2a31b','a9ad67b6-6309-410b-af9f-11bbfa8177b3','a9e0aba5-d461-4a1f-a121-44b3dc2de137','aad0a8c5-ebf7-4930-9075-5952f034700d','ab1a70c6-8c2c-4745-b377-618ab87f81f8','ac23e060-9b43-49e1-8621-11df01e64f3a','aca76b45-7307-44e0-999c-4d56eeb7065a','b3907d2e-baa6-4e3c-b04f-288282fc7577','b4606261-d2c3-42ad-a433-220f3ccc44b6','b78826ce-d249-4559-9242-4b457e87fe7b','b7c06411-0800-45af-ad72-b220da67bece','b80867a0-401a-4e76-b2ca-6d7e49474008','ba212015-fc2d-4bd9-818b-992b0cce5a3f','bb5b7c66-729a-4ec5-91cc-a53c6a94f345','bddfdb0b-739b-4ee0-aa7f-d20891f3af3c','c09c928c-e6a3-43a0-948a-81ed3ac374db','c6455460-ca49-4bdc-9c2b-0b0dee365394','c96c7d9a-d9e8-463a-9d60-78ebb55bc79d','ca30186d-5529-41c9-87be-0edf5ed3f479','caa7017d-a4a6-4fcc-be69-c0cd16043845','cf5d260b-abc2-448b-8344-aed0ca4822e4','d499abdd-8097-4cbc-a73b-18f97dd1056e','d5f750ce-563a-4b24-bb7d-addb79bc9723','d632b536-8010-4664-9d6f-cb57747c7cc4','d6cfc9bc-0093-46f0-88e9-afda24bf1e81','d88f460b-c9be-4bdd-a1b3-68bb0f4d9e07','dc26a877-c2c4-4893-9574-c6610f50ed4a','dd5b9a10-8aa1-4fc2-81be-7e55487bf8d2','de730648-0946-4c7e-8408-6a9f6ddcbb9b','e0c7ff6d-f601-4996-8ed6-d6340f247a3f','e1087f50-e972-4437-90d2-96af3a9d0759','e38e40aa-b952-49e0-91e9-c25be2dafc27','e4b7acfd-05b9-4fd6-9424-d5a7181c961f','e688cb3f-d8f0-4cfa-9a4d-b848ba651c50','e7a8fd11-8816-4dc3-b0d9-1abe9d6cc2b1','e82b8e24-0bd0-4875-ac3d-5c28e778e6b9','edafe6e4-4cdf-4687-8727-070f78e9b0d6','f1c9b0ac-dad7-4370-b024-164fd7f94aa6','f2e2eac7-0750-4b70-a6ba-e13ff7596d9e','f2f39fbb-d4c3-489c-88d0-e0a74837c412','f69aa0a0-e443-4ec2-a04d-a83e8c762672','f870b30a-8eed-4187-9b9e-66664d8ebfce','fdf7c637-15ac-4eb9-8e2c-53f67cde7197','ffd4345d-7f31-4af6-a13c-3e9882f8d395')",
+    "reason": "True 1.65 0.8 gamefix ZONES: Tomb of Mithra: 113 rows outside every zone square: an older copy of the tomb's population (every name already in the zone, 100 of 113 within 300 units of a spawn there; CapnBry's radar shows no room for a 46 % fuller starter dungeon) parked 8 zone blocks east of the dungeon, never spawned (build_gamefix_zones165.py)"
+   },
+   {
+    "table": "Mob",
+    "key": "Mob_ID",
+    "where": "Region = 61 AND Mob_ID IN ('0fa68384-3440-4e5a-b0fe-2fc603505c0f','10a2c235-0275-4aeb-86b8-9e4e240670a3','3584eaf5-bf5a-42ee-b65e-23aa78f4dd47','3e94ab74-4b0c-4593-a5e5-7df7482ec0d8','512af7e6-25b7-44a0-b259-8fa70e27e29f','6b656cca-b03d-4cd5-a4db-b1b989586320','6fe8a24d-76fd-49ce-bc28-48aee26ca30f','706d4023-a281-4c8e-af2c-7aaaf4d63e93','782b3d6b-671b-4540-b592-bf6f51c9cd5f','80f51767-44d8-4c84-912e-e2069910841b','8e40463d-2c0f-4f47-b87e-fd1d00ca03ce','c9bceb6f-8d6b-450a-83ba-3d28612319f1','cdac0e67-59cb-4dd1-9ee7-46662452d976','e43b8d4c-56ee-48d8-9db2-64a6514946c1','ea595c89-6c60-4568-8877-5ce17661d141','fa4c726a-3bcf-44fa-8489-44ba1974e758','fd019261-b85d-4424-b372-058c7a53fe43')",
+    "reason": "True 1.65 0.8 gamefix ZONES: Krondon: 17 rows outside every zone square: an old unscripted copy of the Krondon boss rooms (Drihten Elreden, Lurfos the Herald, Orylle, Orshom: their scripted encounters stand in the zone; Orshom's Fire comes from the script; Drihten's leornere has no period source) parked 8 zone blocks south of the dungeon, never spawned; moving them would double four named bosses (build_gamefix_zones165.py)"
+   },
+   {
+    "table": "Mob",
+    "key": "Mob_ID",
+    "where": "Mob_ID IN ('231313cf-eb6a-408f-9811-f697c705ffb7', 'cc83cc14-e5ff-4eb1-b35c-8ad140793909') AND PackageID IS NULL AND Name IN ('Ley Manton', 'Tria Ellowis')",
+    "reason": "True 1.65 0.8 gamefix SPAWNS: Ley Manton (Weapon Merchant, Black Mountains North) and Tria Ellowis (Armor Merchant, Black Mountains South) each stood twice on one spot: the period Public_DB merchant row stays; the second base row (saved 2021-09-26, PackageID NULL, a GameNPC on the same merchant template) goes"
    }
   ]
  },
@@ -51379,6 +51397,278 @@
   {
    "sql": "UPDATE Mob SET Realm = 0, Flags = Flags & ~16, RespawnInterval = 720 WHERE Mob_ID = '28a63f87-3e68-550e-b3c0-1631cff581e6' AND PackageID = 'ClassicQuest'",
    "reason": "True 1.65 0.7 questfix07 INT-8 [integrator]: Freeing Osier: the peaceful quest Osier at the four standing stones and a hostile Osier 1,800 units away were two of one period monster. The quest's row is now that monster: no realm, attackable for his period drops, aggressive as his template says; the hostile duplicate leaves add-restoredspawns165.json (build_twins165.py PERIOD_TWINS). A player on the hand-in step is not attacked (QuestTalkTruce)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = CASE Mob_ID WHEN '0e502495-0827-4d37-a6e3-6fb0cf52a5bf' THEN 31627 WHEN '1a540311-0768-4ec1-980a-67970b6ea881' THEN 35118 WHEN '1d98c057-2843-4cf5-8c4b-b53c6c620672' THEN 32107 WHEN '1db3e80d-8892-477f-ba0f-3b94b3b8058d' THEN 31926 WHEN '210d3d81-c893-45e9-9333-aa4e58fee902' THEN 33302 WHEN '21af21df-dfcc-4eca-9dba-38e490e6b4d7' THEN 33990 WHEN '2998cd44-d0f7-4326-9039-c78a1f7ad500' THEN 35014 WHEN '29c2f317-fdf9-400c-80d9-99de40aa64f7' THEN 32118 WHEN '43a45a23-e6fc-4d98-83b5-4918102427a3' THEN 32674 WHEN '4468d0a3-1e39-438b-bf70-c22b2fe67e48' THEN 31599 WHEN '44b584f7-7ba4-4bce-9c0f-6bf642acc997' THEN 37238 WHEN '46081ba8-2e88-4ddd-9cfc-e4598b4f52a3' THEN 35182 WHEN '46b21cda-ad78-495c-8440-c9426e80a5d0' THEN 34950 WHEN '4e0434c9-26c6-44b6-887d-a14f235d1618' THEN 31734 WHEN '55188d54-86ad-4985-a94a-7fe9add02c82' THEN 32011 WHEN '576e2015-67e2-425a-8973-4204c12396b9' THEN 31979 WHEN '5ec5c899-988c-460a-b248-9deea63a88ec' THEN 38397 WHEN '6eadcdec-1414-409c-87d8-d109b2a63c6c' THEN 34926 WHEN '746c2255-6cfd-4f02-ac9b-d82d56aa4b14' THEN 38838 WHEN '775b1aa1-4d21-46fd-8e86-60528f8d05e7' THEN 33430 WHEN '7882f9bf-1a19-4a67-95de-546f4955e032' THEN 31734 WHEN '8301133b-040d-4b81-aec0-b7290edc2f15' THEN 34438 WHEN '887e2007-0a2e-438e-9175-e6093b71b9f0' THEN 32355 WHEN '89e636f2-2571-4d54-bd11-0928b53e49d3' THEN 32802 WHEN '8a22c106-6fb4-4c47-b7ed-fba10981149a' THEN 31798 WHEN '9abf7974-c536-4449-bdb6-04510f5a8fcb' THEN 32162 WHEN '9ec59678-f16b-42ca-849e-2bd4c45a9ffb' THEN 35466 WHEN '9f9c7e4d-82c8-48b0-a8f0-244f91263df4' THEN 34502 WHEN 'a537a193-0cd6-4489-88c3-cb54ee2ed988' THEN 38070 WHEN 'a8192d53-5d13-43b4-bb56-06f94381ac29' THEN 35206 WHEN 'aa2d0bb0-a103-415a-8aac-acc300e756a6' THEN 34908 WHEN 'abf5a3a8-09c5-4d64-865d-03f9d3fcf030' THEN 32374 WHEN 'c063322b-50ff-4d46-bb77-d42e256c289c' THEN 33891 WHEN 'c41416af-2ea7-4c26-8466-30dd4c07fb49' THEN 32261 WHEN 'cc32aad8-1a4e-44d4-b10d-2b7b5344b42e' THEN 37638 WHEN 'd66646c5-23da-40a5-8bf7-1ddedcc0def5' THEN 38390 WHEN 'e095e009-44ea-4404-bcd7-4df8d6765a2c' THEN 30059 WHEN 'e1005142-d6fa-493d-b0f7-e622cdc02849' THEN 31670 WHEN 'f22f3e15-e569-4b16-bf5f-dcf407871a71' THEN 35142 WHEN 'f2531bc0-462e-4fae-89fd-bb61c3c02a09' THEN 34851 WHEN 'f56c5648-7614-4b91-85bc-6f5e3bc7d33b' THEN 34166 WHEN 'f72274b1-7ce4-4f0c-9713-335d68391ee7' THEN 34694 END WHERE Region = 161 AND X >= 73728 AND Mob_ID IN ('0e502495-0827-4d37-a6e3-6fb0cf52a5bf','1a540311-0768-4ec1-980a-67970b6ea881','1d98c057-2843-4cf5-8c4b-b53c6c620672','1db3e80d-8892-477f-ba0f-3b94b3b8058d','210d3d81-c893-45e9-9333-aa4e58fee902','21af21df-dfcc-4eca-9dba-38e490e6b4d7','2998cd44-d0f7-4326-9039-c78a1f7ad500','29c2f317-fdf9-400c-80d9-99de40aa64f7','43a45a23-e6fc-4d98-83b5-4918102427a3','4468d0a3-1e39-438b-bf70-c22b2fe67e48','44b584f7-7ba4-4bce-9c0f-6bf642acc997','46081ba8-2e88-4ddd-9cfc-e4598b4f52a3','46b21cda-ad78-495c-8440-c9426e80a5d0','4e0434c9-26c6-44b6-887d-a14f235d1618','55188d54-86ad-4985-a94a-7fe9add02c82','576e2015-67e2-425a-8973-4204c12396b9','5ec5c899-988c-460a-b248-9deea63a88ec','6eadcdec-1414-409c-87d8-d109b2a63c6c','746c2255-6cfd-4f02-ac9b-d82d56aa4b14','775b1aa1-4d21-46fd-8e86-60528f8d05e7','7882f9bf-1a19-4a67-95de-546f4955e032','8301133b-040d-4b81-aec0-b7290edc2f15','887e2007-0a2e-438e-9175-e6093b71b9f0','89e636f2-2571-4d54-bd11-0928b53e49d3','8a22c106-6fb4-4c47-b7ed-fba10981149a','9abf7974-c536-4449-bdb6-04510f5a8fcb','9ec59678-f16b-42ca-849e-2bd4c45a9ffb','9f9c7e4d-82c8-48b0-a8f0-244f91263df4','a537a193-0cd6-4489-88c3-cb54ee2ed988','a8192d53-5d13-43b4-bb56-06f94381ac29','aa2d0bb0-a103-415a-8aac-acc300e756a6','abf5a3a8-09c5-4d64-865d-03f9d3fcf030','c063322b-50ff-4d46-bb77-d42e256c289c','c41416af-2ea7-4c26-8466-30dd4c07fb49','cc32aad8-1a4e-44d4-b10d-2b7b5344b42e','d66646c5-23da-40a5-8bf7-1ddedcc0def5','e095e009-44ea-4404-bcd7-4df8d6765a2c','e1005142-d6fa-493d-b0f7-e622cdc02849','f22f3e15-e569-4b16-bf5f-dcf407871a71','f2531bc0-462e-4fae-89fd-bb61c3c02a09','f56c5648-7614-4b91-85bc-6f5e3bc7d33b','f72274b1-7ce4-4f0c-9713-335d68391ee7')",
+   "reason": "True 1.65 0.8 gamefix ZONES: Iarnvidiur's Lair: 42 period spawns (cadby, syver, animus syndig, captured iarn dwarf; package Yggdrasil) stood 56 zone blocks (458,752 units) east of the dungeon, outside its zone, so the server never spawned them; moved back onto the dungeon floor where CapnBry's radar saw them (Prima SI Iarnvidiur Monsters); levels unchanged (build_gamefix_zones165.py)"
+  },
+  {
+   "sql": "UPDATE NpcTemplate SET Flags = Flags & ~16 WHERE TemplateId = 12799 AND Name = 'Shade of Ambrosius Aurelianus'",
+   "reason": "True 1.65 0.8 gamefix SPAWNS: Shade of Ambrosius Aurelianus can be fought (period Allakhazam mob 2606, 2003-10-11: Undead 54, Known Loot Slender Ebony staves, quest Hands Of Fate; Prima Atlas [54] with drops). One neutral monster (owner 2026-11-09): he still takes the Hands Of Fate items and never attacks first (AggroLevel 0 from questfix07 P04-A1 kept); only the PEACE bit goes, GHOST stays. Runs after the questfix07 P04-A1 entries"
+  },
+  {
+   "sql": "UPDATE Mob SET Flags = Flags & ~16 WHERE Mob_ID = '8ae4dc04-ddf9-454c-acfe-7c4b363f1094'",
+   "reason": "True 1.65 0.8 gamefix SPAWNS: Shade of Ambrosius Aurelianus: the same on his Mob row (the template decides; kept consistent)"
+  },
+  {
+   "sql": "UPDATE NpcTemplate SET Flags = Flags & ~16 WHERE TemplateId = 60161106 AND Name = 'Frit'",
+   "reason": "True 1.65 0.8 gamefix SPAWNS: Frit (Coruscating Mine) can be fought (period Allakhazam mob 3413, 2003-04-18: Monster 37, Known Loot Worn Jewel armour; Prima Atlas 'Frit [37] see silvermine knocker'); his ReplaceMobValues template carried PEACE"
+  },
+  {
+   "sql": "UPDATE Mob SET Flags = Flags & ~16 WHERE Mob_ID = 'ef6e1aac-5068-44a6-9827-e82ae35d8340'",
+   "reason": "True 1.65 0.8 gamefix SPAWNS: Frit: the same on his Mob row (the template decides; kept consistent)"
+  },
+  {
+   "sql": "UPDATE Mob SET Flags = Flags & ~16 WHERE Mob_ID = '765344ed-bc9c-4a6c-90fb-3ba505eb21ca' AND Name = 'Telsar'",
+   "reason": "True 1.65 0.8 gamefix SPAWNS: Telsar (Caldey) can be fought (period Allakhazam mob 5582, 2003-10-11: Monster 45, Known Loot Telsar's Bejeweled Pinky Ring, Gem Wrap, Jewelled Wrap; SI Prima guide Telsar 45)"
+  },
+  {
+   "sql": "UPDATE NpcTemplate SET Flags = Flags & ~16 WHERE TemplateId = 22016 AND Name = 'fallen sea queen'",
+   "reason": "True 1.65 0.8 gamefix SPAWNS: fallen sea queen (Vanern Swamp) can be fought (period Allakhazam mob 2843, 2003-09-18: 'Killed queen 3 times'; Prima Atlas fallen sea queen [60], coral crowns); her ReplaceMobValues template carried PEACE. Her row and the fallen sea king's are fixed in add-restoredspawns165.json (build_gamefix_spawns165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET ClassType = 'DOL.GS.GameNPC' WHERE Mob_ID = 'f79320fe-7f0f-4597-819c-0696d37f6b02' AND ClassType = '0'",
+   "reason": "True 1.65 0.8 gamefix SPAWNS: drakoran mage (Avalon) named class '0', which does not exist (the server fell back to GameNPC and logged an error); its template and its 35 siblings are DOL.GS.GameNPC"
+  },
+  {
+   "sql": "UPDATE NpcTemplate SET ClassType = 'DOL.GS.GameNPC' WHERE TemplateId = 60165654 AND ClassType = 'DOL.GS.Scholar'",
+   "reason": "True 1.65 0.8 gamefix SPAWNS: Scholar Nenet (Lethantis Association, Campacorentin Forest): his ReplaceMobValues template named DOL.GS.Scholar, the Trials of Atlantis artifact scholar (commented out in this server); he is a plain period NPC, as his Mob row says"
+  },
+  {
+   "sql": "UPDATE NpcTemplate SET ClassType = 'DOL.GS.GameNPC' WHERE TemplateId = 60266094 AND ClassType = 'DOL.GS.GamePC'",
+   "reason": "True 1.65 0.8 gamefix SPAWNS: soultorn norse stormur herra: base template 60266094 named DOL.GS.GamePC, which does not exist; every other soultorn is a GameNPC (the Prima batch copied it into template 916615184, fixed in add-primatemplates165.json)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET SpellID = 31114 WHERE SpellID = 40012 AND Id_nb IN ('Black_Diamond_Staff','Warshadow_Staff_of_the_Moon')",
+   "reason": "True 1.65 0.8 gamefix PROCS: SpellID 40012 has no Spell row, so it never fired; period effect = spell 31114: Black_Diamond_Staff, Warshadow_Staff_of_the_Moon (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET SpellID = 31114 WHERE SpellID = 65537 AND Id_nb IN ('Bitten_Staff')",
+   "reason": "True 1.65 0.8 gamefix PROCS: SpellID 65537 has no Spell row, so it never fired; period effect = spell 31114: Bitten_Staff (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET SpellID = 31115 WHERE SpellID = 32127 AND Id_nb IN ('2_sesoi_staff')",
+   "reason": "True 1.65 0.8 gamefix PROCS: SpellID 32127 has no Spell row, so it never fired; period effect = spell 31115: 2_sesoi_staff (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 31117 WHERE ProcSpellID = 55447 AND Id_nb IN ('Brilliant Spear of Malice')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 55447 has no Spell row, so it never fired; period effect = spell 31117: Brilliant Spear of Malice (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 31124 WHERE ProcSpellID = 32012 AND Id_nb IN ('Kvasirs_Sword_of_Blight','Miasmatic_Axe','Sinister_Miasmatic_Axe')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 32012 has no Spell row, so it never fired; period effect = spell 31124: Kvasirs_Sword_of_Blight, Miasmatic_Axe, Sinister_Miasmatic_Axe (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 31126 WHERE ProcSpellID = 32211 AND Id_nb IN ('Eiorharn''s_Skull_Cracker','Laoch_Meadhon_Targaid')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 32211 has no Spell row, so it never fired; period effect = spell 31126: Eiorharn's_Skull_Cracker, Laoch_Meadhon_Targaid (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 31126 WHERE ProcSpellID = 32302 AND Id_nb IN ('Dread_Bone_Great_Hammer')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 32302 has no Spell row, so it never fired; period effect = spell 31126: Dread_Bone_Great_Hammer (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 31126 WHERE ProcSpellID = 40016 AND Id_nb IN ('Frenzied_Blackhearted_Axe','Protector_of_the_Storm','Skufs_Hauberk','icy_great_hammer')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 40016 has no Spell row, so it never fired; period effect = spell 31126: Frenzied_Blackhearted_Axe, Protector_of_the_Storm, Skufs_Hauberk, icy_great_hammer (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET SpellID = 31130 WHERE SpellID = 32190 AND Id_nb IN ('Fas_Bioran','Inntinn_Bioran','Lesser_Staff_of_the_Pack','Lesser_Staff_of_the_Sigils','Rune_Inscribed_Sleeves')",
+   "reason": "True 1.65 0.8 gamefix PROCS: SpellID 32190 has no Spell row, so it never fired; period effect = spell 31130: Fas_Bioran, Inntinn_Bioran, Lesser_Staff_of_the_Pack, Lesser_Staff_of_the_Sigils, Rune_Inscribed_Sleeves (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET SpellID = 31130 WHERE SpellID = 40024 AND Id_nb IN ('Cloth_Cap_Alb')",
+   "reason": "True 1.65 0.8 gamefix PROCS: SpellID 40024 has no Spell row, so it never fired; period effect = spell 31130: Cloth_Cap_Alb (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 31131 WHERE ProcSpellID = 32161 AND Id_nb IN ('Small_Runic_Defender','Warlord`s Golden Flail')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 32161 has no Spell row, so it never fired; period effect = spell 31131: Small_Runic_Defender, Warlord`s Golden Flail (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET SpellID = 31131 WHERE SpellID = 32161 AND Id_nb IN ('Afanc_Hide_Cloak','Afanc_Scale_Cloak','Dire_Discordant_Drum','Enchanted_Afanc_Cloak','Holy_Afanc_Cloak')",
+   "reason": "True 1.65 0.8 gamefix PROCS: SpellID 32161 has no Spell row, so it never fired; period effect = spell 31131: Afanc_Hide_Cloak, Afanc_Scale_Cloak, Dire_Discordant_Drum, Enchanted_Afanc_Cloak, Holy_Afanc_Cloak (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 31145 WHERE ProcSpellID = 31002 AND Id_nb IN ('Soul-Scarred_Vest')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 31002 has no Spell row, so it never fired; period effect = spell 31145: Soul-Scarred_Vest (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 31145 WHERE ProcSpellID = 32155 AND Id_nb IN ('Sanguine Bowyer`s Vest')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 32155 has no Spell row, so it never fired; period effect = spell 31145: Sanguine Bowyer`s Vest (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 31153 WHERE ProcSpellID = 32012 AND Id_nb IN ('Verdant_Sword')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 32012 has no Spell row, so it never fired; period effect = spell 31153: Verdant_Sword (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 31154 WHERE ProcSpellID = 32006 AND Id_nb IN ('Baln`s Flawless Sulfuric Slicer','Brilliant Saeor`s Barbed Hammer','Ensorcelled_Robes_of_Celerity')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 32006 has no Spell row, so it never fired; period effect = spell 31154: Baln`s Flawless Sulfuric Slicer, Brilliant Saeor`s Barbed Hammer, Ensorcelled_Robes_of_Celerity (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET SpellID = 31154 WHERE SpellID = 32006 AND Id_nb IN ('Dommel''s_Flawless_Incendiary_Seal','Dommel''s_Incendiary_Seal')",
+   "reason": "True 1.65 0.8 gamefix PROCS: SpellID 32006 has no Spell row, so it never fired; period effect = spell 31154: Dommel's_Flawless_Incendiary_Seal, Dommel's_Incendiary_Seal (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 31157 WHERE ProcSpellID = 32304 AND Id_nb IN ('Rain')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 32304 has no Spell row, so it never fired; period effect = spell 31157: Rain (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 32100 WHERE ProcSpellID = 65552 AND Id_nb IN ('Fathomless_Short_Sword')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 65552 has no Spell row, so it never fired; period effect = spell 32100: Fathomless_Short_Sword (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 32108 WHERE ProcSpellID = 53463452 AND Id_nb IN ('Soul_Silencer')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 53463452 has no Spell row, so it never fired; period effect = spell 32108: Soul_Silencer (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 32121 WHERE ProcSpellID = 4075 AND Id_nb IN ('Deathly Cabalist Staff')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 4075 has no Spell row, so it never fired; period effect = spell 32121: Deathly Cabalist Staff (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 32124 WHERE ProcSpellID = 40002 AND Id_nb IN ('Halberd of the Stonewatch','Shimmering_Golden_Alloy_Great_Spear','shimmering_Glimmer_Wrath_Great_Hammer')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 40002 has no Spell row, so it never fired; period effect = spell 32124: Halberd of the Stonewatch, Shimmering_Golden_Alloy_Great_Spear, shimmering_Glimmer_Wrath_Great_Hammer (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 32124 WHERE ProcSpellID = 40025 AND Id_nb IN ('Golden_Alloy_Axe')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 40025 has no Spell row, so it never fired; period effect = spell 32124: Golden_Alloy_Axe (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 32124 WHERE ProcSpellID = 655177 AND Id_nb IN ('Ellyll_Rapier','Ellyll_Sword','Gladius_of_the_Battlelord','Kraggon_Sword')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 655177 has no Spell row, so it never fired; period effect = spell 32124: Ellyll_Rapier, Ellyll_Sword, Gladius_of_the_Battlelord, Kraggon_Sword (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 32126 WHERE ProcSpellID = 32127 AND Id_nb IN ('gnarledwitherwoodstaff')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 32127 has no Spell row, so it never fired; period effect = spell 32126: gnarledwitherwoodstaff (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 32126 WHERE ProcSpellID = 40025 AND Id_nb IN ('3_Glimmerspirit_Sword','shimmering_Glimmerstrike_Crusher')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 40025 has no Spell row, so it never fired; period effect = spell 32126: 3_Glimmerspirit_Sword, shimmering_Glimmerstrike_Crusher (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 32180 WHERE ProcSpellID = 32233 AND Id_nb IN ('Nokkvis_Mauler','Shadow Whisper`s Long Bow','Spiked_Jailors_Gloves')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 32233 has no Spell row, so it never fired; period effect = spell 32180: Nokkvis_Mauler, Shadow Whisper`s Long Bow, Spiked_Jailors_Gloves (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 92127 WHERE ProcSpellID = 32127 AND Id_nb IN ('Facimil','Sanguine Bowyer`s Gauntlets','Shimmering_Feather_Light_Granite_Hammer')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 32127 has no Spell row, so it never fired; period effect = spell 92127: Facimil, Sanguine Bowyer`s Gauntlets, Shimmering_Feather_Light_Granite_Hammer (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 92210 WHERE ProcSpellID = 32210 AND Id_nb IN ('Archaic_Granite_Long_Sword','Archaic_Granite_Rapier','Dread_Soul_Splitter','Furious_Pious_Defender','Runic_Granite_Blade','Runic_Granite_Great_Sword','Runic_Granite_Great_hammer','Runic_Granite_War_Pick','Wind_Whisper')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 32210 has no Spell row, so it never fired; period effect = spell 92210: Archaic_Granite_Long_Sword, Archaic_Granite_Rapier, Dread_Soul_Splitter, Furious_Pious_Defender, Runic_Granite_Blade, Runic_Granite_Great_Sword, Runic_Granite_Great_hammer, Runic_Granite_War_Pick, Wind_Whisper (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET SpellID = 92210 WHERE SpellID = 32210 AND Id_nb IN ('Dire_Discordant_Flute')",
+   "reason": "True 1.65 0.8 gamefix PROCS: SpellID 32210 has no Spell row, so it never fired; period effect = spell 92210: Dire_Discordant_Flute (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 92220 WHERE ProcSpellID = 14365 AND Id_nb IN ('Render`s Bone Breaker')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 14365 has no Spell row, so it never fired; period effect = spell 92220: Render`s Bone Breaker (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 92220 WHERE ProcSpellID = 32220 AND Id_nb IN ('Archaic_Granite_Short_Sword','Archaic_Granite_Stiletto','Malevolent_Great_Sword','Malevolent_Hammer','Runic_Granite_Gauntlets')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 32220 has no Spell row, so it never fired; period effect = spell 92220: Archaic_Granite_Short_Sword, Archaic_Granite_Stiletto, Malevolent_Great_Sword, Malevolent_Hammer, Runic_Granite_Gauntlets (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET SpellID = 92220 WHERE SpellID = 32220 AND Id_nb IN ('Bracer of Dire Omen','Fairich_Meadhon_Targaid')",
+   "reason": "True 1.65 0.8 gamefix PROCS: SpellID 32220 has no Spell row, so it never fired; period effect = spell 92220: Bracer of Dire Omen, Fairich_Meadhon_Targaid (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET SpellID = 92230 WHERE SpellID = 32230 AND Id_nb IN ('Swarm_Callers_Lute')",
+   "reason": "True 1.65 0.8 gamefix PROCS: SpellID 32230 has no Spell row, so it never fired; period effect = spell 92230: Swarm_Callers_Lute (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET SpellID = 972001 WHERE SpellID = 30 AND Id_nb IN ('Book_of_Chaos')",
+   "reason": "True 1.65 0.8 gamefix PROCS: SpellID 30 has no Spell row, so it never fired; period effect = spell 972001 (57 DD (350 AoE) Heat, added by add-gamefix-procs165.json): Book_of_Chaos (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 972002 WHERE ProcSpellID = 55449 AND Id_nb IN ('Alfriggs_Dwarf-Smasher','Alfriggs_Dwarf-Splitter')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 55449 has no Spell row, so it never fired; period effect = spell 972002 (ProcDirectDamageHeat64, added by add-gamefix-procs165.json): Alfriggs_Dwarf-Smasher, Alfriggs_Dwarf-Splitter (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 972003 WHERE ProcSpellID = 40010 AND Id_nb IN ('Fire Heatstone Stalagmite')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 40010 has no Spell row, so it never fired; period effect = spell 972003 (ProcDirectDamageHeat88, added by add-gamefix-procs165.json): Fire Heatstone Stalagmite (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 972004 WHERE ProcSpellID = 32031 AND Id_nb IN ('Shimmering_Twilight_Soul_Searer')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 32031 has no Spell row, so it never fired; period effect = spell 972004 (ProcDirectDamageSpirit88, added by add-gamefix-procs165.json): Shimmering_Twilight_Soul_Searer (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 972005 WHERE ProcSpellID = 32031 AND Id_nb IN ('Golden Alloy Kite Shield','Immolated_Dragonfire_Cleaver')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 32031 has no Spell row, so it never fired; period effect = spell 972005 (ProcDirectDamageHeat97, added by add-gamefix-procs165.json): Golden Alloy Kite Shield, Immolated_Dragonfire_Cleaver (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET SpellID = 972006 WHERE SpellID = 65527 AND Id_nb IN ('Rotting_Staff')",
+   "reason": "True 1.65 0.8 gamefix PROCS: SpellID 65527 has no Spell row, so it never fired; period effect = spell 972006 (331 DD Energy, added by add-gamefix-procs165.json): Rotting_Staff (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 972007 WHERE ProcSpellID = 32181 AND Id_nb IN ('Fiery_Revenger')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 32181 has no Spell row, so it never fired; period effect = spell 972007 (ProcDamageShieldMatter4, added by add-gamefix-procs165.json): Fiery_Revenger (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 972007 WHERE ProcSpellID = 55443 AND Id_nb IN ('Brilliant Adremel`s Daemon Fire Spear')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 55443 has no Spell row, so it never fired; period effect = spell 972007 (ProcDamageShieldMatter4, added by add-gamefix-procs165.json): Brilliant Adremel`s Daemon Fire Spear (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 972008 WHERE ProcSpellID = 32152 AND Id_nb IN ('Livid_Deceiver''s_Leggings','Sanguine Bowyer`s Leggings','Widowmaker')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 32152 has no Spell row, so it never fired; period effect = spell 972008 (150 Ablative (50%), added by add-gamefix-procs165.json): Livid_Deceiver's_Leggings, Sanguine Bowyer`s Leggings, Widowmaker (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 972008 WHERE ProcSpellID = 32155 AND Id_nb IN ('Foe_Hammer''s_Sleeves')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 32155 has no Spell row, so it never fired; period effect = spell 972008 (150 Ablative (50%), added by add-gamefix-procs165.json): Foe_Hammer's_Sleeves (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 972008 WHERE ProcSpellID = 32162 AND Id_nb IN ('Nightfire','Rockcrusher')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 32162 has no Spell row, so it never fired; period effect = spell 972008 (150 Ablative (50%), added by add-gamefix-procs165.json): Nightfire, Rockcrusher (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 972008 WHERE ProcSpellID = 32303 AND Id_nb IN ('Thunder')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 32303 has no Spell row, so it never fired; period effect = spell 972008 (150 Ablative (50%), added by add-gamefix-procs165.json): Thunder (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET SpellID = 972008 WHERE SpellID = 32152 AND Id_nb IN ('Belt of Coiled Destruction')",
+   "reason": "True 1.65 0.8 gamefix PROCS: SpellID 32152 has no Spell row, so it never fired; period effect = spell 972008 (150 Ablative (50%), added by add-gamefix-procs165.json): Belt of Coiled Destruction (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET SpellID = 972008 WHERE SpellID = 32162 AND Id_nb IN ('Bracer_of_Dazzling_Allurement')",
+   "reason": "True 1.65 0.8 gamefix PROCS: SpellID 32162 has no Spell row, so it never fired; period effect = spell 972008 (150 Ablative (50%), added by add-gamefix-procs165.json): Bracer_of_Dazzling_Allurement (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET SpellID = 972009 WHERE SpellID = 32171 AND Id_nb IN ('Bracer of Wonderous Alacrity')",
+   "reason": "True 1.65 0.8 gamefix PROCS: SpellID 32171 has no Spell row, so it never fired; period effect = spell 972009 (17% Haste Charge, added by add-gamefix-procs165.json): Bracer of Wonderous Alacrity (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET SpellID = 972010 WHERE SpellID = 31033 AND Id_nb IN ('Greater_Staff_of_Dominance','Greater_Staff_of_Fulmination','Greater_Staff_of_the_Creator')",
+   "reason": "True 1.65 0.8 gamefix PROCS: SpellID 31033 has no Spell row, so it never fired; period effect = spell 972010 (3 Power Regen Charge, added by add-gamefix-procs165.json): Greater_Staff_of_Dominance, Greater_Staff_of_Fulmination, Greater_Staff_of_the_Creator (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET SpellID = 972011 WHERE SpellID = 40018 AND Id_nb IN ('Staff_of_the_Shroud','Staff_of_the_Storm')",
+   "reason": "True 1.65 0.8 gamefix PROCS: SpellID 40018 has no Spell row, so it never fired; period effect = spell 972011 (2 Power Regen Charge, added by add-gamefix-procs165.json): Staff_of_the_Shroud, Staff_of_the_Storm (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET SpellID = 972012 WHERE SpellID = 32231 AND Id_nb IN ('Fairche_Crios')",
+   "reason": "True 1.65 0.8 gamefix PROCS: SpellID 32231 has no Spell row, so it never fired; period effect = spell 972012 (6 Health Regen Charge, added by add-gamefix-procs165.json): Fairche_Crios (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET ProcSpellID = 972013 WHERE ProcSpellID = 32200 AND Id_nb IN ('Hakrs_Hauberk','Runic_Giant-Bone_Gloves')",
+   "reason": "True 1.65 0.8 gamefix PROCS: ProcSpellID 32200 has no Spell row, so it never fired; period effect = spell 972013 (11.3 Dmg Add Matter, added by add-gamefix-procs165.json): Hakrs_Hauberk, Runic_Giant-Bone_Gloves (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE ItemTemplate SET SpellID = 972013 WHERE SpellID = 32200 AND Id_nb IN ('Pikeman''s_Belt')",
+   "reason": "True 1.65 0.8 gamefix PROCS: SpellID 32200 has no Spell row, so it never fired; period effect = spell 972013 (11.3 Dmg Add Matter, added by add-gamefix-procs165.json): Pikeman's_Belt (evidence per item in gamefix/reports/PROCS.md)"
+  },
+  {
+   "sql": "UPDATE NpcTemplate SET ClassType = 'DOL.GS.GameNPC' WHERE TemplateId = 60165072 AND ClassType = 'QanrisDuros'",
+   "reason": "True 1.65 0.8 gamefix BOSSCLASS: Qan'ris Duros template names a class that does not exist (Atlas script not wired: bot-unfriendly, not period); plain GameNPC as he always ran"
+  },
+  {
+   "sql": "UPDATE Mob SET ClassType = 'DOL.GS.GameNPC' WHERE Mob_ID = '5848c78e-3394-492b-aa5d-39e7853bd8fc' AND ClassType = 'DOL.GS.QanrisDuros'",
+   "reason": "True 1.65 0.8 gamefix BOSSCLASS: Qan'ris Duros row: plain GameNPC, as the template"
+  },
+  {
+   "sql": "UPDATE NpcTemplate SET ClassType = 'DOL.GS.GameNPC' WHERE TemplateId = 60165671 AND ClassType = 'ScoutArgyle'",
+   "reason": "True 1.65 0.8 gamefix BOSSCLASS: Scout Argyle template names a class that does not exist (its script adds nothing period); plain GameNPC as he always ran"
+  },
+  {
+   "sql": "UPDATE Mob SET ClassType = 'DOL.GS.GameNPC' WHERE Mob_ID = 'd7187d48-ac6f-448d-adce-1fe644e100ef' AND ClassType = 'DOL.GS.ScoutArgyle'",
+   "reason": "True 1.65 0.8 gamefix BOSSCLASS: Scout Argyle row: plain GameNPC, as the template"
   }
  ]
 }

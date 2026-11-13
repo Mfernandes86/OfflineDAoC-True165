@@ -153,7 +153,9 @@ if only and write:
 for pid in route_ids():
     if only and not any(o in pid.lower() for o in only):
         continue
-    pts = db.execute("SELECT Step,X,Y,Z,MaxSpeed,WaitTime FROM PathPoints WHERE PathID=? ORDER BY Step", (pid,)).fetchall()
+    # gamefix-route- rows (build_gamefix_route165.py: a short route ridden on to its stable) are that file's, not this pass's
+    pts = db.execute("SELECT Step,X,Y,Z,MaxSpeed,WaitTime FROM PathPoints WHERE PathID=? AND PathPoints_ID NOT LIKE 'gamefix-route-%' "
+                     "ORDER BY Step", (pid,)).fetchall()
     if len(pts) < 2:
         continue
     region = region_of(pts)
@@ -229,7 +231,7 @@ if write:
         rules['remove']['where'] = [w for w in rules['remove']['where'] if not w['reason'].startswith(tag)]
         ids = ','.join("'" + p.replace("'", "''") + "'" for p in sorted(changed))
         rules['remove']['where'].append({'table': 'PathPoints', 'key': 'PathPoints_ID',
-            'where': f"PathID IN ({ids}) AND PathPoints_ID NOT LIKE 'p165floor-%'",
+            'where': f"PathID IN ({ids}) AND PathPoints_ID NOT LIKE 'p165floor-%' AND PathPoints_ID NOT LIKE 'gamefix-route-%'",
             'reason': tag + ': the original points of the re-pointed routes (add-routefloor165.json has them, with the floor added)'})
         nl = b'\r\n' if b'\r\n' in raw else b'\n'
         open(rp, 'wb').write(json.dumps(rules, indent=1, ensure_ascii=False).encode('utf-8').replace(b'\n', nl) + (nl if raw.endswith(nl) else b''))

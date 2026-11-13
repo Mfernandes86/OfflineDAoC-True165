@@ -1,0 +1,227 @@
+{
+ "table": "PathPoints",
+ "key": "PathPoints_ID",
+ "reason": "True 1.65 0.8 gamefix ROUTE: horse routes that stopped short of their destination stable ride on to it (build_gamefix_route165.py)",
+ "rows": [
+  {
+   "PathPoints_ID": "gamefix-route-HS_Ludlow_CastleSauvage-126",
+   "PathID": "HS_Ludlow_CastleSauvage",
+   "Step": 126,
+   "X": 584255,
+   "Y": 488408,
+   "Z": 2363,
+   "MaxSpeed": 1000,
+   "WaitTime": 0,
+   "LastTimeRowUpdated": "2026-11-12 12:00:00"
+  },
+  {
+   "PathPoints_ID": "gamefix-route-HS_Ludlow_CastleSauvage-127",
+   "PathID": "HS_Ludlow_CastleSauvage",
+   "Step": 127,
+   "X": 584540,
+   "Y": 487706,
+   "Z": 2394,
+   "MaxSpeed": 1000,
+   "WaitTime": 0,
+   "LastTimeRowUpdated": "2026-11-12 12:00:00"
+  },
+  {
+   "PathPoints_ID": "gamefix-route-HS_Ludlow_CastleSauvage-128",
+   "PathID": "HS_Ludlow_CastleSauvage",
+   "Step": 128,
+   "X": 584661,
+   "Y": 487409,
+   "Z": 2392,
+   "MaxSpeed": 1000,
+   "WaitTime": 0,
+   "LastTimeRowUpdated": "2026-11-12 12:00:00"
+  },
+  {
+   "PathPoints_ID": "gamefix-route-HS_Ludlow_CastleSauvage-129",
+   "PathID": "HS_Ludlow_CastleSauvage",
+   "Step": 129,
+   "X": 585281,
+   "Y": 485889,
+   "Z": 2295,
+   "MaxSpeed": 1000,
+   "WaitTime": 0,
+   "LastTimeRowUpdated": "2026-11-12 12:00:00"
+  },
+  {
+   "PathPoints_ID": "gamefix-route-HS_Ludlow_CastleSauvage-130",
+   "PathID": "HS_Ludlow_CastleSauvage",
+   "Step": 130,
+   "X": 585492,
+   "Y": 485370,
+   "Z": 2287,
+   "MaxSpeed": 1000,
+   "WaitTime": 0,
+   "LastTimeRowUpdated": "2026-11-12 12:00:00"
+  },
+  {
+   "PathPoints_ID": "gamefix-route-HS_Ludlow_CastleSauvage-131",
+   "PathID": "HS_Ludlow_CastleSauvage",
+   "Step": 131,
+   "X": 585597,
+   "Y": 485090,
+   "Z": 2277,
+   "MaxSpeed": 1000,
+   "WaitTime": 0,
+   "LastTimeRowUpdated": "2026-11-12 12:00:00"
+  },
+  {
+   "PathPoints_ID": "gamefix-route-HS_Ludlow_CastleSauvage-132",
+   "PathID": "HS_Ludlow_CastleSauvage",
+   "Step": 132,
+   "X": 585526,
+   "Y": 483409,
+   "Z": 2256,
+   "MaxSpeed": 1000,
+   "WaitTime": 0,
+   "LastTimeRowUpdated": "2026-11-12 12:00:00"
+  },
+  {
+   "PathPoints_ID": "gamefix-route-HS_Ludlow_CastleSauvage-133",
+   "PathID": "HS_Ludlow_CastleSauvage",
+   "Step": 133,
+   "X": 585513,
+   "Y": 483085,
+   "Z": 2345,
+   "MaxSpeed": 1000,
+   "WaitTime": 0,
+   "LastTimeRowUpdated": "2026-11-12 12:00:00"
+  },
+  {
+   "PathPoints_ID": "gamefix-route-HS_Ludlow_CastleSauvage-134",
+   "PathID": "HS_Ludlow_CastleSauvage",
+   "Step": 134,
+   "X": 585511,
+   "Y": 483045,
+   "Z": 2347,
+   "MaxSpeed": 1000,
+   "WaitTime": 0,
+   "LastTimeRowUpdated": "2026-11-12 12:00:00"
+  },
+  {
+   "PathPoints_ID": "gamefix-route-HS_Ludlow_CastleSauvage-135",
+   "PathID": "HS_Ludlow_CastleSauvage",
+   "Step": 135,
+   "X": 585478,
+   "Y": 482276,
+   "Z": 2291,
+   "MaxSpeed": 1000,
+   "WaitTime": 0,
+   "LastTimeRowUpdated": "2026-11-12 12:00:00"
+  },
+  {
+   "PathPoints_ID": "gamefix-route-HS_Ludlow_CastleSauvage-136",
+   "PathID": "HS_Ludlow_CastleSauvage",
+   "Step": 136,
+   "X": 585469,
+   "Y": 482073,
+   "Z": 2251,
+   "MaxSpeed": 1000,
+   "WaitTime": 0,
+   "LastTimeRowUpdated": "2026-11-12 12:00:00"
+  },
+  {
+   "PathPoints_ID": "gamefix-route-HS_Ludlow_CastleSauvage-137",
+   "PathID": "HS_Ludlow_CastleSauvage",
+   "Step": 137,
+   "X": 585457,
+   "Y": 481790,
+   "Z": 2292,
+   "MaxSpeed": 1000,
+   "WaitTime": 0,
+   "LastTimeRowUpdated": "2026-11-12 12:00:00"
+  },
+  {
+   "PathPoints_ID": "gamefix-route-HS_Ludlow_CastleSauvage-138",
+   "PathID": "HS_Ludlow_CastleSauvage",
+   "Step": 138,
+   "X": 585447,
+   "Y": 481546,
+   "Z": 2245,
+   "MaxSpeed": 1000,
+   "WaitTime": 0,
+   "LastTimeRowUpdated": "2026-11-12 12:00:00"
+  },
+  {
+   "PathPoints_ID": "gamefix-route-HS_Ludlow_CastleSauvage-139",
+   "PathID": "HS_Ludlow_CastleSauvage",
+   "Step": 139,
+   "X": 585418,
+   "Y": 480858,
+   "Z": 2271,
+   "MaxSpeed": 1000,
+   "WaitTime": 0,
+   "LastTimeRowUpdated": "2026-11-12 12:00:00"
+  },
+  {
+   "PathPoints_ID": "gamefix-route-HS_Ludlow_CastleSauvage-140",
+   "PathID": "HS_Ludlow_CastleSauvage",
+   "Step": 140,
+   "X": 585393,
+   "Y": 480270,
+   "Z": 2481,
+   "MaxSpeed": 1000,
+   "WaitTime": 0,
+   "LastTimeRowUpdated": "2026-11-12 12:00:00"
+  },
+  {
+   "PathPoints_ID": "gamefix-route-HS_Ludlow_CastleSauvage-141",
+   "PathID": "HS_Ludlow_CastleSauvage",
+   "Step": 141,
+   "X": 585378,
+   "Y": 480110,
+   "Z": 2489,
+   "MaxSpeed": 1000,
+   "WaitTime": 0,
+   "LastTimeRowUpdated": "2026-11-12 12:00:00"
+  },
+  {
+   "PathPoints_ID": "gamefix-route-HS_Ludlow_CastleSauvage-142",
+   "PathID": "HS_Ludlow_CastleSauvage",
+   "Step": 142,
+   "X": 585282,
+   "Y": 479924,
+   "Z": 2549,
+   "MaxSpeed": 1000,
+   "WaitTime": 0,
+   "LastTimeRowUpdated": "2026-11-12 12:00:00"
+  },
+  {
+   "PathPoints_ID": "gamefix-route-HS_Ludlow_CastleSauvage-143",
+   "PathID": "HS_Ludlow_CastleSauvage",
+   "Step": 143,
+   "X": 585063,
+   "Y": 479498,
+   "Z": 2628,
+   "MaxSpeed": 1000,
+   "WaitTime": 0,
+   "LastTimeRowUpdated": "2026-11-12 12:00:00"
+  },
+  {
+   "PathPoints_ID": "gamefix-route-HS_Ludlow_CastleSauvage-144",
+   "PathID": "HS_Ludlow_CastleSauvage",
+   "Step": 144,
+   "X": 584968,
+   "Y": 479312,
+   "Z": 2627,
+   "MaxSpeed": 1000,
+   "WaitTime": 0,
+   "LastTimeRowUpdated": "2026-11-12 12:00:00"
+  },
+  {
+   "PathPoints_ID": "gamefix-route-HS_Ludlow_CastleSauvage-145",
+   "PathID": "HS_Ludlow_CastleSauvage",
+   "Step": 145,
+   "X": 584772,
+   "Y": 479121,
+   "Z": 2622,
+   "MaxSpeed": 1000,
+   "WaitTime": 0,
+   "LastTimeRowUpdated": "2026-11-12 12:00:00"
+  }
+ ]
+}
