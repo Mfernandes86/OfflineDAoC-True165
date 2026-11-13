@@ -39,7 +39,7 @@ Fixes taken from community forks of Offline DAoC, inherited from its source:
 | Fix | From |
 |---|---|
 | Smooth group travel, the Minstrel mez freeze, Valewalker proc ranks, the Warden speed chant, and the idea for the Savage shield/offhand loop guard | [stefanrows/OfflineDAoC](https://github.com/stefanrows/OfflineDAoC) (code by Stefan Rows and Aaron Zielke, GPL-3.0) |
-| The console no longer spins a CPU core when its input closes | lometur ([shadowofze/OfflineDAoC#3](https://github.com/shadowofze/OfflineDAoC/pull/3)) |
+| The console no longer spins a CPU core when its input closes | lometur |
 | Dead gamebots stay where they died; a meetup member that dies 3 times is a no-show | [chris4aker/OfflineDAoC-SocialExpansion](https://github.com/chris4aker/OfflineDAoC-SocialExpansion), branches `offer-0.37/dead-bot-corpse` and `offer-0.37/meetup-death-cap` |
 | `/spawn` healers hold position in a fight and don't walk away to heal or buff | [Nikse77/OfflineDAoC](https://github.com/Nikse77/OfflineDAoC), branch `mod-0.37` |
 | A boss's self-recasting area spell no longer runs the server out of memory | [chris4aker/OfflineDAoC-LivingServer](https://github.com/chris4aker/OfflineDAoC-LivingServer) |

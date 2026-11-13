@@ -44,7 +44,7 @@ This guide is for players. You don't need Git, an AI assistant or any programmin
 
 > **Code > Download ZIP** on the repository page gives you the *source code*, not the playable game.
 
-True 1.65 is a fresh start: saves from Offline DAoC 0.37 and earlier can't be brought over.
+True 1.65 is a fresh start: you begin with new characters, and there is no save import.
 
 ## 2. Play
 

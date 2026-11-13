@@ -38,7 +38,7 @@ You **don't** need to download the other files on this page by hand: the downloa
 - The source code, and the guides for developers and AI assistants, are in this repository; start with the
   [README](https://github.com/shadowofze/OfflineDAoC-True165#readme).
 
-Saves from Offline DAoC 0.37 and earlier can't be brought over: True 1.65 is a fresh start.
+True 1.65 is a fresh start: you begin with new characters.
 
 Dark Age of Camelot is the property of Electronic Arts and Broadsword. This is a free, non-commercial fan project,
 not affiliated with them.

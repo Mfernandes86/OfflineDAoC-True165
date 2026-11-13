@@ -4,7 +4,7 @@ using System.Globalization;
 namespace OfflineDaoc.Launcher;
 
 /// <summary>
-/// The Player XP rate and Gamebot XP rate options (owner 2026-11-10: back from the old repo) and the Crafting skill
+/// The Player XP rate and Gamebot XP rate options (owner 2026-11-10) and the Crafting skill
 /// rate (owner 2026-11-12: each crafting skill gain gives that many points). They are server properties (xp_rate,
 /// bot_xp_rate, crafting_skill_rate) in the world database, like the launcher's other options, default 1x. The True
 /// 1.65 content refresh does not write them, so the launcher's choice wins over true165-rules.json.

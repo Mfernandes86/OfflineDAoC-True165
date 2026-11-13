@@ -2,9 +2,6 @@
 
 The newest version is first.
 
-Offline DAoC True 1.65 grew out of [Offline DAoC](https://github.com/shadowofze/OfflineDAoC) (0.3 to 0.37c, now on
-hold). Its changelog has the history of everything this version inherits.
-
 ## Coming in the next update
 
 Source only so far (2026-11-12): these changes are in the repository; they reach an installed game with the next
@@ -857,12 +854,10 @@ The first version of True 1.65: Classic and Shrouded Isles as they were at patch
 additions to the period game are the bot and companion systems and the Realm Exchange. It is early in development:
 most of the systems below have been tested in autonomous bot runs, but not yet by players.
 
-### Compared with Offline DAoC
+### The basics
 
-- **One mode:** True 1.65 only. The launcher has no normal mode and refuses a world that isn't a True 1.65 one.
-- **One client:** the new client. The original DAoC client is not supported, and there is no DXVK.
-- **A fresh start:** nothing transfers from Offline DAoC, and there is no progress importer.
-- **No Sluaghbinder:** the custom class is gone.
+- **One mode:** True 1.65 only. The launcher refuses a world that isn't a True 1.65 one.
+- **One client:** the new client, built in Godot 4.
 
 ### The world, as in 1.65
 

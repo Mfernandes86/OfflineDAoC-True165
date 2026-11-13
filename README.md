@@ -20,7 +20,8 @@
 > **v0.7 is out**, with an in-place update for players of any earlier version (v0.1 to v0.6). Large parts of the game haven't been played through by a person.
 > Expect bugs, and keep a backup of your save. Bug reports are welcome in [Issues](https://github.com/shadowofze/OfflineDAoC-True165/issues).
 
-**Releases are not on a regular schedule.** Expect potentially long gaps between releases.
+**There is no release schedule.** Releases come out whenever I feel like it, and it may be weeks or months between
+one release and the next.
 Bug reports and ideas are welcome in [Issues](https://github.com/shadowofze/OfflineDAoC-True165/issues).
 Anyone who wants to continue development in a fork is free to do so, no need to ask me.
 
@@ -30,9 +31,8 @@ Offline DAoC True 1.65 is a local, single-player Dark Age of Camelot that runs e
 recreates the game as it was at **patch 1.65** (Classic and Shrouded Isles, November 2003), and fills the world
 with gamebots that level, group, trade, craft and fight on their own.
 
-It grew out of [Offline DAoC](https://github.com/shadowofze/OfflineDAoC), which is now on hold. Everything this
-project adds to the OpenDAoC server was written by AI tools (Codex, then Claude), as was the whole new client. The
-project owner, who has no game development or coding experience, directed and play-tested it.
+Everything this project adds to the OpenDAoC server was written by AI tools (Codex, then Claude), as was the whole
+new client. The project owner, who has no game development or coding experience, directed and play-tested it.
 
 ## Download and play
 
@@ -98,19 +98,6 @@ screens.
 Period sources come first: an item, drop or spawn stays only when the period data supports it, and nothing is
 invented unless no source exists. **The period data itself is not in this repository at this time.** What's here
 is the result: the world database and the content files built from it.
-
-## How it differs from Offline DAoC
-
-| | Offline DAoC (0.37 and earlier) | Offline DAoC True 1.65 |
-|---|---|---|
-| **Rules** | OpenDAoC's freeshard ruleset, plus many custom additions | Patch 1.65 rules only, with no mode toggle |
-| **Client** | The original DAoC client, and a beta new client in 0.37c | The new client only, built in Godot 4 |
-| **Items and loot** | Freeshard items, random "ROG" drops, items with later stats | Period 1.65 items, drops and vendor stock only |
-| **Leveling** | XP rate options, free levels, buff merchants, hasteners | XP 1x by default (player and gamebot rates in the launcher), with no shortcuts |
-| **Getting around** | Teleporters and `/tele` | Walking, horse routes and the period portals |
-| **Your group** | `/spawn` companion bots on demand | Hired companions that you level, spec and gear |
-| **Bots** | Separate bot rules | The same rules as players |
-| **Saves** | Progress transfers from every older version | A fresh start: no progress import from Offline DAoC |
 
 ## What True 1.65 has
 

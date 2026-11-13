@@ -31,8 +31,8 @@ Witrin, Huginfell or Connla). The innkeeper hires companions. More slots
 open at levels 5, 10, 15, 20, 30, 40 and 45.
 
 A FRESH START
-True 1.65 is its own game. Saves from Offline DAoC 0.37 and earlier can't be
-brought over.
+True 1.65 is its own game: you start new characters, and there is no save
+import.
 
 UPDATING
 A new version updates this folder in place: get the new downloader from the

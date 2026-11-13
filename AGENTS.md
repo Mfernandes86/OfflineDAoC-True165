@@ -18,8 +18,8 @@ The only additions to the period game are the bot and companion systems and the 
 - **One mode.** The game runs only in True 1.65 Mode; there is no normal mode and no mode switch. Some code paths of
   the discontinued normal mode are still in the server and the client, switched off behind `Classic165Mode.IsOn`
   (server) and `Server.world_mode` (client). Nothing new goes into them.
-- **One client.** The new client is the only one. The original DAoC client is not supported, and there is no DXVK.
-- **A fresh start.** Nothing transfers from Offline DAoC, and there is no progress importer.
+- **One client.** The new client is the only one.
+- **A fresh start.** There is no progress importer.
 - **Version:** v0.7. The launcher's version is `MainForm.DisplayVersion`, and
   the client's window title is `LoginScreen.GAME_TITLE` in `godot/game/login_screen.gd`.
 

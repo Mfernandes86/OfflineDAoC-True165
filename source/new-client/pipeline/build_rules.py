@@ -1,6 +1,6 @@
-"""Game rule NUMBERS for the MMOEngine's own combat / experience code (owner 2026-10-09: "you have my permission to
-look at the server code from the previous project too just dont use any bot code"). Only data is read here - the
-tables and constants in the old OfflineDAoC server source and its ServerProperty table - never code. The engine
+"""Game rule NUMBERS for the MMOEngine's own combat / experience code (owner 2026-10-09: data only, no bot code).
+Only data is read here - the tables and constants in the OpenDAoC server source and its ServerProperty table -
+never code. The engine
 implements the rules itself (game/combat/*.gd). Every value is listed with where it came from.
 
     python build_rules.py      -> godot/content/rules/rules.json"""

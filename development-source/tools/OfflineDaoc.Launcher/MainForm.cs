@@ -74,7 +74,7 @@ internal sealed partial class MainForm : Form
     private readonly CheckBox _makeMeGm = new() { Text = "Make Me a GM", AutoSize = true, ForeColor = DaocTheme.Parchment, Font = new Font("Georgia", 9f, FontStyle.Bold) };
     private readonly CheckBox _rvrAnnouncements = new() { Text = "RvR and battleground announcements", AutoSize = true, Checked = true, ForeColor = DaocTheme.Parchment, Font = new Font("Georgia", 9f, FontStyle.Bold) };
     private readonly CheckBox _pveAnnouncements = new() { Text = "PvE realm event announcements", AutoSize = true, Checked = true, ForeColor = DaocTheme.Parchment, Font = new Font("Georgia", 9f, FontStyle.Bold) };
-    // XP rate options back from the old repo (owner 2026-11-10): player and gamebot rates, saved as server properties.
+    // XP rate options (owner 2026-11-10): player and gamebot rates, saved as server properties.
     private readonly ComboBox _playerXpRate = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 108 };
     private readonly ComboBox _botXpRate = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 108 };
     private readonly ComboBox _craftRate = new() { DropDownStyle = ComboBoxStyle.DropDownList, Width = 108 };

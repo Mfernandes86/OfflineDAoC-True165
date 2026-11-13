@@ -10,7 +10,6 @@ Run from anywhere; the client is this script's parent folder (godot\\, tools\\go
 It runs on the package's bundled .NET runtime (the package's tools\\dotnet, set as DOTNET_ROOT by its start script).
 Never staged: developer mode (godot\\dev_mode.txt), the debug probes (godot\\tests), the editor's state
 (godot\\.godot\\editor), the C# build's scratch (godot\\.godot\\mono\\temp\\obj), any save\\ folder, logs, and backup files.
-The same rules as the 0.37c package builder (OfflineDAoC source/tools/build_newclient_037.py).
 """
 from __future__ import annotations
 
