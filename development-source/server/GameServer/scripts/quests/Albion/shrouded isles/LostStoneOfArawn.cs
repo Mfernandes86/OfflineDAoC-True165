@@ -122,15 +122,8 @@ public class LostStoneofArawn : BaseQuest
             if (SAVE_INTO_DATABASE) Honaytrt.SaveIntoDatabase();
         }
 
-        npcs = WorldMgr.GetNPCsByName("N\'chever", eRealm.Albion);
-
-        if (npcs.Length > 0)
-            foreach (var npc in npcs)
-                if (DOL.GS.Quests.QuestNpcPlacement.IsAt(npc, 51, 30763, 29908))
-                {
-                    Nchever = npc;
-                    break;
-                }
+        // Gamefix QNPC: searched 30763,29908 (not where N'chever is created), so a world N'chever was never found.
+        Nchever = DOL.GS.Quests.QuestNpcPlacement.Find<GameNPC>(WorldMgr.GetNPCsByName("N\'chever", eRealm.Albion), 51, 435972, 492370);
 
         if (Nchever == null)
         {

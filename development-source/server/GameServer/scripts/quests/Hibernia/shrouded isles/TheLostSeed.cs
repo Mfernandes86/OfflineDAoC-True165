@@ -137,14 +137,9 @@ namespace DOL.GS.Quests.Hibernia
         }
         // end npc
 
-        npcs = WorldMgr.GetNPCsByName("Emolia", eRealm.Hibernia);
-        if (npcs.Length > 0)
-            foreach (var npc in npcs)
-                if (DOL.GS.Quests.QuestNpcPlacement.IsAt(npc, 181, 404696, 503469))
-                {
-	                Emolia = (HiberniaSITeleporter)npc;
-                    break;
-                }
+        // Gamefix QNPC: searched O'honat's spot (404696,503469), not where Emolia is created, so a world Emolia was
+        // never found; a same-named NPC of another class no longer fails a hard cast here either.
+        Emolia = DOL.GS.Quests.QuestNpcPlacement.Find<HiberniaSITeleporter>(WorldMgr.GetNPCsByName("Emolia", eRealm.Hibernia), 181, 378864, 421086);
 
         if (Emolia == null)
         {
@@ -171,14 +166,8 @@ namespace DOL.GS.Quests.Hibernia
         }
         // end npc
 
-        npcs = WorldMgr.GetNPCsByName("Jandros", eRealm.Hibernia);
-        if (npcs.Length > 0)
-	        foreach (var npc in npcs)
-		        if (DOL.GS.Quests.QuestNpcPlacement.IsAt(npc, 181, 404696, 503469))
-		        {
-			        Jandros = npc;
-			        break;
-		        }
+        // Gamefix QNPC: searched O'honat's spot (404696,503469), not where Jandros is created.
+        Jandros = DOL.GS.Quests.QuestNpcPlacement.Find<GameNPC>(WorldMgr.GetNPCsByName("Jandros", eRealm.Hibernia), 181, 310873, 349961);
 
         if (Jandros == null)
         {
