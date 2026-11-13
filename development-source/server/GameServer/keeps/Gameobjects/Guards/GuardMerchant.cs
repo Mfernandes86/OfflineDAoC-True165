@@ -17,26 +17,58 @@
  */
 
 using DOL.AI.Brain;
+using DOL.Database;
 using DOL.GS.PlayerClass;
 
 namespace DOL.GS.Keeps
 {
 	public class GuardMerchant : GameGuardMerchant
 	{
+		// True 1.65 merchant keeps (Caer Benowyc, Bledmeer Faste, Dun Crauchon; battlegrounds fix 2026-11-12, lane BGCONTENT
+		// R2): a Mob row may name the merchant per owning realm ("Alb|Mid|Hib"; an empty part keeps the server's name) and
+		// give a list base ("true165MkSiege" -> "true165MkSiegeAlb/Mid/Hib"). A row without either behaves as before (the
+		// realm's RvRCraftingList and the server's names). Both follow the keep's realm when it is captured: the guard
+		// respawns for the new owner and RefreshTemplate -> SetName re-picks the name and the list.
+		private string[] m_realmNames;
+		private string m_listBase;
+
+		public override void LoadFromDatabase(DataObject obj)
+		{
+			if (obj is DbMob mob)
+			{
+				string[] names = (mob.Name ?? string.Empty).Split('|');
+				m_realmNames = names.Length == 3 ? names : null;
+				m_listBase = string.IsNullOrWhiteSpace(mob.ItemsListTemplateID) ? null : mob.ItemsListTemplateID.Trim();
+			}
+			base.LoadFromDatabase(obj); // runs RefreshTemplate -> SetName, so the fields are set first
+		}
+
+		/// <summary>The merchant list for a realm: the row's list base plus the realm tag, or the realm's RvRCraftingList
+		/// without one; null for no realm (the list is then left as it is).</summary>
+		public static string ListFor(string listBase, eRealm realm)
+		{
+			string tag = realm switch { eRealm.Albion => "Alb", eRealm.Midgard => "Mid", eRealm.Hibernia => "Hib", _ => null };
+			return tag == null ? null : listBase == null ? tag + "RvRCraftingList" : listBase + tag;
+		}
+
+		/// <summary>The row's own name for a realm, or null to keep the server's name.</summary>
+		public static string NameFor(string[] realmNames, eRealm realm)
+		{
+			if (realmNames == null || realmNames.Length != 3) return null;
+			string name = realmNames[realm == eRealm.Midgard ? 1 : realm == eRealm.Hibernia ? 2 : 0];
+			return string.IsNullOrWhiteSpace(name) ? null : name.Trim();
+		}
+
+		private void SetRealmList()
+		{
+			string list = ListFor(m_listBase, Realm);
+			if (list != null && TradeItems?.ItemsListID != list)
+				TradeItems = new MerchantTradeItems(list);
+		}
+
 		public override bool AddToWorld()
 		{
-			switch (Realm)
-			{
-				case eRealm.Albion:
-					TradeItems = new MerchantTradeItems("AlbRvRCraftingList");
-					break;
-				case eRealm.Midgard:
-					TradeItems = new MerchantTradeItems("MidRvRCraftingList");
-					break;
-				case eRealm.Hibernia:
-					TradeItems = new MerchantTradeItems("HibRvRCraftingList");
-					break;
-			}
+			SetRealmList();
 
 			GuildName = "Merchant";
 			return base.AddToWorld();
@@ -111,6 +143,17 @@ namespace DOL.GS.Keeps
 				if (Gender == eGender.Female)
 					Name = "Finnja";
 				else Name = "Fynn";
+			}
+			else
+			{
+				if (NameFor(m_realmNames, ModelRealm) is string own)
+				{
+					Name = own;
+					GuildName = "Merchant";
+				}
+				// A respawn runs AddToWorld before RefreshTemplate gives the guard its new owner's realm: the list follows
+				// the realm here as well, so a captured merchant keep sells the new owner's stock.
+				SetRealmList();
 			}
 		}
 	}

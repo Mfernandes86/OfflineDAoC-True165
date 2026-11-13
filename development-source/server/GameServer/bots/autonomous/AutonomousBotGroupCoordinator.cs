@@ -42,6 +42,7 @@ public static partial class AutonomousBotGroupCoordinator
     }
     private static long _nextGroupPveFormationTick;
     private static long _nextRvrFormationTick;
+    private static long _nextBattlegroundFormationTick;
     private static long _lastMaintenanceTick = long.MinValue;
     private static long _maintenanceRetryTick;
     private static int _nextGroupNumber;
@@ -325,8 +326,16 @@ public static partial class AutonomousBotGroupCoordinator
     /// this prevents repeated formation passes from asymptotically grouping all
     /// compatible bots in a realm.
     /// </summary>
+    /// <summary>
+    /// Battlegrounds fix 2026-11-12 (G2, "never grouped"): PvP-focus battleground bots form real warbands by the frontier
+    /// RvR warband rules (sizes, healer/speed/crowd-control picks, stealther duos, the 35% solo reserve), inside their
+    /// battleground, meeting where the leader stands. Grinders are unchanged.
+    /// </summary>
+    public static bool UsesWarbandRules(eAutonomousObjectiveKind objectiveKind) =>
+        objectiveKind is eAutonomousObjectiveKind.RvR or eAutonomousObjectiveKind.Battleground;
+
     public static int MaximumGroupedForObjective(eAutonomousObjectiveKind objectiveKind, int rosterCount) =>
-        objectiveKind == eAutonomousObjectiveKind.RvR
+        UsesWarbandRules(objectiveKind)
             ? Math.Max(0, rosterCount - MinimumSoloRvrReserve(rosterCount))
             : Math.Max(0, rosterCount);
 
@@ -338,7 +347,7 @@ public static partial class AutonomousBotGroupCoordinator
         Math.Max(0, MaximumGroupedForObjective(objectiveKind, realmRosterCount) - realmGroupedCount);
 
     public static bool ShouldContinueFormationSearch(eAutonomousObjectiveKind objectiveKind, int candidateRealmSlots) =>
-        objectiveKind == eAutonomousObjectiveKind.RvR || candidateRealmSlots >= 2;
+        UsesWarbandRules(objectiveKind) || candidateRealmSlots >= 2;
 
     public static void PublishCamp(GameBot bot, SharedCamp camp)
     {
@@ -1663,13 +1672,17 @@ public static partial class AutonomousBotGroupCoordinator
     {
         TryFormGroups(eAutonomousObjectiveKind.GroupPve);
         TryFormGroups(eAutonomousObjectiveKind.RvR);
+        TryFormGroups(eAutonomousObjectiveKind.Battleground);
     }
 
     private static void TryFormGroups(eAutonomousObjectiveKind objectiveKind)
     {
-        ref long nextFormationTick = ref objectiveKind == eAutonomousObjectiveKind.RvR
-            ? ref _nextRvrFormationTick
-            : ref _nextGroupPveFormationTick;
+        ref long nextFormationTick = ref _nextGroupPveFormationTick;
+        if (objectiveKind == eAutonomousObjectiveKind.RvR)
+            nextFormationTick = ref _nextRvrFormationTick;
+        else if (objectiveKind == eAutonomousObjectiveKind.Battleground)
+            nextFormationTick = ref _nextBattlegroundFormationTick;
+        bool warbandRules = UsesWarbandRules(objectiveKind);
         if (GameLoop.GameLoopTime < nextFormationTick)
             return;
         nextFormationTick = GameLoop.GameLoopTime + 15_000;
@@ -1693,7 +1706,7 @@ public static partial class AutonomousBotGroupCoordinator
         // of the full roster.
         int maximumGrouped = MaximumGroupedForObjective(objectiveKind, activeRoster.Length);
         int availableGroupSlots = maximumGrouped - groupedCount;
-        if (objectiveKind != eAutonomousObjectiveKind.RvR && availableGroupSlots < 2)
+        if (!warbandRules && availableGroupSlots < 2)
             return;
         Dictionary<eRealm, int> initiallyGroupedByRealm = activeRoster
             .Where(bot => bot.Group != null)
@@ -1709,6 +1722,9 @@ public static partial class AutonomousBotGroupCoordinator
                           (objectiveKind != eAutonomousObjectiveKind.GroupPve ||
                            CanRecruitPveMember(bot.IsOnStableMasterRoute, bot.IsReturningAfterRelease,
                                bot.InCombat, bot.IsAttacking, (bot.Brain as BotBrain)?.HasAggro == true, 0)) &&
+                          // a battleground warband forms inside its battleground (the bot's own bracket)
+                          (objectiveKind != eAutonomousObjectiveKind.Battleground ||
+                           AutonomousObjectiveAssignments.IsBattlegroundPvp(bot)) &&
                           AutonomousObjectiveAssignments.Is(bot, objectiveKind))
             .OrderBy(_ => Random.Shared.Next())
             .ToArray();
@@ -1736,16 +1752,16 @@ public static partial class AutonomousBotGroupCoordinator
             // an eight-hour run while 3,640 bots timed out waiting.)
             if (rendezvousChecks >= 6) break;
             if (claimed.Contains(leader) ||
-                objectiveKind != eAutonomousObjectiveKind.RvR && Random.Shared.NextDouble() >= 0.6)
+                !warbandRules && Random.Shared.NextDouble() >= 0.6)
                 continue;
             // RvR reserves are realm-local: Albion grouping cannot consume the
             // independent Midgard/Hibernia roamer reserve, and vice versa.
-            int leaderSlots = objectiveKind == eAutonomousObjectiveKind.RvR
+            int leaderSlots = warbandRules
                 ? AvailableGroupSlotsForObjective(objectiveKind,
                     activeRoster.Count(candidate => candidate.Realm == leader.Realm),
                     initiallyGroupedByRealm.GetValueOrDefault(leader.Realm))
                 : availableGroupSlots - claimed.Count;
-            int largestAllowed = Math.Min(8, leaderSlots - (objectiveKind == eAutonomousObjectiveKind.RvR
+            int largestAllowed = Math.Min(8, leaderSlots - (warbandRules
                 ? claimed.Count(candidate => candidate.Realm == leader.Realm)
                 : 0));
             // PvE prefers a full eight, but a region short on healers or tanks
@@ -1765,11 +1781,11 @@ public static partial class AutonomousBotGroupCoordinator
             // every solo RvR character.
             // True 1.65 Mode: warbands lean toward a full eight (period groups were full groups). Stealthers keep out
             // of them: most hunt alone (the solo reserve), some pair up with another stealther.
-            bool classicWarband = objectiveKind == eAutonomousObjectiveKind.RvR && Classic165Mode.IsOn;
+            bool classicWarband = warbandRules && Classic165Mode.IsOn;
             bool stealthLeader = classicWarband && AutonomousRvrStealthers.PrefersSolo(leader);
             if (stealthLeader && !AutonomousRvrStealthers.FormsDuo(leader.DatabaseID))
                 continue;
-            int rolledSize = objectiveKind == eAutonomousObjectiveKind.RvR
+            int rolledSize = warbandRules
                 ? stealthLeader ? 2
                 : classicWarband
                     ? AutonomousRvrStaging.RollClassicWarbandSize(largestAllowed, Random.Shared.NextDouble())
@@ -2269,7 +2285,7 @@ public static partial class AutonomousBotGroupCoordinator
             }
             // PvE starts when the leader publishes the actual outbound camp.
             // RvR heads out through its director as soon as assembly completes.
-            if (session.ObjectiveKind == eAutonomousObjectiveKind.RvR)
+            if (UsesWarbandRules(session.ObjectiveKind))
                 StartTaskClock(session, members);
             Log.Info($"AUTONOMOUS_GROUP_ASSEMBLED group={session.Id} realm={members[0].Realm} size={members.Length} " +
                      $"members=\"{string.Join(",", members.Select(member => member.Name))}\" " +
@@ -2673,6 +2689,15 @@ public static partial class AutonomousBotGroupCoordinator
             return FormationSlotsFit(nav, targetRegion, zone, chosen, members);
         }
 
+        // A battleground warband meets where its leader stands, inside its battleground (no town, no border keep).
+        if (objectiveKind == eAutonomousObjectiveKind.Battleground)
+        {
+            if (!BattlegroundBrackets.IsBattlegroundRegion(leader.CurrentRegionID) || !TryPoint(leader.CurrentRegion, current, out point))
+                return false;
+            rendezvousName = BattlegroundBrackets.ForRegion(leader.CurrentRegionID)?.Name ?? leader.CurrentRegion.Description;
+            return true;
+        }
+
         if (objectiveKind == eAutonomousObjectiveKind.RvR &&
             AutonomousRvrStaging.TryGetNearestBorderKeep(leader, out AutonomousRvrStaging.BorderKeep borderKeep))
         {
@@ -2854,7 +2879,7 @@ public static partial class AutonomousBotGroupCoordinator
         session.RecoveryRendezvousChosen = true;
         // RvR regrouping returns to the same validated safe border keep used
         // for initial assembly. It must never drift to a random town or bind.
-        if (session.ObjectiveKind == eAutonomousObjectiveKind.RvR)
+        if (UsesWarbandRules(session.ObjectiveKind))
             return;
         // A casualty after a long camp trip should not send the whole party
         // back across the world to its first meetup. Prefer a validated safe

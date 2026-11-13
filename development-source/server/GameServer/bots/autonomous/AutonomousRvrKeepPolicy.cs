@@ -16,6 +16,16 @@ namespace DOL.GS
         }
 
         /// <summary>
+        /// Whether an attack on a keep in this region may open a frontier defense or a forced siege event (battlegrounds
+        /// fix 2026-11-12, owner: "this is wrong"). Those events recruit level-50 RvR warbands, which can never enter a
+        /// battleground (BattlegroundBrackets.Allows): a player hitting a bot-held battleground keep tied up to 240 of them
+        /// for four hours and sent realm-wide rally calls whatever the launcher's Battlegrounds % said. A battleground keep
+        /// is held and retaken only by its own bracket's battleground bots (ExecuteBattleground), whose share the launcher
+        /// sets (0 = none).
+        /// </summary>
+        public static bool RaisesRealmEvent(ushort keepRegion) => !BattlegroundBrackets.IsBattlegroundRegion(keepRegion);
+
+        /// <summary>
         /// A keep a bot siege can win (keeps audit 2026-11-11, B1 safety net): a frontier keep changes hands only when its
         /// lord dies (Lord.cs, NormalServerRules), so a keep whose lord is missing from the world data cannot be taken and
         /// a siege on it would grind for four hours for nothing. 13 of the 21 keeps lost their lord rows on 2026-10-30

@@ -16,7 +16,7 @@ public static class AutonomousRvrDashboard
     public sealed record Participant(string EventId, string GroupId, string Name, string Realm, string Location, string Activity, int X, int Y, int Z);
     public sealed record Battleground(string Name, int MinLevel, int MaxLevel, string CentralKeep, string Owner,
         int AlbionInside, int MidgardInside, int HiberniaInside, int AlbionTravelling, int MidgardTravelling,
-        int HiberniaTravelling, int Monsters);
+        int HiberniaTravelling, int Monsters, int AlbionPvp = 0, int MidgardPvp = 0, int HiberniaPvp = 0);
     public sealed record Snapshot(DateTime UpdatedUtc, bool Running, Objective[] Objectives, Participant[] Participants = null,
         Battleground[] Battlegrounds = null);
     private static Timer _timer;
@@ -83,6 +83,9 @@ public static class AutonomousRvrDashboard
             AbstractGameKeep central = GameServer.KeepManager.GetKeepsOfRegion(bracket.RegionId)
                 .FirstOrDefault(keep => !keep.IsPortalKeep);
             int Inside(eRealm realm) => bots.Count(bot => bot.IsAlive && bot.Realm == realm && bot.CurrentRegionID == bracket.RegionId);
+            // Battlegrounds fix 2026-11-12: of those inside, the PvP focus (Battlegrounds goal); the rest are grinding.
+            int Pvp(eRealm realm) => bots.Count(bot => bot.IsAlive && bot.Realm == realm && bot.CurrentRegionID == bracket.RegionId &&
+                AutonomousObjectiveAssignments.IsBattlegroundPvp(bot));
             int Travelling(eRealm realm) => bots.Count(bot => bot.Realm == realm && bot.CurrentRegionID != bracket.RegionId &&
                 AutonomousObjectiveAssignments.Is(bot, eAutonomousObjectiveKind.Battleground) && BattlegroundBrackets.Allows(bracket, bot.Level));
             Region region = WorldMgr.GetRegion(bracket.RegionId);
@@ -92,7 +95,8 @@ public static class AutonomousRvrDashboard
             result[index] = new(bracket.Name, bracket.MinLevel, bracket.MaxLevel, central?.Name ?? string.Empty,
                 central == null ? string.Empty : central.Realm == eRealm.None ? "Neutral" : GlobalConstants.RealmToName(central.Realm),
                 Inside(eRealm.Albion), Inside(eRealm.Midgard), Inside(eRealm.Hibernia),
-                Travelling(eRealm.Albion), Travelling(eRealm.Midgard), Travelling(eRealm.Hibernia), monsters);
+                Travelling(eRealm.Albion), Travelling(eRealm.Midgard), Travelling(eRealm.Hibernia), monsters,
+                Pvp(eRealm.Albion), Pvp(eRealm.Midgard), Pvp(eRealm.Hibernia));
             if (central != null && logStatus)
                 LogBattlegroundKeep(bracket, central, bots);
         }
@@ -136,7 +140,8 @@ public static class AutonomousRvrDashboard
             $"attackersAtLord={(lord == null ? 0 : inside.Count(bot => bot.Realm != central.Realm && bot.IsWithinRadius(lord, 800)))} " +
             $"attackersOnLordFloor={(lord == null ? 0 : inside.Count(bot => bot.Realm != central.Realm && bot.IsWithinRadius(lord, 800) && Math.Abs(bot.Z - lord.Z) < 200))} " +
             // Live, not the saved roster rows (positions there are saved only every few minutes).
-            $"inside={inside.Length} moving={inside.Count(bot => bot.IsMoving)} inCombat={inside.Count(bot => bot.InCombat)} " +
+            $"inside={inside.Length} pvp={inside.Count(AutonomousObjectiveAssignments.IsBattlegroundPvp)} " +
+            $"grinding={inside.Count(bot => !AutonomousObjectiveAssignments.IsBattlegroundPvp(bot))} moving={inside.Count(bot => bot.IsMoving)} inCombat={inside.Count(bot => bot.InCombat)} " +
             $"medianToKeep={(inside.Length == 0 ? 0 : (int)inside.Select(bot => bot.GetDistanceTo(keepPoint)).OrderBy(d => d).ElementAt(inside.Length / 2))} " +
             $"activities=\"{string.Join("; ", inside.GroupBy(bot => ActivityKind(bot.PersistentRecord?.Activity)).OrderByDescending(g => g.Count()).Take(5).Select(g => $"{g.Key}:{g.Count()}"))}\" " +
             // Where the lord and the standing doors are, and how close the bots storming him get (run 18: they stopped

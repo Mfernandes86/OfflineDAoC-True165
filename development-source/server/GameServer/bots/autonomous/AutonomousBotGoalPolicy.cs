@@ -75,7 +75,9 @@ public static class AutonomousBotGoalPolicy
         if (!AutonomousObjectiveAssignments.IsBetweenPveTasks(record) &&
             !Allows(record.Level, AutonomousObjectiveAssignments.Parse(record.ObjectiveKind)))
         {
-            record.ObjectiveKind = Choose(record.Level).ToString();
+            // Not a battleground tour here: that needs a PvP slot of its bracket (AutonomousBattlegroundSlots), which the
+            // one-minute allocator hands out once the bot is in the world.
+            record.ObjectiveKind = Choose(record.Level, excludeBattlegrounds: true).ToString();
             record.ObjectiveAssignmentId = string.Empty;
             record.ObjectiveAssignedUtc = record.ObjectiveExpiresUtc = string.Empty;
             record.CurrentCampId = record.TargetName = record.TravelDestination = string.Empty;

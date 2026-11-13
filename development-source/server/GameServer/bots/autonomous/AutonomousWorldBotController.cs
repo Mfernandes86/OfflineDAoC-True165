@@ -510,6 +510,12 @@ namespace DOL.GS
                     (!brain.HasAggro && !bot.IsAttacking || !BotSiegeRuntime.StruckInMeleeReach(bot)))
                     return ExecuteRvr(brain,bot);
 
+                // Battlegrounds fix 2026-11-12: a fight never follows an enemy under its own portal keep's guards
+                // (level 90-95, about 2,000 aggro); the bot drops it and walks back out (AutonomousBattlegroundPortalKeeps).
+                if (bot.IsAlive && AutonomousBattlegroundPortalKeeps.InEnemyDanger(bot.Realm, bot.CurrentRegionID, bot.X, bot.Y) &&
+                    RetreatFromEnemyPortalKeep(bot))
+                    return true;
+
                 bool postCombatRecovery = BotRestRecovery.NeedsOrContinuesRest(bot) && !BotRestRecovery.BlocksRest(bot);
                 if (brain.HasAggro || (bot.InCombat && !postCombatRecovery) || bot.IsAttacking)
                 {
@@ -570,7 +576,7 @@ namespace DOL.GS
                     // PvE pauses around one defensive pull. RvR combat is not
                     // a puller/assist encounter: each available member must be
                     // allowed through to its own nearby enemy acquisition.
-                    bool distributeRvrCombat = _groupDirective.ObjectiveKind == eAutonomousObjectiveKind.RvR &&
+                    bool distributeRvrCombat = AutonomousBotGroupCoordinator.UsesWarbandRules(_groupDirective.ObjectiveKind) &&
                                                _groupDirective.GroupCombatActive;
                     if (!distributeRvrCombat && !AutonomousRvrEventLayer.IsBattleForce(_groupDirective.GroupId, nowTick))
                         return HandleGroupCombatAndRecovery(brain, bot, _groupDirective);
@@ -607,6 +613,11 @@ namespace DOL.GS
                     return true;
 
                 if (TryReturnFromForeignFrontier(bot))
+                    return true;
+
+                // Owner 2026-11-12: a bot inside a battleground whose business there is over walks out by the exit
+                // (battlegrounds have no zone connections); a stuck one is taken to its border keep.
+                if (LeaveBattlegroundWhenDone(bot))
                     return true;
 
                 if (HandleCapitalTransit(bot))
@@ -716,7 +727,9 @@ namespace DOL.GS
                     return true;
                 }
 
-                if (objectiveKind == eAutonomousObjectiveKind.Battleground && _groupDirective?.IsDynamic != true)
+                // Battlegrounds fix 2026-11-12 (G2): a battleground warband (frontier warband rules, formed inside the
+                // battleground) runs the battleground tour too; only assembly and regroup above come first.
+                if (objectiveKind == eAutonomousObjectiveKind.Battleground)
                     return ExecuteBattleground(brain, bot);
 
                 if (_groupDirective?.IsDynamic == true && _groupDirective.Camp != null &&
@@ -1854,6 +1867,24 @@ namespace DOL.GS
                 try { return TravelAcrossRegions(bot); }
                 finally { _camp = previous; }
             }
+            // Battlegrounds have no zone connections: out by the exit, in by the portal keep teleporter (a battleground
+            // warband's members coming back from their bind after a wipe, 2026-11-12).
+            if (BattlegroundBrackets.IsBattlegroundRegion(bot.CurrentRegionID) && bot.CurrentRegionID != targetRegion)
+            {
+                LeaveBattleground(bot);
+                return true;
+            }
+            if (BattlegroundBrackets.ForRegion(targetRegion) is { } groupBattleground)
+            {
+                if (!BattlegroundBrackets.Allows(groupBattleground, bot.Level))
+                {
+                    SetStatus(bot, "Replanning group rendezvous", directive.SharedGoal,
+                        $"{groupBattleground.Name} is outside this bot's level bracket");
+                    return true;
+                }
+                TravelToBattleground(bot, groupBattleground, new(targetX, targetY, bot.Z));
+                return true;
+            }
             DbZonePoint crossing = FindNextCrossing(bot, targetRegion, targetX, targetY);
             if (crossing == null)
             {
@@ -2252,6 +2283,27 @@ namespace DOL.GS
             return true;
         }
 
+        // Battlegrounds fix 2026-11-12: the bot's checked keep-guard targets, held briefly (AutonomousRvrGuardTargets).
+        private GameKeepGuard[] _rvrGuardTargets = [];
+        private long _rvrGuardTargetsUntil;
+        private int _rvrGuardTargetsKeep;
+        private Vector3 _rvrGuardTargetsSpot;
+        private string _rvrGuardKeepDestination;
+        private AbstractGameKeep _rvrGuardKeep;
+
+        /// <summary>The keep of the current "rvr-keep-{id}" destination when it stands in the bot's region, looked up once per destination.</summary>
+        private AbstractGameKeep RvrDestinationKeep(GameBot bot)
+        {
+            string id = _rvrDestination?.Id;
+            if (!string.Equals(id, _rvrGuardKeepDestination, StringComparison.Ordinal))
+            {
+                _rvrGuardKeepDestination = id;
+                _rvrGuardKeep = id != null && id.StartsWith("rvr-keep-", StringComparison.Ordinal) &&
+                    int.TryParse(id.AsSpan("rvr-keep-".Length), out int keepId) ? GameServer.KeepManager.GetKeepByID(keepId) : null;
+            }
+            return _rvrGuardKeep != null && _rvrGuardKeep.Region == bot.CurrentRegionID ? _rvrGuardKeep : null;
+        }
+
         private GameLiving FindRvrTarget(GameBot bot)
         {
             // Player/bot/pet threats are acquired by the bounded early frontier
@@ -2266,29 +2318,49 @@ namespace DOL.GS
                 return null; // Roamers still retaliate through normal aggro; they do not initiate an unregistered siege.
             // Any closed door of the target keep keeps its lord off-limits, however far this bot stands from it (the
             // nearby-door check let a bot whose search circle reached the lord but not the inner door attack him).
-            bool closedDoor = GameServer.KeepManager.GetKeepsOfRegion(bot.CurrentRegionID)
-                .Where(keep => $"rvr-keep-{keep.KeepID}" == _rvrDestination?.Id)
-                .Any(KeepRaidDoors.Sealed);
-            var keepNavigation=AutonomousKeepApproachNavigation.ForRealm(PathfindingProvider.Instance,bot.CurrentRegion,bot.Realm);
-            // Staged assault: outer/inner guards first, then the real lord only
-            // after a real gate opens.  The lord's normal death pipeline is the
-            // only mechanism that can capture/reset a keep.
-            GameKeepGuard[] guards = bot.GetNPCsInRadius(TargetSearchRadius)
-                .OfType<GameKeepGuard>()
-                .Where(guard => guard.IsAlive && guard.Realm != bot.Realm &&
-                    (guard.Realm != eRealm.None || BattlegroundBrackets.IsBattlegroundRegion(guard.CurrentRegionID)))
-                .Where(guard => guard.Component?.Keep != null && $"rvr-keep-{guard.Component.Keep.KeepID}" == _rvrDestination?.Id)
-                .Where(guard => !guard.IsPortalKeepGuard && AutonomousRvrKeepPolicy.IsSiegeObjective(guard.Component?.Keep))
-                .Where(guard => !closedDoor || guard is not GuardLord)
-                .Where(guard => GameServer.ServerRules.IsAllowedToAttack(bot, guard, true))
-                .Where(guard => PathfindingProvider.Instance.HasLineOfSight(bot.CurrentZone, new(bot.X, bot.Y, bot.Z),
-                    new(guard.X, guard.Y, guard.Z), PathfindingProvider.Instance.BlockingDoorAvoidanceFilters))
-                .Where(guard => AutonomousRvrDefense.IsRangedDefender(bot) && guard is not GuardFighterRK ||
-                    AutonomousZoneItinerary.HasCompleteCorridor(keepNavigation, bot.CurrentZone,
-                        new(bot.X, bot.Y, bot.Z), new(guard.X, guard.Y, guard.Z)))
-                .OrderBy(guard => guard is GuardLord ? 1 : 0)
-                .ThenBy(guard => bot.GetDistanceTo(guard))
-                .ToArray();
+            // Battlegrounds fix 2026-11-12 (AutonomousRvrGuardTargets): the keep's own guard list, shared for a second per
+            // keep and realm, instead of a 5,000-unit NPC scan per bot; a checked list held 1.5 s; at most 8 raycasts.
+            AbstractGameKeep targetKeep = RvrDestinationKeep(bot);
+            if (targetKeep == null) return null;
+            long now = GameLoop.GameLoopTime;
+            AutonomousRvrGuardTargets.KeepCandidates candidates = AutonomousRvrGuardTargets.Candidates(targetKeep, bot.Realm, now);
+            bool closedDoor = candidates.Sealed;
+            Vector3 here = new(bot.X, bot.Y, bot.Z);
+            GameKeepGuard[] guards;
+            if (AutonomousRvrGuardTargets.HoldValid(now, _rvrGuardTargetsUntil, targetKeep.KeepID, _rvrGuardTargetsKeep,
+                    Vector3.DistanceSquared(here, _rvrGuardTargetsSpot)))
+                guards = _rvrGuardTargets
+                    .Where(guard => guard.IsAlive && guard.ObjectState == GameObject.eObjectState.Active && guard.Realm != bot.Realm &&
+                                    (!closedDoor || guard is not GuardLord) && GameServer.ServerRules.IsAllowedToAttack(bot, guard, true))
+                    .ToArray();
+            else
+            {
+                var keepNavigation=AutonomousKeepApproachNavigation.ForRealm(PathfindingProvider.Instance,bot.CurrentRegion,bot.Realm);
+                GameKeepGuard[] inReach = candidates.Guards
+                    .Where(guard => guard.IsAlive && guard.CurrentRegionID == bot.CurrentRegionID &&
+                                    bot.IsWithinRadius(guard, TargetSearchRadius) && (!closedDoor || guard is not GuardLord) &&
+                                    GameServer.ServerRules.IsAllowedToAttack(bot, guard, true))
+                    .ToArray();
+                float[] distances = inReach.Select(guard => (float)bot.GetDistanceTo(guard)).ToArray();
+                bool[] lords = inReach.Select(guard => guard is GuardLord).ToArray();
+                // Staged assault: outer/inner guards first, then the real lord only
+                // after a real gate opens.  The lord's normal death pipeline is the
+                // only mechanism that can capture/reset a keep.
+                guards = AutonomousRvrGuardTargets.Shortlist(distances, lords, AutonomousRvrGuardTargets.MaxLineChecks)
+                    .Select(index => inReach[index])
+                    .Where(guard => PathfindingProvider.Instance.HasLineOfSight(bot.CurrentZone, here,
+                        new(guard.X, guard.Y, guard.Z), PathfindingProvider.Instance.BlockingDoorAvoidanceFilters))
+                    .Where(guard => AutonomousRvrDefense.IsRangedDefender(bot) && guard is not GuardFighterRK ||
+                        AutonomousZoneItinerary.HasCompleteCorridor(keepNavigation, bot.CurrentZone,
+                            here, new(guard.X, guard.Y, guard.Z)))
+                    .OrderBy(guard => guard is GuardLord ? 1 : 0)
+                    .ThenBy(guard => bot.GetDistanceTo(guard))
+                    .ToArray();
+                _rvrGuardTargets = guards;
+                _rvrGuardTargetsUntil = now + AutonomousRvrGuardTargets.BotHoldMilliseconds;
+                _rvrGuardTargetsKeep = targetKeep.KeepID;
+                _rvrGuardTargetsSpot = here;
+            }
             // Both attacking realms seek the native capture, not an endless
             // guard patrol. Nearby PvP is handled first by the threat scan.
             if (!closedDoor && guards.OfType<GuardLord>().FirstOrDefault() is { } exposedLord) return exposedLord;
@@ -3514,7 +3586,9 @@ namespace DOL.GS
               IEnumerable<GameNPC> sorted = nearby
                 .Where(npc => IsExperienceMonster(npc) && npc.IsAlive && npc.CurrentRegionID == _camp.RegionId &&
                     !AutonomousAuditedCampPolicy.IsBotExcludedNpc(npc) &&
-                    !AutonomousPveTargetPolicy.IsUnreachableFlyer(npc.Flags, npc.Z, bot.Z))
+                    !AutonomousPveTargetPolicy.IsUnreachableFlyer(npc.Flags, npc.Z, bot.Z) &&
+                    // battlegrounds fix 2026-11-12: never a monster under another realm's portal keep guards
+                    !AutonomousBattlegroundPortalKeeps.InEnemyDanger(bot.Realm, npc.CurrentRegionID, npc.X, npc.Y))
                 .Where(npc => _camp.RegionId != AutonomousDarknessFallsPolicy.RegionId ||
                     AutonomousDarknessFallsNavigation.TryGetProof(npc.InternalID, out _))
                 .Where(npc => _camp.RegionId != AutonomousDarknessFallsPolicy.RegionId ||
@@ -3773,7 +3847,13 @@ namespace DOL.GS
             // and add the battleground of the bot's bracket when the whole party fits it (level only).
             HashSet<ushort> reachableRegions = ReachableRegions(bot.Realm,
                 BattlegroundBrackets.IsBattlegroundRegion(bot.CurrentRegionID) ? RealmRaidNeutralEvents.HomeRegion(bot.Realm) : bot.CurrentRegionID);
-            BattlegroundBrackets.Bracket campBattleground = AutonomousTownTeleporters.IsEnabled ? BattlegroundBrackets.ForLevel(bot.Level) : null;
+            // Owner 2026-11-12: any bot whose level fits a battleground's bracket may hunt its monsters like any other
+            // hunting zone, whatever its goal (in by the portal keep teleporter, out by the exit, TravelAcrossRegions);
+            // the launcher's Battlegrounds % is the PvP focus only. True 1.65 had no town teleporters, so this gate was
+            // never open there (BG251-253 G1).
+            BattlegroundBrackets.Bracket campBattleground = AutonomousBattlegroundSlots.GrindBracket(bot.Level,
+                AutonomousTownTeleporters.IsEnabled || Classic165Mode.IsOn, AutonomousBattlegroundSlots.GrindEnabled,
+                AutonomousBattlegroundExit.ReentryBlocked(bot.DatabaseID, GameLoop.GameLoopTime));
             if (campBattleground != null && (!sharedGroup || bot.Group == null ||
                     bot.Group.GetMembersInTheGroup().All(member => BattlegroundBrackets.Allows(campBattleground, member.Level))))
                 reachableRegions.Add(campBattleground.RegionId);
@@ -3819,7 +3899,10 @@ namespace DOL.GS
                                         AutonomousOrdinaryPveRealmPolicy.CanAssignCamp(bot.Realm, cell.RegionId,
                                             cell.Zone?.ID ?? 0) &&
                                         AutonomousAuditedCampPolicy.CanAssignToParty(cell.Id, groupSize) &&
-                                        !(skipFlyerCamps && cell.FlyerCamp)))
+                                        !(skipFlyerCamps && cell.FlyerCamp) &&
+                                        // battlegrounds fix 2026-11-12: no camp under another realm's portal keep guards
+                                        !AutonomousBattlegroundPortalKeeps.InEnemyDanger(bot.Realm, cell.RegionId, cell.X, cell.Y,
+                                            AutonomousBattlegroundPortalKeeps.CampAvoidRadius)))
             {
                 // Filled into a reused buffer; only a camp that qualifies gets its own array (this per-cell
                 // filter was the largest single allocation in a 30 s trace, 2026-10-17).

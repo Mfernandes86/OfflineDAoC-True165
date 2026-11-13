@@ -69,6 +69,9 @@ namespace DOL.GS
             if (player == null || player.Realm == eRealm.None || player.Realm == keep.Realm) return;
             // Goal 11: the player's raid fights this siege on its own, planned bot siege or not.
             CompanionRaidSiege.RequestAssault(player, keep);
+            // A battleground keep raises no frontier defense (its responders are level-50 warbands that cannot enter);
+            // ObserveBattlegroundSiege above already announced the siege (BG250 D1, BG252 S3, BG253 F2).
+            if (!AutonomousRvrKeepPolicy.RaisesRealmEvent(keep.Region)) return;
             if (DefenseAlarms.TryGetValue(id, out var previous) && now - previous.Tick < 1000) return;
             DefenseAlarms[id] = new(keep, player, now, ForceSize(player));
         }
@@ -156,6 +159,7 @@ namespace DOL.GS
         public static bool BeginDefenseResponse(LiveObjective target, eRealm attacker, string playerAccount, long now, DefenseScale scale)
         {
             if (target == null || target.IsPortalKeep || target.IsRelicCarrier || target.OwningRealm == eRealm.None ||
+                !AutonomousRvrKeepPolicy.RaisesRealmEvent(target.RegionId) ||
                 attacker is not (eRealm.Albion or eRealm.Midgard or eRealm.Hibernia) || attacker == target.OwningRealm) return false;
             lock (Sync)
             {

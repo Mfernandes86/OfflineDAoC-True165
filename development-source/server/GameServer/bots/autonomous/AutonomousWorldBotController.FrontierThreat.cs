@@ -134,8 +134,16 @@ public sealed partial class AutonomousWorldBotController
     // The frontier, plus the neutral raid dungeons (Darkness Falls, Summoner's Hall and the
     // dungeons leading to it), where realms meet and fight on sight.
     internal static bool IsBattleground(GameLiving living) =>
-        IsInFrontier(living) || living != null && (RealmRaidNeutralEvents.IsBattleRegion(living.CurrentRegionID) ||
-            BattlegroundBrackets.IsBattlegroundRegion(living.CurrentRegionID));
+        living != null && IsPvpGround(living.CurrentRegionID, living.CurrentZone?.ID);
+
+    /// <summary>
+    /// Pure: where every autonomous bot, whatever its goal, engages enemy realms on sight (TryEngageFrontierThreat): the
+    /// frontier zones, the neutral raid regions (Darkness Falls, Summoner's Hall and its approaches) and the four
+    /// battlegrounds (owner 2026-11-12: battleground grinders fight enemy players and bots as in DF, SH and the frontier).
+    /// </summary>
+    public static bool IsPvpGround(ushort regionId, ushort? zoneId) =>
+        zoneId is ushort zone && IsFrontierZone(regionId, zone) || RealmRaidNeutralEvents.IsBattleRegion(regionId) ||
+        BattlegroundBrackets.IsBattlegroundRegion(regionId);
 
     // Called before optional upkeep and the world controller's rendezvous,
     // recovery and follow returns. Assignment/level do not restrict defense.
@@ -176,7 +184,9 @@ public sealed partial class AutonomousWorldBotController
         }
         // Cheap rejections first (most nearby livings are friendly bots); the area lookup last
         // (IsSafeArea/GetAreasOfZone were ~64 MB per 40 s of allocations in run 11).
-        bool Eligible(GameLiving target) => EligibleRvrTarget(bot, target);
+        // Battlegrounds fix 2026-11-12: no enemy is picked under its own portal keep's guards (AutonomousBattlegroundPortalKeeps).
+        bool Eligible(GameLiving target) => EligibleRvrTarget(bot, target) &&
+            !AutonomousBattlegroundPortalKeeps.InEnemyDanger(bot.Realm, target.CurrentRegionID, target.X, target.Y);
 
         GameLiving[] nearby = bot.GetPlayersInRadius(TargetSearchRadius).Where(Eligible).Cast<GameLiving>()
             .Concat(bot.GetNPCsInRadius(TargetSearchRadius)
@@ -329,6 +339,22 @@ public sealed partial class AutonomousWorldBotController
         AutonomousDefensivePull.OnThreat(bot, enemy);
         AutonomousBotGroupCoordinator.MarkCombatObserved(bot.Group);
         brain.FSM.SetCurrentState(eFSMStateType.AGGRO);
+        TraceBattlegroundGrinderEngage(bot, enemy);
         return true;
+    }
+
+    // Battlegrounds fix 2026-11-12: one line every 30 s server-wide when a battleground bot WITHOUT the PvP focus (a
+    // grinder) takes on an enemy realm, proving grinders fight there as in Darkness Falls, SH and the frontier.
+    private static long _nextGrinderEngageTrace;
+    private static void TraceBattlegroundGrinderEngage(GameBot bot, GameLiving enemy)
+    {
+        if (!BattlegroundBrackets.IsBattlegroundRegion(bot.CurrentRegionID) ||
+            AutonomousObjectiveAssignments.Is(bot, eAutonomousObjectiveKind.Battleground)) return;
+        long now = GameLoop.GameLoopTime;
+        long next = System.Threading.Interlocked.Read(ref _nextGrinderEngageTrace);
+        if (now < next || System.Threading.Interlocked.CompareExchange(ref _nextGrinderEngageTrace, now + 30_000, next) != next) return;
+        Log.Info($"AUTONOMOUS_BATTLEGROUND_GRINDER_ENGAGE bot={bot.Name} id={bot.DatabaseID} realm={GlobalConstants.RealmToName(bot.Realm)} " +
+                 $"goal={AutonomousObjectiveAssignments.KindFor(bot)} region={bot.CurrentRegionID} enemy=\"{enemy.Name}\" " +
+                 $"enemyRealm={GlobalConstants.RealmToName(enemy.Realm)} player={enemy is GamePlayer}");
     }
 }

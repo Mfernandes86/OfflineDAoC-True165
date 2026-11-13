@@ -374,6 +374,7 @@ public static partial class AutonomousRvrEventLayer
         lock (Sync)
         {
             if (target == null || target.IsPortalKeep || target.IsRelicCarrier ||
+                !AutonomousRvrKeepPolicy.RaisesRealmEvent(target.RegionId) ||
                 attacker is not (eRealm.Albion or eRealm.Midgard or eRealm.Hibernia) ||
                 target.OwningRealm == attacker)
             { reason = "Choose an enemy capturable keep and an attacking realm."; return false; }

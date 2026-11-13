@@ -160,6 +160,11 @@ namespace DOL.GS
                     GameRealmGate[] walkChecked = GameRealmGate.WalkCheckedInRegion(Owner.CurrentRegionID);
                     if (walkChecked.Length > 0)
                         MarkGatesOffMesh(pathBuffer.Nodes, pathBuffer.Doors, position, walkChecked);
+                    // Battleground keep gates are found on the walk too: the navmesh does not seal every one (Caer Caledon,
+                    // BG250 N1: the terrain under the gatehouse's floor plate walks past both shut gates).
+                    GameKeepDoor[] keepGates = WalkCheckedKeepGates(Owner.CurrentRegionID);
+                    if (keepGates.Length > 0)
+                        MarkKeepGatesOffMesh(pathBuffer.Nodes, pathBuffer.Doors, position, keepGates);
                 }
 
                 return pathfindingResult.Status;
@@ -329,9 +334,109 @@ namespace DOL.GS
         {
             foreach (List<GameDoorBase> doors in doorsOnPath.Values)
                 foreach (GameDoorBase door in doors)
-                    if (door is GameRealmGate && BlocksActor(actor, door))
+                    if ((door is GameRealmGate || door is GameKeepDoor keepDoor && BattlegroundBrackets.IsBattlegroundRegion(keepDoor.CurrentRegionID)) &&
+                        BlocksActor(actor, door))
                         return true;
             return false;
+        }
+
+        // ---- battleground keep gates checked on the walk (battlegrounds fix 2026-11-12, BG250 N1)
+
+        /// <summary>How far to either side of a keep gate's centre a walk through its plane counts as passing through it.
+        /// Caer Caledon's leak runs 71 from door 250000302; the doors of a keep stand 289 and more apart.</summary>
+        public const float KeepGateHalfWidth = 150;
+        /// <summary>The height band of a keep gate's passage (the wall-walk above a Thidranki gate is 255 higher; the leak
+        /// under Caer Caledon's gatehouse plate runs 62 lower).</summary>
+        public const float KeepGateCrossingHeight = 160;
+        /// <summary>The stop put on the walk in front of a gate (inside the 200 TryUsePathDoor needs for its own realm).</summary>
+        public const float KeepGateStandOff = 100;
+        private const long KeepGateRecheckMilliseconds = 60_000;
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<ushort, (long RecheckAt, GameKeepDoor[] Gates)> KeepGatesByRegion = new();
+
+        /// <summary>
+        /// Where a walk segment from <paramref name="a"/> to <paramref name="b"/> passes through a keep gate: it crosses the
+        /// gate's plane (through the door, across the passage, which runs along the door's heading: the Thidranki,
+        /// Murdaigean, Abermenai and Caledon door pairs all lie on their heading's line) within <see cref="KeepGateHalfWidth"/>
+        /// of the door and <see cref="KeepGateCrossingHeight"/> of its height. A walk along a wall, parallel to the gate,
+        /// never crosses. <paramref name="stop"/> is the fraction of the segment <see cref="KeepGateStandOff"/> before the plane.
+        /// </summary>
+        public static bool TryCrossKeepGate(Vector3 a, Vector3 b, Vector3 door, int heading, out float stop)
+        {
+            stop = 0;
+            double angle = heading * (Math.PI * 2 / 4096);
+            Vector2 axis = new((float)-Math.Sin(angle), (float)Math.Cos(angle));
+            float sa = Vector2.Dot(new(a.X - door.X, a.Y - door.Y), axis);
+            float sb = Vector2.Dot(new(b.X - door.X, b.Y - door.Y), axis);
+            if (sa == sb || sa > 0 && sb > 0 || sa < 0 && sb < 0)
+                return false;
+            float t = sa / (sa - sb);
+            Vector3 at = Vector3.Lerp(a, b, t);
+            if (Vector2.DistanceSquared(new(at.X, at.Y), new(door.X, door.Y)) > KeepGateHalfWidth * KeepGateHalfWidth ||
+                Math.Abs(at.Z - door.Z) > KeepGateCrossingHeight)
+                return false;
+            float length = Vector2.Distance(new(a.X, a.Y), new(b.X, b.Y));
+            stop = length < 1 ? 0 : Math.Max(0, t - KeepGateStandOff / length);
+            return true;
+        }
+
+        /// <summary>The raid gates of a battleground's central keep (none elsewhere), looked up once per region (an
+        /// empty answer is asked again after a minute, in case the keeps were not loaded yet).</summary>
+        public static GameKeepDoor[] WalkCheckedKeepGates(ushort regionId)
+        {
+            if (!BattlegroundBrackets.IsBattlegroundRegion(regionId)) return [];
+            long now = GameLoop.GameLoopTime;
+            if (KeepGatesByRegion.TryGetValue(regionId, out var known) && (known.Gates.Length > 0 || now < known.RecheckAt))
+                return known.Gates;
+            var gates = new List<GameKeepDoor>();
+            var keeps = GameServer.KeepManager?.GetKeepsOfRegion(regionId);
+            if (keeps != null)
+                foreach (AbstractGameKeep keep in keeps)
+                    if (keep != null && !keep.IsPortalKeep)
+                        foreach (GameKeepDoor door in keep.Doors.Values)
+                            if (KeepRaidDoors.IsRaidGate(keep, door))
+                                gates.Add(door);
+            GameKeepDoor[] found = gates.ToArray();
+            KeepGatesByRegion[regionId] = (now + KeepGateRecheckMilliseconds, found);
+            return found;
+        }
+
+        /// <summary>
+        /// The keep gates the walk from <paramref name="origin"/> through the nodes passes (<see cref="TryCrossKeepGate"/>):
+        /// a stop node goes in front of each, listed with the gate like a door polygon's node, so the mover treats it as any
+        /// door on the route (its realm walks on through it, everyone else stops while it stands shut). Cheap: a bounding
+        /// box test per gate (two in a battleground), segments only near one.
+        /// </summary>
+        public static int MarkKeepGatesOffMesh(RingQueue<WrappedPathfindingNode> nodes, Dictionary<WrappedPathfindingNode, List<GameDoorBase>> doors,
+            Vector3 origin, IReadOnlyList<GameKeepDoor> gates)
+        {
+            if (nodes.Count == 0 || gates.Count == 0)
+                return 0;
+            float minX = origin.X, maxX = origin.X, minY = origin.Y, maxY = origin.Y;
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                Vector3 p = nodes.Peek(i).Position;
+                minX = Math.Min(minX, p.X); maxX = Math.Max(maxX, p.X); minY = Math.Min(minY, p.Y); maxY = Math.Max(maxY, p.Y);
+            }
+            List<(int Segment, float Stop, GameDoorBase Door)> crossings = null;
+            foreach (GameKeepDoor gate in gates)
+            {
+                if (gate == null || gate.X < minX - KeepGateHalfWidth || gate.X > maxX + KeepGateHalfWidth ||
+                    gate.Y < minY - KeepGateHalfWidth || gate.Y > maxY + KeepGateHalfWidth)
+                    continue;
+                Vector3 door = new(gate.X, gate.Y, gate.Z);
+                Vector3 from = origin;
+                for (int i = 0; i < nodes.Count; i++)
+                {
+                    Vector3 to = nodes.Peek(i).Position;
+                    if (TryCrossKeepGate(from, to, door, gate.Heading, out float stop))
+                    {
+                        (crossings ??= new()).Add((i, stop, gate));
+                        break;
+                    }
+                    from = to;
+                }
+            }
+            return crossings == null ? 0 : InsertStops(nodes, doors, origin, crossings);
         }
 
         /// <summary>
@@ -351,7 +456,7 @@ namespace DOL.GS
                 Vector3 p = nodes.Peek(i).Position;
                 minX = Math.Min(minX, p.X); maxX = Math.Max(maxX, p.X); minY = Math.Min(minY, p.Y); maxY = Math.Max(maxY, p.Y);
             }
-            List<(int Segment, float Stop, GameRealmGate Gate)> crossings = null;
+            List<(int Segment, float Stop, GameDoorBase Door)> crossings = null;
             foreach (GameRealmGate gate in gates)
             {
                 if (gate == null || gate.X < minX - GameRealmGate.DoorwayHalfWidth || gate.X > maxX + GameRealmGate.DoorwayHalfWidth ||
@@ -371,8 +476,13 @@ namespace DOL.GS
                     from = to;
                 }
             }
-            if (crossings == null)
-                return 0;
+            return crossings == null ? 0 : InsertStops(nodes, doors, origin, crossings);
+        }
+
+        /// <summary>Puts a stop node, listed with its door, in front of each crossing (in walk order).</summary>
+        private static int InsertStops(RingQueue<WrappedPathfindingNode> nodes, Dictionary<WrappedPathfindingNode, List<GameDoorBase>> doors,
+            Vector3 origin, List<(int Segment, float Stop, GameDoorBase Door)> crossings)
+        {
             crossings.Sort((x, y) => x.Segment != y.Segment ? x.Segment.CompareTo(y.Segment) : x.Stop.CompareTo(y.Stop));
             var rebuilt = new List<WrappedPathfindingNode>(nodes.Count + crossings.Count);
             int next = 0;
@@ -385,7 +495,7 @@ namespace DOL.GS
                     WrappedPathfindingNode stop = new(Vector3.Lerp(previous, node.Position, crossings[next].Stop), EDtPolyFlags.Walk);
                     if (!doors.TryGetValue(stop, out List<GameDoorBase> near))
                         doors[stop] = near = new(1);
-                    near.Add(crossings[next].Gate);
+                    near.Add(crossings[next].Door);
                     rebuilt.Add(stop);
                 }
                 rebuilt.Add(node);

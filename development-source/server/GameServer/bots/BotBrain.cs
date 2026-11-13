@@ -7382,7 +7382,9 @@ namespace DOL.AI.Brain
 
             // RvR support uses ordinary, range/LOS-checked single-target heals.
             // This does not extend PvE/companion triage to unrelated NPCs.
-            if (BotBody.IsAutonomousWorldBot && AutonomousObjectiveAssignments.Is(BotBody, eAutonomousObjectiveKind.RvR))
+            // Battlegrounds fix 2026-11-12 (G2): a PvP-focus healer in its battleground supports its realm there too.
+            if (BotBody.IsAutonomousWorldBot && (AutonomousObjectiveAssignments.Is(BotBody, eAutonomousObjectiveKind.RvR) ||
+                                                 AutonomousObjectiveAssignments.IsBattlegroundPvp(BotBody)))
             {
                 // Q30: held 2 s, ranked before any line-of-sight raycast (BotBrain.RvrSupport.cs)
                 GameLiving support = RvrSupportTarget();
@@ -7784,8 +7786,11 @@ namespace DOL.AI.Brain
             _nextSiegeRaiseScanTick = now + 3_000;
             // An RvR healer of the realm that is not in the siege army itself (a roaming group at the battle) raises the
             // army's dead too, as any realm-mate would (run 27: 20-100 such checks per 5 minutes with dead beside them).
+            // Battlegrounds fix 2026-11-12 (G2): a PvP-focus healer in its battleground counts as the realm's army there
+            // (battleground keeps have no siege event and its bots no group), so it raises its realm's dead too.
             if (!AutonomousSiegeResurrection.IsSiegeAttacker(BotBody) &&
-                !(AutonomousObjectiveAssignments.Is(BotBody, eAutonomousObjectiveKind.RvR) && AutonomousSiegeResurrection.HasFallenComradeNear(BotBody)))
+                !((AutonomousObjectiveAssignments.Is(BotBody, eAutonomousObjectiveKind.RvR) ||
+                   AutonomousObjectiveAssignments.IsBattlegroundPvp(BotBody)) && AutonomousSiegeResurrection.HasFallenComradeNear(BotBody)))
             {
                 _nextSiegeRaiseScanTick = now + 15_000;
                 return false;

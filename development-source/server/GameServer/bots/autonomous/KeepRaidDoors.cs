@@ -90,6 +90,28 @@ public static class KeepRaidDoors
         return index < 0 ? null : shut[index];
     }
 
+    /// <summary>
+    /// Pure: a spot <paramref name="distance"/> in front of a door, on its outer side, along its passage (battlegrounds fix
+    /// 2026-11-12, S1b). A keep door's passage runs along its heading (all four battleground keeps' door pairs lie on their
+    /// heading's line); the side away from the keep's centre is the outer one. Caer Caledon's doors sit 40 degrees off the
+    /// line to the keep's centre, so "away from the centre" alone puts the spot in the gatehouse wall.
+    /// </summary>
+    public static Vector2 StandOff(Vector2 door, int heading, Vector2 keepCentre, float distance)
+    {
+        double angle = heading * (Math.PI * 2 / 4096);
+        Vector2 axis = new((float)-Math.Sin(angle), (float)Math.Cos(angle));
+        if (Vector2.Dot(door - keepCentre, axis) < 0) axis = -axis;
+        return door + axis * distance;
+    }
+
+    /// <summary>Where a bot stands to batter <paramref name="door"/>: 150 in front of it on its outer side (in the gate
+    /// passage for an inner door), well inside the 450 the door work needs, never on the door's own blocking polygons.</summary>
+    public static Vector3 StandOff(AbstractGameKeep keep, GameKeepDoor door, float distance = 150)
+    {
+        Vector2 spot = StandOff(new(door.X, door.Y), door.Heading, new(keep.X, keep.Y), distance);
+        return new(spot.X, spot.Y, door.Z);
+    }
+
     // ---- the walk to a relic pad, once per keep
 
     private static readonly object WalkGate = new();

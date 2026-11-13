@@ -13,6 +13,12 @@ namespace DOL.GS
         private Vector3 _defensivePostOrigin;
         private RvrPlanningNavigation _defensivePostPlanning;
 
+        /// <summary>What standing at a verified defensive post reports to the stuck watchdog: siege participation in a
+        /// battleground (both clocks), the plain objective mark elsewhere (frontier defenders have their event's
+        /// protection while it runs).</summary>
+        public static eAutonomousProgressKind HoldingPostProgress(bool inBattleground) =>
+            inBattleground ? eAutonomousProgressKind.SiegeParticipation : eAutonomousProgressKind.Objective;
+
         private bool HoldDefensiveKeepPost(GameBot bot, AbstractGameKeep keep)
         {
             if (keep.Realm != bot.Realm || bot.CurrentRegionID != keep.Region) return false;
@@ -70,7 +76,11 @@ namespace DOL.GS
             if (Vector3.DistanceSquared(current, _defensivePost.Value) <= 80 * 80)
             {
                 bot.StopMovingOnPath(); bot.StopMoving();
-                AutonomousStuckWatchdog.MarkProgress(bot, eAutonomousProgressKind.Objective);
+                // Battleground holders (battlegrounds fix 2026-11-12, BG252 S4 / BG253 F3): a solo bot whose job is to
+                // stand here, with no siege event or group hold to protect it; Objective refreshed neither watchdog clock,
+                // so a quiet keep's defenders went to their capital after 15 minutes and walked back, again and again.
+                // Holding a verified post counts as siege participation, as a planned siege's protection already does.
+                AutonomousStuckWatchdog.MarkProgress(bot, HoldingPostProgress(BattlegroundBrackets.IsBattlegroundRegion(bot.CurrentRegionID)));
                 SetRvrStatus(bot, "Defending keep", keep.Name, "At a verified interior post; engaging visible enemy combatants before siege engines");
                 return true;
             }

@@ -206,6 +206,19 @@ public static class AutonomousObjectiveAssignments
     public static bool CanTakeBattleground(GameBot bot) =>
         bot != null && AutonomousBotGoalPolicy.Allows(bot.Level, eAutonomousObjectiveKind.Battleground);
 
+    /// <summary>
+    /// A PvP-focus battleground bot at work: an autonomous bot with the Battleground goal, inside a battleground whose
+    /// bracket fits its level (owner 2026-11-12: any bot of the bracket may grind there; only these count as the realm's
+    /// battleground army for waves, heals and raises).
+    /// </summary>
+    public static bool IsBattlegroundPvp(GameBot bot) =>
+        bot is { IsAutonomousWorldBot: true } && BattlegroundBrackets.IsBattlegroundRegion(bot.CurrentRegionID) &&
+        Is(bot, eAutonomousObjectiveKind.Battleground) &&
+        BattlegroundBrackets.Allows(BattlegroundBrackets.ForRegion(bot.CurrentRegionID), bot.Level);
+
+    /// <summary>The bucket's level band (0, 20 or 50) a level belongs to.</summary>
+    private static int BandOf(int level) => level >= 50 ? 50 : level >= 20 ? 20 : 0;
+
     private static Allocation Allocate(int count, double soloWeight, double groupWeight, double rvrWeight, double battlegroundWeight = 0)
     {
         count = Math.Max(0, count);
@@ -314,7 +327,18 @@ public static class AutonomousObjectiveAssignments
                 Allocation target = bucket.Key.Band == 0
                     ? TargetForLowLevelPopulation(members.Length)
                     : TargetForPopulation(members.Length, bucket.Key.Band == 50);
-                target = LimitBattlegrounds(target, members.Count(CanTakeBattleground));
+                // Battlegrounds % = the share of the bots that can enter a battleground (BG253 F1), spread over the
+                // brackets with a floor for thin ones and a per-realm cap per battleground (AutonomousBattlegroundSlots).
+                int[] bgEligible = new int[BattlegroundBrackets.Count];
+                foreach (GameBot bot in members)
+                    if (CanTakeBattleground(bot) && AutonomousBattlegroundSlots.BracketIndex(bot.Level) is int eligibleBracket and >= 0)
+                        bgEligible[eligibleBracket]++;
+                int bgPercent = (bucket.Key.Band == 0 ? AutonomousBotGoalPolicy.Settings.Levels1To19
+                    : AutonomousBotGoalPolicy.Settings.ForLevel(bucket.Key.Band)).Battlegrounds;
+                int[] bgSlots = AutonomousBattlegroundSlots.Spread(bgEligible,
+                    AutonomousBattlegroundSlots.Slots(bgEligible.Sum(), bgPercent),
+                    AutonomousBattlegroundSlots.ThinBracketFloor, AutonomousBattlegroundSlots.CapPerRealm);
+                target = LimitBattlegrounds(target, bgSlots.Sum());
                 int currentRvr = members.Count(bot => Is(bot, eAutonomousObjectiveKind.RvR));
                 foreach (GameBot bot in members.Where(bot => bot.Group == null &&
                              Is(bot, eAutonomousObjectiveKind.GroupPve) &&
@@ -356,10 +380,21 @@ public static class AutonomousObjectiveAssignments
                 int assignedGroup = lockedPve.Count(bot => Parse(bot.PersistentRecord.ObjectiveKind) == eAutonomousObjectiveKind.GroupPve);
                 int assignedBattleground = lockedPve.Count(bot => Parse(bot.PersistentRecord.ObjectiveKind) == eAutonomousObjectiveKind.Battleground);
                 int assignedRvr = lockedRvr.Length;
-                // A battleground slot is drawn with the same odds as the remaining solo/group need.
+                // The PvP tours already running per bracket; Assign takes a slot for each new one (TryTake).
+                int[] bgTaken = new int[BattlegroundBrackets.Count];
+                foreach (GameBot bot in lockedPve)
+                    if (Is(bot, eAutonomousObjectiveKind.Battleground) &&
+                        AutonomousBattlegroundSlots.BracketIndex(bot.Level) is int takenBracket and >= 0)
+                        bgTaken[takenBracket]++;
+                for (int bracket = 0; bracket < bgSlots.Length; bracket++)
+                    if (BandOf(BattlegroundBrackets.Get(bracket).MinLevel) == bucket.Key.Band)
+                        AutonomousBattlegroundSlots.Publish(bucket.Key.Realm, bracket, bgSlots[bracket], bgTaken[bracket]);
+                // A battleground slot is drawn with the same odds as the remaining solo/group need, within the bot's
+                // own bracket's free slots.
                 bool TakesBattleground(GameBot bot, int otherNeeded)
                 {
-                    int needed = Math.Max(0, target.Battlegrounds - assignedBattleground);
+                    int needed = Math.Min(Math.Max(0, target.Battlegrounds - assignedBattleground),
+                        AutonomousBattlegroundSlots.Free(bot.Realm, bot.Level));
                     return needed > 0 && CanTakeBattleground(bot) && Random.Shared.Next(needed + Math.Max(0, otherNeeded)) < needed;
                 }
                 foreach (GameBot bot in members.Where(bot => !groupOwned.Contains(bot) && !HasActiveRvrTenure(bot.PersistentRecord, utcNow) &&
@@ -553,6 +588,22 @@ public static class AutonomousObjectiveAssignments
         if (string.Equals(record.ObjectiveKind, kind.ToString(), StringComparison.Ordinal) &&
             string.Equals(record.ObjectiveAssignmentId, assignment, StringComparison.Ordinal))
             return kind;
+        // Every NEW Battleground goal (allocator or task-boundary roll) takes one of its bracket's PvP slots, only here,
+        // after the unchanged-assignment return (a repeat must not take a second slot); a full bracket gives a
+        // non-battleground goal instead (per-realm cap and spread, AutonomousBattlegroundSlots). A bot just taken out of a
+        // battleground for making no progress is not sent back (AutonomousBattlegroundExit).
+        if (kind == eAutonomousObjectiveKind.Battleground && !forcedRaid &&
+            (AutonomousBattlegroundExit.ReentryBlocked(bot.DatabaseID, GameLoop.GameLoopTime) ||
+             !AutonomousBattlegroundSlots.TryTake(bot.Realm, bot.Level)))
+        {
+            kind = AutonomousBotGoalPolicy.IsConfigured
+                ? AutonomousBotGoalPolicy.Choose(bot.Level, excludeBattlegrounds: true)
+                : eAutonomousObjectiveKind.SoloPve;
+            assignment = $"{GlobalConstants.RealmToName(bucket.Realm).ToLowerInvariant()}-{bucket.Band}-{epoch}-{kind}";
+            if (string.Equals(record.ObjectiveKind, kind.ToString(), StringComparison.Ordinal) &&
+                string.Equals(record.ObjectiveAssignmentId, assignment, StringComparison.Ordinal))
+                return kind;
+        }
 
         record.ObjectiveKind = kind.ToString();
         record.ObjectiveAssignmentId = assignment;

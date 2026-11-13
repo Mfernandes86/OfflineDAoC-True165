@@ -18,8 +18,9 @@ public static class AutonomousFrontierTransport
         .OrderBy(bot.GetDistanceTo).FirstOrDefault();
 
     public static GameBot[] BoardingParty(GameBot bot, Passage passage) =>
-        // A relic carrier boards alone (relic audit B4); its escort follows by its own next departure.
-        GameRelic.IsPlayerCarryingRelic(bot) ||
+        // A relic carrier boards alone (relic audit B4); its escort follows by its own next departure. A battleground
+        // traveller boards alone too (each bot's own level decides its battleground).
+        GameRelic.IsPlayerCarryingRelic(bot) || IsBattlegroundPassage(passage) ||
         HasCommittedSiegePassage(bot, passage) || passage.Medallion == "home_necklace" &&
         AutonomousObjectiveAssignments.Parse(bot.PersistentRecord?.ObjectiveKind) != eAutonomousObjectiveKind.RvR
             ? [bot] // Initial PvE meetups can have members returning from different frontiers.
@@ -115,6 +116,38 @@ public static class AutonomousFrontierTransport
         _ => null,
     };
 
+    public const string BattlegroundMedallion = "battlegrounds_necklace";
+    /// <summary>The tick a bot last worked its battleground boarding (it must still want that battleground to board).</summary>
+    public const string BattlegroundBoardingKey = "BattlegroundBoardingTick";
+    public const long BattlegroundBoardingFreshMilliseconds = 10_000;
+
+    public static bool IsBattlegroundPassage(Passage passage) =>
+        passage != null && passage.Medallion == BattlegroundMedallion && BattlegroundBrackets.IsBattlegroundRegion(passage.Region);
+
+    /// <summary>
+    /// The realm portal keep teleporter's battlegrounds passage (owner 2026-11-12: bots enter as players do, buying the
+    /// battlegrounds medallion from the medallion merchant beside the teleporter and boarding its departure). Bots land on
+    /// the field 800 outside their portal keep gate (BattlegroundBrackets.BotArrival: run 19-20, the players' arrival inside
+    /// the portal keep had no path out for bots), not at the players' spot.
+    /// </summary>
+    public static Passage BattlegroundPassage(eRealm realm, BattlegroundBrackets.Bracket bracket) =>
+        bracket == null || realm is not (eRealm.Albion or eRealm.Midgard or eRealm.Hibernia) ? null
+            : new(bracket.RegionId, BattlegroundMedallion, BattlegroundBrackets.BotArrival(bracket, realm));
+
+    /// <summary>A battleground passage boards only a bot whose level fits that battleground and that is working its
+    /// boarding now (a stale request from a bot that changed its mind must not carry it in). Other passages: true.</summary>
+    public static bool BattlegroundPassageFits(GameBot bot, Passage passage, long now) =>
+        !IsBattlegroundPassage(passage) ||
+        bot != null && BattlegroundBrackets.Allows(BattlegroundBrackets.ForRegion(passage.Region), bot.Level) &&
+        now - bot.TempProperties.GetProperty<long>(BattlegroundBoardingKey, long.MinValue / 2) <= BattlegroundBoardingFreshMilliseconds;
+
+    /// <summary>The merchant near a porter that sells a medallion (the realm's own or a neutral one), or null.</summary>
+    public static GameMerchant MedallionMerchant(OFTeleporter porter, eRealm realm, string medallion) =>
+        porter?.GetNPCsInRadius(3000).OfType<GameMerchant>()
+            .Where(npc => (npc.Realm == realm || npc.Realm == eRealm.None) &&
+                npc.TradeItems?.GetAllItems().Values.OfType<DbItemTemplate>().Any(item => item.Id_nb == medallion) == true)
+            .OrderBy(porter.GetDistanceTo).FirstOrDefault();
+
     public static DbInventoryItem Ticket(GameBot bot, Passage passage) => bot.Inventory.AllItems
         .FirstOrDefault(item => item.SlotPosition >= (int)eInventorySlot.FirstBackpack &&
             item.SlotPosition <= (int)eInventorySlot.LastBackpack && item.Count > 0 && item.Id_nb == passage.Medallion);
@@ -126,7 +159,7 @@ public static class AutonomousFrontierTransport
         bot.IsWithinRadius(porter, BoardingRadius) && !bot.InCombat && !bot.IsAttacking &&
         (bot.Brain as BotBrain)?.HasAggro != true && (!GameRelic.IsPlayerCarryingRelic(bot) || CarrierPassage(bot, porter, request?.Passage)) &&
         CanBoardForObjective(bot.Realm, AutonomousObjectiveAssignments.KindFor(bot), request?.Passage) &&
-        PassageMatchesSiege(bot,request?.Passage) &&
+        PassageMatchesSiege(bot,request?.Passage) && BattlegroundPassageFits(bot, request?.Passage, GameLoop.GameLoopTime) &&
         request?.Porter == porter && request.ForceId == (bot.TempProperties.GetProperty<string>("RvrEventForce") ?? $"rvr-{bot.DatabaseID}") &&
         Ticket(bot,request.Passage) != null;
 
@@ -141,6 +174,10 @@ public static class AutonomousFrontierTransport
     public static bool CanBoardForObjective(eRealm realm, eAutonomousObjectiveKind objective, Passage passage)
     {
         if (passage == null) return false;
+        // Owner 2026-11-12: the battlegrounds medallion is for any goal (grinders and the PvP focus); the bot's level is
+        // checked by BattlegroundPassageFits.
+        if (IsBattlegroundPassage(passage)) return BattlegroundPassage(realm, BattlegroundBrackets.ForRegion(passage.Region)) is { } own &&
+            own.Medallion == passage.Medallion;
         Passage canonical = Destination(realm, passage.Region);
         if (canonical == null || canonical.Medallion != passage.Medallion) return false;
         return objective == eAutonomousObjectiveKind.RvR || passage.Medallion == "home_necklace";

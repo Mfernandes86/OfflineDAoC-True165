@@ -368,7 +368,7 @@ namespace DOL.GS
                 return false;
 
             ulong[] polyRefs = GetNearestPolys(zone, new(door.X, door.Y, door.Z), _doorMask, gate ? 2 * MAX_DOOR_POLYS : MAX_DOOR_POLYS,
-                gate ? GameRealmGate.DoorwayHalfWidth : 64f);
+                DoorSearchHalfWidth(gate, door is Keeps.GameKeepDoor, zone.ZoneRegion?.ID ?? 0));
 
             if (polyRefs.Length == 0)
                 return false;
@@ -381,6 +381,16 @@ namespace DOL.GS
             UpdateDoorFlags(zone, door);
             return true;
         }
+
+        /// <summary>Half width of the box whose Door-flag polygons a door registers. A battleground keep door takes 120:
+        /// the Hibernian keep (Hfrontkeep) gates have doorway slivers up to 113 from their door row (portal keeps xx041601,
+        /// Dun Abermenai 253000301), so with the usual 64 a bot walked round the shut gate (lane BGNAV 2026-11-12). Checked on
+        /// all four battleground meshes: at most 4 polygons a door, and no polygon reaches two doors' boxes below 224.</summary>
+        public const float BattlegroundKeepDoorHalfWidth = 120f;
+
+        public static float DoorSearchHalfWidth(bool realmGate, bool keepDoor, ushort regionId) =>
+            realmGate ? GameRealmGate.DoorwayHalfWidth :
+            keepDoor && BattlegroundBrackets.IsBattlegroundRegion(regionId) ? BattlegroundKeepDoorHalfWidth : 64f;
 
         public override bool UpdateDoorFlags(GameDoorBase door)
         {

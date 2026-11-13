@@ -50,6 +50,13 @@ namespace DOL.AI.Brain
             }
         }
 
+        /// <summary>
+        /// Battlegrounds fix 2026-11-12 (G2): a PvP-focus healer in its battleground also heals the realm's battleground bots
+        /// near it (they are never grouped there), ranked with the guards, so the lowest health among them goes first.
+        /// They come from the same NPC scan as the guards: no new area search.
+        /// </summary>
+        public const int BattlegroundComradeRank = 2;
+
         /// <summary>Pure: a support candidate's rank, lower first - a relic carrier, then a keep lord, then other guards.</summary>
         public static int RvrSupportRank(bool carriesRelic, bool keepLord) => carriesRelic ? 0 : keepLord ? 1 : 2;
 
@@ -82,9 +89,12 @@ namespace DOL.AI.Brain
             foreach (GameLiving carrier in RelicCarriers())
                 if (SupportCandidate(carrier))
                     candidates.Add((carrier, RvrSupportRank(GameRelic.IsPlayerCarryingRelic(carrier), false), carrier.HealthPercent));
+            bool battleground = AutonomousObjectiveAssignments.IsBattlegroundPvp(BotBody);
             foreach (GameNPC npc in Body.GetNPCsInRadius(RvrSupportRadius))
                 if (npc is GameKeepGuard guard && SupportCandidate(guard))
                     candidates.Add((guard, RvrSupportRank(GameRelic.IsPlayerCarryingRelic(guard), guard is GuardLord), guard.HealthPercent));
+                else if (battleground && npc is GameBot mate && mate != BotBody && mate.IsAutonomousWorldBot && SupportCandidate(mate))
+                    candidates.Add((mate, BattlegroundComradeRank, mate.HealthPercent));
             candidates.Sort((a, b) => a.Rank != b.Rank ? a.Rank.CompareTo(b.Rank) : a.Health.CompareTo(b.Health));
 
             GameLiving chosen = null;

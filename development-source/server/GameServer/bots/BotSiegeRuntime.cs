@@ -38,7 +38,10 @@ namespace DOL.GS
             }
             else if (repair.MaxCount != RepairStackLimit)
             { repair.MaxCount=RepairStackLimit; GameServer.Database.SaveObject(repair); }
-            AddSupplyToMerchants(repair);
+            // True 1.65 Mode: the bot-only kit is not put on the siege merchants players buy from (the battleground Siege
+            // Masters, battlegrounds fix 2026-11-12); repairs follow the player rule there (HasRepairMeans).
+            if (!Classic165Mode.IsOn)
+                AddSupplyToMerchants(repair);
         }
 
         private static void AddSupplyToMerchants(DbItemTemplate template)
@@ -141,8 +144,8 @@ namespace DOL.GS
         /// Keeps audit 2026-11-11 (L5): True 1.65 Mode repairs a siege engine by the player rule (GameSiegeWeapon.TryRepair,
         /// RepairCommandHandler): woodworking 301 or more and the wood for one repair (the engine level's /repair table),
         /// paid at the board price on success. Any crafter of the engine's realm standing at it may repair it, as any player
-        /// could. The bot-only "field siege repair kit" is sold by siege merchants the 1.65 frontiers do not have, so no
-        /// bot could ever keep a ram alive; it stays the rule outside True 1.65 Mode (the operator only).
+        /// could. The bot-only "field siege repair kit" is not sold in True 1.65 Mode (SupplyCatalog), so no bot could
+        /// ever keep a ram alive with it; it stays the rule outside True 1.65 Mode (the operator only).
         /// </summary>
         public static bool HasRepairMeans(GameBot bot, GameSiegeWeapon w) => Classic165Mode.IsOn
             ? MayRepairSiege(ItemWear165.RepairSkill(bot, eCraftingSkill.WoodWorking), w.TimesRepaired,

@@ -181,6 +181,15 @@ public static class AutonomousStuckWatchdog
         isAlive && !inPlayerLedGroup && !protectedStableTravel && !isRvrRoaming &&
         nowUtc - lastGoalProgressUtc >= GoalProgressThreshold;
 
+    /// <summary>
+    /// Exempt from the 45-minute goal clock (the movement clock still applies): frontier RvR roaming, and a battleground
+    /// tour inside its battleground (battlegrounds fix 2026-11-12, BG252 S4 / BG253 F3: a roamer in a quiet battleground
+    /// meets no enemy for 45 minutes and was sent to its capital, then walked back through the portal keep; the tour's own
+    /// clocks, its expiry and the level bracket, end it). Outside the battleground, on the way in, the clock stays.
+    /// </summary>
+    public static bool RoamsLikeRvr(bool rvrGoal, bool battlegroundGoal, bool inBattleground) =>
+        rvrGoal || battlegroundGoal && inBattleground;
+
     public static bool CountsAsGoalProgress(eAutonomousProgressKind kind) => kind is
         eAutonomousProgressKind.SiegeParticipation or
         eAutonomousProgressKind.Combat or
@@ -383,7 +392,9 @@ public static class AutonomousStuckWatchdog
             return false;
         }
 
-        bool isRvrRoaming = AutonomousObjectiveAssignments.Is(bot, eAutonomousObjectiveKind.RvR);
+        bool isRvrRoaming = RoamsLikeRvr(AutonomousObjectiveAssignments.Is(bot, eAutonomousObjectiveKind.RvR),
+            AutonomousObjectiveAssignments.Is(bot, eAutonomousObjectiveKind.Battleground),
+            BattlegroundBrackets.IsBattlegroundRegion(bot.CurrentRegionID));
         if (ShouldRecoverGoal(goalObservation.LastProgressUtc, now, bot.IsAlive, withHuman, false, isRvrRoaming))
         {
             return RelocateToSafeCapital(bot, now,
@@ -435,6 +446,14 @@ public static class AutonomousStuckWatchdog
         !string.Equals(previousId ?? string.Empty, currentId ?? string.Empty, StringComparison.Ordinal)
             ? now : lastProgressUtc;
 
+    /// <summary>How a recovery ends the bot's goal attempt in the diagnostics, from its log marker.</summary>
+    public static GoalAttemptEnd GoalEndFor(string logMarker) => logMarker switch
+    {
+        "AUTONOMOUS_GOAL_STALL_45M_RECOVERY" => GoalAttemptEnd.NoProgress45m,
+        "AUTONOMOUS_STUCK_15M_RECOVERY" => GoalAttemptEnd.NoMovement15m,
+        _ => GoalAttemptEnd.InvalidPosition
+    };
+
     private static bool RelocateToSafeCapital(
         GameBot bot,
         DateTime now,
@@ -442,6 +461,22 @@ public static class AutonomousStuckWatchdog
         bool moveLiveObject,
         string logMarker = "AUTONOMOUS_POSITION_RECOVERY")
     {
+        // Battlegrounds fix 2026-11-12 (BGPLAY): a live bot inside a battleground goes to its border keep, not the capital
+        // vault, with its battleground tour/camp ended and re-entry blocked for 30 minutes (no entry/exit loop). Healthy
+        // holders and roamers never get here (HoldingPostProgress, RoamsLikeRvr); a genuinely stuck one does.
+        if (moveLiveObject && BattlegroundBrackets.IsBattlegroundRegion(bot.CurrentRegionID))
+        {
+            (int Region, int X, int Y, int Z) stuckAt = (bot.CurrentRegionID, bot.X, bot.Y, bot.Z);
+            if (AutonomousWorldBotController.ExitBattlegroundNow(bot, reason, logMarker))
+            {
+                AutonomousGoalDiagnostics.End(bot, GoalEndFor(logMarker), reason, stuckAt);
+                if (bot.PersistentRecord != null) bot.PersistentRecord.RecoveryCount++;
+                // Both clocks restart from the border keep, as after a capital recovery.
+                MarkProgress(bot, eAutonomousProgressKind.Recovery, now);
+                return true;
+            }
+        }
+
         CapitalLocation capital = SafeCapitalFor(bot.Realm);
         if (capital.RegionId == 0)
             return false;
@@ -489,12 +524,7 @@ public static class AutonomousStuckWatchdog
             bot.Heading = capital.Heading;
         }
 
-        AutonomousGoalDiagnostics.End(bot, logMarker switch
-        {
-            "AUTONOMOUS_GOAL_STALL_45M_RECOVERY" => GoalAttemptEnd.NoProgress45m,
-            "AUTONOMOUS_STUCK_15M_RECOVERY" => GoalAttemptEnd.NoMovement15m,
-            _ => GoalAttemptEnd.InvalidPosition
-        }, reason, (oldRegion, oldX, oldY, oldZ));
+        AutonomousGoalDiagnostics.End(bot, GoalEndFor(logMarker), reason, (oldRegion, oldX, oldY, oldZ));
         OfflineWorldBotRecord record = bot.PersistentRecord;
         record.RecoveryCount++;
         record.CurrentCampId = string.Empty;

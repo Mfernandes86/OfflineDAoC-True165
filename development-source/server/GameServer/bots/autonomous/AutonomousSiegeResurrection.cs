@@ -46,7 +46,9 @@ namespace DOL.GS
             if (corpse == null || corpse.ObjectState != GameObject.eObjectState.Active) return false;
             foreach (GameNPC npc in corpse.GetNPCsInRadius(SearchRadius))
                 if (npc is GameBot healer && healer != corpse && healer.Realm == corpse.Realm && CanRaise(healer) &&
-                    (IsSiegeAttacker(healer) || AutonomousObjectiveAssignments.Is(healer, eAutonomousObjectiveKind.RvR)))
+                    (IsSiegeAttacker(healer) || AutonomousObjectiveAssignments.Is(healer, eAutonomousObjectiveKind.RvR) ||
+                     // battlegrounds fix 2026-11-12 (G2): a PvP-focus healer in its battleground raises the realm's dead
+                     AutonomousObjectiveAssignments.IsBattlegroundPvp(healer)))
                     return true;
             return false;
         }

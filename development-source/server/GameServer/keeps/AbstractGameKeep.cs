@@ -532,6 +532,9 @@ namespace DOL.GS.Keeps
 					StartDeductionTimer();
 				}
 			}
+			// A battleground keep saved at the old capture level (4) comes back at level 1 (LevelAfterCapture).
+			if (Guild == null && BattlegroundBrackets.IsBattlegroundRegion(Region) && Level > BattlegroundKeepLevel)
+				Level = BattlegroundKeepLevel;
 			if (Level < ServerProperties.Properties.MAX_KEEP_LEVEL && Guild != null)
 				StartChangeLevel((byte)ServerProperties.Properties.MAX_KEEP_LEVEL);
 			else if (Level <= ServerProperties.Properties.MAX_KEEP_LEVEL && Level > ServerProperties.Properties.STARTING_KEEP_LEVEL && Guild == null)
@@ -859,11 +862,27 @@ namespace DOL.GS.Keeps
 		}
 
 
+		/// <summary>
+		/// Whether a keep guard takes the Level of its own Mob row (battlegrounds fix 2026-11-12, lane BGCONTENT's request):
+		/// True 1.65 battleground central keeps, where the rows carry the Prima Atlas levels (Thidranki guards 24 / lord 33,
+		/// Murdaigean 30 / commanders 33 / lord 40, Caer Caledon 35 / lord 42, Abermenai today's 23 / 28). The BaseLevel
+		/// formula cannot give those guards (it came out 3-4 levels high in Thidranki and Murdaigean). The level never
+		/// depends on the keep's level or owner, so a capture and the new owner's respawned guards keep the period
+		/// levels. Frontier keeps, portal keeps and rows without a level keep the formula.
+		/// </summary>
+		public static bool UsesRowLevel(bool classic165, bool portalKeep, bool battleground, byte rowLevel) =>
+			classic165 && !portalKeep && battleground && rowLevel > 1;
+
 		public virtual void SetGuardLevel(GameKeepGuard guard)
 		{
 			if (guard is FrontierHastener)
 			{
 				guard.Level = 1;
+			}
+			else if (UsesRowLevel(Classic165Mode.IsOn, IsPortalKeep, BattlegroundBrackets.IsBattlegroundRegion(Region), guard.DbLevel))
+			{
+				guard.Level = guard.DbLevel;
+				guard.Health = guard.MaxHealth;
 			}
 			else
 			{
@@ -1040,6 +1059,20 @@ namespace DOL.GS.Keeps
 
 		#region Reset
 
+		/// <summary>The level a battleground keep has after a capture: level 1, as the world builds it.</summary>
+		public const byte BattlegroundKeepLevel = 1;
+
+		/// <summary>
+		/// The keep's level right after a capture (battlegrounds fix 2026-11-12, BG252 S2). A captured battleground keep
+		/// keeps level 1: in 2002-2003 a newly taken Thidranki Faste had level 1 doors ("The Doors were originally level1",
+		/// Freddyshouse 91018, 2002-06-28; "They were lvl1 doors when you got in", FH 92033, 2002-07-04; upgrades made by
+		/// players were "lvl 1 again" next day, FH 96740). The jump to starting_keep_level (4) made the doors 20,800 instead
+		/// of 5,200 in Thidranki and the guards and lord about five levels higher after the first capture. Frontier keeps
+		/// are unchanged.
+		/// </summary>
+		public static byte LevelAfterCapture(bool battleground, byte startingKeepLevel) =>
+			battleground ? BattlegroundKeepLevel : startingKeepLevel;
+
 		/// <summary>
 		/// reset the realm when the lord have been killed
 		/// </summary>
@@ -1053,7 +1086,7 @@ namespace DOL.GS.Keeps
 
 			PlayerMgr.BroadcastCapture(this);
 
-            Level = (byte)ServerProperties.Properties.STARTING_KEEP_LEVEL;
+            Level = LevelAfterCapture(BattlegroundBrackets.IsBattlegroundRegion(Region), (byte)ServerProperties.Properties.STARTING_KEEP_LEVEL);
 
 			//if a guild holds the keep, we release it
 			if (Guild != null)

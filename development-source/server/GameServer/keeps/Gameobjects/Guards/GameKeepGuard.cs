@@ -454,6 +454,10 @@ namespace DOL.GS.Keeps
 		
 		string m_dataObjectID = string.Empty;
 
+		/// <summary>The Level of this guard's Mob row (0 when not loaded from one). True 1.65 battleground keeps use it as the
+		/// guard's level (AbstractGameKeep.SetGuardLevel, battlegrounds fix 2026-11-12).</summary>
+		public byte DbLevel { get; private set; }
+
         #region Database
         /// <summary>
         /// Load the guard from the database
@@ -462,6 +466,7 @@ namespace DOL.GS.Keeps
         public override void LoadFromDatabase(DataObject mobobject)
 		{
 			base.LoadFromDatabase(mobobject);
+			DbLevel = (mobobject as DbMob)?.Level ?? 0;
 			movementComponent.ForceUpdatePosition(); // Ensures `CurrentAreas` returns something.
 
 			foreach (AbstractArea area in CurrentAreas)

@@ -223,12 +223,23 @@ namespace DOL.GS
             // Goal 1 (owner 2026-10-07): siege crews use a kit they carry, otherwise synthetic siege equipment set up on
             // the spot; no more shopping trips (runs to run 18: hundreds of supply timeouts, not one engine deployed).
             // True 1.65 Mode: no free engines: a kit the crew carries or buys from a siegecrafter of its realm (CrafterBots165).
-            if (Classic165Mode.IsOn && BotSiegeRuntime.Item(bot, kitId) == null && !CrafterBots165.SupplySiege(bot, kitId))
+            // In a battleground the crew walks to its realm's Siege Master at the portal keep and buys it there.
+            // Only to deploy: an operator already working a usable engine (the kit was spent on it, or a reclaimed one) keeps
+            // operating it and looks for a kit again once the engine is gone.
+            if (NeedsNewKit(Classic165Mode.IsOn, owned != null, BotSiegeRuntime.Item(bot, kitId) != null))
             {
-                SiegeStatus(bot, "Waiting for a siegecrafter's engine", target);
-                _siegeNextAttempt = now + 60_000;
-                return false;
+                // A Siege Master that does not sell the realm's kit: the siegecrafters, as before.
+                if (SellsHere(BattlegroundSiegeMaster(bot), kitId)) return SupplySiegeItem(bot, kitId, 1);
+                if (!CrafterBots165.SupplySiege(bot, kitId))
+                {
+                    SiegeStatus(bot, "Waiting for a siegecrafter's engine", target);
+                    _siegeNextAttempt = now + 60_000;
+                    return false;
+                }
             }
+            // A battleground crew with an artillery engine and no stones or bolts fetches them from its Siege Master (the
+            // remote restock in SiegeAmmo165.Ready stays the frontier's way, and the fallback where no Siege Master stands).
+            if (NeedsSiegeMasterAmmo(bot, owned, _siegeKind) is { } ammoId) return SupplySiegeItem(bot, ammoId, SiegeAmmo165.RestockTarget);
             // True 1.65 Mode: artillery fires only with ammunition (SiegeAmmo165; rams need none). The crew restocks when it
             // takes the job (muster time) and again after a supply run of RestockRetryMilliseconds; with none it leaves the
             // engine (ammunition still in it stays for another crew) and goes back to the door work of ordinary RvR.
@@ -484,6 +495,8 @@ namespace DOL.GS
             // Never leave a siege just to fetch repair supplies.
             if (id==BotSiegeRuntime.RepairKit) return false;
             long now=GameLoop.GameLoopTime;
+            // Inside a battleground (both modes): the realm's own Siege Master at its portal keep.
+            if (BattlegroundSiegeMaster(bot) is { } master && SellsHere(master, id)) return SupplyAtSiegeMaster(bot, master, id, quantity);
             if (_siegeSupplyItem!=id) _siegeSupplyStarted=now;
             // True 1.65 Mode: no siege merchants in the frontiers; siegecrafters supply the kits.
             if (Classic165Mode.IsOn)
@@ -682,6 +695,147 @@ namespace DOL.GS
                 bot.PathTo(new Vector3(weapon.X,weapon.Y,weapon.Z),bot.MaxSpeed);
             SiegeStatus(bot,"Relocating siege equipment along checked route",weapon); return true;
         }
+        // ---- battleground Siege Masters (battlegrounds fix 2026-11-12, owner: "put them back. make the bots use them.")
+        // 1.53D (FH 97993, 2002-09-12): a Siege Master "at your realm's portal keep within the Battlegrounds"; FH 116313
+        // (2003-03-02, Caledonia): "tried about 4 rams on it from the siege master". A siege crew inside a battleground buys
+        // its kit, and the stones or bolts its engine fires, from its own realm's Siege Master there, at the list price, and
+        // carries them back to the keep, as a player did. Where no Siege Master of the realm stands in that battleground,
+        // and everywhere outside the battlegrounds, nothing changes (True 1.65: the siegecrafters and the merchant-price
+        // ammunition restock; normal mode: the nearest siege merchant). Cost: one scan of the region's merchants per realm
+        // and battleground every five minutes; a crew that cannot pay looks again after five minutes.
+
+        public const long SiegeMasterCacheMilliseconds = 5 * 60_000;
+        public const long SiegeMasterRetryMilliseconds = 5 * 60_000;
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<(ushort Region, eRealm Realm), (long Until, GameMerchant Master)> SiegeMasters = new();
+
+        /// <summary>The bot's realm's Siege Master in the battleground it stands in (the one nearest its realm's arrival
+        /// point, so at its own portal keep); null outside a battleground or where none stands.</summary>
+        internal static GameMerchant BattlegroundSiegeMaster(GameBot bot)
+        {
+            if (bot?.CurrentRegion == null || !BattlegroundBrackets.IsBattlegroundRegion(bot.CurrentRegionID)) return null;
+            long now = GameLoop.GameLoopTime;
+            var key = (bot.CurrentRegionID, bot.Realm);
+            if (SiegeMasters.TryGetValue(key, out var cached) && now < cached.Until &&
+                (cached.Master == null || cached.Master.ObjectState == GameObject.eObjectState.Active))
+                return cached.Master;
+            GameLocation home = BattlegroundBrackets.ForRegion(bot.CurrentRegionID) is { } bracket
+                ? BattlegroundBrackets.BotArrival(bracket, bot.Realm) : null;
+            Vector2 anchor = home != null ? new(home.X, home.Y) : new(bot.X, bot.Y);
+            GameMerchant master = null;
+            float best = float.MaxValue;
+            foreach (GameMerchant merchant in bot.CurrentRegion.Merchants)
+            {
+                if (merchant == null || merchant.ObjectState != GameObject.eObjectState.Active || merchant.TradeItems == null ||
+                    !IsSiegeMasterFor(bot.Realm, merchant.Realm, merchant.TradeItems.ItemsListID)) continue;
+                float distance = Vector2.DistanceSquared(anchor, new(merchant.X, merchant.Y));
+                if (distance < best) { best = distance; master = merchant; }
+            }
+            SiegeMasters[key] = (now + SiegeMasterCacheMilliseconds, master);
+            return master;
+        }
+
+        /// <summary>Pure rule: a merchant serves a realm's siege crews when it sells that realm's siege list and is of that
+        /// realm or of none.</summary>
+        public static bool IsSiegeMasterFor(eRealm realm, eRealm merchantRealm, string itemListId) =>
+            (merchantRealm == eRealm.None || merchantRealm == realm) && AutonomousSiegePolicy.IsSiegeMerchant(realm, itemListId);
+
+        /// <summary>Pure rule: how many a crew buys at the Siege Master: a kit only when it can pay for all of them,
+        /// ammunition up to the wanted stack as far as its coin goes (SiegeAmmo165.RestockCount).</summary>
+        public static int SiegeMasterPurchaseCount(bool ammunition, int held, int wanted, long money, long price) =>
+            price <= 0 || wanted <= 0 ? 0
+            : ammunition ? SiegeAmmo165.RestockCount(held, money, price, wanted)
+            : money / price >= wanted ? wanted : 0;
+
+        /// <summary>The engine kind a kit deploys for this realm (null for anything else).</summary>
+        public static BotSiegeKind? KitKind(eRealm realm, string id)
+        {
+            foreach (BotSiegeKind kind in Enum.GetValues<BotSiegeKind>())
+                if (string.Equals(BotSiegeRuntime.Kit(realm, kind), id, StringComparison.OrdinalIgnoreCase)) return kind;
+            return null;
+        }
+
+        /// <summary>The ammunition a battleground crew must fetch from its Siege Master before it can fire: True 1.65,
+        /// an engine kind that fires it, none in the engine or the pack, and a Siege Master of the realm here.</summary>
+        private static string NeedsSiegeMasterAmmo(GameBot bot, GameSiegeWeapon engine, BotSiegeKind kind)
+        {
+            if (!SiegeAmmo165.Required(kind) || engine != null && BotSiegeRuntime.Kind(engine) == kind && engine.HasAmmo ||
+                SiegeAmmo165.Carried(bot, kind) > 0) return null;
+            string ammoId = SiegeAmmo165.AmmoId(bot.Realm, SiegeAmmo165.BasicAmmo(kind));
+            // A Siege Master whose list lacks the realm's stones or bolts: the ordinary restock (SiegeAmmo165.Ready: crafted,
+            // a siegecrafter bot, or the list price), as in the frontier, instead of a give-up every five minutes.
+            return SellsHere(BattlegroundSiegeMaster(bot), ammoId) ? ammoId : null;
+        }
+
+        /// <summary>The bot's battleground Siege Master exists and sells this item (kit or ammunition).</summary>
+        private static bool SellsHere(GameMerchant master, string id) => master != null && SoldBy(master, id) != null;
+
+        /// <summary>
+        /// Pure rule: a siege crew looks for a new kit only to deploy an engine, never while it works a usable one (the kit
+        /// was spent on it, or it reclaimed an abandoned one). Before (pre-existing, review 2026-11-12) a frontier crew at
+        /// its deployed engine with no spare kit stood "Waiting for a siegecrafter's engine", or bought a spare.
+        /// </summary>
+        public static bool NeedsNewKit(bool classic165, bool workingEngine, bool carriesKit) =>
+            classic165 && !workingEngine && !carriesKit;
+
+        private static DbItemTemplate SoldBy(GameMerchant merchant, string id) => id == null ? null :
+            merchant?.TradeItems?.GetAllItems().Values.OfType<DbItemTemplate>()
+                .FirstOrDefault(t => t.Price > 0 && string.Equals(t.Id_nb, id, StringComparison.OrdinalIgnoreCase));
+
+        /// <summary>One step of a crew's errand to its Siege Master: walk there, pay, carry it back (TryRunSiegeJobCore
+        /// then walks the bot to the keep). True while the errand runs or when it is done; false when it gave up.</summary>
+        private bool SupplyAtSiegeMaster(GameBot bot, GameMerchant master, string id, int quantity)
+        {
+            long now = GameLoop.GameLoopTime;
+            if (_siegeSupplyItem != id) _siegeSupplyStarted = now;
+            if (now - _siegeSupplyStarted > SiegeSupplyBudget(false))
+                return GiveUpSiegeMaster(bot, master, id, "gave_up", now);
+            bool ammunition = SiegeAmmo165.KindOf(id) != SiegeAmmoKind.None;
+            DbItemTemplate template = SoldBy(master, id);
+            int held = ammunition ? bot.Inventory?.CountItemTemplate(template?.Id_nb ?? id, eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack) ?? 0 : 0;
+            int count = template == null ? 0 :
+                SiegeMasterPurchaseCount(ammunition, held, ammunition ? quantity : 1, AutonomousBotEconomy.GetMoney(bot.DatabaseID), template.Price);
+            if (count <= 0) return GiveUpSiegeMaster(bot, master, id, template == null ? "not_sold" : "cannot_pay", now);
+            _siegeSupplyItem = id; _siegeSupplyCount = quantity;
+            if (!ApproachSupplyMerchant(bot, master))
+            {
+                SiegeStatus(bot, $"Buying siege supplies from {master.Name}", master);
+                return true;
+            }
+            if (!BuyFromSiegeMaster(bot, template, count)) return GiveUpSiegeMaster(bot, master, id, "pack_full", now);
+            SiegeLog(bot, "purchase", null, $"item={template.Id_nb} count={count} copper={template.Price * count} from=\"{master.Name}\" battleground=True");
+            // A kit for an engine that fires ammunition: its stones or bolts in the same visit.
+            if (!ammunition && KitKind(bot.Realm, id) is { } kind && SiegeAmmo165.Required(kind) &&
+                SoldBy(master, SiegeAmmo165.AmmoId(bot.Realm, SiegeAmmo165.BasicAmmo(kind))) is { } ammo)
+            {
+                int have = bot.Inventory.CountItemTemplate(ammo.Id_nb, eInventorySlot.FirstBackpack, eInventorySlot.LastBackpack);
+                int more = SiegeMasterPurchaseCount(true, have, SiegeAmmo165.RestockTarget, AutonomousBotEconomy.GetMoney(bot.DatabaseID), ammo.Price);
+                if (more > 0 && BuyFromSiegeMaster(bot, ammo, more))
+                    SiegeLog(bot, "purchase", null, $"item={ammo.Id_nb} count={more} copper={ammo.Price * more} from=\"{master.Name}\" battleground=True");
+            }
+            _siegeSupplyItem = null;
+            return true;
+        }
+
+        private bool GiveUpSiegeMaster(GameBot bot, GameMerchant master, string id, string why, long now)
+        {
+            SiegeLog(bot, "siege_master_" + why, null, $"item={id} master=\"{master.Name}\" retrySeconds={SiegeMasterRetryMilliseconds / 1000}");
+            ReleaseSiegeJob(bot);
+            _siegeNextAttempt = now + SiegeMasterRetryMilliseconds;
+            return false;
+        }
+
+        /// <summary>A real purchase: the coin leaves first (the list price, as GameMerchant charges) and comes back if the
+        /// pack refuses the goods.</summary>
+        private static bool BuyFromSiegeMaster(GameBot bot, DbItemTemplate template, int count)
+        {
+            if (bot?.Inventory == null || template == null || count <= 0) return false;
+            long price = checked(template.Price * count);
+            if (!AutonomousBotEconomy.TrySpend(bot.DatabaseID, price, BotMoneyLedger165.Kind.Siege)) return false;
+            if (SiegeAmmo165.Give(bot, template, count)) return true;
+            AutonomousBotEconomy.AddMoney(bot.DatabaseID, price, BotMoneyLedger165.Kind.Siege);
+            return false;
+        }
+
         private void SiegeStatus(GameBot bot,string status,GameLiving target) => SetRvrStatus(bot,status,target.Name,"Real siege equipment, finite inventory and native combat timers");
         private void SiegeLog(GameBot bot,string action,GameSiegeWeapon weapon,string detail)
         { if(Log.IsInfoEnabled) Log.Info($"RVR_SIEGE action={action} bot={bot.Name} keep={_siegeJobKeep} engine={weapon?.ObjectID} {detail}"); }
