@@ -14,25 +14,21 @@
 > official site: [darkageofcamelot.com](https://www.darkageofcamelot.com/).
 
 > [!IMPORTANT]
-> **This is an AI-made project.** All of its code was written by AI tools (Codex, then Claude). The project owner
-> has no game development or coding experience: they directed the work and play-tested it. Expect bugs.
->
-> **v0.7 is out**, with an in-place update for players of any earlier version (v0.1 to v0.6). Large parts of the game haven't been played through by a person.
-> Expect bugs, and keep a backup of your save. Bug reports are welcome in [Issues](https://github.com/shadowofze/OfflineDAoC-True165/issues).
+> **This is an AI-made project.** All of its code was written by AI tools (Codex, then Claude). I have no game
+> development or coding experience: I directed the work and play-tested it. Large parts of the game haven't been
+> played through by a person yet, so expect bugs and keep a backup of your save.
 
-**There is no release schedule.** Releases come out whenever I feel like it, and it may be weeks or months between
-one release and the next.
-Bug reports and ideas are welcome in [Issues](https://github.com/shadowofze/OfflineDAoC-True165/issues).
-Anyone who wants to continue development in a fork is free to do so, no need to ask me.
+**About updates:** this is a hobby project I work on for fun, in my spare time. There is no release schedule:
+releases come out whenever I feel like it, and it may be weeks or months between one release and the next. I can't
+promise to keep updating it forever, but while I'm enjoying it, it'll keep getting better. Bug reports and ideas are
+always welcome in [Issues](https://github.com/shadowofze/OfflineDAoC-True165/issues), and if you'd like to take the
+project further yourself, you're welcome to fork it. No need to ask.
 
 # Offline DAoC True 1.65: single-player Dark Age of Camelot as of patch 1.65
 
 Offline DAoC True 1.65 is a local, single-player Dark Age of Camelot that runs entirely on your own PC. It
 recreates the game as it was at **patch 1.65** (Classic and Shrouded Isles, November 2003), and fills the world
 with gamebots that level, group, trade, craft and fight on their own.
-
-Everything this project adds to the OpenDAoC server was written by AI tools (Codex, then Claude), as was the whole
-new client. The project owner, who has no game development or coding experience, directed and play-tested it.
 
 ## Download and play
 
@@ -165,30 +161,15 @@ is the result: the world database and the content files built from it.
 
 ## Good to know
 
-- **AI-written code can have bugs.** Keep a backup of your save before installing a new build or mod. There's
-  no guarantee against regressions.
+- **Back up your save** before installing a new build or a mod. AI-written code can have bugs.
 - **Licensing:** this repository holds the server, launcher, tools and the new client's source code. It does
   not hold the original game client's source. The new client's content is converted from the original
   client's files and ships only in the release download. The server's license doesn't relicense
   third-party client assets or dependencies. See [THIRD_PARTY.md](THIRD_PARTY.md).
 - **Local only:** the default setup is for one PC. Running a public multiplayer server would need its own
   security work.
-- **Forking:** you don't need permission to fork this repository and make it your own. Keep the existing
-  licenses and credits ([THIRD_PARTY.md](THIRD_PARTY.md)).
-
-## Known issues
-
-- Horse routes: crossing Prydwen Bridge, the horse can dip into the deck now and then.
-- Horse rides can stop or slide sideways for a moment after the server stalls.
-- Town doors (Ludlow's, for example) can be attacked by players and gamebots.
-- Housing is new in v0.2: it is checked offline but not yet played through on a live server.
-- Low-level gamebots (levels 6-9) die a lot: they start with no armour and have to buy it.
-- Gear wears at the player rate, so bots rarely need repairs early on. This is expected.
-- About 2,100 monster names drop only coin, mostly in the Shrouded Isles, where no period source recorded their loot.
-- About 133 low-confidence period merchant goods are left out, and the Darkness Falls seal stock still includes later
-  items beside the period ones.
-- Support bots don't leave combat while only their pet fights.
-- The login panel is the older one, not the period 1.64 one.
+- **Forking:** fork it and make it your own; just keep the existing licenses and credits
+  ([THIRD_PARTY.md](THIRD_PARTY.md)).
 
 ## License
 

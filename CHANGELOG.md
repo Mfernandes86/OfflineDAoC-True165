@@ -1020,5 +1020,4 @@ These were built during this work and are shared with Offline DAoC.
   - the Realm Exchange tab (the Exchange is in game only);
   - the Reset Keeps & Relics button.
 
-The known issues are listed in the [README](README.md#known-issues), and the fixes taken from
-community forks are credited in [THIRD_PARTY.md](THIRD_PARTY.md#fork-credits).
+The fixes taken from community forks are credited in [THIRD_PARTY.md](THIRD_PARTY.md#fork-credits).
