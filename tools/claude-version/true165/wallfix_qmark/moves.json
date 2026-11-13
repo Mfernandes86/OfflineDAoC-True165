@@ -1,0 +1,1 @@
+{"_about": "Moves of Mob rows that an add-file creates (the lanes message them to QMARK): {lane, mob_id, region, old [x, y], new [x, y, z], why}. Rules-file moves are read from true165-rules.json directly.", "moves": []}

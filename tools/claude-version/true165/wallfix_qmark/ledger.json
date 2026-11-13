@@ -1,0 +1,2608 @@
+{
+ "_about": "build_wallfix_qmark165.py: the edits it made to classic-quests.json (undone before each run)",
+ "written": "2026-11-12T20:07:15",
+ "ops": [
+  {
+   "path": [
+    "Quests",
+    "21318",
+    "Steps",
+    11,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "21318",
+    "Steps",
+    11,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "21318",
+    "Steps",
+    11,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "21319",
+    "Steps",
+    11,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "21319",
+    "Steps",
+    11,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "21319",
+    "Steps",
+    11,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "21320",
+    "Steps",
+    11,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "21320",
+    "Steps",
+    11,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "21320",
+    "Steps",
+    11,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "21321",
+    "Steps",
+    11,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "21321",
+    "Steps",
+    11,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "21321",
+    "Steps",
+    11,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20007",
+    "Steps",
+    3,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20007",
+    "Steps",
+    3,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20007",
+    "Steps",
+    3,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20622",
+    "Steps",
+    1,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20622",
+    "Steps",
+    1,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20622",
+    "Steps",
+    1,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20622",
+    "Steps",
+    3,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20622",
+    "Steps",
+    3,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20622",
+    "Steps",
+    3,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20622",
+    "Steps",
+    9,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20622",
+    "Steps",
+    9,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20622",
+    "Steps",
+    9,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20623",
+    "Steps",
+    1,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20623",
+    "Steps",
+    1,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20623",
+    "Steps",
+    1,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20623",
+    "Steps",
+    3,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20623",
+    "Steps",
+    3,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20623",
+    "Steps",
+    3,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20623",
+    "Steps",
+    9,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20623",
+    "Steps",
+    9,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20623",
+    "Steps",
+    9,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20624",
+    "Steps",
+    1,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20624",
+    "Steps",
+    1,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20624",
+    "Steps",
+    1,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20624",
+    "Steps",
+    3,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20624",
+    "Steps",
+    3,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20624",
+    "Steps",
+    3,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20624",
+    "Steps",
+    9,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20624",
+    "Steps",
+    9,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20624",
+    "Steps",
+    9,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20625",
+    "Steps",
+    1,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20625",
+    "Steps",
+    1,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20625",
+    "Steps",
+    1,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20625",
+    "Steps",
+    3,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20625",
+    "Steps",
+    3,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20625",
+    "Steps",
+    3,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20625",
+    "Steps",
+    9,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20625",
+    "Steps",
+    9,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20625",
+    "Steps",
+    9,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20626",
+    "Steps",
+    1,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20626",
+    "Steps",
+    1,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20626",
+    "Steps",
+    1,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20626",
+    "Steps",
+    3,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20626",
+    "Steps",
+    3,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20626",
+    "Steps",
+    3,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20626",
+    "Steps",
+    9,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20626",
+    "Steps",
+    9,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20626",
+    "Steps",
+    9,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20627",
+    "Steps",
+    1,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20627",
+    "Steps",
+    1,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20627",
+    "Steps",
+    1,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20627",
+    "Steps",
+    3,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20627",
+    "Steps",
+    3,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20627",
+    "Steps",
+    3,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20627",
+    "Steps",
+    9,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20627",
+    "Steps",
+    9,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20627",
+    "Steps",
+    9,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20628",
+    "Steps",
+    1,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20628",
+    "Steps",
+    1,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20628",
+    "Steps",
+    1,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20628",
+    "Steps",
+    3,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20628",
+    "Steps",
+    3,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20628",
+    "Steps",
+    3,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20628",
+    "Steps",
+    9,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20628",
+    "Steps",
+    9,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20628",
+    "Steps",
+    9,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20629",
+    "Steps",
+    1,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20629",
+    "Steps",
+    1,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20629",
+    "Steps",
+    1,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20629",
+    "Steps",
+    3,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20629",
+    "Steps",
+    3,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20629",
+    "Steps",
+    3,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20629",
+    "Steps",
+    9,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20629",
+    "Steps",
+    9,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20629",
+    "Steps",
+    9,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20630",
+    "Steps",
+    1,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20630",
+    "Steps",
+    1,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20630",
+    "Steps",
+    1,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20630",
+    "Steps",
+    3,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20630",
+    "Steps",
+    3,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20630",
+    "Steps",
+    3,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20630",
+    "Steps",
+    9,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20630",
+    "Steps",
+    9,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20630",
+    "Steps",
+    9,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20631",
+    "Steps",
+    1,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20631",
+    "Steps",
+    1,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20631",
+    "Steps",
+    1,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20631",
+    "Steps",
+    3,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20631",
+    "Steps",
+    3,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20631",
+    "Steps",
+    3,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20631",
+    "Steps",
+    9,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20631",
+    "Steps",
+    9,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20631",
+    "Steps",
+    9,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20632",
+    "Steps",
+    1,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20632",
+    "Steps",
+    1,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20632",
+    "Steps",
+    1,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20632",
+    "Steps",
+    3,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20632",
+    "Steps",
+    3,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20632",
+    "Steps",
+    3,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20632",
+    "Steps",
+    9,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20632",
+    "Steps",
+    9,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20632",
+    "Steps",
+    9,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20633",
+    "Steps",
+    1,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20633",
+    "Steps",
+    1,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20633",
+    "Steps",
+    1,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20633",
+    "Steps",
+    3,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20633",
+    "Steps",
+    3,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20633",
+    "Steps",
+    3,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20633",
+    "Steps",
+    9,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20633",
+    "Steps",
+    9,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20633",
+    "Steps",
+    9,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20634",
+    "Steps",
+    1,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20634",
+    "Steps",
+    1,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20634",
+    "Steps",
+    1,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20634",
+    "Steps",
+    3,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20634",
+    "Steps",
+    3,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20634",
+    "Steps",
+    3,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20634",
+    "Steps",
+    9,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20634",
+    "Steps",
+    9,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20634",
+    "Steps",
+    9,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20635",
+    "Steps",
+    1,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20635",
+    "Steps",
+    1,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20635",
+    "Steps",
+    1,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20635",
+    "Steps",
+    3,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20635",
+    "Steps",
+    3,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20635",
+    "Steps",
+    3,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20635",
+    "Steps",
+    9,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20635",
+    "Steps",
+    9,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20635",
+    "Steps",
+    9,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20636",
+    "Steps",
+    1,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20636",
+    "Steps",
+    1,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20636",
+    "Steps",
+    1,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20636",
+    "Steps",
+    3,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20636",
+    "Steps",
+    3,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20636",
+    "Steps",
+    3,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  },
+  {
+   "path": [
+    "Quests",
+    "20636",
+    "Steps",
+    9,
+    "Marker",
+    "X"
+   ],
+   "before": 517007,
+   "after": 528700
+  },
+  {
+   "path": [
+    "Quests",
+    "20636",
+    "Steps",
+    9,
+    "Marker",
+    "Y"
+   ],
+   "before": 374753,
+   "after": 359900
+  },
+  {
+   "path": [
+    "Quests",
+    "20636",
+    "Steps",
+    9,
+    "Marker",
+    "Z"
+   ],
+   "before": 9040,
+   "after": 9088
+  }
+ ],
+ "hits": [
+  {
+   "quest": "21318",
+   "step": 11,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "21319",
+   "step": 11,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "21320",
+   "step": 11,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "21321",
+   "step": 11,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20007",
+   "step": 3,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20622",
+   "step": 1,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20622",
+   "step": 3,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20622",
+   "step": 9,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20623",
+   "step": 1,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20623",
+   "step": 3,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20623",
+   "step": 9,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20624",
+   "step": 1,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20624",
+   "step": 3,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20624",
+   "step": 9,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20625",
+   "step": 1,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20625",
+   "step": 3,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20625",
+   "step": 9,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20626",
+   "step": 1,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20626",
+   "step": 3,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20626",
+   "step": 9,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20627",
+   "step": 1,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20627",
+   "step": 3,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20627",
+   "step": 9,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20628",
+   "step": 1,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20628",
+   "step": 3,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20628",
+   "step": 9,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20629",
+   "step": 1,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20629",
+   "step": 3,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20629",
+   "step": 9,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20630",
+   "step": 1,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20630",
+   "step": 3,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20630",
+   "step": 9,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20631",
+   "step": 1,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20631",
+   "step": 3,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20631",
+   "step": 9,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20632",
+   "step": 1,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20632",
+   "step": 3,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20632",
+   "step": 9,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20633",
+   "step": 1,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20633",
+   "step": 3,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20633",
+   "step": 9,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20634",
+   "step": 1,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20634",
+   "step": 3,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20634",
+   "step": 9,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20635",
+   "step": 1,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20635",
+   "step": 3,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20635",
+   "step": 9,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20636",
+   "step": 1,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20636",
+   "step": 3,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  },
+  {
+   "quest": "20636",
+   "step": 9,
+   "kind": "Marker",
+   "lane": "ALB",
+   "mob_id": "829c7123-4cbf-4656-b4d0-b317d8c6aa16",
+   "old": [
+    517007,
+    374753
+   ],
+   "new": [
+    528700,
+    359900,
+    9088
+   ]
+  }
+ ]
+}

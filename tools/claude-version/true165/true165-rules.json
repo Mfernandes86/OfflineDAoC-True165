@@ -665,6 +665,30 @@
     "key": "Mob_ID",
     "where": "Mob_ID IN ('231313cf-eb6a-408f-9811-f697c705ffb7', 'cc83cc14-e5ff-4eb1-b35c-8ad140793909') AND PackageID IS NULL AND Name IN ('Ley Manton', 'Tria Ellowis')",
     "reason": "True 1.65 0.8 gamefix SPAWNS: Ley Manton (Weapon Merchant, Black Mountains North) and Tria Ellowis (Armor Merchant, Black Mountains South) each stood twice on one spot: the period Public_DB merchant row stays; the second base row (saved 2021-09-26, PackageID NULL, a GameNPC on the same merchant template) goes"
+   },
+   {
+    "table": "Mob",
+    "key": "Mob_ID",
+    "where": "ClassType = 'DOL.GS.GameHastener' AND Region IN (2, 102, 202) AND Mob_ID IN ('08acdd2c-0082-48de-b2b8-3accdda694e6', '0c536d5f-c24f-4115-87f2-377f94288463', '0eda41a7-3e5d-44cd-ad68-3092a9c0cbbe', '0f04f8dd-67e6-4fc9-b165-e506fb4560d7', '1fd1fc0c-f442-476c-aaf2-084380ba1680', '2003744c-1937-4bb9-8566-50b39cb6a936', '2f7f0df9-8e58-4416-8d49-cc87f2a3c6d6', '3105c6e6-c1ea-4eff-945c-4a11a7886285', '31849fe2-3e55-4222-a45a-2bed34396680', '378ee3e5-be85-48d1-a9a6-579690f05b4d', '40df70fb-e2de-4d03-8f8b-755500720eab', '423b6840-d56b-4b57-8ec9-728eb2097843', '44232871-5f96-417f-b2fa-ff3c92826e99', '46aaae3a-2686-4eab-abdd-8586a02586b1', '46e7e62d-2df3-4769-9c7c-11c57c259475', '47334b7b-c55c-4569-b5bd-9bb27574fe9a', '4ad80248-edfd-41b8-b89d-fe8f414bc401', '4e643ff1-8a3a-4199-a2b8-ede20ac7f10e', '552f0cd8-fad1-49a9-892c-974a8e14c9bc', '584c3709-a66e-4784-8e7a-313a8b32d13c', '5f06b9a7-b1cc-4fd3-b6ab-4c365dff4434', '61c05648-76cc-4872-be3b-5a30a61ccbd0', '620d0fbd-5ab1-4517-8c43-6f47cc98d35c', '65699ed4-b4e9-4af2-b78c-73bdd3c8beb4', '6faf2072-d541-40ff-acce-307e62644e84', '70082820-da2f-434e-9567-d0cf20aa0cc3', '7130798d-902b-4acb-ae3c-a2969dd3137a', '71e76b85-c6c0-4382-9a6a-5b9edd224dab', '76c5fc31-91fb-4125-890b-9652d3c35272', '78bf5832-d40b-4700-aab6-aeefebdaa23c', '80590569-3cd2-4190-9ea9-9d72655e38f3', '8259cfe0-4113-4865-877e-61cd88d49cc7', '87a25e12-581b-4630-8fae-ceba8330dbc6', '8a6483ab-0caf-420d-ae69-b155e66ceb52', '8baacd91-2a9e-41f4-bd91-e9a4733a2c0b', '91f8450e-2dde-4d38-b6ce-b1076871010d', 'a741dd51-7740-4a32-bba7-ffdbaf63c4a9', 'ac3032af-ba5a-4b7f-97b7-92af5046a890', 'ad7f5dbe-8f78-46b6-b3e8-d6d806b1d2ba', 'b2e98afc-38d8-4c62-9917-0d8a4fd15f5f', 'bb4bcb7b-334b-4840-8ef6-5c8a85c1f2d6', 'bb4de7c1-adb8-4e98-b7af-5de6576c5ad2', 'bb7815fa-a56f-402e-be32-292a1115d341', 'bc5c28f6-1fec-4e87-8c8a-34abe706ab3e', 'bd3e4ab5-8097-474a-b2b5-802af9d84161', 'c9ea0bde-9b65-447a-ace0-fb0af84ce11f', 'cb8945ad-66a4-4577-92ac-c64f94a74e2a', 'cbf5ab99-2a80-4fa9-93b6-6491e5218328', 'cdcf0d51-0398-4f24-b66d-db2a6f4660fb', 'ce7bede3-0a09-40e8-900a-01a62e5c5978', 'daa9dfa0-530b-45cd-bce6-921c2c17d9c6', 'dc94ec9a-0985-49ef-98fb-03beaa726e2c', 'dcbfd704-27e6-40a4-a479-b62da57865e7', 'e4a5d1b9-214b-4649-92ec-035a41748e8f', 'e711727f-d547-478e-85a9-7feceb6f79aa', 'e7d3f276-cfff-4aa8-a657-3eb1e8919b82', 'e8475149-6aca-46cd-aae3-e8aa860c487b', 'e94e9420-9c3e-4be9-aef2-c5bb667e8fbb', 'ea439094-0c7a-4686-930f-cfcc738ebf6d')",
+    "reason": "True 1.65 0.8 hastenerfix: 59 housing hasteners in housing zones the 1.64 client does not have (Brisworthy, Aylesbury, Chiltern, Sherborne, Stoneleigh; Frisia, Kaupang, Holmestrand, Nittedal, Stavgaard; Saeranthal, Aberillan, Tullamore, Moycullen, Broughshane): no ground or walls there, never reachable (wall audit 2026-11-12, lane BGFR). build_rules165.py no longer adds them."
+   },
+   {
+    "table": "Mob",
+    "key": "Mob_ID",
+    "where": "Mob_ID IN ('12016664-0f0b-4b4c-a677-3a3accda73b0', '53f56ece-6011-4ead-809f-ad1c1f89b429', '5c350cd8-1a56-4ca7-8b66-82aa5fe77dca', '60f9231c-877d-4b2d-942b-b2fdd08e7f7b', 'c0bb66be-9224-4f88-8175-91a3895a8942', 'ca9f1aba-c89f-4f09-8d04-e20671a7d280', 'e21a9430-e563-4112-bc30-1dd114798380', 'e82ccd2a-4c1c-40cb-9139-194b1eb2be04', 'ec1eb7f1-eb0c-4f55-ac4b-86bf6b7e5015', 'fde7acf2-6fb6-4dd0-bd54-ae5bfd436a4e') AND Name IN ('Dannen', 'Kan', 'Kek', 'Kel', 'Kon', 'Kuz', 'Kyl', 'Kyr', 'Lamont', 'Los Ortiz') AND Region = 1",
+    "reason": "True 1.65 0.8 wallfix ALB: Grimspound (Dartmoor) NPCs Kel, Kuz (merchants), Kan (smith), Kyr (healer), Kek (enchanter), Kon (recharger), Kyl, Dannen, Lamont, Los Ortiz archived: not 1.65 content (owner 2026-11-12: 'remove it'): no period source (2003 or earlier) names Grimspound; the real 1.64 client has no town on that Dartmoor plateau and its invisible walls seal it off; the camp's crafting stations stood 2,800 under the 1.64 terrain (a later map); Los Ortiz is a 'Dragonslayer Journeyman', a later system (build_wallfix_alb165.py)"
+   },
+   {
+    "table": "WorldObject",
+    "key": "WorldObject_ID",
+    "where": "WorldObject_ID IN ('60e7cc52-9062-4056-a382-0525c03b043d', '82d0c64f-b2f6-432c-84cc-313fa1d7009e', 'cf6544ed-54ac-40bf-a600-447b38c7608d', 'e7c28ca6-54a1-4bb3-a3b9-77393eec7c70') AND Name IN ('Alchemy Table', 'Forge', 'Loom', 'Stretcher') AND Region = 1",
+    "reason": "True 1.65 0.8 wallfix ALB: Grimspound's four crafting stations (Stretcher, Forge, Loom, Alchemy Table) archived with its NPCs: not 1.65 content (owner 2026-11-12: 'remove it'): no period source (2003 or earlier) names Grimspound; the real 1.64 client has no town on that Dartmoor plateau and its invisible walls seal it off; the camp's crafting stations stood 2,800 under the 1.64 terrain (a later map); Los Ortiz is a 'Dragonslayer Journeyman', a later system (build_wallfix_alb165.py)"
+   },
+   {
+    "table": "MerchantItem",
+    "key": "MerchantItem_ID",
+    "where": "ItemListID = '60848b48-e669-45de-bd47-8d23b98f778a'",
+    "reason": "True 1.65 0.8 wallfix ALB: Kel's merchant list (19 crafting-supply rows), used by no NPC but Grimspound's Kel, archived with him: not 1.65 content (owner 2026-11-12: 'remove it'): no period source (2003 or earlier) names Grimspound; the real 1.64 client has no town on that Dartmoor plateau and its invisible walls seal it off; the camp's crafting stations stood 2,800 under the 1.64 terrain (a later map); Los Ortiz is a 'Dragonslayer Journeyman', a later system (build_wallfix_alb165.py)"
    }
   ]
  },
@@ -51669,6 +51693,350 @@
   {
    "sql": "UPDATE Mob SET ClassType = 'DOL.GS.GameNPC' WHERE Mob_ID = 'd7187d48-ac6f-448d-adce-1fe644e100ef' AND ClassType = 'DOL.GS.ScoutArgyle'",
    "reason": "True 1.65 0.8 gamefix BOSSCLASS: Scout Argyle row: plain GameNPC, as the template"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 432991, Y = 382655, Z = 6355 WHERE Mob_ID = '100019509' AND Region = 151 AND X = 432991 AND Y = 388055",
+   "reason": "True 1.65 0.8 wallfix MIDSA: sjoalf breaker (100019509) sjoalf group, south-west shore stood behind the invisible zone wall at Modernagrav 7007, 60375, Z 8405 (2040 outside the wall), out of a player's reach; CapnBry saw every sjoalf breaker / waverunner of this shore swimming (Z 6370) at x 900-6800, y 50400-55200; four of these stood on the cliff behind the south wall (a water monster at Z 8100-9350), one in the sea 287 outside it; moved together 5400 north into the period cluster; now 7007, 54975, Z 6355 (navmesh at the water surface 6355 (sea floor 5077), 3350 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 433088, Y = 382999, Z = 6355 WHERE Mob_ID = '100020195' AND Region = 151 AND X = 433088 AND Y = 388399",
+   "reason": "True 1.65 0.8 wallfix MIDSA: sjoalf waverunner (100020195) sjoalf group, south-west shore stood behind the invisible zone wall at Modernagrav 7104, 60719, Z 9347 (2389 outside the wall), out of a player's reach; CapnBry saw every sjoalf breaker / waverunner of this shore swimming (Z 6370) at x 900-6800, y 50400-55200; four of these stood on the cliff behind the south wall (a water monster at Z 8100-9350), one in the sea 287 outside it; moved together 5400 north into the period cluster; now 7104, 55319, Z 6355 (navmesh at the water surface 6355 (sea floor 5051), 3001 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 432628, Y = 382600, Z = 6355 WHERE Mob_ID = '100020529' AND Region = 151 AND X = 432628 AND Y = 388000",
+   "reason": "True 1.65 0.8 wallfix MIDSA: sjoalf breaker (100020529) sjoalf group, south-west shore stood behind the invisible zone wall at Modernagrav 6644, 60320, Z 8121 (1963 outside the wall), out of a player's reach; CapnBry saw every sjoalf breaker / waverunner of this shore swimming (Z 6370) at x 900-6800, y 50400-55200; four of these stood on the cliff behind the south wall (a water monster at Z 8100-9350), one in the sea 287 outside it; moved together 5400 north into the period cluster; now 6644, 54920, Z 6355 (navmesh at the water surface 6355 (sea floor 4714), 3427 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 432290, Y = 382603, Z = 6355 WHERE Mob_ID = '100021550' AND Region = 151 AND X = 432290 AND Y = 388003",
+   "reason": "True 1.65 0.8 wallfix MIDSA: sjoalf waverunner (100021550) sjoalf group, south-west shore stood behind the invisible zone wall at Modernagrav 6306, 60323, Z 8107 (1955 outside the wall), out of a player's reach; CapnBry saw every sjoalf breaker / waverunner of this shore swimming (Z 6370) at x 900-6800, y 50400-55200; four of these stood on the cliff behind the south wall (a water monster at Z 8100-9350), one in the sea 287 outside it; moved together 5400 north into the period cluster; now 6306, 54923, Z 6355 (navmesh at the water surface 6355 (sea floor 4432), 3444 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 431928, Y = 380935, Z = 6355 WHERE Mob_ID = '100018899' AND Region = 151 AND X = 431928 AND Y = 386335",
+   "reason": "True 1.65 0.8 wallfix MIDSA: sjoalf waverunner (100018899) sjoalf group, south-west shore stood behind the invisible zone wall at Modernagrav 5944, 58655, Z 6355 (287 outside the wall), out of a player's reach; CapnBry saw every sjoalf breaker / waverunner of this shore swimming (Z 6370) at x 900-6800, y 50400-55200; four of these stood on the cliff behind the south wall (a water monster at Z 8100-9350), one in the sea 287 outside it; moved together 5400 north into the period cluster; now 5944, 53255, Z 6355 (navmesh at the water surface 6355 (sea floor 4949), 5113 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 445547, Y = 337003, Z = 7243 WHERE Mob_ID = '1cc1e137-e900-4afc-bee7-1a65c377509d' AND Region = 151 AND X = 445547 AND Y = 334803",
+   "reason": "True 1.65 0.8 wallfix MIDSA: morvalt vaktare (1cc1e137-e900-4afc-bee7-1a65c377509d) morvalt group, ridge north of the camp stood behind the invisible zone wall at Modernagrav 19563, 7123, Z 8528 (474 outside the wall), out of a player's reach; the morvalt camp CapnBry saw lies south of the north wall (y 8800-17700 at these x); these stood on the ridge outside it; moved together 2200 south onto the camp's north edge; now 19563, 9323, Z 7243 (navmesh ground 7243 (client ground 7236), 1650 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 446903, Y = 336475, Z = 7392 WHERE Mob_ID = 'e6b793e9-cf45-4796-b3f2-bb14222b1b55' AND Region = 151 AND X = 446903 AND Y = 334275",
+   "reason": "True 1.65 0.8 wallfix MIDSA: morvalt vaktare (e6b793e9-cf45-4796-b3f2-bb14222b1b55) morvalt group, ridge north of the camp stood behind the invisible zone wall at Modernagrav 20919, 6595, Z 9190 (1144 outside the wall), out of a player's reach; the morvalt camp CapnBry saw lies south of the north wall (y 8800-17700 at these x); these stood on the ridge outside it; moved together 2200 south onto the camp's north edge; now 20919, 8795, Z 7392 (navmesh ground 7392 (client ground 7385), 1053 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 447796, Y = 336186, Z = 7460 WHERE Mob_ID = '48561158-cec6-4765-b41e-a254777bca2d' AND Region = 151 AND X = 447796 AND Y = 333986",
+   "reason": "True 1.65 0.8 wallfix MIDSA: morvalt framkalla (48561158-cec6-4765-b41e-a254777bca2d) morvalt group, ridge north of the camp stood behind the invisible zone wall at Modernagrav 21812, 6306, Z 8953 (811 outside the wall), out of a player's reach; the morvalt camp CapnBry saw lies south of the north wall (y 8800-17700 at these x); these stood on the ridge outside it; moved together 2200 south onto the camp's north edge; now 21812, 8506, Z 7460 (navmesh ground 7460 (client ground 7460), 720 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 447451, Y = 337119, Z = 7154 WHERE Mob_ID = '6c03cd54-6229-4572-9d4f-46a76b49a852' AND Region = 151 AND X = 447451 AND Y = 334919",
+   "reason": "True 1.65 0.8 wallfix MIDSA: morvalt framkalla (6c03cd54-6229-4572-9d4f-46a76b49a852) morvalt group, ridge north of the camp stood behind the invisible zone wall at Modernagrav 21467, 7239, Z 8362 (528 outside the wall), out of a player's reach; the morvalt camp CapnBry saw lies south of the north wall (y 8800-17700 at these x); these stood on the ridge outside it; moved together 2200 south onto the camp's north edge; now 21467, 9439, Z 7154 (navmesh ground 7154 (client ground 7152), 1669 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 445531, Y = 336666, Z = 7329 WHERE Mob_ID = 'b3932124-b2d5-4b6f-8b22-af754f50a6dd' AND Region = 151 AND X = 445531 AND Y = 334466",
+   "reason": "True 1.65 0.8 wallfix MIDSA: morvalt framkalla (b3932124-b2d5-4b6f-8b22-af754f50a6dd) morvalt group, ridge north of the camp stood behind the invisible zone wall at Modernagrav 19547, 6786, Z 8884 (785 outside the wall), out of a player's reach; the morvalt camp CapnBry saw lies south of the north wall (y 8800-17700 at these x); these stood on the ridge outside it; moved together 2200 south onto the camp's north edge; now 19547, 8986, Z 7329 (navmesh ground 7329 (client ground 7330), 1316 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 447907, Y = 336424, Z = 7351 WHERE Mob_ID = 'd251a890-130d-4f0f-8fc6-7613fb0f8af0' AND Region = 151 AND X = 447907 AND Y = 334224",
+   "reason": "True 1.65 0.8 wallfix MIDSA: morvalt framkalla (d251a890-130d-4f0f-8fc6-7613fb0f8af0) morvalt group, ridge north of the camp stood behind the invisible zone wall at Modernagrav 21923, 6544, Z 8657 (645 outside the wall), out of a player's reach; the morvalt camp CapnBry saw lies south of the north wall (y 8800-17700 at these x); these stood on the ridge outside it; moved together 2200 south onto the camp's north edge; now 21923, 8744, Z 7351 (navmesh ground 7351 (client ground 7356), 952 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 446135, Y = 336814, Z = 7288 WHERE Mob_ID = 'd6d5be38-7179-48fb-a03f-550fe4d543cd' AND Region = 151 AND X = 446135 AND Y = 334614",
+   "reason": "True 1.65 0.8 wallfix MIDSA: morvalt blandare (d6d5be38-7179-48fb-a03f-550fe4d543cd) morvalt group, ridge north of the camp stood behind the invisible zone wall at Modernagrav 20151, 6934, Z 8864 (767 outside the wall), out of a player's reach; the morvalt camp CapnBry saw lies south of the north wall (y 8800-17700 at these x); these stood on the ridge outside it; moved together 2200 south onto the camp's north edge; now 20151, 9134, Z 7288 (navmesh ground 7288 (client ground 7282), 1430 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 446845, Y = 337225, Z = 7165 WHERE Mob_ID = 'ff262da1-0017-416c-a950-88ec83c0c8b6' AND Region = 151 AND X = 446845 AND Y = 335025",
+   "reason": "True 1.65 0.8 wallfix MIDSA: morvalt blandare (ff262da1-0017-416c-a950-88ec83c0c8b6) morvalt group, ridge north of the camp stood behind the invisible zone wall at Modernagrav 20861, 7345, Z 8454 (392 outside the wall), out of a player's reach; the morvalt camp CapnBry saw lies south of the north wall (y 8800-17700 at these x); these stood on the ridge outside it; moved together 2200 south onto the camp's north edge; now 20861, 9545, Z 7165 (navmesh ground 7165 (client ground 7171), 1805 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 486510, Y = 367473, Z = 7467 WHERE Mob_ID = 'b51f5b2b-f74e-5283-a04a-46f9b7a8f573' AND Region = 151 AND X = 486910 AND Y = 367473",
+   "reason": "True 1.65 0.8 wallfix MIDSA: bone-eater eviscerater (b51f5b2b-f74e-5283-a04a-46f9b7a8f573) bone-eater eviscerater pair, east wall stood behind the invisible zone wall at Modernagrav 60926, 39793, Z 7672 (185 outside the wall), out of a player's reach; CapnBry saw this camp at and beyond the east wall line; the one period spot inside (60700, 39940) already holds a third eviscerater; moved together 400 west to ~210 inside; now 60526, 39793, Z 7467 (navmesh ground 7467 (client ground 7467), 210 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 486590, Y = 367000, Z = 7550 WHERE Mob_ID = '3b04e58a-6cd1-5390-a60a-27098c22893a' AND Region = 151 AND X = 486990 AND Y = 367000",
+   "reason": "True 1.65 0.8 wallfix MIDSA: bone-eater eviscerater (3b04e58a-6cd1-5390-a60a-27098c22893a) bone-eater eviscerater pair, east wall stood behind the invisible zone wall at Modernagrav 61006, 39320, Z 7790 (186 outside the wall), out of a player's reach; CapnBry saw this camp at and beyond the east wall line; the one period spot inside (60700, 39940) already holds a third eviscerater; moved together 400 west to ~210 inside; now 60606, 39320, Z 7550 (navmesh ground 7550 (client ground 7527), 208 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 357729, Y = 413360, Z = 3286 WHERE Mob_ID = '3bb2ce37-d6ea-4333-b2fa-390fe97b9479' AND Region = 151 AND X = 358729 AND Y = 413360",
+   "reason": "True 1.65 0.8 wallfix MIDSA: washed-up skeleton (3bb2ce37-d6ea-4333-b2fa-390fe97b9479) washed-up skeleton group, east shore stood behind the invisible zone wall at Munin Sound 63817, 36528, Z 3086 (329 outside the wall), out of a player's reach; stood in the sea 220-565 east of the east wall; the world's skeleton camp on this shore lies just west (x 62400-63350) and CapnBry's at x 61400-62850; moved together 1000 west; now 62817, 36528, Z 3286 (navmesh ground 3286 (client ground 3269), 584 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 357874, Y = 413763, Z = 3118 WHERE Mob_ID = '595338ad-a383-4da9-a67c-3aa290e1b271' AND Region = 151 AND X = 358874 AND Y = 413763",
+   "reason": "True 1.65 0.8 wallfix MIDSA: washed-up skeleton (595338ad-a383-4da9-a67c-3aa290e1b271) washed-up skeleton group, east shore stood behind the invisible zone wall at Munin Sound 63962, 36931, Z 3085 (474 outside the wall), out of a player's reach; stood in the sea 220-565 east of the east wall; the world's skeleton camp on this shore lies just west (x 62400-63350) and CapnBry's at x 61400-62850; moved together 1000 west; now 62962, 36931, Z 3118 (navmesh ground 3118 (client ground 3122), 526 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 357633, Y = 414574, Z = 3145 WHERE Mob_ID = 'c5a97e78-bace-4198-99fa-7dd25926bbf6' AND Region = 151 AND X = 358633 AND Y = 414574",
+   "reason": "True 1.65 0.8 wallfix MIDSA: washed-up skeleton (c5a97e78-bace-4198-99fa-7dd25926bbf6) washed-up skeleton group, east shore stood behind the invisible zone wall at Munin Sound 63721, 37742, Z 3085 (233 outside the wall), out of a player's reach; stood in the sea 220-565 east of the east wall; the world's skeleton camp on this shore lies just west (x 62400-63350) and CapnBry's at x 61400-62850; moved together 1000 west; now 62721, 37742, Z 3145 (navmesh ground 3145 (client ground 3145), 767 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 357965, Y = 415163, Z = 3085 WHERE Mob_ID = 'c2669d97-908a-474e-8ef8-2d76efa568e4' AND Region = 151 AND X = 358965 AND Y = 415163",
+   "reason": "True 1.65 0.8 wallfix MIDSA: washed-up skeleton (c2669d97-908a-474e-8ef8-2d76efa568e4) washed-up skeleton group, east shore stood behind the invisible zone wall at Munin Sound 64053, 38331, Z 3085 (565 outside the wall), out of a player's reach; stood in the sea 220-565 east of the east wall; the world's skeleton camp on this shore lies just west (x 62400-63350) and CapnBry's at x 61400-62850; moved together 1000 west; now 63053, 38331, Z 3085 (navmesh at the water surface 3085 (sea floor 2322), 435 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 357620, Y = 415686, Z = 3093 WHERE Mob_ID = '424f012c-5662-4e23-8bcd-598b65740658' AND Region = 151 AND X = 358620 AND Y = 415686",
+   "reason": "True 1.65 0.8 wallfix MIDSA: washed-up skeleton (424f012c-5662-4e23-8bcd-598b65740658) washed-up skeleton group, east shore stood behind the invisible zone wall at Munin Sound 63708, 38854, Z 3085 (220 outside the wall), out of a player's reach; stood in the sea 220-565 east of the east wall; the world's skeleton camp on this shore lies just west (x 62400-63350) and CapnBry's at x 61400-62850; moved together 1000 west; now 62708, 38854, Z 3093 (navmesh at the water surface 3093 (sea floor 2896), 780 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 354080, Y = 401807, Z = 6006 WHERE Mob_ID = '100018798' AND Region = 151 AND X = 354404 AND Y = 401417",
+   "reason": "True 1.65 0.8 wallfix MIDSA: washed-up skeleton (100018798) washed-up skeleton above the Knarr camp stood behind the invisible zone wall at Munin Sound 59492, 24585, Z 6278 (63 outside the wall), out of a player's reach; stood 63 outside the east wall on the slope; CapnBry saw a washed-up skeleton at 59168, 24975, Z 6006; now 59168, 24975, Z 6006 (radar Z 6006 (ground 6004, navmesh [6012]), 210 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 357102, Y = 412549, Z = 4075 WHERE Mob_ID = '100019658' AND Region = 151 AND X = 357272 AND Y = 412079",
+   "reason": "True 1.65 0.8 wallfix MIDSA: washed-up skeleton (100019658) washed-up skeleton north of the east beach stood behind the invisible zone wall at Munin Sound 62360, 35247, Z 4942 (197 outside the wall), out of a player's reach; stood 197 outside the east wall; CapnBry saw a washed-up skeleton at 62190, 35717, Z 4075; now 62190, 35717, Z 4075 (radar Z 4075 (ground 4055, navmesh [4102]), 284 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 310442, Y = 382627, Z = 5459 WHERE Mob_ID = '100021383' AND Region = 151 AND X = 311554 AND Y = 382007",
+   "reason": "True 1.65 0.8 wallfix MIDSA: drowning victim (100021383) drowning victim, north shore stood behind the invisible zone wall at Munin Sound 16642, 5175, Z 5788 (260 outside the wall), out of a player's reach; stood 260 outside the north wall; CapnBry saw a drowning victim at 15530, 5795, Z 5459 (the only one on this stretch of shore); now 15530, 5795, Z 5459 (radar Z 5459 (ground 5474, navmesh [5469]), 468 inside the wall); nothing else changed (build_wallfix_midsa165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 711809, Y = 980315, Z = 4635 WHERE Mob_ID = '6b517a00-e91c-49aa-8a3e-6aeae0b57856' AND Region = 100 AND X = 712159 AND Y = 982138",
+   "reason": "True 1.65 0.8 wallfix MIDM: swarm of flies (6b517a00-e91c-49aa-8a3e-6aeae0b57856) stood behind the invisible zone wall at Malmohus 24031, 15482, Z 5381, out of a player's reach; one of the Malmohus fly swarms (no loot, no quest; period Allakhazam/Illia lists 'Swarm of Flies 50' in Malmohus with no location, no CapnBry sighting, not on the Prima Atlas map). It stood inside a walled-off mountain ring 359 units below that mountain's ground, so it was never seen. Camp A moved as a group by the shortest shift to the playable valley side (>= 250 inside, on the navmesh, >= 180 from other spawns); FLYING (Flags 32), so it hovers 75 over the ground like the zone's 21 reachable swarms; now 23681, 13659, Z 4635 (ground 4560, 592 inside the wall); nothing else changed (build_wallfix_midm165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 712078, Y = 980670, Z = 5105 WHERE Mob_ID = '7d8ac9e0-84bf-4b53-8401-6e6f27524d82' AND Region = 100 AND X = 712428 AND Y = 982493",
+   "reason": "True 1.65 0.8 wallfix MIDM: swarm of flies (7d8ac9e0-84bf-4b53-8401-6e6f27524d82) stood behind the invisible zone wall at Malmohus 24300, 15837, Z 5306, out of a player's reach; one of the Malmohus fly swarms (no loot, no quest; period Allakhazam/Illia lists 'Swarm of Flies 50' in Malmohus with no location, no CapnBry sighting, not on the Prima Atlas map). It stood inside a walled-off mountain ring 545 units below that mountain's ground, so it was never seen. Camp A moved as a group by the shortest shift to the playable valley side (>= 250 inside, on the navmesh, >= 180 from other spawns); FLYING (Flags 32), so it hovers 75 over the ground like the zone's 21 reachable swarms; now 23950, 14014, Z 5105 (ground 5030, 252 inside the wall); nothing else changed (build_wallfix_midm165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 704241, Y = 984431, Z = 3032 WHERE Mob_ID = '5b7ca0ae-853b-4ece-ad9f-cbc83196fade' AND Region = 100 AND X = 702823 AND Y = 986407",
+   "reason": "True 1.65 0.8 wallfix MIDM: swarm of flies (5b7ca0ae-853b-4ece-ad9f-cbc83196fade) stood behind the invisible zone wall at Malmohus 14695, 19751, Z 4431, out of a player's reach; one of the Malmohus fly swarms (no loot, no quest; period Allakhazam/Illia lists 'Swarm of Flies 50' in Malmohus with no location, no CapnBry sighting, not on the Prima Atlas map). It stood inside a walled-off mountain ring 1591 units below that mountain's ground, so it was never seen. Camp B moved as a group by the shortest shift to the playable valley side (>= 250 inside, on the navmesh, >= 180 from other spawns); FLYING (Flags 32), so it hovers 75 over the ground like the zone's 21 reachable swarms; now 16113, 17775, Z 3032 (ground 2957, 803 inside the wall); nothing else changed (build_wallfix_midm165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 704399, Y = 984578, Z = 3061 WHERE Mob_ID = '6214760a-6d25-4c00-929b-527b48c50290' AND Region = 100 AND X = 702981 AND Y = 986554",
+   "reason": "True 1.65 0.8 wallfix MIDM: swarm of flies (6214760a-6d25-4c00-929b-527b48c50290) stood behind the invisible zone wall at Malmohus 14853, 19898, Z 4452, out of a player's reach; one of the Malmohus fly swarms (no loot, no quest; period Allakhazam/Illia lists 'Swarm of Flies 50' in Malmohus with no location, no CapnBry sighting, not on the Prima Atlas map). It stood inside a walled-off mountain ring 1638 units below that mountain's ground, so it was never seen. Camp B moved as a group by the shortest shift to the playable valley side (>= 250 inside, on the navmesh, >= 180 from other spawns); FLYING (Flags 32), so it hovers 75 over the ground like the zone's 21 reachable swarms; now 16271, 17922, Z 3061 (ground 2986, 787 inside the wall); nothing else changed (build_wallfix_midm165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 704036, Y = 984974, Z = 3459 WHERE Mob_ID = '9a1a22f5-6f41-49ec-8e6f-86a635cc35d3' AND Region = 100 AND X = 702618 AND Y = 986950",
+   "reason": "True 1.65 0.8 wallfix MIDM: swarm of flies (9a1a22f5-6f41-49ec-8e6f-86a635cc35d3) stood behind the invisible zone wall at Malmohus 14490, 20294, Z 4431, out of a player's reach; one of the Malmohus fly swarms (no loot, no quest; period Allakhazam/Illia lists 'Swarm of Flies 50' in Malmohus with no location, no CapnBry sighting, not on the Prima Atlas map). It stood inside a walled-off mountain ring 1696 units below that mountain's ground, so it was never seen. Camp B moved as a group by the shortest shift to the playable valley side (>= 250 inside, on the navmesh, >= 180 from other spawns); FLYING (Flags 32), so it hovers 75 over the ground like the zone's 21 reachable swarms; now 15908, 18318, Z 3459 (ground 3384, 251 inside the wall); nothing else changed (build_wallfix_midm165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 704622, Y = 991015, Z = 4643 WHERE Mob_ID = 'cfa572b3-fc99-46b2-9453-11dcfab0e76d' AND Region = 100 AND X = 706246 AND Y = 991504",
+   "reason": "True 1.65 0.8 wallfix MIDM: swarm of flies (cfa572b3-fc99-46b2-9453-11dcfab0e76d) stood behind the invisible zone wall at Malmohus 18118, 24848, Z 4857, out of a player's reach; one of the Malmohus fly swarms (no loot, no quest; period Allakhazam/Illia lists 'Swarm of Flies 50' in Malmohus with no location, no CapnBry sighting, not on the Prima Atlas map). It stood inside a walled-off mountain ring 1057 units below that mountain's ground, so it was never seen. Camp C moved as a group by the shortest shift to the playable valley side (>= 250 inside, on the navmesh, >= 180 from other spawns); FLYING (Flags 32), so it hovers 75 over the ground like the zone's 21 reachable swarms; now 16494, 24359, Z 4643 (ground 4568, 260 inside the wall); nothing else changed (build_wallfix_midm165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 704009, Y = 991148, Z = 3721 WHERE Mob_ID = 'fdaa0018-7608-4887-a587-83c6c1e3cac3' AND Region = 100 AND X = 705633 AND Y = 991637",
+   "reason": "True 1.65 0.8 wallfix MIDM: swarm of flies (fdaa0018-7608-4887-a587-83c6c1e3cac3) stood behind the invisible zone wall at Malmohus 17505, 24981, Z 4857, out of a player's reach; one of the Malmohus fly swarms (no loot, no quest; period Allakhazam/Illia lists 'Swarm of Flies 50' in Malmohus with no location, no CapnBry sighting, not on the Prima Atlas map). It stood inside a walled-off mountain ring 982 units below that mountain's ground, so it was never seen. Camp C moved as a group by the shortest shift to the playable valley side (>= 250 inside, on the navmesh, >= 180 from other spawns); FLYING (Flags 32), so it hovers 75 over the ground like the zone's 21 reachable swarms; now 15881, 24492, Z 3721 (ground 3646, 870 inside the wall); nothing else changed (build_wallfix_midm165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 704468, Y = 991239, Z = 4331 WHERE Mob_ID = '315e3f39-ba40-4ed5-92ee-64f83f2205e7' AND Region = 100 AND X = 706092 AND Y = 991728",
+   "reason": "True 1.65 0.8 wallfix MIDM: swarm of flies (315e3f39-ba40-4ed5-92ee-64f83f2205e7) stood behind the invisible zone wall at Malmohus 17964, 25072, Z 4857, out of a player's reach; one of the Malmohus fly swarms (no loot, no quest; period Allakhazam/Illia lists 'Swarm of Flies 50' in Malmohus with no location, no CapnBry sighting, not on the Prima Atlas map). It stood inside a walled-off mountain ring 1129 units below that mountain's ground, so it was never seen. Camp C moved as a group by the shortest shift to the playable valley side (>= 250 inside, on the navmesh, >= 180 from other spawns); FLYING (Flags 32), so it hovers 75 over the ground like the zone's 21 reachable swarms; now 16340, 24583, Z 4331 (ground 4256, 429 inside the wall); nothing else changed (build_wallfix_midm165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 704224, Y = 991726, Z = 4158 WHERE Mob_ID = 'd1d73083-0f4d-401a-ae6d-19636b1d8647' AND Region = 100 AND X = 705848 AND Y = 992215",
+   "reason": "True 1.65 0.8 wallfix MIDM: swarm of flies (d1d73083-0f4d-401a-ae6d-19636b1d8647) stood behind the invisible zone wall at Malmohus 17720, 25559, Z 4857, out of a player's reach; one of the Malmohus fly swarms (no loot, no quest; period Allakhazam/Illia lists 'Swarm of Flies 50' in Malmohus with no location, no CapnBry sighting, not on the Prima Atlas map). It stood inside a walled-off mountain ring 1233 units below that mountain's ground, so it was never seen. Camp C moved as a group by the shortest shift to the playable valley side (>= 250 inside, on the navmesh, >= 180 from other spawns); FLYING (Flags 32), so it hovers 75 over the ground like the zone's 21 reachable swarms; now 16096, 25070, Z 4158 (ground 4083, 254 inside the wall); nothing else changed (build_wallfix_midm165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 719115, Y = 997294, Z = 4360 WHERE Mob_ID = 'ec76152a-f3e9-445c-9feb-f1b5a572b659' AND Region = 100 AND X = 717933 AND Y = 997230",
+   "reason": "True 1.65 0.8 wallfix MIDM: swarm of flies (ec76152a-f3e9-445c-9feb-f1b5a572b659) stood behind the invisible zone wall at Malmohus 29805, 30574, Z 4901, out of a player's reach; one of the Malmohus fly swarms (no loot, no quest; period Allakhazam/Illia lists 'Swarm of Flies 50' in Malmohus with no location, no CapnBry sighting, not on the Prima Atlas map). It stood inside a walled-off mountain ring 780 units below that mountain's ground, so it was never seen. Camp D moved as a group by the shortest shift to the playable valley side (>= 250 inside, on the navmesh, >= 180 from other spawns); FLYING (Flags 32), so it hovers 75 over the ground like the zone's 21 reachable swarms; now 30987, 30638, Z 4360 (ground 4285, 251 inside the wall); nothing else changed (build_wallfix_midm165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 720041, Y = 1003974, Z = 3962 WHERE Mob_ID = 'dac35ff4-8100-4905-a007-3f2268d86055' AND Region = 100 AND X = 718076 AND Y = 1006035",
+   "reason": "True 1.65 0.8 wallfix MIDM: swarm of flies (dac35ff4-8100-4905-a007-3f2268d86055) stood behind the invisible zone wall at Malmohus 29948, 39379, Z 4516, out of a player's reach; one of the Malmohus fly swarms (no loot, no quest; period Allakhazam/Illia lists 'Swarm of Flies 50' in Malmohus with no location, no CapnBry sighting, not on the Prima Atlas map). It stood inside a walled-off mountain ring 1827 units below that mountain's ground, so it was never seen. Camp E moved as a group by the shortest shift to the playable valley side (>= 250 inside, on the navmesh, >= 180 from other spawns); FLYING (Flags 32), so it hovers 75 over the ground like the zone's 21 reachable swarms; now 31913, 37318, Z 3962 (ground 3887, 250 inside the wall); nothing else changed (build_wallfix_midm165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 705869, Y = 1008892, Z = 4544 WHERE Mob_ID = 'd0b951a8-0852-49c6-b80d-798ad307f8c9' AND Region = 100 AND X = 702643 AND Y = 1011813",
+   "reason": "True 1.65 0.8 wallfix MIDM: swarm of flies (d0b951a8-0852-49c6-b80d-798ad307f8c9) stood behind the invisible zone wall at Malmohus 14515, 45157, Z 6368, out of a player's reach; one of the Malmohus fly swarms (no loot, no quest; period Allakhazam/Illia lists 'Swarm of Flies 50' in Malmohus with no location, no CapnBry sighting, not on the Prima Atlas map). It stood inside a walled-off mountain ring 1258 units below that mountain's ground, so it was never seen. Camp F1 moved as a group by the shortest shift to the playable valley side (>= 250 inside, on the navmesh, >= 180 from other spawns); FLYING (Flags 32), so it hovers 75 over the ground like the zone's 21 reachable swarms; now 17741, 42236, Z 4544 (ground 4469, 253 inside the wall); nothing else changed (build_wallfix_midm165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 706397, Y = 1009254, Z = 4291 WHERE Mob_ID = '5f4eca8d-ac40-4216-ad75-13a289b7db77' AND Region = 100 AND X = 704656 AND Y = 1012855",
+   "reason": "True 1.65 0.8 wallfix MIDM: swarm of flies (5f4eca8d-ac40-4216-ad75-13a289b7db77) stood behind the invisible zone wall at Malmohus 16528, 46199, Z 6374, out of a player's reach; one of the Malmohus fly swarms (no loot, no quest; period Allakhazam/Illia lists 'Swarm of Flies 50' in Malmohus with no location, no CapnBry sighting, not on the Prima Atlas map). It stood inside a walled-off mountain ring 356 units below that mountain's ground, so it was never seen. Camp F2 moved as a group by the shortest shift to the playable valley side (>= 250 inside, on the navmesh, >= 180 from other spawns); FLYING (Flags 32), so it hovers 75 over the ground like the zone's 21 reachable swarms; now 18269, 42598, Z 4291 (ground 4216, 252 inside the wall); nothing else changed (build_wallfix_midm165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 652350, Y = 609546, Z = 8095 WHERE Mob_ID = 'acda71ae-9903-45f8-9a4a-deb8c65b9102' AND Region = 100 AND X = 652698 AND Y = 609317",
+   "reason": "True 1.65 0.8 wallfix MIDM: bone-eater eviscerater (acda71ae-9903-45f8-9a4a-deb8c65b9102) stood behind the invisible zone wall at Odin's Gate 62874, 35877, Z 8363, out of a player's reach; one of the 11 bone-eater eviscerater camp rows at the Odin's Gate east wall. It stood in the sealed strip between the east ring wall and the two-way frontier wall at local x 63776; the nearest CapnBry sighting (63226, 36089) is in the same strip. Moved to the nearest playable spot inside its own camp; now 62526, 36106, Z 8095 (ground 8095, 252 inside the wall); nothing else changed (build_wallfix_midm165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 33554, Y = 37488, Z = 4106 WHERE Mob_ID = 'caledon-guard-25' AND Region = 250 AND X = 33217 AND Y = 37386",
+   "reason": "True 1.65 0.8 wallfix BGFR: Caer Caledon keep Wizard: its spot (33185/33217, 37386; the Atlas Thidranki caster's spot, made for another keep layout) is inside the closed base of the north tower of Caledon's 1.64 bfrontkeep1 (csv250.mpk fixtures.csv: 24930, 29908, A 230), a sealed navmesh pocket no player can enter; moved to the nearest wall-walk floor on the main navmesh, the north-east wall beside the tower (navmesh-165 floor 4106), like the keep's other casters on the wall-walk"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 357829, Y = 485902, Z = 5948 WHERE Mob_ID = '3f679c2d-d3e4-4886-8b5a-be271dc2d3a7' AND Region = 200 AND X = 357691 AND Y = 484451",
+   "reason": "True 1.65 0.8 wallfix HIB: Spackit (3f679c2d-d3e4-4886-8b5a-be271dc2d3a7) stood behind the invisible zone wall at Lough Derg 38203, 1123, Z 6865, out of a player's reach; quest kill target of 'Spicket, Spackit and Spykit' (drops Spraggon's Head; Spackit's Bracer is the quest's reward); CapnBry's radar saw him at 38341, 2574, Z 5948 (his only sighting), on the playable side; the walkthrough puts him in the east-west valley to the north-east of Mag Mell; now 38341, 2574, Z 5948 (radar Z 5948 (client ground 5948, on the navmesh), 481 inside the wall (was 971 outside)); nothing else changed (build_wallfix_hib165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 357146, Y = 486325, Z = 5888 WHERE Mob_ID = 'e8111270-c4f9-4ac9-99aa-ee7457f28add' AND Region = 200 AND X = 357008 AND Y = 484874",
+   "reason": "True 1.65 0.8 wallfix HIB: spraggon (e8111270-c4f9-4ac9-99aa-ee7457f28add) stood behind the invisible zone wall at Lough Derg 37520, 1546, Z 6556, out of a player's reach; stood with Spackit behind the north wall (no radar sighting of a spraggon there; CapnBry saw them just south of it); moved with him by his offset (+138, +1451); now 37658, 2997, Z 5888 (navmesh floor 5888 (client ground 5883), 899 inside the wall (was 553 outside)); nothing else changed (build_wallfix_hib165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 355955, Y = 486043, Z = 5836 WHERE Mob_ID = 'f9b91fe6-b484-4464-848a-7b208a841a27' AND Region = 200 AND X = 355817 AND Y = 484592",
+   "reason": "True 1.65 0.8 wallfix HIB: orchard nipper (f9b91fe6-b484-4464-848a-7b208a841a27) stood behind the invisible zone wall at Lough Derg 36329, 1264, Z 6721, out of a player's reach; stood with Spackit behind the north wall (no radar sighting of an orchard nipper there; CapnBry saw them just south of it); moved with him by his offset (+138, +1451); now 36467, 2715, Z 5836 (navmesh floor 5836 (client ground 5833), 609 inside the wall (was 843 outside)); nothing else changed (build_wallfix_hib165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 374736, Y = 663163, Z = 3906 WHERE Mob_ID = '8ac4d300-ba69-4e1e-8f5f-16a4ec092df7' AND Region = 200 AND X = 374963 AND Y = 662599",
+   "reason": "True 1.65 0.8 wallfix HIB: glimmer ward (8ac4d300-ba69-4e1e-8f5f-16a4ec092df7) stood behind the invisible zone wall at Sheeroe Hills 22707, 15431, Z 4490, out of a player's reach; stood on the slope north-east of the glimmer camp; the Prima Atlas puts glimmer wards in the NW, NC, WC and C of the zone and the zone's 47 other wards stand inside (no radar coverage of Sheeroe Hills); moved to the nearest spot 250 inside on the camp's side; now 22480, 15995, Z 3906 (navmesh floor 3906 (client ground 3890), 254 inside the wall (was 336 outside)); nothing else changed (build_wallfix_hib165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 375733, Y = 664913, Z = 4114 WHERE Mob_ID = 'c33baff2-8d7e-4f66-83d6-470f1c1cc531' AND Region = 200 AND X = 376634 AND Y = 664691",
+   "reason": "True 1.65 0.8 wallfix HIB: glimmer ward (c33baff2-8d7e-4f66-83d6-470f1c1cc531) stood behind the invisible zone wall at Sheeroe Hills 24378, 17523, Z 5399, out of a player's reach; stood on the slope north-east of the glimmer camp; the Prima Atlas puts glimmer wards in the NW, NC, WC and C of the zone and the zone's 47 other wards stand inside (no radar coverage of Sheeroe Hills); moved to the nearest spot 250 inside on the camp's side; now 23477, 17745, Z 4114 (navmesh floor 4114 (client ground 4087), 251 inside the wall (was 675 outside)); nothing else changed (build_wallfix_hib165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 376114, Y = 679893, Z = 3956 WHERE Mob_ID = '5d44668e-c474-4dd0-91df-088b980c633d' AND Region = 200 AND X = 376373 AND Y = 679768",
+   "reason": "True 1.65 0.8 wallfix HIB: glimmer ardent (5d44668e-c474-4dd0-91df-088b980c633d) stood behind the invisible zone wall at Sheeroe Hills 24117, 32600, Z 4228, out of a player's reach; stood 28 outside the east wall on the slope above the glimmer camp (the first-pass detector's thick walls hid it; found by this lane's nearest-segment scan, and lane DETECT's reach map puts it in the unreached outside); the Prima Atlas puts glimmer ardents in the NW, NC, WC and C of the zone; moved to the nearest spot 250 inside; now 23858, 32725, Z 3956 (navmesh floor 3956 (client ground 3944), 251 inside the wall (was 28 outside)); nothing else changed (build_wallfix_hib165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 308886, Y = 742989, Z = 7573 WHERE Mob_ID = '4deeb5fc-1a3b-4607-888d-7029212e7038' AND Region = 200 AND X = 309046 AND Y = 744162",
+   "reason": "True 1.65 0.8 wallfix HIB: melancholic fairy (4deeb5fc-1a3b-4607-888d-7029212e7038) stood behind the invisible zone wall at Lough Gur 22326, 64226, Z 7610, out of a player's reach; the southern tail of the melancholic fairies' hold (the Melancholic Fairy Wings kill task's monster; the walkthrough: Lough Gur /loc 23k,54k; no radar coverage of Lough Gur), south of the south wall; moved to the nearest spot 250 inside; a flying monster (Flags 32, its 55 kin hover 120-1470 over the ground), it keeps its own 521 over the ground; now 22166, 63053, Z 7573 (client ground 7052 + its own 521 hover (navmesh below), 257 inside the wall (was 903 outside)); nothing else changed (build_wallfix_hib165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 415000, Y = 396600, Z = 5443 WHERE Mob_ID = '100028768' AND Region = 181 AND X = 413883 AND Y = 394342",
+   "reason": "True 1.65 0.8 wallfix HIB: Priestess of the Watch (100028768) stood behind the invisible zone wall at Domnann 20667, 1126, Z 6968, out of a player's reach; stood alone 2229 north of Domnann's north wall (Illia's period bestiary: an NPC of level 19-20; the Star Lake procession, PrimaEncounters165b.cs, spawns its own priestesses and does not use this row); moved to the nearest spot 290 inside; now 21784, 3384, Z 5443 (navmesh floor 5443 (client ground 5436), 290 inside the wall (was 2229 outside)); nothing else changed (build_wallfix_hib165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 285880, Y = 275480, Z = 2474 WHERE Mob_ID = '100025865' AND Region = 181 AND X = 285265 AND Y = 275482",
+   "reason": "True 1.65 0.8 wallfix HIB: glutton (100025865) stood behind the invisible zone wall at Cothrom Gorge 6737, 13338, Z 3137, out of a player's reach; stood 320 outside the west wall on the slope (8 other gluttons in Hy Brasil); moved to the nearest spot 295 inside; now 7352, 13336, Z 2474 (navmesh floor 2474 (client ground 2461), 295 inside the wall (was 320 outside)); nothing else changed (build_wallfix_hib165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 335080, Y = 271592, Z = 2461 WHERE Mob_ID = '100027605' AND Region = 181 AND X = 334957 AND Y = 270864",
+   "reason": "True 1.65 0.8 wallfix HIB: young botonid disperser (100027605) stood behind the invisible zone wall at Cothrom Gorge 56429, 8720, Z 3028, out of a player's reach; stood 445 outside the north wall (46 other young botonid dispersers, the nearest camp just south); moved to the nearest spot 291 inside; now 56552, 9448, Z 2461 (navmesh floor 2461 (client ground 2455), 291 inside the wall (was 445 outside)); nothing else changed (build_wallfix_hib165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 288648, Y = 270856, Z = 2417 WHERE Mob_ID = '0e86fa24-9197-44c0-a0ef-dd8e1642d1fb' AND Region = 181 AND X = 288048 AND Y = 269978",
+   "reason": "True 1.65 0.8 wallfix HIB: Tudeg (0e86fa24-9197-44c0-a0ef-dd8e1642d1fb) stood behind the invisible zone wall at Cothrom Gorge 9520, 7834, Z 3129, out of a player's reach; a named monster (Illia's period bestiary: Tudeg, Humanoid 59; his own template) 769 outside the north-west wall with the writhing mass beside him; the pair moved together by (+600, +878) to 294 inside; now 10120, 8712, Z 2417 (navmesh floor 2417 (client ground 2413), 294 inside the wall (was 769 outside)); nothing else changed (build_wallfix_hib165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 288409, Y = 271499, Z = 2371 WHERE Mob_ID = '100028345' AND Region = 181 AND X = 287809 AND Y = 270621",
+   "reason": "True 1.65 0.8 wallfix HIB: writhing mass (100028345) stood behind the invisible zone wall at Cothrom Gorge 9281, 8477, Z 2709, out of a player's reach; the zone's only writhing mass (Illia: Plant 60-64), 385 outside the north-west wall beside Tudeg; moved with him by (+600, +878) to 678 inside; now 9881, 9355, Z 2371 (navmesh floor 2371 (client ground 2366), 678 inside the wall (was 385 outside)); nothing else changed (build_wallfix_hib165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 369880, Y = 187736, Z = 2934 WHERE Mob_ID = '100024046' AND Region = 181 AND X = 369852 AND Y = 187424",
+   "reason": "True 1.65 0.8 wallfix HIB: volant manta (100024046) stood behind the invisible zone wall at Allta Fearann 25788, 23584, Z 2937, out of a player's reach; stood 22 outside the wall of the manta line on the water (its 7 kin hold the same line 29-226 inside); moved to the nearest spot 291 inside; now 25816, 23896, Z 2934 (navmesh swim layer 2934 as its kin (sea floor 2524), 291 inside the wall (was 22 outside)); nothing else changed (build_wallfix_hib165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 261360, Y = 370501, Z = 4752 WHERE Mob_ID = '100019367' AND Region = 151 AND X = 261412 AND Y = 372852",
+   "reason": "True 1.65 0.8 wallfix MIDSB: scimitar kit (100019367) kit pair at the south rim (west) stood behind the invisible zone wall at Aegir's Landing 15652, 61556, Z 5552 (2036 outside the wall), out of a player's reach; kits and the Enraged Scimitar Kit stood on the plateau behind the south rim wall; CapnBry saw them there too and a period forum post (Freddyshouse, April 2003) calls the Enraged Scimitar Kit kill task 'on top of the zone wall', unpullable - a period bug; the kit is the quest target of Helping Dalea (DataQuest 20340-20343) and the Enraged kit a named kill-task monster, so moved together 2351 north to 300 inside the rim; now 15600, 59205, Z 4752 (navmesh ground 4752 (client ground 4748), 315 inside the wall); nothing else changed (build_wallfix_midsb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 261472, Y = 370510, Z = 4818 WHERE Mob_ID = '100020430' AND Region = 151 AND X = 261524 AND Y = 372861",
+   "reason": "True 1.65 0.8 wallfix MIDSB: Enraged Scimitar Kit (100020430) kit pair at the south rim (west) stood behind the invisible zone wall at Aegir's Landing 15764, 61565, Z 5525 (2045 outside the wall), out of a player's reach; kits and the Enraged Scimitar Kit stood on the plateau behind the south rim wall; CapnBry saw them there too and a period forum post (Freddyshouse, April 2003) calls the Enraged Scimitar Kit kill task 'on top of the zone wall', unpullable - a period bug; the kit is the quest target of Helping Dalea (DataQuest 20340-20343) and the Enraged kit a named kill-task monster, so moved together 2351 north to 300 inside the rim; now 15712, 59214, Z 4818 (navmesh ground 4818 (client ground 4825), 306 inside the wall); nothing else changed (build_wallfix_midsb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 263899, Y = 370037, Z = 5000 WHERE Mob_ID = '100021197' AND Region = 151 AND X = 264109 AND Y = 371301",
+   "reason": "True 1.65 0.8 wallfix MIDSB: scimitar kit (100021197) kit pair at the south rim (east) stood behind the invisible zone wall at Aegir's Landing 18349, 60005, Z 5795 (978 outside the wall), out of a player's reach; two kits stood on the plateau behind the south rim wall (CapnBry saw kits there too, out of reach as in the period); the kit is the quest target of Helping Dalea (DataQuest 20340-20343; loc 28k, 57k in the quest text; the zone's kit camps at x 17-19k / 26-29k are inside); moved together 1264 north to 300 inside the rim; now 18139, 58741, Z 5000 (navmesh ground 5000 (client ground 4991), 302 inside the wall); nothing else changed (build_wallfix_midsb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 263309, Y = 370051, Z = 4852 WHERE Mob_ID = '100021721' AND Region = 151 AND X = 263519 AND Y = 371315",
+   "reason": "True 1.65 0.8 wallfix MIDSB: scimitar kit (100021721) kit pair at the south rim (east) stood behind the invisible zone wall at Aegir's Landing 17759, 60019, Z 5764 (878 outside the wall), out of a player's reach; two kits stood on the plateau behind the south rim wall (CapnBry saw kits there too, out of reach as in the period); the kit is the quest target of Helping Dalea (DataQuest 20340-20343; loc 28k, 57k in the quest text; the zone's kit camps at x 17-19k / 26-29k are inside); moved together 1264 north to 300 inside the rim; now 17549, 58755, Z 4852 (navmesh ground 4852 (client ground 4843), 402 inside the wall); nothing else changed (build_wallfix_midsb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 286970, Y = 352822, Z = 3662 WHERE Mob_ID = '100020556' AND Region = 151 AND X = 286927 AND Y = 352322",
+   "reason": "True 1.65 0.8 wallfix MIDSB: mygga (100020556) mygga at the lake shore stood behind the invisible zone wall at Aegir's Landing 41167, 41026, Z 4214 (149 outside the wall), out of a player's reach; stood 149 outside a shore wall; CapnBry saw a mygga at 41210, 41526, Z 3662 (313 inside); now 41210, 41526, Z 3662 (radar Z 3662 (navmesh 3626, ground 3612), 312 inside the wall); nothing else changed (build_wallfix_midsb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 307352, Y = 370314, Z = 4599 WHERE Mob_ID = '100020534' AND Region = 151 AND X = 307559 AND Y = 370226",
+   "reason": "True 1.65 0.8 wallfix MIDSB: biting insect (100020534) biting insect at the south-east rim stood behind the invisible zone wall at Aegir's Landing 61799, 58930, Z 5240 (39 outside the wall), out of a player's reach; flew 39 outside the south rim wall (found by DETECT's flagged_v2); CapnBry saw a biting insect at 61592, 59018, Z 4599 (168 inside); 98 of the zone's 99 biting insects are playable; now 61592, 59018, Z 4599 (radar Z 4599 (navmesh 4607, ground 4524), 168 inside the wall); nothing else changed (build_wallfix_midsb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 318529, Y = 285500, Z = 4079 WHERE Mob_ID = '37b2b9ef-5981-4fca-9554-100944a1b0ff' AND Region = 151 AND X = 320670 AND Y = 286880",
+   "reason": "True 1.65 0.8 wallfix MIDSB: morvalt beskydda (37b2b9ef-5981-4fca-9554-100944a1b0ff) morvalt beskydda on the ridge west of the pocket stood behind the invisible zone wall at Gripklosa Mountains 42142, 41120, Z 9046 (1081 outside the wall), out of a player's reach; stood on top of the walled ridge east of the morvalt valley (Z 9046, valley floor 4100); all 148 CapnBry sightings of morvalt beskydda are in the valley; quest target of Morvalt Crystal (DataQuest 21246); moved to the CapnBry spot 40001, 39740, Z 4079; now 40001, 39740, Z 4079 (radar Z 4079 (navmesh 4084, ground 4080), 1439 inside the wall); nothing else changed (build_wallfix_midsb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 323656, Y = 283183, Z = 7402 WHERE Mob_ID = '5466afdf-affa-4ff9-9b43-a402b4d82b12' AND Region = 151 AND X = 323513 AND Y = 283758",
+   "reason": "True 1.65 0.8 wallfix MIDSB: morvalt beskydda (5466afdf-affa-4ff9-9b43-a402b4d82b12) morvalt beskydda at the ridge tip stood behind the invisible zone wall at Gripklosa Mountains 44985, 37998, Z 8706 (277 outside the wall), out of a player's reach; stood inside the walled ridge tip (278 outside); its camp-mate beskydda stands 660 east on the playable slope (CapnBry: every beskydda sighting playable); moved to the nearest point 300 inside; now 45128, 37423, Z 7402 (navmesh ground 7402 (client ground 7396), 310 inside the wall); nothing else changed (build_wallfix_midsb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 319320, Y = 286327, Z = 5923 WHERE Mob_ID = '921fb9d2-74e6-4fd9-a291-fed569f44922' AND Region = 151 AND X = 319870 AND Y = 286655",
+   "reason": "True 1.65 0.8 wallfix MIDSB: myling (921fb9d2-74e6-4fd9-a291-fed569f44922) myling on the ridge (west) stood behind the invisible zone wall at Gripklosa Mountains 41342, 40895, Z 7897 (329 outside the wall), out of a player's reach; stood on top of the walled ridge (330 outside); all 105 CapnBry myling sightings are playable (valley to the west); moved to the nearest point 300 inside, on the valley side; now 40792, 40567, Z 5923 (navmesh ground 5923 (client ground 5891), 300 inside the wall); nothing else changed (build_wallfix_midsb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 321505, Y = 288168, Z = 6882 WHERE Mob_ID = 'b2d4c716-97b1-477f-b955-bd51aaceaea1' AND Region = 151 AND X = 320618 AND Y = 287538",
+   "reason": "True 1.65 0.8 wallfix MIDSB: myling (b2d4c716-97b1-477f-b955-bd51aaceaea1) myling on the ridge (south) stood behind the invisible zone wall at Gripklosa Mountains 42090, 41778, Z 8925 (773 outside the wall), out of a player's reach; stood on top of the walled ridge (773 outside); all 105 CapnBry myling sightings are playable; moved to the nearest point 300 inside (south-east slope, by the bergklan camp); now 42977, 42408, Z 6882 (navmesh ground 6882 (client ground 6871), 312 inside the wall); nothing else changed (build_wallfix_midsb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 324252, Y = 283404, Z = 7681 WHERE Mob_ID = 'd9977a02-bf91-4c4c-b868-be5b861dee1f' AND Region = 151 AND X = 324050 AND Y = 283839",
+   "reason": "True 1.65 0.8 wallfix MIDSB: myling (d9977a02-bf91-4c4c-b868-be5b861dee1f) myling at the ridge tip stood behind the invisible zone wall at Gripklosa Mountains 45522, 38079, Z 8675 (165 outside the wall), out of a player's reach; stood inside the walled ridge tip (165 outside), 360 from a playable beskydda of its camp; all 105 CapnBry myling sightings are playable; moved to the nearest point 300 inside; now 45724, 37644, Z 7681 (navmesh ground 7681 (client ground 7690), 313 inside the wall); nothing else changed (build_wallfix_midsb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 340888, Y = 264716, Z = 7619 WHERE Mob_ID = '100021188' AND Region = 151 AND X = 341503 AND Y = 263917",
+   "reason": "True 1.65 0.8 wallfix MIDSB: young mammoth (100021188) young mammoth on the north-east mountain stood behind the invisible zone wall at Gripklosa Mountains 62975, 18157, Z 9880 (697 outside the wall), out of a player's reach; stood on the mountain behind the north-east wall (697 outside); CapnBry saw no young mammoth there (the one sighting in this zone is in Mammoth Valley, 56215, 9087); moved to the nearest point 300 inside; now 62360, 18956, Z 7619 (navmesh ground 7619 (client ground 7603), 303 inside the wall); nothing else changed (build_wallfix_midsb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 296276, Y = 266354, Z = 8222 WHERE Mob_ID = '100021643' AND Region = 151 AND X = 295815 AND Y = 265512",
+   "reason": "True 1.65 0.8 wallfix MIDSB: griffon glider (100021643) griffon glider in a sealed mountain pocket stood behind the invisible zone wall at Gripklosa Mountains 17287, 19752, Z 10146 (648 outside the wall), out of a player's reach; flew in a small walled pocket on the western mountains (648 outside) where CapnBry saw no glider (182 of 185 sightings playable); drops Griffon_Glider_Head; moved to the nearest point 300 inside at the same height above the ground; now 17748, 20594, Z 8222 (flying: navmesh ground 7573 + its old 649 above the ground, 311 inside the wall); nothing else changed (build_wallfix_midsb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 528700, Y = 359900, Z = 9088 WHERE Mob_ID = '829c7123-4cbf-4656-b4d0-b317d8c6aa16' AND Region = 1 AND X = 517007 AND Y = 374753",
+   "reason": "True 1.65 0.8 wallfix ALB: Cynwik the Wizard (829c7123-4cbf-4656-b4d0-b317d8c6aa16) at 517007, 374753, Z 9040 quest NPC (The Craft of Retribution 21318-21321, Wizard Lost, Wizard's Appeal) stood at the post-New-Frontiers Snowdonia Fortress spot, Black Mtns. North 33679, 6113 (live Allakhazam 2012: 'loc=33673,6074 Black Mtns. North, upstairs in Snowdonia Fortress'), 1,770 under the mountain and 235 behind its invisible wall. Period: Allakhazam mob 3545 (2002-10-16) Known Habitats Snowdonia (Snowdonia Fortress); Warcry Wizard's Appeal spoiler 'in the upper level'; the quest walkthrough 'also in the fortress' with Captain Leri. Now on the upper floor of the period Snowdonia Fortress beside Captain Leri: Snowdonia 28988, 56796, Z 9088 (navmesh floor, 1,479 inside the walls); now 528700, 359900, Z 9088; nothing else changed (build_wallfix_alb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 387077, Y = 721228, Z = 418 WHERE Mob_ID = '5f0c777c-cf63-4526-bc93-1b2e9ce3d570' AND Region = 1 AND X = 387865 AND Y = 720960",
+   "reason": "True 1.65 0.8 wallfix ALB: granite giant stonelord (5f0c777c-cf63-4526-bc93-1b2e9ce3d570) at 387865, 720960, Z 1674 stood buried ~1,300 under the mountain behind the invisible wall; moved to the nearest playable ground (wallaudit tools), on the navmesh floor at least 250 inside the wall, among its siblings; now 387077, 721228, Z 418; nothing else changed (build_wallfix_alb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 393390, Y = 731037, Z = 529 WHERE Mob_ID = 'b7b9b6f1-3fad-48c6-8016-4bb5361d2d4d' AND Region = 1 AND X = 392887 AND Y = 731617",
+   "reason": "True 1.65 0.8 wallfix ALB: granite giant pounder (b7b9b6f1-3fad-48c6-8016-4bb5361d2d4d) at 392887, 731617, Z 1437 stood buried ~1,300 under the mountain behind the invisible wall; moved to the nearest playable ground (wallaudit tools), on the navmesh floor at least 250 inside the wall, among its siblings; now 393390, 731037, Z 529; nothing else changed (build_wallfix_alb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 540795, Y = 473464, Z = 3914 WHERE Mob_ID = 'ac75abce-c138-4cd6-a658-ab62f5030647' AND Region = 1 AND X = 541126 AND Y = 473408",
+   "reason": "True 1.65 0.8 wallfix ALB: worker ant (ac75abce-c138-4cd6-a658-ab62f5030647) at 541126, 473408, Z 4237 stood behind the invisible wall at its camp's edge, out of a player's reach; no period position for this camp; moved to the nearest playable ground (wallaudit tools), on the navmesh floor at least 250 inside the wall; now 540795, 473464, Z 3914; nothing else changed (build_wallfix_alb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 542529, Y = 474687, Z = 4046 WHERE Mob_ID = 'c4216f1d-b1e4-4363-8f42-06bcbb33a21d' AND Region = 1 AND X = 542783 AND Y = 473678",
+   "reason": "True 1.65 0.8 wallfix ALB: weak skeleton (c4216f1d-b1e4-4363-8f42-06bcbb33a21d) at 542783, 473678, Z 5403 stood behind the invisible wall at its camp's edge, out of a player's reach; no period position for this camp; moved to the nearest playable ground (wallaudit tools), on the navmesh floor at least 250 inside the wall; now 542529, 474687, Z 4046; nothing else changed (build_wallfix_alb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 398940, Y = 480778, Z = 3369 WHERE Mob_ID = '99992854' AND Region = 51 AND X = 398900 AND Y = 480396",
+   "reason": "True 1.65 0.8 wallfix ALB: mountain algae (99992854) at 398900, 480396, Z 3576 stood behind the invisible wall at its camp's edge, out of a player's reach; no period position for this camp; moved to the nearest playable ground (wallaudit tools), on the navmesh floor at least 250 inside the wall; now 398940, 480778, Z 3369; nothing else changed (build_wallfix_alb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 403531, Y = 480256, Z = 3511 WHERE Mob_ID = '99994353' AND Region = 51 AND X = 403551 AND Y = 479808",
+   "reason": "True 1.65 0.8 wallfix ALB: mountain algae (99994353) at 403551, 479808, Z 3831 stood behind the invisible wall at its camp's edge, out of a player's reach; no period position for this camp; moved to the nearest playable ground (wallaudit tools), on the navmesh floor at least 250 inside the wall; now 403531, 480256, Z 3511; nothing else changed (build_wallfix_alb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 265560, Y = 432440, Z = 4757 WHERE Mob_ID = 'ef50314b-a9cc-415d-a76c-482c41b33e20' AND Region = 51 AND X = 265415 AND Y = 432181",
+   "reason": "True 1.65 0.8 wallfix ALB: marsh slime (ef50314b-a9cc-415d-a76c-482c41b33e20) at 265415, 432181, Z 4953 stood behind the invisible wall at its camp's edge, out of a player's reach; no period position for this camp; moved to the nearest playable ground (wallaudit tools), on the navmesh floor at least 250 inside the wall; now 265560, 432440, Z 4757; nothing else changed (build_wallfix_alb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 363030, Y = 724612, Z = 490 WHERE Mob_ID = '635cd22e-2dd5-4ada-a999-3adbe2a9c09c' AND Region = 1 AND X = 362992 AND Y = 725211",
+   "reason": "True 1.65 0.8 wallfix ALB: Stonecrush excavator (635cd22e-2dd5-4ada-a999-3adbe2a9c09c) at 362992, 725211, Z 2537 stood behind the invisible wall with its camp mates, out of a player's reach; no period position for this camp; the camp moved together by one offset (relative spacing kept) to the nearest playable ground (wallaudit tools), each on the navmesh floor at least 250 inside the wall; now 363030, 724612, Z 490; nothing else changed (build_wallfix_alb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 363049, Y = 724504, Z = 335 WHERE Mob_ID = 'a6db3def-6c11-479c-af61-d4dcb4e8b3b0' AND Region = 1 AND X = 363011 AND Y = 725103",
+   "reason": "True 1.65 0.8 wallfix ALB: Stonecrush excavator (a6db3def-6c11-479c-af61-d4dcb4e8b3b0) at 363011, 725103, Z 2149 stood behind the invisible wall with its camp mates, out of a player's reach; no period position for this camp; the camp moved together by one offset (relative spacing kept) to the nearest playable ground (wallaudit tools), each on the navmesh floor at least 250 inside the wall; now 363049, 724504, Z 335; nothing else changed (build_wallfix_alb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 402009, Y = 636936, Z = 7082 WHERE Mob_ID = '37b2682a-62a8-46b1-a7ed-26a619a54d4f' AND Region = 1 AND X = 400448 AND Y = 635048",
+   "reason": "True 1.65 0.8 wallfix ALB: brown bear (37b2682a-62a8-46b1-a7ed-26a619a54d4f) at 400448, 635048, Z 7307 stood behind the invisible wall with its camp mates, out of a player's reach; no period position for this camp; the camp moved together by one offset (relative spacing kept) to the nearest playable ground (wallaudit tools), each on the navmesh floor at least 250 inside the wall; now 402009, 636936, Z 7082; nothing else changed (build_wallfix_alb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 401808, Y = 636627, Z = 7130 WHERE Mob_ID = '4d47c34b-d773-4ad0-a7a1-2d4f31d4c2bd' AND Region = 1 AND X = 400247 AND Y = 634739",
+   "reason": "True 1.65 0.8 wallfix ALB: brown bear (4d47c34b-d773-4ad0-a7a1-2d4f31d4c2bd) at 400247, 634739, Z 7386 stood behind the invisible wall with its camp mates, out of a player's reach; no period position for this camp; the camp moved together by one offset (relative spacing kept) to the nearest playable ground (wallaudit tools), each on the navmesh floor at least 250 inside the wall; now 401808, 636627, Z 7130; nothing else changed (build_wallfix_alb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 292011, Y = 680382, Z = 2685 WHERE Mob_ID = 'd07c2af1-7047-4c28-8371-2cfa6e669814' AND Region = 1 AND X = 290761 AND Y = 680382",
+   "reason": "True 1.65 0.8 wallfix ALB: bone snapper (d07c2af1-7047-4c28-8371-2cfa6e669814) at 290761, 680382, Z 2549 stood behind the invisible wall with its camp mates, out of a player's reach; no period position for this camp; the camp moved together by one offset (relative spacing kept) to the nearest playable ground (wallaudit tools), each on the navmesh floor at least 250 inside the wall; now 292011, 680382, Z 2685; nothing else changed (build_wallfix_alb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 292124, Y = 678917, Z = 2685 WHERE Mob_ID = 'd647667e-b706-4774-aba7-e2d91cb10a97' AND Region = 1 AND X = 290874 AND Y = 678917",
+   "reason": "True 1.65 0.8 wallfix ALB: bone snapper (d647667e-b706-4774-aba7-e2d91cb10a97) at 290874, 678917, Z 2549 stood behind the invisible wall with its camp mates, out of a player's reach; no period position for this camp; the camp moved together by one offset (relative spacing kept) to the nearest playable ground (wallaudit tools), each on the navmesh floor at least 250 inside the wall; now 292124, 678917, Z 2685; nothing else changed (build_wallfix_alb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 558595, Y = 543567, Z = 2584 WHERE Mob_ID = '88ee1edd-b49a-477c-9bb8-30bd0c631144' AND Region = 1 AND X = 556345 AND Y = 543567",
+   "reason": "True 1.65 0.8 wallfix ALB: undead filidh (88ee1edd-b49a-477c-9bb8-30bd0c631144) at 556345, 543567, Z 3581 stood behind the invisible wall with its camp mates, out of a player's reach; no period position for this camp; the camp moved together by one offset (relative spacing kept) to the nearest playable ground (wallaudit tools), each on the navmesh floor at least 250 inside the wall; now 558595, 543567, Z 2584; nothing else changed (build_wallfix_alb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 557827, Y = 542549, Z = 2953 WHERE Mob_ID = 'cc726560-ebae-408e-b4b0-82a29a256d98' AND Region = 1 AND X = 555577 AND Y = 542549",
+   "reason": "True 1.65 0.8 wallfix ALB: undead filidh (cc726560-ebae-408e-b4b0-82a29a256d98) at 555577, 542549, Z 3616 stood behind the invisible wall with its camp mates, out of a player's reach; no period position for this camp; the camp moved together by one offset (relative spacing kept) to the nearest playable ground (wallaudit tools), each on the navmesh floor at least 250 inside the wall; now 557827, 542549, Z 2953; nothing else changed (build_wallfix_alb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 557769, Y = 545552, Z = 2816 WHERE Mob_ID = '395e927f-535c-4fb6-9ab7-9b0816db005c' AND Region = 1 AND X = 557419 AND Y = 545552",
+   "reason": "True 1.65 0.8 wallfix ALB: brownie nomad (395e927f-535c-4fb6-9ab7-9b0816db005c) at 557419, 545552, Z 2923 stood behind the invisible wall at its camp's edge, out of a player's reach; no period position for this camp; moved to the nearest playable ground (wallaudit tools), on the navmesh floor at least 250 inside the wall; now 557769, 545552, Z 2816; nothing else changed (build_wallfix_alb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 494312, Y = 417624, Z = 9412 WHERE Mob_ID = '7dc37023-cc83-4aee-80f3-22d2700ff20c' AND Region = 1 AND X = 494299 AND Y = 417924",
+   "reason": "True 1.65 0.8 wallfix ALB: necromancer (7dc37023-cc83-4aee-80f3-22d2700ff20c) at 494299, 417924, Z 9485 stood behind the invisible wall at its camp's edge, out of a player's reach; no period position for this camp; moved to the nearest playable ground (wallaudit tools), on the navmesh floor at least 250 inside the wall; now 494312, 417624, Z 9412; nothing else changed (build_wallfix_alb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 555110, Y = 524133, Z = 2517 WHERE Mob_ID = 'bae16a7c-08a1-4dcf-bb87-18affc485330' AND Region = 1 AND X = 554760 AND Y = 524133",
+   "reason": "True 1.65 0.8 wallfix ALB: wandering albions (bae16a7c-08a1-4dcf-bb87-18affc485330) at 554760, 524133, Z 2512 stood behind the invisible wall at its camp's edge, out of a player's reach; no period position for this camp; moved to the nearest playable ground (wallaudit tools), on the navmesh floor at least 250 inside the wall; now 555110, 524133, Z 2517; nothing else changed (build_wallfix_alb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 552887, Y = 552369, Z = 3126 WHERE Mob_ID = 'c1f0b856-980b-46f8-8050-a50bcd4363ed' AND Region = 1 AND X = 552182 AND Y = 551894",
+   "reason": "True 1.65 0.8 wallfix ALB: carrion drake (c1f0b856-980b-46f8-8050-a50bcd4363ed) at 552182, 551894, Z 3472 stood behind the invisible wall at its camp's edge, out of a player's reach; no period position for this camp; moved to the nearest playable ground (wallaudit tools), on the navmesh floor at least 250 inside the wall; now 552887, 552369, Z 3126; nothing else changed (build_wallfix_alb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 485613, Y = 440251, Z = 5743 WHERE Mob_ID = 'd4f5e5c9-bf7c-4f91-a9d4-2bbe42d0f93d' AND Region = 1 AND X = 484863 AND Y = 440251",
+   "reason": "True 1.65 0.8 wallfix ALB: goblin lookout (d4f5e5c9-bf7c-4f91-a9d4-2bbe42d0f93d) at 484863, 440251, Z 6435 stood behind the invisible wall at its camp's edge, out of a player's reach; no period position for this camp; moved to the nearest playable ground (wallaudit tools), on the navmesh floor at least 250 inside the wall; now 485613, 440251, Z 5743; nothing else changed (build_wallfix_alb165.py)"
+  },
+  {
+   "sql": "UPDATE Mob SET X = 485930, Y = 414458, Z = 8991 WHERE Mob_ID = 'f549e8bd-2620-4217-8d9f-b6efe5929f8d' AND Region = 1 AND X = 485720 AND Y = 415073",
+   "reason": "True 1.65 0.8 wallfix ALB: hill avenger (f549e8bd-2620-4217-8d9f-b6efe5929f8d) at 485720, 415073, Z 9150 stood behind the invisible wall at its camp's edge, out of a player's reach; no period position for this camp; moved to the nearest playable ground (wallaudit tools), on the navmesh floor at least 250 inside the wall; now 485930, 414458, Z 8991; nothing else changed (build_wallfix_alb165.py)"
   }
  ]
 }

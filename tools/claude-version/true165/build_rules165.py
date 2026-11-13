@@ -41,10 +41,29 @@ for reason, row_json in con.execute("SELECT Reason, RowJson FROM offline_true165
     row = json.loads(row_json)
     archived[row["Mob_ID"]] = row          # the latest copy of each row wins
 
+# Only the housing zones the real 1.64 client has (zones.dat in zones/zones.mpk). The world lists 15 more housing zones
+# (Brisworthy, Aylesbury, Chiltern, Sherborne, Stoneleigh; Frisia, Kaupang, Holmestrand, Nittedal, Stavgaard;
+# Saeranthal, Aberillan, Tullamore, Moycullen, Broughshane) that the client has no ground for: their 59 hasteners could
+# never be reached (wall audit 2026-11-12, lane BGFR; owner: "do it").
+HOUSING_ZONES_164 = {13, 16, 17, 18, 114, 117, 118, 119, 213, 215, 217, 218}
+_zones = con.execute("SELECT ZoneID, RegionID, OffsetX, OffsetY, Width, Height FROM Zones").fetchall()
+
+
+def zone_of(region, x, y):
+    for zid, rid, ox, oy, w, h in _zones:
+        if rid == region and ox * 8192 <= x < (ox + w) * 8192 and oy * 8192 <= y < (oy + h) * 8192:
+            return zid
+    return None
+
+
 housing, border, keep = [], [], []
+dropped_housing = []
 for row in archived.values():
     if row["ClassType"] == "DOL.GS.GameHastener" and row["Region"] in HOUSING_REGIONS:
-        housing.append(row)
+        if zone_of(row["Region"], row["X"], row["Y"]) in HOUSING_ZONES_164:
+            housing.append(row)
+        else:
+            dropped_housing.append(row)
     elif row["ClassType"] == "DOL.GS.GameHastener" and any(row["Mob_ID"].startswith(p) for p in BORDER_KEEP_HASTENERS):
         border.append(row)
     elif row["ClassType"] == "DOL.GS.Keeps.FrontierHastener" and row["Region"] in FRONTIER_REGIONS:
@@ -191,6 +210,9 @@ json.dump({
     "remove_where_add": where_rules,
 }, open(os.path.join(HERE, "pending-rules165-updates.json"), "w", encoding="utf-8"), indent=1)
 
-print(f"hasteners: {len(housing)} housing, {len(border)} border/portal keep, {len(keep)} frontier keep")
+print(f"hasteners: {len(housing)} housing, {len(border)} border/portal keep, {len(keep)} frontier keep; "
+      f"{len(dropped_housing)} housing hasteners left out (zones not in the 1.64 client)")
+json.dump(sorted(r["Mob_ID"] for r in dropped_housing),
+          open(os.path.join(HERE, "rules165-hasteners-dropped.json"), "w", encoding="utf-8"), indent=1)
 print(f"arrow updates: {len(updates)} ({sum(1 for u in updates if u['sql'].startswith('UPDATE Mob'))} merchants moved), "
       f"duplicate rows removed: {len(duplicates)}")
