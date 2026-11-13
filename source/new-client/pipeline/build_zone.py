@@ -1173,7 +1173,12 @@ def build(zone_id, upscale=True):
     (out / 'zone.json').write_text(json.dumps(zone, indent=1), encoding='utf-8')
     import stitch_zone_edges                                # the far edges from the neighbour zones (seamless borders)
     stitch_zone_edges.stitch([zone_id])
-    for w in warnings:                                      # texture layers the engine can't draw yet: say so
+    import fix_bg_keeps_165
+    if zone_id in fix_bg_keeps_165.BATTLEGROUNDS:
+        # the period client's patch table moves the battlegrounds' central keep (fix_bg_keeps_165.py); the 0.5 rebuild
+        # of Abermenai (2026-11-09, ground blend) wrote the dat placement back and undid it (gamefix ABER 2026-11-12)
+        fix_bg_keeps_165.fix(zone_id)
+    for w in warnings:                                     # texture layers the engine can't draw yet: say so
         print('WARNING', w)
     print(f"{zone['name']}: {len(models)} models, {len(placements)} fixtures, {len(tex_names)} textures "
           f"({len(missing)} missing: {missing[:8]}), water {[(b['name'], b['cells']) for b in bodies]}")

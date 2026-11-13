@@ -31,6 +31,7 @@ from build_zone import height_at, ambient_only
 M = nif_static.UNITS_TO_METRES
 ZONES = HERE.parent / 'godot/content/zones'
 KEEP_FIXTURE = 3
+BATTLEGROUNDS = (250, 251, 252, 253)                       # (build_zone.py runs fix() after building one of these)
 
 
 def period_table(zone_id):
@@ -89,7 +90,7 @@ def fix(zone_id):
 
 
 def main():
-    for zone_id in (sys.argv[1:] or (250, 251, 252, 253)):
+    for zone_id in (sys.argv[1:] or BATTLEGROUNDS):
         fix(int(zone_id))
 
 
