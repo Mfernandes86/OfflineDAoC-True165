@@ -36,6 +36,7 @@ need the author's permission to fork it.
 | The launcher | `development-source/tools/OfflineDaoc.Launcher` |
 | The new client: interface, world, controls | `source/new-client/godot/game` (see its [README](../source/new-client/README.md)) |
 | The client's converted content | `source/new-client/pipeline` |
+| The OFFLINEDAOC Database look-up tool (drops, hunting, maps, merchants, routes) | `tools/offlinedaoc-database` (set-up: its `README-SETUP.md`) |
 
 ## Good habits
 

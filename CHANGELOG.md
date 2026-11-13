@@ -7,7 +7,55 @@ hold). Its changelog has the history of everything this version inherits.
 
 ## Coming in the next update
 
-Nothing yet.
+Source only so far (2026-11-12): these changes are in the repository; they reach an installed game with the next
+release. Content changes are applied by the first START SERVER, as always.
+
+### Battlegrounds
+
+- Gamebots: any gamebot whose level fits a battleground may grind its monsters like any hunting zone, whatever its
+  goal. The launcher's Battlegrounds share is now the PvP focus only (roaming, keep sieges, keep defence): the share of
+  the gamebots of levels 15-35, spread over the four battlegrounds with at most 60 a realm in each (default still 0).
+- Gamebots go in like players (the battlegrounds medallion and the portal keep's port) and always come out: when the
+  hunt or tour ends, when they level out of the bracket, to sell, repair or train, or by a backstop after 20 minutes
+  without XP or realm points or three deaths for nothing (then 30 minutes away from every battleground, doing other
+  work). Stuck ones leave to their border keep, never the capital vault.
+- Gamebots grinding in a battleground fight nearby enemy players and gamebots, as in Darkness Falls and the frontier,
+  and keep out of enemy portal keeps. PvP gamebots form warbands, heal and resurrect each other.
+- Keep assaults break the outer gate before the inner one and stand where they can batter each door. A player
+  attacking a gamebot-held battleground keep no longer pulls level 50 frontier gamebots into a defence they cannot
+  join. Defenders stay at their post. A captured battleground keep stays at its strength (no keep levels in 1.65).
+- Siege Masters stand in every battleground portal keep again, Abermenai included (1.53D), selling the period stock;
+  gamebot crews buy there and keep working an engine once it is built.
+- The period portal keep guards are back in all four battlegrounds, and the keep guards and lords match the Prima
+  Atlas (Caer Caledon was about ten levels too high: guards 35, lord 42 now). Caledonia's bridge guards, Thidranki's
+  commanders and the Atlas portal keep characters are placed.
+- Gamebots no longer walk past shut keep gates: in Caer Caledon (under the gatehouse floor), at the Hibernia portal
+  keeps, Dun Abermenai, and in the frontier at Caer Berkstead, Boldiam and Benowyc, the Albion portal keeps, Glenlock
+  Faste, Dun Bolg, Dun nGed, Castle Myrddin and Grallarhorn Faste (navmesh-165;
+  `development-source/server/tools/navmesh_keepgate/seal_all.py` reseals after any rebuild).
+- The merchant keeps (Caer Benowyc, Bledmeer Faste, Dun Crauchon) sell siegecraft parts and change hands with the keep.
+- The new client: Abermenai's keep stands where the server has its doors again.
+
+### The world
+
+- Spawns behind the invisible zone walls moved to where a player can reach them: 107 in all, with the period radar
+  positions first. Among them Spackit (Lough Derg), Cynwik the Wizard (now in Snowdonia Fortress, his quest markers with
+  him), the Helping Dalea scimitar kits, the Morvalt Crystal beskydda, and camps in Hy Brasil, Sheeroe Hills,
+  Modernagrav, Munin Sound, Malmohus, Odin's Gate and Dartmoor. The Unseelie Envoy convoy no longer walks behind the Bog
+  of Cullen wall.
+- Removed: the Grimspound camp in Dartmoor (not in 1.65) and the housing hasteners in housing zones the 1.64 client
+  does not have.
+- Game fixes: Iarnvidiur's Lair is populated again; doubled Ley Manton and Tria Ellowis; peaceful monsters with loot
+  attackable as in the period; the Ludlow - Castle Sauvage horse reaches the stable; 105 broken item procs and charges
+  fire again; Lost Stone of Arawn and The Lost Seed find their NPCs.
+- Gamebots log in where they logged off: no more crowd leaving the Tir na Nog vault (and Camelot and Jordheim) at every
+  server start.
+
+### Tools
+
+- The OFFLINEDAOC Database (`tools/offlinedaoc-database`): a look-up site built from the game's own data - item
+  upgrades and where they drop with the real chances, monsters to hunt for your level and con, camps on the zone maps,
+  merchants, quest kill steps and stable routes. Set-up on any PC: `tools/offlinedaoc-database/README-SETUP.md`.
 
 ## 0.7 (2026-11-12)
 
