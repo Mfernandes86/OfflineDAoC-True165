@@ -1,0 +1,40 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>con.js evaluation (D-V)</title>
+<script src="../../app/core.js"></script>
+<script src="../../app/lib/concolor.js"></script>
+</head><body>
+<pre id="out"></pre>
+<script>
+/* Writes what app/lib/concolor.js answers, for source/verify_con.py to compare with the table built from the C#. */
+(function () {
+  var out = {error: null};
+  try {
+    var con = WG.con, LETTER = {grey: "g", green: "G", blue: "b", yellow: "y", orange: "o", red: "r", purple: "p"};
+    out.rows = {};                 // my level -> one letter per monster level -1..128
+    out.values = {};               // my level -> the server's numbers for monster level 0..127
+    out.levels = {};               // my level -> {colour: [min, max] | null}
+    out.bands = {};
+    out.presetLevels = {};
+    out.presets = con.presets;
+    for (var my = -1; my <= 128; my++) {
+      var s = "", v = [];
+      for (var mob = -1; mob <= 128; mob++) {
+        var c = con.color(my, mob);
+        s += LETTER[c] || "?";
+        if (mob >= 0 && mob <= 127) v.push(con.value(my, mob));
+      }
+      out.rows[my] = s; out.values[my] = v;
+      if (my >= 0 && my <= 127) {
+        out.levels[my] = {};
+        ["grey", "green", "blue", "yellow", "orange", "red", "purple"].forEach(function (col) { out.levels[my][col] = con.levels(my, col); });
+        out.bands[my] = con.bands(my);
+        out.presetLevels[my] = {};
+        con.presets.forEach(function (p) { out.presetLevels[my][p.id] = con.presetLevels(my, p.id); });
+      }
+    }
+    out.span = [[24, 20, 26], [5, 1, 9], [50, 35, 65], [50, 50, 50], [30, 40, 22]].map(function (a) { return [a, con.span(a[0], a[1], a[2])]; });
+  } catch (e) { out.error = String(e && e.stack || e); }
+  document.getElementById("out").textContent = JSON.stringify(out);
+})();
+</script>
+</body></html>

@@ -1,0 +1,8 @@
+# made by source/build_all.py from your game files
+data/
+maps/
+icons/
+# this PC's paths (see README-SETUP.md)
+source/paths.local.json
+source/scratch/
+__pycache__/
