@@ -187,7 +187,7 @@ namespace DOL.GS
                 why = "on an RvR or battleground task";
             else if (!waitForGroup && bot.Group != null)
                 why = "in a group: logs off when the group ends";
-            else if (bot.CurrentRegion?.IsFrontier == true || bot.CurrentRegion?.IsRvR == true)
+            else if (IsFrontierSpot(bot.CurrentRegion, bot.X, bot.Y) || bot.CurrentRegion?.IsRvR == true)
                 why = "in the frontier (siege, keep defence or relic run)";
             else if (bot.TempProperties.GetProperty<GameRelic>(GameRelic.PLAYER_CARRY_RELIC_WEAK) != null)
                 why = "carrying a relic";
@@ -225,12 +225,35 @@ namespace DOL.GS
             return Logouts.TryAdd(bot.DatabaseID, intent) || Logouts.ContainsKey(bot.DatabaseID);
         }
 
+        /// <summary>
+        /// Is this spot in the frontier? Owner 2026-11-12: "on every server start theres tons of bots leaving tir na nog
+        /// from the vault area". In 1.65 the old frontier zones sit inside each realm's home region, so the Regions table
+        /// flags the WHOLE of Albion (1), Midgard (100) and Hibernia (200) as frontier. The login code read that flag, so
+        /// a bot saved anywhere in its realm's countryside (and its bind there) counted as "in the frontier" and logged in
+        /// at the capital fallback - in Tir na Nog beside the vault keeper - and the logout gate never let a countryside
+        /// bot log off. In those three regions only the frontier zones count, as the rest of the AI already decides
+        /// (<see cref="AutonomousWorldBotController.IsFrontierZone"/>); any other region keeps its own flag.
+        /// </summary>
+        public static bool IsFrontierSpot(Region region, int x, int y) =>
+            region != null && IsFrontierPoint(region.ID, region.IsFrontier, region.GetZone(x, y)?.ID);
+
+        /// <summary>Pure: see <see cref="IsFrontierSpot"/>.</summary>
+        public static bool IsFrontierPoint(ushort regionId, bool regionFlaggedFrontier, ushort? zoneId)
+        {
+            if (!regionFlaggedFrontier)
+                return false;
+            if (regionId is 1 or 100 or 200)
+                return zoneId is ushort zone && AutonomousWorldBotController.IsFrontierZone(regionId, zone);
+            return true;
+        }
+
         /// <summary>Its bind point, when it is in the same (non-frontier) region and within walking reach.</summary>
         private static bool TryBindTarget(GameBot bot, out Vector3 target)
         {
             target = default;
             OfflineWorldBotRecord record = bot.PersistentRecord;
-            if (record == null || record.BindRegionId != bot.CurrentRegionID || bot.CurrentRegion?.IsFrontier == true)
+            if (record == null || record.BindRegionId != bot.CurrentRegionID || IsFrontierSpot(bot.CurrentRegion, bot.X, bot.Y) ||
+                IsFrontierSpot(bot.CurrentRegion, record.BindX, record.BindY))
                 return false;
             target = new Vector3(record.BindX, record.BindY, record.BindZ);
             float distance = Vector2.Distance(new Vector2(bot.X, bot.Y), new Vector2(target.X, target.Y));
@@ -663,7 +686,8 @@ namespace DOL.GS
         private static void PlaceAtBindOrCapital(GameBot bot, OfflineWorldBotRecord record)
         {
             Region bind = record.BindRegionId > 0 ? WorldMgr.GetRegion((ushort)record.BindRegionId) : null;
-            if (bind != null && !bind.IsFrontier && !bind.IsRvR && !bind.IsDungeon && (record.BindX != 0 || record.BindY != 0))
+            if (bind != null && !IsFrontierSpot(bind, record.BindX, record.BindY) && !bind.IsRvR && !bind.IsDungeon &&
+                (record.BindX != 0 || record.BindY != 0))
             {
                 bot.CurrentRegionID = (ushort)record.BindRegionId;
                 bot.X = record.BindX;
@@ -678,12 +702,12 @@ namespace DOL.GS
         private static void PlaceAwayFromFrontierAndDungeons(GameBot bot, OfflineWorldBotRecord record)
         {
             Region region = WorldMgr.GetRegion((ushort)record.RegionId);
-            bool unsafeSpot = region == null || region.IsFrontier || region.IsRvR || region.IsDungeon ||
+            bool unsafeSpot = region == null || IsFrontierSpot(region, record.X, record.Y) || region.IsRvR || region.IsDungeon ||
                               region.GetZone(record.X, record.Y)?.IsDungeon == true;
             if (!unsafeSpot)
                 return;
             Region bind = record.BindRegionId > 0 ? WorldMgr.GetRegion((ushort)record.BindRegionId) : null;
-            if (bind != null && !bind.IsFrontier && !bind.IsRvR && !bind.IsDungeon)
+            if (bind != null && !IsFrontierSpot(bind, record.BindX, record.BindY) && !bind.IsRvR && !bind.IsDungeon)
             {
                 bot.CurrentRegionID = (ushort)record.BindRegionId;
                 bot.X = record.BindX;
