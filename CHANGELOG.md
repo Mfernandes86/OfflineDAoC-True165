@@ -35,6 +35,8 @@ release. Content changes are applied by the first START SERVER, as always.
   `development-source/server/tools/navmesh_keepgate/seal_all.py` reseals after any rebuild).
 - The merchant keeps (Caer Benowyc, Bledmeer Faste, Dun Crauchon) sell siegecraft parts and change hands with the keep.
 - The new client: Abermenai's keep stands where the server has its doors again.
+- The new client: large Hibernian weapons sheathed on the back (two-handed swords, large swords, spears) sit where
+  the 1.64 client puts them, the grip near the shoulder instead of the waist.
 
 ### The world
 
