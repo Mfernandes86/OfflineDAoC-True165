@@ -282,6 +282,11 @@ namespace DOL.GS
         /// <summary>New level 1s once running: at most 1% of the goal per 30 minutes.</summary>
         public static int NewPer30Minutes(int goal) => goal <= 0 ? 0 : Math.Max(1, (int)Math.Round(goal * 0.01));
 
+        /// <summary>A realm this far below its goal (live and coming) goes back to the fill phase: saved bots that can
+        /// play first, then new level 1s at the fill pace (AutonomousPopulationFillPace), until the goal is met again.</summary>
+        public static bool NeedsRefill(int liveAndInbound, int goal) =>
+            goal > 0 && liveAndInbound < goal - Math.Max(5, goal / 50);
+
         #endregion
 
         #region State
@@ -748,6 +753,15 @@ namespace DOL.GS
                 if (now - p.RequestedUtc >= PendingLoginCounts) continue;
                 have[BracketOf(p.Level)]++;
                 inbound++;
+            }
+
+            // owner 2026-11-13 ("only 1,200 bots were online when i had population set to 3000"): after the start fill the
+            // saved roster runs out over a long session (daily caps, rests), and outside the fill phase new bots came at
+            // 1% of the goal per half hour, so the online count drained all night. A realm well below its goal fills again.
+            if (!r.FillPhase && r.Initialized && NeedsRefill(liveTotal + inbound, settingsGoal))
+            {
+                r.FillPhase = true;
+                LogInfo($"POPULATION_REFILL realm={PopulationGoalSettings.RealmName(r.Realm)} live_and_inbound={liveTotal + inbound} goal={settingsGoal}");
             }
 
             int[] targets = BracketTargets(goal, s.Level50MaxPercent, s.BracketFloorPercent);

@@ -154,6 +154,41 @@ namespace DOL.Tests.Unit.Population
         }
 
         [Test]
+        public void ARealmWellBelowItsGoalFillsAgain()
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(AutonomousPopulationScheduler.NeedsRefill(980, 1000), Is.False, "within 2%: no refill");
+                Assert.That(AutonomousPopulationScheduler.NeedsRefill(979, 1000), Is.True);
+                Assert.That(AutonomousPopulationScheduler.NeedsRefill(96, 100), Is.False, "at least 5 short for small goals");
+                Assert.That(AutonomousPopulationScheduler.NeedsRefill(94, 100), Is.True);
+                Assert.That(AutonomousPopulationScheduler.NeedsRefill(0, 0), Is.False);
+            });
+        }
+
+        [Test]
+        public void AfterTheStartFillARealmThatLosesItsRosterRefillsAtTheFillPace()
+        {
+            // Owner 2026-11-13: about 3,000 online at 1 am, 1,250 by 10 am. The saved roster could not play (daily caps) and
+            // outside the fill phase new bots came at 1% of the goal per half hour. Now a realm well below its goal fills again.
+            Start(500, 0, 0);
+            Run(90 * 60);
+            Assert.That(_life.LiveCount(eRealm.Albion), Is.InRange(490, 505), "filled after the start");
+            // 200 bots leave and their saved rows can't come back (as at the daily cap): only new bots can fill the gap.
+            foreach (long id in _life.Live.Keys.Where(id => _life.Live[id].Realm == eRealm.Albion).Take(200).ToList())
+            {
+                _life.Live.Remove(id);
+                _archive.Bots.Remove(id);
+            }
+            Assert.That(_life.LiveCount(eRealm.Albion), Is.InRange(290, 305));
+            Run(20 * 60);
+            // At the fill pace (4 a minute) about 80 come back in 20 minutes; the old 1%-per-half-hour pace gave about 3.
+            Assert.That(_life.LiveCount(eRealm.Albion), Is.GreaterThanOrEqualTo(360), "refilling at the fill pace");
+            Run(60 * 60);
+            Assert.That(_life.LiveCount(eRealm.Albion), Is.InRange(490, 505), "back at the goal");
+        }
+
+        [Test]
         public void SwitchedOffNewLevelOnesComeAtTheLoginRateAsBefore()
         {
             foreach (eRealm realm in AutonomousPopulationScheduler.Realms)
