@@ -2,7 +2,7 @@
 
 The newest version is first.
 
-## Coming in the next update
+## Coming in 0.8
 
 Source only so far (2026-11-12): these changes are in the repository; they reach an installed game with the next
 release. Content changes are applied by the first START SERVER, as always.
