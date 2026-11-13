@@ -49,6 +49,9 @@ release. Content changes are applied by the first START SERVER, as always.
   fire again; Lost Stone of Arawn and The Lost Seed find their NPCs.
 - Gamebots log in where they logged off: no more crowd leaving the Tir na Nog vault (and Camelot and Jordheim) at every
   server start.
+- Gamebot population: the number online stays at your goal. Over a long session the online count used to drain (3,000
+  at the start, about 1,250 by morning) as gamebots used up their daily play time; a realm that falls below its goal
+  now fills again, with returning gamebots first and new ones after.
 - Quest searches: `/search` works where the period walkthroughs say, and the map marker points there. Spicket,
   Spackit and Spykit searches under the Elf Bridge north of Ardee (it pointed at open country). Also fixed: Missing
   Tapestry (inside the house), Thraxia's Dilemma (the easternmost hut), A Piece of Gormghlaith's Mind, Reaching Beyond,
