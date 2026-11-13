@@ -71,6 +71,11 @@ def door_cases(kdoors, polys):
     """(label, blocked polys) per test: every door shut, each door alone, each 01/02 style pair (same id // 100)."""
     allp = sorted(set(sum((polys[d[0]] for d in kdoors), [])))
     cases = [("all doors shut", allp)] + [(f"only {d[0]} shut", polys[d[0]]) for d in kdoors]
+    if len(kdoors) > 2:
+        # the server keeps every keep door shut until a raid breaks one: each door open with all the others shut
+        # (Castle Myrddin 12086801, Grallarhorn 112179302: a sliver walk round the one shut gate of the opened pair)
+        cases += [(f"all but {d[0]} shut", sorted(set(sum((polys[e[0]] for e in kdoors if e[0] != d[0]), []))))
+                  for d in kdoors]
     pairs = {}
     for d in kdoors:
         pairs.setdefault(d[0] // 100, []).append(d[0])
@@ -105,7 +110,9 @@ def main(argv):
     comp0, big0 = largest(usable0)
     main0 = usable0 & (comp0 == big0)
     print(f"polys {nv.n}, main area {int(main0.sum())}, off-mesh links {len(nv.offmesh)}")
-    doors = db.execute("select InternalID, X, Y, Z from Door where InternalID/1000000=?", (zone,)).fetchall()
+    # realm gates (border keeps, milegates: Realm 1-3) register doorway-wide; UT_GateNavmeshInstalled165 checks them
+    doors = db.execute("select InternalID, X, Y, Z from Door where InternalID/1000000=? and Realm not in (1, 2, 3)",
+                       (zone,)).fetchall()
     keeps = db.execute("select KeepID, Name, X, Y, Z from Keep where Region=?", (region,)).fetchall()
     guards = db.execute("select Mob_ID, Name, X, Y, Z from Mob where Region=? and ClassType like 'DOL.GS.Keeps.%'",
                         (region,)).fetchall()
