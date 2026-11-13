@@ -50,12 +50,18 @@ release. Content changes are applied by the first START SERVER, as always.
   fire again; Lost Stone of Arawn and The Lost Seed find their NPCs.
 - Gamebots log in where they logged off: no more crowd leaving the Tir na Nog vault (and Camelot and Jordheim) at every
   server start.
+- Quest searches: `/search` works where the period walkthroughs say, and the map marker points there. Spicket,
+  Spackit and Spykit searches under the Elf Bridge north of Ardee (it pointed at open country). Also fixed: Missing
+  Tapestry (inside the house), Thraxia's Dilemma (the easternmost hut), A Piece of Gormghlaith's Mind, Reaching Beyond,
+  The Piper's Price, and five searches that worked anywhere in their zone but marked its centre: Dark Places of the
+  Soul, Impossible Mission, Reports, Willing Sacrifice and Immortal Gift.
 
 ### Tools
 
 - The OFFLINEDAOC Database (`tools/offlinedaoc-database`): a look-up site built from the game's own data - item
   upgrades and where they drop with the real chances, monsters to hunt for your level and con, camps on the zone maps,
   merchants, quest kill steps and stable routes. Set-up on any PC: `tools/offlinedaoc-database/README-SETUP.md`.
+  Its zone maps no longer go blank when you switch between "From above" and "Game map".
 
 ## 0.7 (2026-11-12)
 
