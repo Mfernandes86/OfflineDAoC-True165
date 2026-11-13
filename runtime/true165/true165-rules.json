@@ -52092,6 +52092,50 @@
   {
    "sql": "UPDATE Mob SET Level = 28 WHERE Region = 253 AND Mob_ID IN ('91c88f86-159d-486c-a374-a1b0c96ba3cc')",
    "reason": "True 1.65 0.8 bgfix: Abermenai keep guard row level 28 (1 rows): no period source for Abermenai: the rows carry today's computed values (guards 23, lord 28). The server takes keep guard levels from Keep.BaseLevel; the row level counts only with the battleground row-level code change"
+  },
+  {
+   "sql": "UPDATE DataQuest SET SourceName = 'SEARCH;3;;200;334976;447488;1500;5' WHERE ID = 21397 AND SourceName = 'SEARCH;3;;200;340873;468276;1500;5'",
+   "reason": "True 1.65 0.8 questfix SPRAGGON: Spicket, Spackit and Spykit step 3 searches under the Elf Bridge north of Ardee (Connacht /loc 48256, 29696), the bridge on the road to Druim Ligen the period walkthrough names; the old area lay in open country 4,000 units north of Ardee"
+  },
+  {
+   "sql": "UPDATE DataQuest SET SourceName = REPLACE(SourceName, 'SEARCH;7;;181;357573;405871;400;5', 'SEARCH;7;;181;356160;404864;400;5') WHERE Name = 'Missing Tapestry' AND SourceName LIKE '%SEARCH;7;;181;357573;405871;400;5%'",
+   "reason": "True 1.65 0.8 questfix SEARCH: Missing Tapestry: step 7 searches inside the Fomorian camp's house (zone 182 /loc 28480,44416), not the settlement's /loc (period walkthrough + client zone fixtures)"
+  },
+  {
+   "sql": "UPDATE DataQuest SET SourceName = REPLACE(SourceName, 'SEARCH;2;;100;738128;941120;500;5', 'SEARCH;2;;100;739200;940416;500;5') WHERE Name = 'Thraxia''s Dilemma' AND SourceName LIKE '%SEARCH;2;;100;738128;941120;500;5%'",
+   "reason": "True 1.65 0.8 questfix SEARCH: Thraxia's Dilemma: step 2 searches the easternmost Were Hut (zone 106 /loc 51072,39296); the old circle missed both huts (period walkthrough + client zone fixtures)"
+  },
+  {
+   "sql": "UPDATE DataQuest SET SourceName = REPLACE(SourceName, 'SEARCH;9;;200;330634;557009;500;5', 'SEARCH;9;;200;330470;557520;500;5') WHERE Name = 'A Piece of Gormghlaith''s Mind' AND SourceName LIKE '%SEARCH;9;;200;330634;557009;500;5%'",
+   "reason": "True 1.65 0.8 questfix SEARCH: A Piece of Gormghlaith's Mind: step 9 centred on the Ruined Hut (zone 201 /loc 10982,8656), 36 units outside the old circle (period walkthrough + client zone fixtures)"
+  },
+  {
+   "sql": "UPDATE DataQuest SET SourceName = REPLACE(SourceName, 'SEARCH;3;;1;574139;530505;1500;5', 'SEARCH;3;;1;585472;534272;1500;5') WHERE Name = 'Reaching Beyond' AND SourceName LIKE '%SEARCH;3;;1;574139;530505;1500;5%'",
+   "reason": "True 1.65 0.8 questfix SEARCH: Reaching Beyond: step 3 searches the water at the base of the bridge (zone 0 /loc 36608,50944), not the hilltop keep (period walkthrough + client zone fixtures)"
+  },
+  {
+   "sql": "UPDATE DataQuest SET SourceName = REPLACE(SourceName, 'SEARCH;4;;200;304720;701136;600;5', 'SEARCH;4;;200;303120;704636;600;5') WHERE Name = 'The Piper''s Price' AND SourceName LIKE '%SEARCH;4;;200;304720;701136;600;5%'",
+   "reason": "True 1.65 0.8 questfix SEARCH: The Piper's Price: step 4 searches the den the walkthrough puts at 16.4k, 24.7k (zone 204), 3,850 from the old spot (period walkthrough + client zone fixtures)"
+  },
+  {
+   "sql": "UPDATE DataQuest SET SourceName = REPLACE(SourceName, 'SEARCH;14;;100;688128;638976;32768;5', 'SEARCH;14;;100;683660;610208;5000;5') WHERE Name = 'Dark Places of the Soul' AND SourceName LIKE '%SEARCH;14;;100;688128;638976;32768;5%'",
+   "reason": "True 1.65 0.8 questfix SEARCH: Dark Places of the Soul: step 14 the cold stone between the rocks where a player saw the frost spectre at 28.3k, 4k in Jamtland Mountains (zone 113); radius 5000 (the walkthrough's 'north-east of Glenlock' does not match that loc, so the circle is wide) (period walkthrough + client zone fixtures)"
+  },
+  {
+   "sql": "UPDATE DataQuest SET SourceName = REPLACE(SourceName, 'SEARCH;4;;1;319488;663552;32768;5', 'SEARCH;4;;1;315720;664512;2000;5') WHERE Name = 'Impossible Mission' AND SourceName LIKE '%SEARCH;4;;1;319488;663552;32768;5%'",
+   "reason": "True 1.65 0.8 questfix SEARCH: Impossible Mission: step 4 the ruined temple and its guards on the Lyonesse shore: between the two Ruined Temple fixtures (zone 10 /loc 29000, 33728), radius 2000 (period walkthrough + client zone fixtures)"
+  },
+  {
+   "sql": "UPDATE DataQuest SET SourceName = REPLACE(SourceName, 'SEARCH;3;;51;524288;524288;32768;5', 'SEARCH;3;;51;524464;544304;2000;5') WHERE Name = 'Reports' AND SourceName LIKE '%SEARCH;3;;51;524288;524288;32768;5%'",
+   "reason": "True 1.65 0.8 questfix SEARCH: Reports: step 3 hide by the boats in the town north along the road into the Isle of Glass: the docks (zone 51 /loc 32944, 52784), radius 2000 (period walkthrough + client zone fixtures)"
+  },
+  {
+   "sql": "UPDATE DataQuest SET SourceName = REPLACE(SourceName, 'SEARCH;6;;21;40960;40960;32768;5', 'SEARCH;6;;21;28415;32728;2500;5') WHERE Name = 'Willing Sacrifice' AND SourceName LIKE '%SEARCH;6;;21;40960;40960;32768;5%'",
+   "reason": "True 1.65 0.8 questfix SEARCH: Willing Sacrifice: step 6 the password room beyond the forgotten promise in the Tomb of Mithra (zone 21 /loc 20223, 24536), radius 2500 to take in the neighbouring rooms (the walkthrough gives turns, not a /loc) (period walkthrough + client zone fixtures)"
+  },
+  {
+   "sql": "UPDATE DataQuest SET SourceName = REPLACE(SourceName, 'SEARCH;12;;224;40960;40960;32768;5', 'SEARCH;12;;224;30145;31358;1500;5') WHERE Name = 'Immortal Gift' AND SourceName LIKE '%SEARCH;12;;224;40960;40960;32768;5%'",
+   "reason": "True 1.65 0.8 questfix SEARCH: Immortal Gift: step 12 the forge behind the Dreaded Ursine in Treibh Caillte (zone 224 /loc 21953, 23166), radius 1500 (period walkthrough + client zone fixtures)"
   }
  ]
 }
