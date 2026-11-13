@@ -9,10 +9,10 @@ internal sealed class BattlegroundsPanel : UserControl
 {
     public sealed record Status(string Name, int MinLevel, int MaxLevel, string CentralKeep, string Owner,
         int AlbionInside, int MidgardInside, int HiberniaInside, int AlbionTravelling, int MidgardTravelling,
-        int HiberniaTravelling, int Monsters);
+        int HiberniaTravelling, int Monsters, int AlbionPvp = 0, int MidgardPvp = 0, int HiberniaPvp = 0);
 
     private sealed record Row(string Battleground, string Levels, string CentralKeep, string HeldBy,
-        int Albion, int Midgard, int Hibernia, int Total, string OnTheirWay);
+        int Albion, int Midgard, int Hibernia, int Total, string PvpFocus, string OnTheirWay);
 
     private readonly Label _summary = new()
     {
@@ -66,15 +66,18 @@ internal sealed class BattlegroundsPanel : UserControl
         _grid.Columns.Add(Column("Midgard bots", nameof(Row.Midgard), 90));
         _grid.Columns.Add(Column("Hibernia bots", nameof(Row.Hibernia), 90));
         _grid.Columns.Add(Column("Total inside", nameof(Row.Total), 85));
-        _grid.Columns.Add(Column("On their way (Alb / Mid / Hib)", nameof(Row.OnTheirWay), 190));
+        _grid.Columns.Add(Column("PvP focus (Alb / Mid / Hib)", nameof(Row.PvpFocus), 170));
+        _grid.Columns.Add(Column("PvP on their way (Alb / Mid / Hib)", nameof(Row.OnTheirWay), 210));
         layout.Controls.Add(_grid, 0, 1);
 
         layout.Controls.Add(new Label
         {
             AutoSize = true, MaximumSize = new Size(1100, 0), Margin = new Padding(6, 8, 6, 6), ForeColor = DaocTheme.Text,
-            Text = "Bots with a battleground goal take a realm teleporter's [Battlegrounds] choice to the battleground of their level, " +
-                   "then roam it and attack or defend its central keep. Set how many bots do this with Battlegrounds % on the Bot Goals Setting tab " +
-                   "(0% by default). Players reach the same battlegrounds from any realm teleporter.",
+            Text = "Any bot whose level fits a battleground may hunt its monsters like any other hunting spot, and fights enemy realms it meets there. " +
+                   "Bots with the Battlegrounds goal (PvP focus) roam the field, siege the central keep and defend it for their realm. " +
+                   "Both go in as players do: the battlegrounds medallion from the medallion merchant at the realm's portal keep, then the " +
+                   "portal keep teleporter (Master Visur, Stor Gothi Annark, Glasny), and leave by the exit back to the border keep. " +
+                   "Set the PvP focus share with Battlegrounds % on the Bot Goals Setting tab (0% by default). The rest of the bots inside are hunting.",
         }, 0, 2);
         Controls.Add(layout);
         Show(null, false);
@@ -96,6 +99,7 @@ internal sealed class BattlegroundsPanel : UserControl
         var rows = battlegrounds.Select(bg => new Row(bg.Name, $"{bg.MinLevel}–{bg.MaxLevel}",
             string.IsNullOrEmpty(bg.CentralKeep) ? "(none)" : bg.CentralKeep, string.IsNullOrEmpty(bg.Owner) ? "—" : bg.Owner,
             bg.AlbionInside, bg.MidgardInside, bg.HiberniaInside, bg.AlbionInside + bg.MidgardInside + bg.HiberniaInside,
+            $"{bg.AlbionPvp} / {bg.MidgardPvp} / {bg.HiberniaPvp}",
             $"{bg.AlbionTravelling} / {bg.MidgardTravelling} / {bg.HiberniaTravelling}")).ToList();
         _source.DataSource = rows;
         int inside = rows.Sum(row => row.Total);
