@@ -1,0 +1,8 @@
+{
+ "updates": [
+  {
+   "sql": "UPDATE Mob SET X = 32296, Y = 38267, Z = 4592, Heading = 1068 WHERE Mob_ID = 'true165-thidranki-lord'",
+   "reason": "True 1.65 BG keeps: Thidranki lord to Thidranki's own lord spot on the keep tower top (the archived Atlas lord), not Abermenai's spot where it floated 1,217 over the ground"
+  }
+ ]
+}

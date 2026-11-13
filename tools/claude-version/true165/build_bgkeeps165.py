@@ -24,6 +24,18 @@ model: a client fix, reported separately; first version of this pass had moved t
    of this script is dropped. The battleground meshes were rebuilt from the 1.64 client (staged for the lead; the lord and
    all 87 battleground keep NPC spots stand on the new floors).
 
+4. 2026-11-12 (lane BGCONTENT, <lead workspace>/bgfix\\reports\\BGCONTENT.md; owner: "check the caledonia guards and lord
+   stats against period", period corrections approved): the six wall-walk guards are ARCHERS, not casters, and the
+   keep's guards stand at the Prima levels. Period: The Atlas (Prima 2002) Thidranki list names only fighters, archers,
+   commanders and lords for the central keep (Man at Arms / Viking Huscarl / Guardian, Bowman / Viking Archer / Ranger
+   [24,45,90], Knight Commander / Viking Jarl / Champion [27,..], lords Lady Bromley / Jarl Gunnulf / Chieftain Marzhin
+   [33]); its only casters are the portal keeps' Master Wizard / Master of Runes / Master Eldritch [95]. Freddyshouse
+   93299 (2002-07-31): Thidranki's keep guards were "mostly yellow" to a level 24 (22-24). So the six rows are
+   GuardStaticArcher (values as Thidranki's own tower-top archers, row a227aada) and every row's Level is 24, the lord's
+   33 (add-thidranki165.json). NOTE: the server sets keep guard levels from Keep.BaseLevel, not from the row
+   (AbstractGameKeep.SetGuardLevel); the row levels apply only with the BG row-level code change requested from the lead.
+   Both content copies (tools\\claude-version\\true165 and runtime\\true165) are written.
+
 python -I build_bgkeeps165.py      (rerunnable; checks every Thidranki keep spot on the server navmesh, tolerance 64)
 Out: pending-bgkeeps165-updates.json (the lord's rules update for the lead to merge, tagged "True 1.65 BG keeps"),
      add-bgkeeps165.json (the 12 Thidranki guards), add-thidranki165.json (the lord row's spot).
@@ -38,6 +50,7 @@ NAVMESH = next(p for p in (os.path.join(CV, 'runtime', 'server', 'navmesh-165', 
 PENDING = os.path.join(HERE, 'pending-bgkeeps165-updates.json')
 ADDFILE = os.path.join(HERE, 'add-bgkeeps165.json')
 THIDRANKI = os.path.join(HERE, 'add-thidranki165.json')
+RUNTIME = os.path.join(CV, 'runtime', 'true165')
 TAG = 'True 1.65 BG keeps'
 
 THIDRANKI_LORD = ('true165-thidranki-lord', 32296, 38267, 4592, 1068)   # archived Atlas lord 863582fc-...
@@ -49,12 +62,12 @@ ATLAS_GUARDS = [
     ('9145eac4-4c5e-4ddb-94f3-ab301c14d82d', 'GuardFighter', 32308, 38560, 4272, 2070),
     ('c61b3bde-cc63-4bc6-be09-a643f0eb3ddd', 'GuardFighter', 34024, 39282, 3720, 3885),
     ('fbf6d8ec-19ab-4fb5-8a68-e24ef57fe143', 'GuardFighter', 34720, 38637, 3715, 3271),
-    ('10abd579-b36f-413b-8c61-0e0b8964ab92', 'GuardStaticCaster', 33679, 39074, 3976, 3791),
-    ('2b5ff25d-c932-4407-90f1-1823c38814c5', 'GuardStaticCaster', 33185, 37386, 3975, 2005),
-    ('5b850048-b2b8-4884-8cc1-3bb297fbc533', 'GuardStaticCaster', 33971, 38815, 3976, 3470),
-    ('8b778475-5d5b-4a0d-b52c-093b10931bc3', 'GuardStaticCaster', 32478, 39130, 3976, 355),
-    ('c1192c17-7970-4900-84ae-06aa84405ec8', 'GuardStaticCaster', 33976, 37722, 3976, 2693),
-    ('c8187c3f-a92c-4117-8a4b-a6c3545ff8a8', 'GuardStaticCaster', 32441, 37328, 3991, 1549),
+    ('10abd579-b36f-413b-8c61-0e0b8964ab92', 'GuardStaticArcher', 33679, 39074, 3976, 3791),
+    ('2b5ff25d-c932-4407-90f1-1823c38814c5', 'GuardStaticArcher', 33185, 37386, 3975, 2005),
+    ('5b850048-b2b8-4884-8cc1-3bb297fbc533', 'GuardStaticArcher', 33971, 38815, 3976, 3470),
+    ('8b778475-5d5b-4a0d-b52c-093b10931bc3', 'GuardStaticArcher', 32478, 39130, 3976, 355),
+    ('c1192c17-7970-4900-84ae-06aa84405ec8', 'GuardStaticArcher', 33976, 37722, 3976, 2693),
+    ('c8187c3f-a92c-4117-8a4b-a6c3545ff8a8', 'GuardStaticArcher', 32441, 37328, 3991, 1549),
 ]
 # the Thidranki keep spawns already in the world (checked on the navmesh too; none needs moving)
 THIDRANKI_EXISTING = [
@@ -62,15 +75,16 @@ THIDRANKI_EXISTING = [
     ('0849e575-78af-4d6e-9b3b-fc63409e87c3', 32218, 37987, 4592), ('1d1c1d2f-8496-4f4b-9081-15c8dd0dcb43', 32213, 38573, 4592),
     ('a227aada-f492-4111-a487-86375d666b09', 32526, 38271, 4592),
 ]
-THIDRANKI_LEVEL = 27
+THIDRANKI_LEVEL = 24          # Prima Atlas: Thidranki guards [24] (bracket top)
+THIDRANKI_LORD_LEVEL = 33     # Prima Atlas: Thidranki keep lords [33]
 THIDRANKI_STATS = dict(Strength=71, Constitution=20, Dexterity=29, Quickness=40, Intelligence=58, Piety=57, Empathy=57, Charisma=57)
 TEMPLATE = {   # caledon-guard-5 / caledon-guard-23
     'GuardFighter': dict(ClassType='DOL.GS.Keeps.GuardFighter', Name='Renegade Huscarl', Speed=250, Model=185,
                          AggroLevel=90, AggroRange=1000, RespawnInterval=307, Brain='DOL.AI.Brain.KeepGuardBrain',
                          Gender=1, VisibleWeaponSlots=16),
-    'GuardStaticCaster': dict(ClassType='DOL.GS.Keeps.GuardStaticCaster', Name='Renegade Runemaster', Speed=0, Model=507,
-                              AggroLevel=99, AggroRange=1850, RespawnInterval=335, Brain='DOL.AI.Brain.CasterBrain',
-                              Gender=2, VisibleWeaponSlots=34),
+    'GuardStaticArcher': dict(ClassType='DOL.GS.Keeps.GuardStaticArcher', Name='Renegade Hunter', Speed=0, Model=773,
+                              AggroLevel=99, AggroRange=2100, RespawnInterval=325, Brain='DOL.AI.Brain.KeepGuardBrain',
+                              Gender=1, VisibleWeaponSlots=51),   # Thidranki's own tower-top archer a227aada
 }
 
 
@@ -109,8 +123,9 @@ def build():
         rows.append(row)
     add = {'table': 'Mob', 'key': 'Mob_ID',
            'reason': f'{TAG}: the 12 Thidranki Faste keep guards (6 fighters at the gate and in the tower, 6 casters on '
-                     f'the wall-walk) back at their archived spots (Atlas rows named "new mob"); values copied from the '
-                     f'other battlegrounds\' guards of the same class, level {THIDRANKI_LEVEL} = bracket top + 3 like theirs',
+                     f'the wall-walk) back at their archived spots (Atlas rows named "new mob"); fighter values copied from Caledon\'s '
+                     f'Renegade Huscarl; the wall-walk guards are archers (period: the Prima Atlas lists no keep casters in the '
+                     f'battlegrounds) with Thidranki\'s own archer values; level {THIDRANKI_LEVEL} (Prima Atlas Thidranki guards)',
            'rows': rows}
     return updates, add
 
@@ -119,16 +134,17 @@ def main():
     updates, add = build()
     with open(PENDING, 'w', encoding='utf-8') as f:
         json.dump({'updates': updates}, f, ensure_ascii=False, indent=1)
-    with open(ADDFILE, 'w', encoding='utf-8') as f:
-        json.dump(add, f, ensure_ascii=False, indent=1)
     th = json.load(open(THIDRANKI, encoding='utf-8'))
     lid, lx, ly, lz, lh = THIDRANKI_LORD
     for row in th['rows']:
         if row['Mob_ID'] == lid:
-            row.update(X=lx, Y=ly, Z=lz, Heading=lh)
-    with open(THIDRANKI, 'w', encoding='utf-8') as f:
-        json.dump(th, f, ensure_ascii=False, indent=1)
-        f.write('\n')
+            row.update(X=lx, Y=ly, Z=lz, Heading=lh, Level=THIDRANKI_LORD_LEVEL)
+    for folder in (HERE, RUNTIME):          # both content copies, byte-identical (CRLF as before)
+        with open(os.path.join(folder, os.path.basename(ADDFILE)), 'w', encoding='utf-8') as f:
+            json.dump(add, f, ensure_ascii=False, indent=1)
+        with open(os.path.join(folder, os.path.basename(THIDRANKI)), 'w', encoding='utf-8') as f:
+            json.dump(th, f, ensure_ascii=False, indent=1)
+            f.write('\n')
     print(f'{len(updates)} updates -> {os.path.basename(PENDING)}; {len(add["rows"])} rows -> {os.path.basename(ADDFILE)}; '
           f'lord row in {os.path.basename(THIDRANKI)} at {lx},{ly},{lz}')
 

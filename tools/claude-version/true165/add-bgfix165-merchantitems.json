@@ -1,0 +1,511 @@
+{
+ "table": "MerchantItem",
+ "key": "MerchantItem_ID",
+ "reason": "True 1.65 0.8 bgfix: merchant keep lists: the realm's siegecraft parts with its catapult stones and ballista bolts (true165MkSiegeAlb/Mid/Hib) and the wood merchant's boards (true165MkWoodAlb/Mid/Hib); period: FH 89097 (2002-05-29), FH 86254, FH 100226; build_bgfix165.py",
+ "rows": [
+  {
+   "ItemListID": "true165MkSiegeAlb",
+   "ItemTemplateID": "elm_bucket",
+   "PageNumber": 0,
+   "SlotPosition": 0,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeAlb-00"
+  },
+  {
+   "ItemListID": "true165MkSiegeAlb",
+   "ItemTemplateID": "elm_counterweight_alb",
+   "PageNumber": 0,
+   "SlotPosition": 1,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeAlb-01"
+  },
+  {
+   "ItemListID": "true165MkSiegeAlb",
+   "ItemTemplateID": "elm_pivot_alb",
+   "PageNumber": 0,
+   "SlotPosition": 2,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeAlb-02"
+  },
+  {
+   "ItemListID": "true165MkSiegeAlb",
+   "ItemTemplateID": "iron_ballista_trigger_alb",
+   "PageNumber": 0,
+   "SlotPosition": 3,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeAlb-03"
+  },
+  {
+   "ItemListID": "true165MkSiegeAlb",
+   "ItemTemplateID": "iron_gimbal_alb",
+   "PageNumber": 0,
+   "SlotPosition": 4,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeAlb-04"
+  },
+  {
+   "ItemListID": "true165MkSiegeAlb",
+   "ItemTemplateID": "iron_ram_beak",
+   "PageNumber": 0,
+   "SlotPosition": 5,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeAlb-05"
+  },
+  {
+   "ItemListID": "true165MkSiegeAlb",
+   "ItemTemplateID": "iron_ram_cladding_alb",
+   "PageNumber": 0,
+   "SlotPosition": 6,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeAlb-06"
+  },
+  {
+   "ItemListID": "true165MkSiegeAlb",
+   "ItemTemplateID": "iron_spring_arms_alb",
+   "PageNumber": 0,
+   "SlotPosition": 7,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeAlb-07"
+  },
+  {
+   "ItemListID": "true165MkSiegeAlb",
+   "ItemTemplateID": "iron_winding_crank_alb",
+   "PageNumber": 0,
+   "SlotPosition": 8,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeAlb-08"
+  },
+  {
+   "ItemListID": "true165MkSiegeAlb",
+   "ItemTemplateID": "tanned_arm_cushion_alb",
+   "PageNumber": 0,
+   "SlotPosition": 9,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeAlb-09"
+  },
+  {
+   "ItemListID": "true165MkSiegeAlb",
+   "ItemTemplateID": "tanned_swing_harness_alb",
+   "PageNumber": 0,
+   "SlotPosition": 10,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeAlb-10"
+  },
+  {
+   "ItemListID": "true165MkSiegeAlb",
+   "ItemTemplateID": "tanned_torsion_cables_alb",
+   "PageNumber": 0,
+   "SlotPosition": 11,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeAlb-11"
+  },
+  {
+   "ItemListID": "true165MkSiegeAlb",
+   "ItemTemplateID": "catapult_stone",
+   "PageNumber": 0,
+   "SlotPosition": 12,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeAlb-12"
+  },
+  {
+   "ItemListID": "true165MkSiegeAlb",
+   "ItemTemplateID": "ballista_bolt",
+   "PageNumber": 0,
+   "SlotPosition": 13,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeAlb-13"
+  },
+  {
+   "ItemListID": "true165MkWoodAlb",
+   "ItemTemplateID": "rowan_wooden_boards",
+   "PageNumber": 0,
+   "SlotPosition": 0,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkWoodAlb-00"
+  },
+  {
+   "ItemListID": "true165MkWoodAlb",
+   "ItemTemplateID": "elm_wooden_boards",
+   "PageNumber": 0,
+   "SlotPosition": 1,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkWoodAlb-01"
+  },
+  {
+   "ItemListID": "true165MkWoodAlb",
+   "ItemTemplateID": "oak_wooden_boards",
+   "PageNumber": 0,
+   "SlotPosition": 2,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkWoodAlb-02"
+  },
+  {
+   "ItemListID": "true165MkWoodAlb",
+   "ItemTemplateID": "ironwood_wooden_boards",
+   "PageNumber": 0,
+   "SlotPosition": 3,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkWoodAlb-03"
+  },
+  {
+   "ItemListID": "true165MkWoodAlb",
+   "ItemTemplateID": "heartwood_wooden_boards",
+   "PageNumber": 0,
+   "SlotPosition": 4,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkWoodAlb-04"
+  },
+  {
+   "ItemListID": "true165MkWoodAlb",
+   "ItemTemplateID": "runewood_wooden_boards",
+   "PageNumber": 0,
+   "SlotPosition": 5,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkWoodAlb-05"
+  },
+  {
+   "ItemListID": "true165MkWoodAlb",
+   "ItemTemplateID": "stonewood_wooden_boards",
+   "PageNumber": 0,
+   "SlotPosition": 6,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkWoodAlb-06"
+  },
+  {
+   "ItemListID": "true165MkSiegeMid",
+   "ItemTemplateID": "elm_bucket2",
+   "PageNumber": 0,
+   "SlotPosition": 0,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeMid-00"
+  },
+  {
+   "ItemListID": "true165MkSiegeMid",
+   "ItemTemplateID": "elm_counterweight_mid",
+   "PageNumber": 0,
+   "SlotPosition": 1,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeMid-01"
+  },
+  {
+   "ItemListID": "true165MkSiegeMid",
+   "ItemTemplateID": "elm_pivot_mid",
+   "PageNumber": 0,
+   "SlotPosition": 2,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeMid-02"
+  },
+  {
+   "ItemListID": "true165MkSiegeMid",
+   "ItemTemplateID": "iron_ballista_trigger_mid",
+   "PageNumber": 0,
+   "SlotPosition": 3,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeMid-03"
+  },
+  {
+   "ItemListID": "true165MkSiegeMid",
+   "ItemTemplateID": "iron_gimbal_mid",
+   "PageNumber": 0,
+   "SlotPosition": 4,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeMid-04"
+  },
+  {
+   "ItemListID": "true165MkSiegeMid",
+   "ItemTemplateID": "iron_ram_beak2",
+   "PageNumber": 0,
+   "SlotPosition": 5,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeMid-05"
+  },
+  {
+   "ItemListID": "true165MkSiegeMid",
+   "ItemTemplateID": "iron_ram_cladding_mid",
+   "PageNumber": 0,
+   "SlotPosition": 6,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeMid-06"
+  },
+  {
+   "ItemListID": "true165MkSiegeMid",
+   "ItemTemplateID": "iron_spring_arms_mid",
+   "PageNumber": 0,
+   "SlotPosition": 7,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeMid-07"
+  },
+  {
+   "ItemListID": "true165MkSiegeMid",
+   "ItemTemplateID": "iron_winding_crank_mid",
+   "PageNumber": 0,
+   "SlotPosition": 8,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeMid-08"
+  },
+  {
+   "ItemListID": "true165MkSiegeMid",
+   "ItemTemplateID": "tanned_arm_cushion_mid",
+   "PageNumber": 0,
+   "SlotPosition": 9,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeMid-09"
+  },
+  {
+   "ItemListID": "true165MkSiegeMid",
+   "ItemTemplateID": "tanned_swing_harness_mid",
+   "PageNumber": 0,
+   "SlotPosition": 10,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeMid-10"
+  },
+  {
+   "ItemListID": "true165MkSiegeMid",
+   "ItemTemplateID": "tanned_torsion_cables_mid",
+   "PageNumber": 0,
+   "SlotPosition": 11,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeMid-11"
+  },
+  {
+   "ItemListID": "true165MkSiegeMid",
+   "ItemTemplateID": "catapult_stone2",
+   "PageNumber": 0,
+   "SlotPosition": 12,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeMid-12"
+  },
+  {
+   "ItemListID": "true165MkSiegeMid",
+   "ItemTemplateID": "ballista_bolt2",
+   "PageNumber": 0,
+   "SlotPosition": 13,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeMid-13"
+  },
+  {
+   "ItemListID": "true165MkWoodMid",
+   "ItemTemplateID": "rowan_wooden_boards",
+   "PageNumber": 0,
+   "SlotPosition": 0,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkWoodMid-00"
+  },
+  {
+   "ItemListID": "true165MkWoodMid",
+   "ItemTemplateID": "elm_wooden_boards",
+   "PageNumber": 0,
+   "SlotPosition": 1,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkWoodMid-01"
+  },
+  {
+   "ItemListID": "true165MkWoodMid",
+   "ItemTemplateID": "oak_wooden_boards",
+   "PageNumber": 0,
+   "SlotPosition": 2,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkWoodMid-02"
+  },
+  {
+   "ItemListID": "true165MkWoodMid",
+   "ItemTemplateID": "ironwood_wooden_boards",
+   "PageNumber": 0,
+   "SlotPosition": 3,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkWoodMid-03"
+  },
+  {
+   "ItemListID": "true165MkWoodMid",
+   "ItemTemplateID": "heartwood_wooden_boards",
+   "PageNumber": 0,
+   "SlotPosition": 4,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkWoodMid-04"
+  },
+  {
+   "ItemListID": "true165MkWoodMid",
+   "ItemTemplateID": "runewood_wooden_boards",
+   "PageNumber": 0,
+   "SlotPosition": 5,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkWoodMid-05"
+  },
+  {
+   "ItemListID": "true165MkWoodMid",
+   "ItemTemplateID": "stonewood_wooden_boards",
+   "PageNumber": 0,
+   "SlotPosition": 6,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkWoodMid-06"
+  },
+  {
+   "ItemListID": "true165MkSiegeHib",
+   "ItemTemplateID": "elm_bucket3",
+   "PageNumber": 0,
+   "SlotPosition": 0,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeHib-00"
+  },
+  {
+   "ItemListID": "true165MkSiegeHib",
+   "ItemTemplateID": "elm_counterweight_hib",
+   "PageNumber": 0,
+   "SlotPosition": 1,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeHib-01"
+  },
+  {
+   "ItemListID": "true165MkSiegeHib",
+   "ItemTemplateID": "elm_pivot_hib",
+   "PageNumber": 0,
+   "SlotPosition": 2,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeHib-02"
+  },
+  {
+   "ItemListID": "true165MkSiegeHib",
+   "ItemTemplateID": "ferrite_ballista_trigger_hib",
+   "PageNumber": 0,
+   "SlotPosition": 3,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeHib-03"
+  },
+  {
+   "ItemListID": "true165MkSiegeHib",
+   "ItemTemplateID": "ferrite_gimbal_hib",
+   "PageNumber": 0,
+   "SlotPosition": 4,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeHib-04"
+  },
+  {
+   "ItemListID": "true165MkSiegeHib",
+   "ItemTemplateID": "ferrite_ram_beak3",
+   "PageNumber": 0,
+   "SlotPosition": 5,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeHib-05"
+  },
+  {
+   "ItemListID": "true165MkSiegeHib",
+   "ItemTemplateID": "ferrite_ram_cladding_hib",
+   "PageNumber": 0,
+   "SlotPosition": 6,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeHib-06"
+  },
+  {
+   "ItemListID": "true165MkSiegeHib",
+   "ItemTemplateID": "ferrite_spring_arms_hib",
+   "PageNumber": 0,
+   "SlotPosition": 7,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeHib-07"
+  },
+  {
+   "ItemListID": "true165MkSiegeHib",
+   "ItemTemplateID": "ferrite_winding_crank_hib",
+   "PageNumber": 0,
+   "SlotPosition": 8,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeHib-08"
+  },
+  {
+   "ItemListID": "true165MkSiegeHib",
+   "ItemTemplateID": "tanned_arm_cushion_hib",
+   "PageNumber": 0,
+   "SlotPosition": 9,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeHib-09"
+  },
+  {
+   "ItemListID": "true165MkSiegeHib",
+   "ItemTemplateID": "tanned_swing_harness_hib",
+   "PageNumber": 0,
+   "SlotPosition": 10,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeHib-10"
+  },
+  {
+   "ItemListID": "true165MkSiegeHib",
+   "ItemTemplateID": "tanned_torsion_cables_hib",
+   "PageNumber": 0,
+   "SlotPosition": 11,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeHib-11"
+  },
+  {
+   "ItemListID": "true165MkSiegeHib",
+   "ItemTemplateID": "catapult_stone3",
+   "PageNumber": 0,
+   "SlotPosition": 12,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeHib-12"
+  },
+  {
+   "ItemListID": "true165MkSiegeHib",
+   "ItemTemplateID": "ballista_bolt3",
+   "PageNumber": 0,
+   "SlotPosition": 13,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkSiegeHib-13"
+  },
+  {
+   "ItemListID": "true165MkWoodHib",
+   "ItemTemplateID": "rowan_wooden_boards",
+   "PageNumber": 0,
+   "SlotPosition": 0,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkWoodHib-00"
+  },
+  {
+   "ItemListID": "true165MkWoodHib",
+   "ItemTemplateID": "elm_wooden_boards",
+   "PageNumber": 0,
+   "SlotPosition": 1,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkWoodHib-01"
+  },
+  {
+   "ItemListID": "true165MkWoodHib",
+   "ItemTemplateID": "oak_wooden_boards",
+   "PageNumber": 0,
+   "SlotPosition": 2,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkWoodHib-02"
+  },
+  {
+   "ItemListID": "true165MkWoodHib",
+   "ItemTemplateID": "ironwood_wooden_boards",
+   "PageNumber": 0,
+   "SlotPosition": 3,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkWoodHib-03"
+  },
+  {
+   "ItemListID": "true165MkWoodHib",
+   "ItemTemplateID": "heartwood_wooden_boards",
+   "PageNumber": 0,
+   "SlotPosition": 4,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkWoodHib-04"
+  },
+  {
+   "ItemListID": "true165MkWoodHib",
+   "ItemTemplateID": "runewood_wooden_boards",
+   "PageNumber": 0,
+   "SlotPosition": 5,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkWoodHib-05"
+  },
+  {
+   "ItemListID": "true165MkWoodHib",
+   "ItemTemplateID": "stonewood_wooden_boards",
+   "PageNumber": 0,
+   "SlotPosition": 6,
+   "LastTimeRowUpdated": "2026-11-12 21:00:00",
+   "MerchantItem_ID": "true165-bgfix-true165MkWoodHib-06"
+  }
+ ]
+}

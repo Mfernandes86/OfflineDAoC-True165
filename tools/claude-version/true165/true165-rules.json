@@ -46,7 +46,6 @@
    "DOL.GS.HealDummy": "training dummy (freeshard)",
    "DOL.GS.LordOfBattle": "Atlas event warper",
    "DOL.GS.LordOfBoss": "Atlas event warper",
-   "DOL.GS.Keeps.GuardMerchant": "freeshard keep merchant",
    "DOL.GS.BasicCraftingMaster": "freeshard crafting master",
    "DOL.GS.Trainer.SluaghbinderTrainer": "custom class (Sluaghbinder)",
    "DOL.GS.ParthananFarmController": "Atlas event controller",
@@ -213,7 +212,7 @@
    {
     "table": "PathPoints",
     "key": "PathPoints_ID",
-    "where": "PathID IN ('HR_Ardagh_Connla','HR_Ardagh_TirUrphost','HR_Ardee_TirUrphost','HR_Audliten_GnaFaste','HR_Brynach_DruimCain','HR_CaerUlfwych_SnowdoniaFortress','HR_CampStation_CamelotEast','HR_CampStation_GronyrsFarm','HR_CastleSauvage_SnowdoniaFortress','HR_CastleSauvage_WestCornwall','HR_Connla_DruimLigen','HR_Connla_InnisCarthaig','HR_DruimCain_DruimLigen','HR_FortVeldon_WestSkona','HR_Galplen_Nalliten','HR_GnaFaste_Audliten','HR_InnisCarthaig_ParthananFarm','HR_MagMell_Howth','HR_Nalliten_Galplen','HR_ParthananFarm_Ardagh','HR_ParthananFarm_InnisCarthaig','HR_SnowdoniaFortress_CaerUlfwych','HR_SnowdoniaStation_CamelotEast','HR_TirNaNog_Brynach','HR_TirNaNog_DruimLigen','HR_TirUrphost_Ardee','HR_VindsaulFaste_Vasudheim','HR_WesternCornwall_CastleSauvage','HS_AdribardsRetreat_CastleSauvage','HS_AdribardsRetreat_WestDowns','HS_Ardee_ParthenonFarm','HS_Audliten_Mularn','HS_Brynach_CursedForest','HS_Brynach_TirNaNogNord','HS_CaerUlfwych_CornwallStation','HS_CaerWitrin_WesternCornwall','HS_CamelotNoth_NobsFarm','HS_CastleSauvage_AdribardsRetreat','HS_CastleSauvage_Ludlow','HS_CornwallStation_CaerUlfwych','HS_Cotswold_CampacorentinStation','HS_Cotswold_SnowdoniaStation','HS_CursedForest_Brynach','HS_DruimCain_TirnamBeo','HS_DruimLigen_Connla','HS_FortAtla_Galplen','HS_FortAtla_Mularn','HS_Galplen_FortAtla','HS_Galplen_GnaFaste','HS_Galplen_Vasudheim','HS_GnaFaste_FortVeldon','HS_GnaFaste_Galplen','HS_GnaFaste_Huginfel','HS_GnaFaste_Raumarik','HS_GnaFaste_WestSkona','HS_GronyrsFarm_CampacorentinStation','HS_Haggerfel_Vasudheim','HS_Howth_InnisCarthaig','HS_Howth_MagMell','HS_Huginfel_GnaFaste','HS_Huginfel_Raumarik','HS_Huginfel_SvasudFaste','HS_Huginfel_Vasudheim','HS_Humberton_SnowdoniaFortress','HS_InnisCarthaig_Culraid','HS_InnisCarthaig_TirnamBeo','HS_LlynBarfog_SnowdoniaStation','HS_Ludlow_CastleSauvage','HS_MagMell_ParthenonFarm','HS_Mularn_Audliten','HS_Mularn_FortAtla','HS_Mularn_Nalliten','HS_Mularn_SvasudFaste','HS_Nalliten_Mularn','HS_Nalliten_VindsaulFaste','HS_NobsFarm_CamelotNoth','HS_ParthenonFarm_DruimCain','HS_Raumarik_GnaFaste','HS_Raumarik_Huginfel','HS_SnowdoniaFortress_Humberton','HS_SnowdoniaStation_LlynBarfog','HS_SvasudFaste_Huginfel','HS_SvasudFaste_Mularn','HS_SvasudFaste_VindsaulFaste','HS_TirNaNogNord_InnisCarthaig','HS_TirUrphost_Ardagh','HS_TirnamBeo_DruimLigen','HS_Vasudheim_Galplen','HS_Vasudheim_Haggerfel','HS_Vasudheim_Huginfel','HS_Vasudheim_VindsaulFaste','HS_VindsaulFaste_Nalliten','HS_VindsaulFaste_SvasudFaste','HS_WestDowns_AdribardsRetreat','HS_WestSkona_GnaFaste','HS_WesternCornwall_CaerWitrin','ticket_to_ConnlaMulgraighy','ticket_to_CulraidAelerogh','ticket_to_Innis_CarthaigMulgraighy') AND PathPoints_ID NOT LIKE 'p165floor-%'",
+    "where": "PathID IN ('HR_Ardagh_Connla','HR_Ardagh_TirUrphost','HR_Ardee_TirUrphost','HR_Audliten_GnaFaste','HR_Brynach_DruimCain','HR_CaerUlfwych_SnowdoniaFortress','HR_CampStation_CamelotEast','HR_CampStation_GronyrsFarm','HR_CastleSauvage_SnowdoniaFortress','HR_CastleSauvage_WestCornwall','HR_Connla_DruimLigen','HR_Connla_InnisCarthaig','HR_DruimCain_DruimLigen','HR_FortVeldon_WestSkona','HR_Galplen_Nalliten','HR_GnaFaste_Audliten','HR_InnisCarthaig_ParthananFarm','HR_MagMell_Howth','HR_Nalliten_Galplen','HR_ParthananFarm_Ardagh','HR_ParthananFarm_InnisCarthaig','HR_SnowdoniaFortress_CaerUlfwych','HR_SnowdoniaStation_CamelotEast','HR_TirNaNog_Brynach','HR_TirNaNog_DruimLigen','HR_TirUrphost_Ardee','HR_VindsaulFaste_Vasudheim','HR_WesternCornwall_CastleSauvage','HS_AdribardsRetreat_CastleSauvage','HS_AdribardsRetreat_WestDowns','HS_Ardee_ParthenonFarm','HS_Audliten_Mularn','HS_Brynach_CursedForest','HS_Brynach_TirNaNogNord','HS_CaerUlfwych_CornwallStation','HS_CaerWitrin_WesternCornwall','HS_CamelotNoth_NobsFarm','HS_CastleSauvage_AdribardsRetreat','HS_CastleSauvage_Ludlow','HS_CornwallStation_CaerUlfwych','HS_Cotswold_CampacorentinStation','HS_Cotswold_SnowdoniaStation','HS_CursedForest_Brynach','HS_DruimCain_TirnamBeo','HS_DruimLigen_Connla','HS_FortAtla_Galplen','HS_FortAtla_Mularn','HS_Galplen_FortAtla','HS_Galplen_GnaFaste','HS_Galplen_Vasudheim','HS_GnaFaste_FortVeldon','HS_GnaFaste_Galplen','HS_GnaFaste_Huginfel','HS_GnaFaste_Raumarik','HS_GnaFaste_WestSkona','HS_GronyrsFarm_CampacorentinStation','HS_Haggerfel_Vasudheim','HS_Howth_InnisCarthaig','HS_Howth_MagMell','HS_Huginfel_GnaFaste','HS_Huginfel_Raumarik','HS_Huginfel_SvasudFaste','HS_Huginfel_Vasudheim','HS_Humberton_SnowdoniaFortress','HS_InnisCarthaig_Culraid','HS_InnisCarthaig_TirnamBeo','HS_LlynBarfog_SnowdoniaStation','HS_Ludlow_CastleSauvage','HS_MagMell_ParthenonFarm','HS_Mularn_Audliten','HS_Mularn_FortAtla','HS_Mularn_Nalliten','HS_Mularn_SvasudFaste','HS_Nalliten_Mularn','HS_Nalliten_VindsaulFaste','HS_NobsFarm_CamelotNoth','HS_ParthenonFarm_DruimCain','HS_Raumarik_GnaFaste','HS_Raumarik_Huginfel','HS_SnowdoniaFortress_Humberton','HS_SnowdoniaStation_LlynBarfog','HS_SvasudFaste_Huginfel','HS_SvasudFaste_Mularn','HS_SvasudFaste_VindsaulFaste','HS_TirNaNogNord_InnisCarthaig','HS_TirUrphost_Ardagh','HS_TirnamBeo_DruimLigen','HS_Vasudheim_Galplen','HS_Vasudheim_Haggerfel','HS_Vasudheim_Huginfel','HS_Vasudheim_VindsaulFaste','HS_VindsaulFaste_Nalliten','HS_VindsaulFaste_SvasudFaste','HS_WestDowns_AdribardsRetreat','HS_WestSkona_GnaFaste','HS_WesternCornwall_CaerWitrin','ticket_to_ConnlaMulgraighy','ticket_to_CulraidAelerogh','ticket_to_Innis_CarthaigMulgraighy') AND PathPoints_ID NOT LIKE 'p165floor-%' AND PathPoints_ID NOT LIKE 'gamefix-route-%'",
     "reason": "True 1.65 horse routes follow the floor: the original points of the re-pointed routes (add-routefloor165.json has them, with the floor added)"
    },
    {
@@ -689,6 +688,18 @@
     "key": "MerchantItem_ID",
     "where": "ItemListID = '60848b48-e669-45de-bd47-8d23b98f778a'",
     "reason": "True 1.65 0.8 wallfix ALB: Kel's merchant list (19 crafting-supply rows), used by no NPC but Grimspound's Kel, archived with him: not 1.65 content (owner 2026-11-12: 'remove it'): no period source (2003 or earlier) names Grimspound; the real 1.64 client has no town on that Dartmoor plateau and its invisible walls seal it off; the camp's crafting stations stood 2,800 under the 1.64 terrain (a later map); Los Ortiz is a 'Dragonslayer Journeyman', a later system (build_wallfix_alb165.py)"
+   },
+   {
+    "table": "Mob",
+    "key": "Mob_ID",
+    "where": "ClassType = 'DOL.GS.Keeps.GuardMerchant' AND Mob_ID NOT LIKE 'true165-bgfix-mk-%'",
+    "reason": "True 1.65 0.8 bgfix: freeshard keep merchant (moved here from remove.mob_classes \"DOL.GS.Keeps.GuardMerchant\": same effect, except the period merchant keep merchants of build_bgfix165.py; FH 89097 2002-05-29 \"In these keeps there are merchants who sell siege parts, there are also woodmerchants there\")"
+   },
+   {
+    "table": "MerchantItem",
+    "key": "MerchantItem_ID",
+    "where": "ItemListID IN ('SiegeMerchantAlb','SiegeMerchantMid','SiegeMerchantHib') AND ItemTemplateID = 'deploy_heavy_siege_ram'",
+    "reason": "True 1.65 0.8 bgfix: the battleground Siege Masters sold no heavy siege ram: the period Thidranki Siegemasters' goods were \"Field Ballista Token, Field Catapult Token, Field Trebuchet Token, Small Ram Token\" (Allakhazam bestiary); the Atlas heavy siege ram (100g) leaves the three SiegeMerchant lists, which only the battleground Siege Masters use"
    }
   ]
  },
@@ -52037,6 +52048,50 @@
   {
    "sql": "UPDATE Mob SET X = 485930, Y = 414458, Z = 8991 WHERE Mob_ID = 'f549e8bd-2620-4217-8d9f-b6efe5929f8d' AND Region = 1 AND X = 485720 AND Y = 415073",
    "reason": "True 1.65 0.8 wallfix ALB: hill avenger (f549e8bd-2620-4217-8d9f-b6efe5929f8d) at 485720, 415073, Z 9150 stood behind the invisible wall at its camp's edge, out of a player's reach; no period position for this camp; moved to the nearest playable ground (wallaudit tools), on the navmesh floor at least 250 inside the wall; now 485930, 414458, Z 8991; nothing else changed (build_wallfix_alb165.py)"
+  },
+  {
+   "sql": "UPDATE Keep SET BaseLevel = 33 WHERE KeepID = 31 AND Region = 250 AND BaseLevel = 46",
+   "reason": "True 1.65 0.8 bgfix: Caer Caledon's keep base level 46 -> 33: its guards come out at level 35 and its lord at 42 (were 48 / 57). Period: the Prima Atlas lists the Caledonia keep's guards as Stoddard Archer [35], Baron Protector [35] and Stoddard Warder [40] (\"Stoddard keep\" = the Caledonia keep, Freddyshouse 94033, 2002-08-01); to a level 34 its archers and inner guards were orange (35-37) and the lord purple (41+) (FH 93539, 2002-07-31). The doors follow the base level (x200): 9,200 -> 6,600 health"
+  },
+  {
+   "sql": "UPDATE Mob SET ClassType = 'DOL.GS.Keeps.GuardStaticArcher', Brain = 'DOL.AI.Brain.KeepGuardBrain', Name = 'Renegade Hunter', Realm = 0, AggroLevel = 99, AggroRange = 2100, VisibleWeaponSlots = 51, Model = 781, Gender = 2 WHERE Region = 250 AND ClassType = 'DOL.GS.Keeps.GuardStaticCaster' AND Mob_ID IN ('caledon-guard-23','caledon-guard-25','caledon-guard-37','caledon-guard-46','caledon-guard-48')",
+   "reason": "True 1.65 0.8 bgfix: Caer Caledon's five wall-walk casters are archers (values as the keep's own archer caledon-guard-21): a level 34 scout counted \"roughly 7 archers on the first floor/walls\" and no casters (FH 93539, 2002-07-31), and the Prima Atlas battleground lists name no keep casters (only the portal keeps' Masters)"
+  },
+  {
+   "sql": "UPDATE Mob SET Level = 35 WHERE Region = 250 AND Mob_ID IN ('caledon-guard-16','caledon-guard-18','caledon-guard-21','caledon-guard-22','caledon-guard-23','caledon-guard-25','caledon-guard-37','caledon-guard-46','caledon-guard-48','caledon-guard-5','caledon-guard-8','caledon-guard-9')",
+   "reason": "True 1.65 0.8 bgfix: Caledonia keep guard row level 35 (12 rows): Prima Atlas Caledonia keep guards (Stoddard Archer / Baron Protector 35, Stoddard Warder 40 for the three outside the front gate, FH 93539) and the lord at 42 (purple to a 34, = the server's value at base level 33). The server takes keep guard levels from Keep.BaseLevel; the row level counts only with the battleground row-level code change"
+  },
+  {
+   "sql": "UPDATE Mob SET Level = 40 WHERE Region = 250 AND Mob_ID IN ('caledon-guard-12','caledon-guard-6','caledon-guard-7')",
+   "reason": "True 1.65 0.8 bgfix: Caledonia keep guard row level 40 (3 rows): Prima Atlas Caledonia keep guards (Stoddard Archer / Baron Protector 35, Stoddard Warder 40 for the three outside the front gate, FH 93539) and the lord at 42 (purple to a 34, = the server's value at base level 33). The server takes keep guard levels from Keep.BaseLevel; the row level counts only with the battleground row-level code change"
+  },
+  {
+   "sql": "UPDATE Mob SET Level = 42 WHERE Region = 250 AND Mob_ID IN ('caledon-guard-19')",
+   "reason": "True 1.65 0.8 bgfix: Caledonia keep guard row level 42 (1 rows): Prima Atlas Caledonia keep guards (Stoddard Archer / Baron Protector 35, Stoddard Warder 40 for the three outside the front gate, FH 93539) and the lord at 42 (purple to a 34, = the server's value at base level 33). The server takes keep guard levels from Keep.BaseLevel; the row level counts only with the battleground row-level code change"
+  },
+  {
+   "sql": "UPDATE Mob SET Level = 30 WHERE Region = 251 AND Mob_ID IN ('23b55152-a7e7-48cd-bf74-86cef3f5fd32','23f45294-c520-450c-8bf3-052308e82876','2e1d1478-f082-401b-ac17-1b212ff6b634','33f628d3-ecbd-418c-a5a4-8b08009c9e82','46660ff3-7346-4e0b-b5c3-ee6fc2baa2e7','4f04b6eb-bfcd-42dc-8678-90bfb0f7803d','5798dd81-c994-48bd-9f21-fd671dec29b1','6c2c91f8-6825-46c9-9058-4edf8de7fe61','752b4e1a-605a-49a7-9a01-6bc61c1bc3b7','842345eb-4477-4aea-b6c8-02b25fadb044','a2c5293f-a4ce-47c1-b7c4-8e8dae48f74a','a48a0f7a-d049-4450-b949-b5276a63fbe3','a5eccfad-a69e-4327-b6c7-b35750052a5e','b018270f-d616-450f-8841-273df75698a3','b21b8a4d-9658-49bb-9ea8-8086510acf07','b961a4c2-52f0-4b02-8491-69eee84027e7','d438b17c-acf8-4759-81bc-7fe0e57fc297','d4f8f1d3-f666-40cc-a0dc-76c5fb994b97','e15527d0-ef34-4fb9-88b4-c128c5a5c479','f351c4e8-e958-4d23-805c-e923a4b9ebfd','f905cd42-6635-49d5-b433-312f7c94cf38','fcfe1db1-7930-4f00-9964-c4427ca5795a','fd13deac-52c2-4fed-832c-28c6001170f6')",
+   "reason": "True 1.65 0.8 bgfix: Murdaigean keep guard row level 30 (23 rows): Prima Atlas Murdaigean: guards and archers [30], commanders [33], lords [40]. The server takes keep guard levels from Keep.BaseLevel; the row level counts only with the battleground row-level code change"
+  },
+  {
+   "sql": "UPDATE Mob SET Level = 33 WHERE Region = 251 AND Mob_ID IN ('131ca907-64dc-4356-b0ef-3fed683a919e','35802b76-82d8-4ba3-8ebd-789537bfd898','f11d5292-262b-4481-ba36-1910ba10e244')",
+   "reason": "True 1.65 0.8 bgfix: Murdaigean keep guard row level 33 (3 rows): Prima Atlas Murdaigean: guards and archers [30], commanders [33], lords [40]. The server takes keep guard levels from Keep.BaseLevel; the row level counts only with the battleground row-level code change"
+  },
+  {
+   "sql": "UPDATE Mob SET Level = 40 WHERE Region = 251 AND Mob_ID IN ('fd847893-4c73-4613-a7c2-fda3e6c16dcf')",
+   "reason": "True 1.65 0.8 bgfix: Murdaigean keep guard row level 40 (1 rows): Prima Atlas Murdaigean: guards and archers [30], commanders [33], lords [40]. The server takes keep guard levels from Keep.BaseLevel; the row level counts only with the battleground row-level code change"
+  },
+  {
+   "sql": "UPDATE Mob SET Level = 24 WHERE Region = 252 AND Mob_ID IN ('0849e575-78af-4d6e-9b3b-fc63409e87c3','1d1c1d2f-8496-4f4b-9081-15c8dd0dcb43','606b14b5-4d63-4185-a0d4-fdf82a28ab8d','a227aada-f492-4111-a487-86375d666b09','f00c1b81-bf0f-419e-9b43-80f26db9f5d3')",
+   "reason": "True 1.65 0.8 bgfix: Thidranki keep guard row level 24 (5 rows): Prima Atlas Thidranki: guards and archers [24], lords [33]. The server takes keep guard levels from Keep.BaseLevel; the row level counts only with the battleground row-level code change"
+  },
+  {
+   "sql": "UPDATE Mob SET Level = 23 WHERE Region = 253 AND Mob_ID IN ('02517b5c-f9aa-43f3-8951-db80de5328a2','14658db4-dc55-457e-9777-f5e43fd23c70','157865f2-7f2c-4fbd-8756-ba7bd6bf9460','27b20f43-5803-4450-aa11-920eaddc5199','2e8a28e8-b8e6-46e7-9f4b-fdffa4067d49','33a299ec-b702-419a-b4ac-3a3c96fa65d2','3678b80f-5092-4a65-86b7-adc4365a8e93','46a8a8fd-393b-4601-980e-3901ca3bd567','47454e17-34d6-4a6a-8569-c3cf5aab47e0','4b803f4b-3765-499f-a154-5742d639db31','69ef5d56-8bc4-4e95-a0c1-734522c333b5','6e543e2a-7996-4594-a4ff-95fbc06401f4','70cecda8-3f51-4bdb-8aab-b5f166ba13f8','83c3dcb7-6685-4903-86df-2b0e8587badc','85cc4d24-969a-4e0f-b9d8-6f895cc1c372','86a6dabe-af78-45e1-b8dd-ad0e87928764','8799d080-dc6b-4111-9b04-be04451ad0b1','89806f4e-3259-4805-a337-8c1db817029e','8d9c29d1-555a-4ebf-b97a-86a94d09f8e5','a8c4cf94-322a-4489-91d9-fb908dc0224a','b79030cd-4c8b-4659-b097-e83bb65ed178','c9db2d9e-58a7-43ee-914a-4802bf3d925a','d9157f95-12c0-43d8-9d2a-299e58830414','f5e43954-0df3-4feb-8538-ca46bbc9f7f0','fefdbac2-061c-4bd6-92b0-b7fb3fa2e2d2')",
+   "reason": "True 1.65 0.8 bgfix: Abermenai keep guard row level 23 (25 rows): no period source for Abermenai: the rows carry today's computed values (guards 23, lord 28). The server takes keep guard levels from Keep.BaseLevel; the row level counts only with the battleground row-level code change"
+  },
+  {
+   "sql": "UPDATE Mob SET Level = 28 WHERE Region = 253 AND Mob_ID IN ('91c88f86-159d-486c-a374-a1b0c96ba3cc')",
+   "reason": "True 1.65 0.8 bgfix: Abermenai keep guard row level 28 (1 rows): no period source for Abermenai: the rows carry today's computed values (guards 23, lord 28). The server takes keep guard levels from Keep.BaseLevel; the row level counts only with the battleground row-level code change"
   }
  ]
 }
