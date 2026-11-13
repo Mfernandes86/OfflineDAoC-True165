@@ -8,6 +8,13 @@ lifts the sword so its hilt comes up over the shoulder with the blade under the 
 inverse hung it down by the leg; n_1h_doubleaxe01's BELT turns the axe head down along the thigh). Stored like
 "held" (nif_static.held_frame): column-vector, NIF axes and units - [basis x, y, z, origin], 12 numbers - as
 "belt_frame" / "back_frame" ("belt" is objects.csv On Belt).
+
+The BACK node with items.csv "Back Offset" (col 15, weapons.json "back_offset"; owner 2026-11-13: Hibernian
+two-handers sat a hand lower on the back than Albion / Midgard ones): the real 1.64 game.dll reads it with the NIF
+(items.csv loader 0x46014e passes col 15 to 0x4464e8) and, when it is not 0, finds the NIF's "BACK" node and adds it
+to that node's own translation Z (0x4465e8-0x44661c: fild offset, fadd node+0x58, fstp) before anything hangs by it.
+The Hibernian NIFs' BACK sits at the grip (h_2h_sword01 Z -1.08, h_2h_elvengreatsword01 -0.73) where the Albion /
+Midgard ones sit 12 units down (b_2h_2hsword01 -12): their -10 brings them level. Applied here the same way.
 Run after add_weapon_frames.py / add_h2h_held.py / add_h2h_stab.py (it leaves "held" alone).
 
     python pipeline/add_sheath_frames.py
@@ -23,16 +30,20 @@ from netimmerse import read_nif
 import nif_static
 
 
-def frames(raw):
-    """{'belt': 4x4, 'back': 4x4} - the nodes' row-vector matrices in the NIF's root space."""
+def frames(raw, back_offset=0):
+    """{'belt': 4x4, 'back': 4x4} - the nodes' row-vector matrices in the NIF's root space; back_offset (items.csv
+    Back Offset) added to the BACK node's own translation Z first, as game.dll 0x4465e8."""
     nif = read_nif(raw)
     found = {}
 
     def walk(b, pm):
         if b is None:
             return
-        m = nif_static.local_matrix(b) @ pm
+        local = nif_static.local_matrix(b)
         name = (b.get('name') or '').strip().lower()
+        if name == 'back' and back_offset and 'back' not in found:
+            local[3, 2] += back_offset                     # row-vector: the translation is row 3
+        m = local @ pm
         if name in ('belt', 'back') and name not in found:
             found[name] = m
         for c in b.get('children') or []:
@@ -59,7 +70,7 @@ def main():
         if src is None:
             continue
         try:
-            f = frames(src.read_bytes())
+            f = frames(src.read_bytes(), int(w.get('back_offset', 0) or 0))
         except Exception:
             continue
         for k in ('belt', 'back'):
