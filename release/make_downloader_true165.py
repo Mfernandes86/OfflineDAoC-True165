@@ -45,13 +45,17 @@ def readme(version: str) -> str:
         "Nothing else to install: .NET comes with the game, and no original DAoC client is needed.",
         "",
         "Full guide and troubleshooting:",
-        "https://github.com/shadowofze/OfflineDAoC-True165/blob/main/docs/PLAY.md",
+        "https://github.com/zomboden/OfflineDAoC-True165/blob/main/docs/PLAY.md",
     ]
     return "\r\n".join(lines) + "\r\n"
 
 
 def sha(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(1 << 20), b""):
+            digest.update(block)
+    return digest.hexdigest()
 
 
 def main():

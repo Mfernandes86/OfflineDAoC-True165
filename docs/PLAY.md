@@ -24,7 +24,7 @@ This guide is for players. You don't need Git, an AI assistant or any programmin
 
 > **Already playing v0.1 to v0.6?** See [Updating](#updating): the same downloader updates your game in place.
 
-1. Open the [latest release](https://github.com/shadowofze/OfflineDAoC-True165/releases/latest) and, under
+1. Open the [latest release](https://github.com/zomboden/OfflineDAoC-True165/releases/latest) and, under
    **Assets**, download **`Download-OfflineDAoC-True165-v0.7.zip`**. It's small: just the downloader.
 2. Make a folder with a short path, for example **`C:\Games\OfflineDAoC`**, and move the zip there. Avoid OneDrive,
    Program Files and very deep folders.
@@ -102,7 +102,7 @@ characters, companions, bots and settings stay as they are.
 
 1. Quit the game and click **STOP SERVER**, then close the launcher.
 2. Download the new version's downloader zip from the
-   [latest release](https://github.com/shadowofze/OfflineDAoC-True165/releases/latest) and extract it, as in
+   [latest release](https://github.com/zomboden/OfflineDAoC-True165/releases/latest) and extract it, as in
    [1. Download](#1-download).
 3. Double-click **`GET-OFFLINE-DAOC-TRUE165.cmd`** and press **1 = Update my game**. It finds your
    `OfflineDAoC-True165` folder (or asks you to pick it) and shows what it will download.
@@ -138,6 +138,6 @@ characters, companions, bots and settings stay as they are.
 **Keep a backup of your save** before you try a new build or a mod. Your world, characters, companions and bots are
 in `runtime\data\opendaoc-165.sqlite3.db`.
 
-**Reporting a bug:** open an [issue](https://github.com/shadowofze/OfflineDAoC-True165/issues). Say what you were
+**Reporting a bug:** open an [issue](https://github.com/zomboden/OfflineDAoC-True165/issues). Say what you were
 doing, and attach the logs from `new-client\save\Godot\app_userdata\MMOEngine` (`logs\godot.log`, `spell_log.txt`, `death_log.txt`) and
 `runtime\logs` if there are any. [docs/NEW-CLIENT.md](NEW-CLIENT.md#reporting-problems) says which files to send.

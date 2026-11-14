@@ -6,7 +6,7 @@ Isles, November 2003), with a world full of gamebots, hired companions, and a ne
 > your save.
 
 > **Releases are not on a regular schedule.** Expect potentially long gaps between releases. Bug reports and
-> ideas are welcome in [Issues](https://github.com/shadowofze/OfflineDAoC-True165/issues), and anyone who wants to
+> ideas are welcome in [Issues](https://github.com/zomboden/OfflineDAoC-True165/issues), and anyone who wants to
 > continue development in a fork is free to do so, no need to ask me.
 
 ## What's new in 0.7
@@ -36,7 +36,7 @@ Isles, November 2003), with a world full of gamebots, hired companions, and a ne
   restarting its cure, duplicate companions, quickbar slots that swapped styles, `/dfowner`, `/fly` across zones,
   and more.
 
-The full list is in the [changelog](https://github.com/shadowofze/OfflineDAoC-True165/blob/main/CHANGELOG.md).
+The full list is in the [changelog](https://github.com/zomboden/OfflineDAoC-True165/blob/main/CHANGELOG.md).
 
 ## Already playing an earlier version? Update in place (about 3.0 GB)
 
@@ -76,11 +76,11 @@ You **don't** need to download the other files on this page by hand: the downloa
 
 ## More
 
-- The full guide with troubleshooting: [docs/PLAY.md](https://github.com/shadowofze/OfflineDAoC-True165/blob/main/docs/PLAY.md)
-- Bugs: [open an issue](https://github.com/shadowofze/OfflineDAoC-True165/issues). Say what you were doing, and
+- The full guide with troubleshooting: [docs/PLAY.md](https://github.com/zomboden/OfflineDAoC-True165/blob/main/docs/PLAY.md)
+- Bugs: [open an issue](https://github.com/zomboden/OfflineDAoC-True165/issues). Say what you were doing, and
   attach the logs from `new-client\save\Godot\app_userdata\MMOEngine\logs` (and `spell_log.txt`, `death_log.txt` there) if you can.
 - The source code, and the guides for developers and AI assistants, are in this repository; start with the
-  [README](https://github.com/shadowofze/OfflineDAoC-True165#readme).
+  [README](https://github.com/zomboden/OfflineDAoC-True165#readme).
 
 Dark Age of Camelot is the property of Electronic Arts and Broadsword. This is a free, non-commercial fan project,
 not affiliated with them.

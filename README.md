@@ -21,7 +21,7 @@
 **About updates:** this is a hobby project I work on for fun, in my spare time. There is no release schedule:
 releases come out whenever I feel like it, and it may be weeks or months between one release and the next. I can't
 promise to keep updating it forever, but while I'm enjoying it, it'll keep getting better. Bug reports and ideas are
-always welcome in [Issues](https://github.com/shadowofze/OfflineDAoC-True165/issues), and if you'd like to take the
+always welcome in [Issues](https://github.com/zomboden/OfflineDAoC-True165/issues), and if you'd like to take the
 project further yourself, you're welcome to fork it. No need to ask.
 
 # Offline DAoC True 1.65: single-player Dark Age of Camelot as of patch 1.65
@@ -32,7 +32,7 @@ with gamebots that level, group, trade, craft and fight on their own.
 
 ## Download and play
 
-**[Download v0.7](https://github.com/shadowofze/OfflineDAoC-True165/releases/latest)**, no Git or AI tools needed.
+**[Download v0.7](https://github.com/zomboden/OfflineDAoC-True165/releases/latest)**, no Git or AI tools needed.
 **Already playing v0.1 to v0.6?** The same downloader updates your game in place with a much smaller download
 (about 3.0 GB). Your account, characters, companions and bots stay as they are.
 

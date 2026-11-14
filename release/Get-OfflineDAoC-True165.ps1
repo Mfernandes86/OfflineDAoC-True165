@@ -24,7 +24,7 @@ $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-$Repo = 'shadowofze/OfflineDAoC-True165'
+$Repo = 'zomboden/OfflineDAoC-True165'
 $Product = 'Offline DAoC True 1.65'
 $StartFile = 'START OFFLINE DAOC TRUE 1.65.cmd'
 # The new client keeps its graphics (shader) cache in new-client\save, up to 200 characters deeper, and Windows refuses
