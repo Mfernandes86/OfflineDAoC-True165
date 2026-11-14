@@ -1,10 +1,11 @@
 OFFLINE DAOC TRUE 1.65 v0.1 - QUICK COMMANDS AND LAUNCHER SHORTCUTS
 
-On the launcher, click + Lv.1 under a realm to add gamebots:
-  Normal click: +1 bot
-  Hold Shift while clicking: +10 bots
-  Hold Ctrl while clicking: +100 bots
-  Bots start at level 1 and level up in the world (there is no + Lv.50 button).
+On the launcher, each realm's card has a number box: how many gamebots that
+realm keeps online. Click it, type a number and press Enter.
+  It saves at once and works while the server runs (no restart needed).
+  A new world starts at 500 per realm. Lower it if your PC struggles.
+  Bots start at level 1 and level up in the world (there is no level 50 option).
+  The World Population tab shows the goals and the live counts by level.
 
 COMPANIONS
 Talk to (right-click) the innkeeper at your realm's traveler's inn to hire companions.

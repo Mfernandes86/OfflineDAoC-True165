@@ -20,8 +20,9 @@ PLAY
 3. Click START SERVER and wait until the launcher shows RUNNING.
    The first start sets up the world and can take a few minutes.
 4. Click ENTER REALM. Your own local account is created the first time.
-5. Add bots with the + Lv.1 button on each realm's card (Shift = 10,
-   Ctrl = 100). Start small and add more as your PC allows.
+5. Each realm's card has a box for how many gamebots it keeps online
+   (500 per realm in a new world). Click it, type a number and press
+   Enter. Lower it if your PC struggles. Bots start at level 1.
 6. To finish: quit the game, click STOP SERVER, and wait for it to save.
 Only one server can run at a time.
 

@@ -65,11 +65,14 @@ Only one server can run at a time.
 
 The world fills with gamebots that level, group, craft, trade and fight on their own.
 
-- **Add bots** with the **+ Lv.1** button on a realm's card in the launcher. Hold **Shift** for 10 at a time, or
-  **Ctrl** for 100. Bots start at level 1 and level up in the world, like you.
-- **Start small** and add more as your PC allows. Every bot is simulated by the server on your PC.
-- The launcher's tabs show the active population, groups, RvR, battlegrounds, realm events and realm records.
-  **Bot Goals Setting** sets what the bots aim for.
+- **Set how many bots** each realm keeps online with the number box on its card in the launcher: click it, type a
+  number and press **Enter**. It saves at once and works while the server runs. A new world starts at 500 per
+  realm. Bots always start at level 1 and level up in the world, like you, and they log in and out over time like
+  players.
+- **Match it to your PC.** Every bot is simulated by the server on your PC. If the game stutters or the **BOT AI
+  DELAY** card keeps climbing, lower the numbers; bots log out a few at a time.
+- The launcher's tabs show the active population, the world population by level, groups, RvR, battlegrounds, realm
+  events and realm records. **Bot Goals Setting** sets what the bots aim for.
 
 ### Companions
 
